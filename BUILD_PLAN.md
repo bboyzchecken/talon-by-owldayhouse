@@ -290,15 +290,15 @@ components/Footer.tsx:
 **Goal:** วางรากฐาน SEO ครบ (เมื่อก่อนไม่มีเลย) — ทำให้ Google เจอ + local SEO เชียงใหม่ + แชร์สวย
 
 **Checklist**
-- [ ] `generateMetadata` ทุกหน้า (title/description/canonical/OG/Twitter)
-- [ ] `app/sitemap.ts` ออก `/sitemap.xml` ครบทุก route
-- [ ] `app/robots.ts` ออก `/robots.txt` (allow + ชี้ sitemap)
-- [ ] JSON-LD: `Organization`, `LocalBusiness` (ที่อยู่/พิกัดเชียงใหม่/โทร/เวลาเปิด), `Service` (Talon), `BreadcrumbList`
-- [ ] OG image (`opengraph-image` หรือ static 1200×630) แบรนด์ ODH
-- [ ] favicon/apple-touch/`manifest`
-- [ ] HTML semantic (h1 เดียว/หน้า, alt รูปครบ, lang th)
-- [ ] Analytics: GA4 หรือ Plausible (เลือก 1) + (option) Facebook Pixel
-- [ ] Lighthouse SEO ≥ 95, Performance ดี (static ช่วยอยู่แล้ว)
+- [x] `generateMetadata` ทุกหน้า (title/description/canonical/OG/Twitter) *(ผ่าน `lib/seo.ts` pageMeta + layout defaults)*
+- [x] `app/sitemap.ts` ออก `/sitemap.xml` ครบทุก route
+- [x] `app/robots.ts` ออก `/robots.txt` (allow + ชี้ sitemap)
+- [x] JSON-LD: `Organization`, `LocalBusiness` (ที่อยู่/พิกัดเชียงใหม่/โทร/เวลาเปิด), `Service` (Talon), `BreadcrumbList`
+- [x] OG image (static `/og.png` 1200×630 แบรนด์ ODH — สร้างด้วย next/og แล้ว export เป็นไฟล์จริง)
+- [x] favicon + `manifest` *(apple-touch-icon ค้าง — ต้องการ PNG 180×180)*
+- [x] HTML semantic (h1 เดียว/หน้า ✓, lang th ✓, รูปเป็น inline SVG มี aria-label)
+- [x] Analytics: Plausible (component แยก, เปิดเมื่อตั้ง env `NEXT_PUBLIC_ANALYTICS_DOMAIN`)
+- [ ] Lighthouse SEO ≥ 95, Performance ดี *(วัดจริงตอน pre-launch Step 10)*
 
 **Claude Code Prompt**
 ```

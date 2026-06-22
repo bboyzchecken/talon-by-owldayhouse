@@ -1,16 +1,19 @@
-import type { Metadata } from "next";
 import { AlertTriangle, Check, ShieldCheck, Sparkles, Users } from "lucide-react";
 import { Badge, Button, Card, SectionHeading, cn } from "@odh/ui";
 import { contact } from "@/content/site";
 import { carePlans, firstMonthFree, talon } from "@/content/packages";
 import { ClosingCTA } from "@/components/ClosingCTA";
 import { Reveal } from "@/components/Reveal";
+import { JsonLd } from "@/components/JsonLd";
+import { pageMeta } from "@/lib/seo";
+import { breadcrumbSchema, talonServiceSchema } from "@/lib/structured-data";
 
-export const metadata: Metadata = {
-  title: "Talon — เว็บไซต์โปร เสร็จไวใน 5 วัน ฿3,900",
+export const metadata = pageMeta({
+  title: "Talon — เว็บไซต์ ฿3,900 เสร็จใน 5 วัน",
   description:
     "Talon เว็บไซต์โปร เสร็จไวใน 5 วัน เริ่มต้น ฿3,900 — ทีมคนไทยทำให้ครบ ดูแลต่อจริง แพ็กดูแลรายเดือนเดือนแรกฟรี",
-};
+  path: "/talon/",
+});
 
 const problems = [
   "เว็บสวยตอนแรก แต่พอจะแก้เองกลับทำไม่เป็น",
@@ -28,6 +31,7 @@ const solutions = [
 export default function TalonPage() {
   return (
     <main>
+      <JsonLd data={[breadcrumbSchema("Talon", "/talon/"), talonServiceSchema]} />
       {/* hero */}
       <section className="relative overflow-hidden bg-navy text-paper">
         <div aria-hidden className="pointer-events-none absolute inset-0 bg-gradient-to-b from-navy to-navy-deep" />

@@ -1,15 +1,20 @@
-import type { Metadata } from "next";
 import { Button, Card, SectionHeading } from "@odh/ui";
 import { company, contact } from "@/content/site";
+import { pageMeta } from "@/lib/seo";
+import { JsonLd } from "@/components/JsonLd";
+import { breadcrumbSchema } from "@/lib/structured-data";
 
-export const metadata: Metadata = {
+export const metadata = pageMeta({
   title: "ติดต่อเรา",
-  description: "ติดต่อ Owl Day House เชียงใหม่ ผ่าน Facebook Messenger, โทร 092-455-2450 หรือ LINE — ไม่มีฟอร์มให้กรอกยุ่งยาก",
-};
+  description:
+    "ติดต่อ Owl Day House เชียงใหม่ ผ่าน Facebook Messenger, โทร 092-455-2450 หรือ LINE — ไม่มีฟอร์มให้กรอกยุ่งยาก",
+  path: "/contact/",
+});
 
 export default function ContactPage() {
   return (
     <main className="mx-auto max-w-5xl px-6 py-20">
+      <JsonLd data={breadcrumbSchema("ติดต่อ", "/contact/")} />
       <SectionHeading
         as="h1"
         eyebrow="ติดต่อ"

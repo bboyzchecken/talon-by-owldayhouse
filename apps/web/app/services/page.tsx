@@ -1,15 +1,19 @@
-import type { Metadata } from "next";
 import { Button, SectionHeading } from "@odh/ui";
 import { contact } from "@/content/site";
+import { pageMeta } from "@/lib/seo";
+import { JsonLd } from "@/components/JsonLd";
+import { breadcrumbSchema } from "@/lib/structured-data";
 
-export const metadata: Metadata = {
+export const metadata = pageMeta({
   title: "บริการของเรา",
   description: "รับทำเว็บไซต์ เว็บแอป/โมบายแอป ระบบองค์กร และงานกราฟิก โดยทีมซอฟต์แวร์เฮาส์เชียงใหม่",
-};
+  path: "/services/",
+});
 
 export default function ServicesPage() {
   return (
     <main className="mx-auto max-w-5xl px-6 py-20">
+      <JsonLd data={breadcrumbSchema("บริการ", "/services/")} />
       <SectionHeading
         as="h1"
         eyebrow="บริการ"

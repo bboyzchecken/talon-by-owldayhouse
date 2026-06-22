@@ -1,15 +1,19 @@
-import type { Metadata } from "next";
 import { Button, SectionHeading } from "@odh/ui";
 import { contact } from "@/content/site";
+import { pageMeta } from "@/lib/seo";
+import { JsonLd } from "@/components/JsonLd";
+import { breadcrumbSchema } from "@/lib/structured-data";
 
-export const metadata: Metadata = {
+export const metadata = pageMeta({
   title: "แพ็กเกจ & ราคา",
   description: "แพ็กเกจรับทำเว็บไซต์และระบบ — บันได 4 ขั้น เริ่มจากเว็บไว ฿3,900 ถึงระบบองค์กร พร้อมแพ็กดูแลรายเดือน",
-};
+  path: "/packages/",
+});
 
 export default function PackagesPage() {
   return (
     <main className="mx-auto max-w-5xl px-6 py-20">
+      <JsonLd data={breadcrumbSchema("แพ็กเกจ", "/packages/")} />
       <SectionHeading
         as="h1"
         eyebrow="แพ็กเกจ"

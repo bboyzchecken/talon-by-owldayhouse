@@ -1,16 +1,20 @@
-import type { Metadata } from "next";
 import { Button, SectionHeading } from "@odh/ui";
 import { contact } from "@/content/site";
+import { pageMeta } from "@/lib/seo";
+import { JsonLd } from "@/components/JsonLd";
+import { breadcrumbSchema } from "@/lib/structured-data";
 
-export const metadata: Metadata = {
+export const metadata = pageMeta({
   title: "เราคือใคร",
   description:
     "Owl Day House ซอฟต์แวร์เฮาส์เชียงใหม่ บริษัทจดทะเบียน ออกใบกำกับภาษีได้ มีผลงานจริงทั้งเว็บและระบบองค์กร",
-};
+  path: "/about/",
+});
 
 export default function AboutPage() {
   return (
     <main className="mx-auto max-w-5xl px-6 py-20">
+      <JsonLd data={breadcrumbSchema("เราคือใคร", "/about/")} />
       <SectionHeading
         as="h1"
         eyebrow="เกี่ยวกับเรา"
