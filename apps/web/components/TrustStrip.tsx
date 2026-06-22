@@ -1,8 +1,9 @@
-import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
-import { Badge, SectionHeading } from "@odh/ui";
+import { SectionHeading } from "@odh/ui";
 import { portfolio, trustedBy } from "@/content/portfolio";
+import { PortfolioCard } from "./PortfolioCard";
 import { Reveal } from "./Reveal";
+
+const featured = portfolio.filter((item) => item.featured);
 
 export function TrustStrip() {
   return (
@@ -26,24 +27,9 @@ export function TrustStrip() {
         </div>
 
         <div className="mt-10 grid gap-5 md:grid-cols-3">
-          {portfolio.map((item, i) => (
+          {featured.map((item, i) => (
             <Reveal key={item.title} delay={i * 0.08}>
-              <article className="flex h-full flex-col rounded-2xl border border-line bg-white p-6 shadow-card">
-                <Badge variant={i === 0 ? "gold" : "soft"}>{item.category}</Badge>
-                <h3 className="mt-4 font-display text-lg font-bold text-navy">{item.title}</h3>
-                <p className="mt-1 text-sm font-medium text-navy/70">{item.client}</p>
-                <p className="mt-3 text-sm text-muted">{item.result}</p>
-                {item.url ? (
-                  <Link
-                    href={item.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-4 inline-flex items-center gap-1 font-display text-sm font-semibold text-gold hover:underline"
-                  >
-                    ดูระบบจริง <ArrowUpRight size={16} />
-                  </Link>
-                ) : null}
-              </article>
+              <PortfolioCard item={item} />
             </Reveal>
           ))}
         </div>
