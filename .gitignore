@@ -1,6 +1,10 @@
 # dependencies
 node_modules
 
+# this is a pnpm workspace — never commit npm/yarn lockfiles
+package-lock.json
+yarn.lock
+
 # build output
 .next
 out
