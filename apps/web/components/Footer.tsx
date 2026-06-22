@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { MapPin, MessageCircle, Phone } from "lucide-react";
-import { OwlMark } from "@odh/ui";
+import { OwlLogo } from "@odh/ui";
 import { company, contact, navLinks, social } from "@/content/site";
 import { FacebookIcon, InstagramIcon, LineIcon, LinkedinIcon } from "./social-icons";
 
@@ -17,10 +17,7 @@ export function Footer() {
     <footer className="bg-navy text-paper">
       <div className="mx-auto grid max-w-6xl gap-10 px-6 py-16 md:grid-cols-[1.6fr_1fr_1.4fr]">
         <div>
-          <div className="flex items-center gap-2.5">
-            <OwlMark size={40} />
-            <span className="font-display text-lg font-bold tracking-wide">{company.brandNameEn}</span>
-          </div>
+          <OwlLogo height={34} className="text-paper" />
           <p className="mt-4 max-w-xs text-sm text-paper/70">
             {company.tagline} — รับทำเว็บไซต์ เว็บแอป และระบบองค์กร จากเชียงใหม่
           </p>

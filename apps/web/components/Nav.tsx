@@ -4,8 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
-import { Button, OwlMark, cn } from "@odh/ui";
-import { company, navLinks } from "@/content/site";
+import { Button, OwlLogo, cn } from "@odh/ui";
+import { navLinks } from "@/content/site";
 
 export function Nav() {
   const [open, setOpen] = useState(false);
@@ -14,9 +14,8 @@ export function Nav() {
   return (
     <header className="sticky top-0 z-50 border-b border-white/10 bg-navy/80 text-paper backdrop-blur supports-[backdrop-filter]:bg-navy/70">
       <nav className="mx-auto flex h-16 max-w-6xl items-center gap-4 px-6">
-        <Link href="/" className="flex items-center gap-2.5" onClick={() => setOpen(false)}>
-          <OwlMark size={34} />
-          <span className="font-display text-base font-bold tracking-wide">{company.brandNameEn}</span>
+        <Link href="/" className="flex items-center" onClick={() => setOpen(false)} aria-label="Owl Day House — หน้าแรก">
+          <OwlLogo height={30} className="text-paper" />
         </Link>
 
         <ul className="ml-auto hidden items-center gap-6 lg:flex">

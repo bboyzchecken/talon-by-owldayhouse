@@ -44,7 +44,8 @@ export default function Example() {
 
 | Component        | Notes                                                              |
 | ---------------- | ------------------------------------------------------------------ |
-| `OwlMark`        | SVG logo mark. Props: `size`, `tile`. Colors from brand tokens.    |
+| `OwlMark`        | Registered owl symbol (SVG). Prop: `size`. Inherits `currentColor`. |
+| `OwlLogo`        | Registered horizontal lockup (owl + wordmark). Prop: `height`. `currentColor`. |
 | `Button`         | `variant`: `gold` \| `navy` \| `ghost`; `size`: `sm` \| `md` \| `lg`; `asChild`. |
 | `Card`           | Surface container (border + soft shadow).                          |
 | `Badge`          | `variant`: `gold` \| `navy` \| `soft`.                             |

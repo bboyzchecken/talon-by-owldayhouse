@@ -251,12 +251,12 @@ components/Footer.tsx:
 5. **CTA ปิด** — ไป Messenger
 
 **Checklist**
-- [ ] Hero มี gradient + accent ทอง + animation เข้าเบา ๆ (ไม่หน่วง LCP)
-- [ ] Ladder 4 ขั้น เป็น component ใช้ data จาก `content/`
-- [ ] Talon band เด่น แยกจากส่วนอื่นชัด มีปุ่มไป `/talon`
-- [ ] Trust section ดึง portfolio data, งานราชการอยู่บนสุด
-- [ ] ทุก section responsive + ใช้ tokens แบรนด์
-- [ ] หน้า `/talon` เต็ม: ปัญหา→ทางออก(AI+คนไทยดูแล)→ราคา ฿3,900→แพ็กดูแล→CTA Messenger
+- [x] Hero มี gradient + accent ทอง + animation เข้าเบา ๆ (ไม่หน่วง LCP)
+- [x] Ladder 4 ขั้น เป็น component ใช้ data จาก `content/`
+- [x] Talon band เด่น แยกจากส่วนอื่นชัด มีปุ่มไป `/talon`
+- [x] Trust section ดึง portfolio data, งานราชการอยู่บนสุด
+- [x] ทุก section responsive + ใช้ tokens แบรนด์
+- [x] หน้า `/talon` เต็ม: ปัญหา→ทางออก(AI+คนไทยดูแล)→ราคา ฿3,900→แพ็กดูแล→CTA Messenger
 
 **Claude Code Prompt**
 ```

@@ -1,7 +1,7 @@
 import { Badge } from "./badge";
 import { Button } from "./button";
 import { Card } from "./card";
-import { OwlMark } from "./owl-mark";
+import { OwlLogo } from "./owl-logo";
 import { SectionHeading } from "./section-heading";
 
 /**
@@ -12,11 +12,7 @@ export function Showcase() {
   return (
     <div className="flex flex-col gap-10 bg-paper p-8 font-body text-ink">
       <div className="flex items-center gap-4">
-        <OwlMark size={56} />
-        <div>
-          <p className="font-display text-xl font-bold text-navy">OWL DAY HOUSE</p>
-          <p className="text-sm text-muted">Design system · navy + gold</p>
-        </div>
+        <OwlLogo height={44} className="text-navy" />
         <Badge variant="gold" className="ml-auto">
           NEW
         </Badge>

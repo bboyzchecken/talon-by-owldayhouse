@@ -1,6 +1,7 @@
 // @odh/ui — shared React components for the ODH site. All visual styling
 // references @odh/brand tokens / Tailwind theme utilities (no hardcoded hex).
 export { OwlMark, type OwlMarkProps } from "./owl-mark";
+export { OwlLogo, type OwlLogoProps } from "./owl-logo";
 export { Button, type ButtonProps } from "./button";
 export { Card } from "./card";
 export { Badge, type BadgeProps } from "./badge";

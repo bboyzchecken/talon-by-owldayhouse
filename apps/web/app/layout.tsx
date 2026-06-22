@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     template: "%s | Owl Day House",
   },
   description:
-    "ซอฟต์แวร์เฮาส์เชียงใหม่ รับทำเว็บไซต์ เว็บแอป และระบบองค์กร เริ่มต้นด้วย Talon เว็บไว AI ฿3,900 — ทีมคนไทยดูแลจริง",
+    "ซอฟต์แวร์เฮาส์เชียงใหม่ รับทำเว็บไซต์ เว็บแอป และระบบองค์กร เริ่มต้นด้วย Talon เว็บไซต์เสร็จไวใน 5 วัน ฿3,900 — ทีมคนไทยดูแลจริง",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

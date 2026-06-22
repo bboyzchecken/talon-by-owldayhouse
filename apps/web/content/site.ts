@@ -6,7 +6,7 @@ export const company = {
   legalName: "บริษัท อาวล์ เดย์ เฮ้าส์ จำกัด",
   brandName: "Owl Day House",
   brandNameEn: "OWL DAY HOUSE",
-  tagline: "AI เร็ว + ทีมคนไทยดูแลจริง",
+  tagline: "เสร็จไว ดูแลต่อ โดยทีมคนไทย",
   address: {
     line: "ห้อง B1 ชั้น 1 อาคาร TNC เลขที่ 172",
     district: "ต.ไชยสถาน อ.สารภี",
