@@ -10,12 +10,17 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit"
   },
+  "dependencies": {
+    "@odh/brand": "workspace:*",
+    "@radix-ui/react-slot": "^1.1.1",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^2.6.0"
+  },
   "peerDependencies": {
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@odh/brand": "workspace:*",
     "@odh/eslint-config": "workspace:*",
     "@odh/tsconfig": "workspace:*",
     "@types/react": "^19.0.2",

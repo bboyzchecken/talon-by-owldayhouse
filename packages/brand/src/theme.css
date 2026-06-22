@@ -1,0 +1,28 @@
+/**
+ * @odh/brand — Tailwind v4 theme.
+ * In the app's global stylesheet, import AFTER Tailwind:
+ *   @import "tailwindcss";
+ *   @import "@odh/brand/theme.css";
+ * This maps brand tokens to CSS variables + generates utilities
+ * (bg-navy, text-gold, font-display, shadow-glow, ...).
+ */
+@theme {
+  /* Brand colors */
+  --color-navy: #28254c;
+  --color-navy-deep: #1b1938;
+  --color-gold: #e9a41b;
+  --color-gold-soft: #fbefd3;
+  --color-paper: #fbf8f1;
+  --color-ink: #28254c;
+  --color-muted: #6e6b86;
+  --color-line: #eae6db;
+
+  /* Fonts — the underlying --font-* vars are injected by next/font (@odh/brand/fonts) */
+  --font-display: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-ibm-plex-thai), "IBM Plex Sans Thai", ui-sans-serif, system-ui,
+    sans-serif;
+
+  /* Brand shadows */
+  --shadow-card: 0 12px 40px -20px rgb(40 37 76 / 0.35);
+  --shadow-glow: 0 18px 50px -16px rgb(233 164 27 / 0.55);
+}
