@@ -332,11 +332,11 @@ components/Footer.tsx:
 **Goal:** ใส่เนื้อหาจริง + คีย์เวิร์ดให้ทุกหน้า (ไม่ใช่ lorem) เพื่อ rank + แปลงเป็นลูกค้า
 
 **Checklist**
-- [ ] คีย์เวิร์ดหลัก/รองต่อหน้า (เชียงใหม่ + บริการ + Talon)
-- [ ] เนื้อหา home/services/talon/packages/work/about/contact เป็นไทยจริง อ่านลื่น
-- [ ] แต่ละหน้า: h1 ชัด, ย่อหน้าเปิดมี keyword ธรรมชาติ, CTA ลง Messenger
-- [ ] portfolio: งานราชการ/มหาวิทยาลัยมีคำอธิบาย + ผลลัพธ์
-- [ ] meta description ทุกหน้า ≤ 160 ตัวอักษร
+- [x] คีย์เวิร์ดหลัก/รองต่อหน้า (เชียงใหม่ + บริการ + Talon)
+- [x] เนื้อหา home/services/talon/packages/work/about/contact เป็นไทยจริง อ่านลื่น
+- [x] แต่ละหน้า: h1 ชัด, ย่อหน้าเปิดมี keyword ธรรมชาติ, CTA ลง Messenger
+- [x] portfolio: งานราชการ/มหาวิทยาลัยมีคำอธิบาย + ผลลัพธ์ *(reg.tu.ac.th อยู่บนสุด)*
+- [x] meta description ทุกหน้า ≤ 160 ตัวอักษร *(วัดจริง 99–128 อักขระ)*
 
 **Claude Code Prompt**
 ```

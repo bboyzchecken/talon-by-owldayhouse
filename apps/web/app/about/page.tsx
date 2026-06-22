@@ -1,8 +1,10 @@
-import { Button, SectionHeading } from "@odh/ui";
-import { contact } from "@/content/site";
+import { Building2, FileCheck, MapPin, Users } from "lucide-react";
+import { Button, Card, SectionHeading } from "@odh/ui";
+import { company, contact } from "@/content/site";
 import { pageMeta } from "@/lib/seo";
 import { JsonLd } from "@/components/JsonLd";
 import { breadcrumbSchema } from "@/lib/structured-data";
+import { Reveal } from "@/components/Reveal";
 
 export const metadata = pageMeta({
   title: "เราคือใคร",
@@ -11,6 +13,13 @@ export const metadata = pageMeta({
   path: "/about/",
 });
 
+const reasons = [
+  { icon: Building2, title: "บริษัทจดทะเบียน", text: `${company.legalName} ตั้งอยู่ที่เชียงใหม่ มีตัวตนจริง ตรวจสอบได้` },
+  { icon: FileCheck, title: "ออกใบกำกับภาษีได้", text: "เบิกจ่ายในนามบริษัทหรือหน่วยงานได้ สะดวกกับงานองค์กรและราชการ" },
+  { icon: Users, title: "ทีมคนไทยดูแลต่อ", text: "คุยภาษาเดียวกัน แก้ไขไว ดูแลต่อเนื่อง ไม่หายตัวหลังส่งงาน" },
+  { icon: MapPin, title: "ผลงานระดับมหาวิทยาลัย", text: "รับงานที่คนใช้จริงจำนวนมาก เช่น ระบบลงทะเบียน reg.tu.ac.th" },
+];
+
 export default function AboutPage() {
   return (
     <main className="mx-auto max-w-5xl px-6 py-20">
@@ -18,13 +27,44 @@ export default function AboutPage() {
       <SectionHeading
         as="h1"
         eyebrow="เกี่ยวกับเรา"
-        title="Owl Day House — ซอฟต์แวร์เฮาส์เชียงใหม่"
-        subtitle="บริษัทจดทะเบียน ออกใบกำกับภาษีได้ ผลงานจริง — น่าไว้ใจตั้งแต่เว็บแรกจนถึงระบบองค์กร"
+        title="ซอฟต์แวร์เฮาส์เชียงใหม่ ที่โตไปกับลูกค้า"
+        subtitle="เริ่มจากเว็บเล็กๆ จนถึงระบบระดับองค์กร — ด้วยทีมเดิมที่อยู่กับคุณจริง"
       />
-      <p className="mt-8 max-w-2xl text-muted">เนื้อหาแบบเต็มจะเพิ่มใน Step 6 — ตอนนี้เป็นโครงหน้าเพื่อวาง navigation และฐาน SEO</p>
-      <Button variant="gold" className="mt-8" asChild>
-        <a href={contact.messenger}>คุยกับทีมเรา</a>
-      </Button>
+      <div className="mt-8 max-w-2xl space-y-4 text-muted">
+        <p>
+          Owl Day House คือซอฟต์แวร์เฮาส์จากเชียงใหม่ ที่เชื่อว่าธุรกิจทุกขนาดควรเริ่มมีเว็บที่ดีได้
+          โดยไม่ต้องลงทุนก้อนใหญ่ตั้งแต่วันแรก เราจึงออกแบบบริการให้เริ่มเล็กได้ แล้วต่อยอดขึ้นไปเรื่อยๆ
+          ตามการเติบโตของคุณ
+        </p>
+        <p>
+          นี่คือการเดินทางครั้งใหม่ของเรา — จากเว็บแรกราคา ฿3,900 ไปจนถึงระบบที่รองรับคนทั้งองค์กรหรือทั้งมหาวิทยาลัย
+          โดยมีทีมคนไทยคอยดูแล แก้ไข และพัฒนาต่อให้ ไม่ปล่อยให้คุณงมเอง
+        </p>
+      </div>
+
+      <div className="mt-12 grid gap-4 sm:grid-cols-2">
+        {reasons.map(({ icon: Icon, title, text }, i) => (
+          <Reveal key={title} delay={i * 0.06}>
+            <Card className="flex h-full gap-4">
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gold-soft text-navy">
+                <Icon size={22} />
+              </span>
+              <div>
+                <h2 className="font-display text-lg font-bold text-navy">{title}</h2>
+                <p className="mt-1 text-sm text-muted">{text}</p>
+              </div>
+            </Card>
+          </Reveal>
+        ))}
+      </div>
+
+      <div className="mt-12">
+        <Button variant="gold" size="lg" asChild>
+          <a href={contact.messenger} target="_blank" rel="noopener noreferrer">
+            คุยกับทีมเรา
+          </a>
+        </Button>
+      </div>
     </main>
   );
 }
