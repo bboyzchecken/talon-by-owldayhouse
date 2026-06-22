@@ -1,0 +1,4 @@
+{
+  "extends": "@odh/tsconfig/base.json",
+  "include": ["src"]
+}

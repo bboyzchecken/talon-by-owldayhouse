@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>แพ็กเกจเว็บไซต์ · Owl Day House</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --gold:#E9A41B; --gold-soft:#FBEFD3; --navy:#28254C; --navy-2:#1B1938;
+    --paper:#FBF8F1; --ink:#28254C; --muted:#6E6B86; --line:#EAE6DB; --surface:#fff;
+  }
+  *{box-sizing:border-box;margin:0}
+  body{font-family:'IBM Plex Sans Thai',sans-serif;color:var(--ink);background:var(--paper);line-height:1.55}
+  .wrap{max-width:1060px;margin:0 auto;padding:0 20px}
+
+  /* header */
+  header{background:var(--navy);color:#fff;padding:46px 0 64px;text-align:center}
+  .brandrow{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:22px}
+  .mark{width:42px;height:42px;background:var(--gold);border-radius:11px;display:flex;align-items:center;justify-content:center}
+  .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;letter-spacing:1px;font-size:18px}
+  .brand small{display:block;color:var(--gold);font-size:11px;letter-spacing:.5px;font-weight:600}
+  header h1{font-size:clamp(26px,5vw,40px);line-height:1.15;margin-bottom:10px}
+  header p{opacity:.82;max-width:560px;margin:0 auto;font-size:15px}
+
+  /* offer banner */
+  .offer{max-width:1060px;margin:-38px auto 0;padding:0 20px}
+  .offer-in{background:var(--gold);color:var(--navy);border-radius:16px;padding:22px 26px;display:flex;flex-wrap:wrap;align-items:center;gap:14px;justify-content:center;text-align:center;box-shadow:0 12px 36px #28254c22}
+  .offer-in b{font-size:19px}
+  .offer-in .pill{background:var(--navy);color:#fff;border-radius:20px;padding:5px 14px;font-size:13px;font-weight:600}
+
+  section{padding:54px 0 8px}
+  .eyebrow{color:var(--gold);font-weight:700;font-size:12px;letter-spacing:2px;text-transform:uppercase}
+  h2{font-size:26px;margin:6px 0 4px}
+  .sub{color:var(--muted);margin-bottom:26px;font-size:14px}
+
+  /* toggle */
+  .toggle{display:inline-flex;background:#fff;border:1px solid var(--line);border-radius:30px;padding:4px;margin-bottom:26px;font-size:14px}
+  .toggle button{border:0;background:transparent;padding:8px 18px;border-radius:30px;cursor:pointer;font-family:inherit;font-weight:600;color:var(--muted)}
+  .toggle button.on{background:var(--navy);color:#fff}
+  .save{color:var(--gold);font-weight:700}
+
+  /* cards */
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:26px 22px;display:flex;flex-direction:column}
+  .card.feat{border:2px solid var(--gold);box-shadow:0 14px 40px #e9a41b22;position:relative}
+  .tagbest{position:absolute;top:-12px;left:22px;background:var(--gold);color:var(--navy);font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;letter-spacing:.5px}
+  .tier{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;letter-spacing:1px;color:var(--muted)}
+  .price{font-family:'Space Grotesk',sans-serif;font-size:36px;font-weight:700;margin:10px 0 2px;line-height:1}
+  .price small{font-size:15px;color:var(--muted);font-weight:500}
+  .once{font-size:12px;color:var(--muted);margin-bottom:16px}
+  ul{list-style:none;margin:8px 0 20px;font-size:14px}
+  ul li{padding:7px 0 7px 26px;position:relative;border-bottom:1px dashed var(--line)}
+  ul li:before{content:"✓";position:absolute;left:0;color:var(--gold);font-weight:700}
+  ul li.no{color:#b8b5c4}
+  ul li.no:before{content:"–";color:#cfccd9}
+  .btn{margin-top:auto;text-align:center;text-decoration:none;padding:13px;border-radius:11px;font-weight:700;font-family:inherit}
+  .btn-navy{background:var(--navy);color:#fff}
+  .btn-gold{background:var(--gold);color:var(--navy)}
+  .btn-ghost{background:#fff;color:var(--navy);border:1.5px solid var(--line)}
+
+  .note{background:#fff;border:1px solid var(--line);border-left:4px solid var(--gold);border-radius:12px;padding:18px 20px;margin:30px 0;font-size:14px;color:#555}
+  .note b{color:var(--ink)}
+
+  footer{margin-top:50px;padding:30px 0;border-top:1px solid var(--line);text-align:center;color:var(--muted);font-size:13px}
+  footer a{color:var(--muted)}
+
+  @media(max-width:780px){ .grid{grid-template-columns:1fr} header{padding-bottom:54px} }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="brandrow">
+      <span class="mark">
+        <svg width="26" height="26" viewBox="0 0 48 48" fill="none">
+          <path d="M16 6l4 9-9-2 5-7zM33 8l-3 9 9 1-6-10z" fill="#28254C"/>
+          <circle cx="24" cy="28" r="13" fill="none" stroke="#28254C" stroke-width="4.5"/>
+          <path d="M24 28a8 8 0 0 1 8-8" fill="none" stroke="#28254C" stroke-width="4.5" stroke-linecap="round"/>
+          <circle cx="24" cy="28" r="4.5" fill="#28254C"/>
+        </svg>
+      </span>
+      <span class="brand">OWL DAY HOUSE<small>เว็บไซต์สำหรับธุรกิจของคุณ</small></span>
+    </div>
+    <h1>มีเว็บเป็นของร้านคุณ<br>ในงบที่จับต้องได้</h1>
+    <p>เราออกแบบ เขียนเนื้อหา และดูแลให้ครบจบ — คุณแค่เปิดร้านขายของ ที่เหลือเราจัดการ</p>
+  </div>
+</header>
+
+<div class="offer">
+  <div class="offer-in">
+    <b>เริ่มต้น ฿3,900 — เดือนแรกโฮสต์ + ดูแล ฟรี</b>
+    <span class="pill">จากนั้นเพียง ฿390/เดือน</span>
+    <span class="pill">ส่งงานใน 3–5 วัน</span>
+  </div>
+</div>
+
+<!-- BUILD -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow">ค่าทำเว็บ · จ่ายครั้งเดียว</div>
+    <h2>เลือกขนาดเว็บที่ใช่</h2>
+    <p class="sub">ราคาทำครั้งเดียว เป็นเจ้าของเว็บได้เลย พร้อมเนื้อหาที่เราเขียนให้</p>
+
+    <div class="grid">
+      <div class="card">
+        <div class="tier">STARTER</div>
+        <div class="price">฿3,900</div>
+        <div class="once">โปรไฟล์ร้าน 1 หน้า</div>
+        <ul>
+          <li>เว็บหน้าเดียว ครบทุกข้อมูลร้าน</li>
+          <li>เขียนเนื้อหา + พาดหัวให้</li>
+          <li>ฟอร์มติดต่อ + ปุ่มโทร/LINE</li>
+          <li>แสดงผลสวยบนมือถือ + SSL</li>
+          <li class="no">ระบบจัดการหลังบ้าน</li>
+        </ul>
+        <a class="btn btn-navy" href="#">เริ่มแพ็กนี้</a>
+      </div>
+
+      <div class="card feat">
+        <span class="tagbest">ขายดีที่สุด</span>
+        <div class="tier">STANDARD</div>
+        <div class="price">฿6,900</div>
+        <div class="once">เว็บหลายเซกชัน + SEO</div>
+        <ul>
+          <li>ทุกอย่างใน Starter</li>
+          <li>หลายเซกชัน + แกลเลอรีรูป</li>
+          <li>SEO เริ่มต้น (ติด Google ง่ายขึ้น)</li>
+          <li>ตั้งค่า Google Business ให้</li>
+          <li>เชื่อมแผนที่ + LINE OA</li>
+        </ul>
+        <a class="btn btn-gold" href="#">เริ่มแพ็กนี้</a>
+      </div>
+
+      <div class="card">
+        <div class="tier">PRO</div>
+        <div class="price">฿15,000<small>+</small></div>
+        <div class="once">หลายหน้า + ระบบ</div>
+        <ul>
+          <li>ทุกอย่างใน Standard</li>
+          <li>หลายหน้า / ดีไซน์เฉพาะร้าน</li>
+          <li>ระบบจัดการเนื้อหาเอง</li>
+          <li>ใบกำกับภาษีในนามบริษัท</li>
+          <li>ปรึกษาวางแผนการตลาด</li>
+        </ul>
+        <a class="btn btn-ghost" href="#">คุยรายละเอียด</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CARE -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow">ค่าดูแล + โฮสต์ · รายเดือน</div>
+    <h2>เดือนแรกฟรีทุกแพลน 🎁</h2>
+    <p class="sub">ให้เว็บออนไลน์ตลอด 24 ชม. ปลอดภัย และมีคนคอยดูแลให้</p>
+
+    <div class="toggle" id="tg">
+      <button class="on" data-mode="m">รายเดือน</button>
+      <button data-mode="y">รายปี <span class="save">ฟรี 2 เดือน</span></button>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="tier">LITE</div>
+        <div class="price"><span class="amt" data-m="฿390" data-y="฿3,900">฿390</span><small class="per">/เดือน</small></div>
+        <div class="once">โฮสต์ + ออนไลน์ 24/7</div>
+        <ul>
+          <li>โฮสต์ + SSL + สำรองข้อมูล</li>
+          <li>เว็บออนไลน์ตลอด ไม่ล่ม</li>
+          <li>แก้ปัญหาทางเทคนิคให้</li>
+          <li class="no">แก้ไขเนื้อหา (คิดครั้งละ)</li>
+          <li class="no">โดเมนฟรี (+฿690/ปี)</li>
+        </ul>
+        <a class="btn btn-ghost" href="#">เลือก Lite</a>
+      </div>
+
+      <div class="card feat">
+        <span class="tagbest">คุ้มสุด</span>
+        <div class="tier">CARE</div>
+        <div class="price"><span class="amt" data-m="฿690" data-y="฿6,900">฿690</span><small class="per">/เดือน</small></div>
+        <div class="once">ดูแล + แก้ไขให้</div>
+        <ul>
+          <li>ทุกอย่างใน Lite</li>
+          <li><b>โดเมน .com ฟรี</b></li>
+          <li>แก้ไขเนื้อหา 2 ครั้ง/เดือน</li>
+          <li>เปลี่ยนรูป/โปรโมชันให้</li>
+          <li>ตอบช่วยเหลือทาง LINE</li>
+        </ul>
+        <a class="btn btn-gold" href="#">เลือก Care</a>
+      </div>
+
+      <div class="card">
+        <div class="tier">PRO CARE</div>
+        <div class="price"><span class="amt" data-m="฿990" data-y="฿9,900">฿990</span><small class="per">/เดือน</small></div>
+        <div class="once">ดูแลเต็มที่ + รายงาน</div>
+        <ul>
+          <li>ทุกอย่างใน Care</li>
+          <li>แก้ไขเนื้อหาไม่จำกัด*</li>
+          <li>รายงานยอดผู้เข้าชมรายเดือน</li>
+          <li>ซัพพอร์ตด่วน (ภายในวัน)</li>
+          <li>ปรับ SEO ต่อเนื่อง</li>
+        </ul>
+        <a class="btn btn-navy" href="#">เลือก Pro Care</a>
+      </div>
+    </div>
+
+    <div class="note">
+      <b>เรื่องโดเมน:</b> จดในนามร้านคุณเอง (คุณเป็นเจ้าของ) ค่าโดเมน .com ราว ฿690/ปี —
+      แพ็ก Care ขึ้นไปรวมให้ฟรี · <b>ยกเลิกได้ทุกเมื่อ</b> ไม่มีสัญญาผูกมัด เว็บยังเป็นของคุณ
+      *“ไม่จำกัด” = การแก้ไขเนื้อหาเดิม ไม่รวมงานออกแบบใหม่ทั้งหน้า
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <strong>บริษัท อาวล์ เดย์ เฮ้าส์ จำกัด</strong> · owldayhouse.com · 092 455 2450<br>
+    ออกใบกำกับภาษีได้ · รับชำระโอน/บัตร/พร้อมเพย์
+  </div>
+</footer>
+
+<script>
+  // toggle รายเดือน/รายปี (ไม่ใช้ storage)
+  const tg = document.getElementById('tg');
+  tg.addEventListener('click', e => {
+    const btn = e.target.closest('button'); if(!btn) return;
+    [...tg.children].forEach(b => b.classList.toggle('on', b===btn));
+    const mode = btn.dataset.mode;
+    document.querySelectorAll('.amt').forEach(a => a.textContent = a.dataset[mode]);
+    document.querySelectorAll('.per').forEach(p => p.textContent = mode==='y' ? '/ปี' : '/เดือน');
+  });
+</script>
+</body>
+</html>
