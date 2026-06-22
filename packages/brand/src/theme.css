@@ -17,8 +17,12 @@
   --color-muted: #6e6b86;
   --color-line: #eae6db;
 
-  /* Fonts — the underlying --font-* vars are injected by next/font (@odh/brand/fonts) */
-  --font-display: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  /* Fonts — the underlying --font-* vars are injected by next/font (@odh/brand/fonts).
+     Space Grotesk has no Thai glyphs, so Thai must fall back to IBM Plex Sans Thai
+     (proper tone-mark placement) — never the system font. Latin/digits still use
+     Space Grotesk; Thai uses IBM Plex Sans Thai per-glyph. */
+  --font-display: var(--font-space-grotesk), var(--font-ibm-plex-thai), "IBM Plex Sans Thai",
+    ui-sans-serif, system-ui, sans-serif;
   --font-body: var(--font-ibm-plex-thai), "IBM Plex Sans Thai", ui-sans-serif, system-ui,
     sans-serif;
 
