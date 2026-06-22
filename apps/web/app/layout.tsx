@@ -2,6 +2,8 @@ import "./globals.css";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { fontVariables } from "@odh/brand/fonts";
+import { Nav } from "@/components/Nav";
+import { Footer } from "@/components/Footer";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://owldayhouse.com"),
@@ -16,7 +18,11 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="th" className={fontVariables}>
-      <body className="min-h-screen bg-paper font-body text-ink antialiased">{children}</body>
+      <body className="flex min-h-screen flex-col bg-paper font-body text-ink antialiased">
+        <Nav />
+        <div className="flex-1">{children}</div>
+        <Footer />
+      </body>
     </html>
   );
 }

@@ -207,11 +207,11 @@ packages/ui (React + Tailwind, ใช้ tokens จาก brand):
 - `/contact` ติดต่อ → ปุ่ม Messenger / โทร / LINE / แผนที่เชียงใหม่
 
 **Checklist**
-- [ ] ทุก route ข้างบนมีไฟล์ `app/<route>/page.tsx` (เนื้อหา placeholder ได้)
-- [ ] `<Nav/>` sticky, โลโก้ ODH, เมนูครบ, ปุ่ม "เริ่มเลย ฿3,900" → `/talon`
-- [ ] `<Footer/>` มีที่อยู่เชียงใหม่จริง, โทร 092-455-2450, Facebook/IG/LinkedIn, ลิงก์ภายใน
-- [ ] ปุ่มติดต่อทั้งหมดชี้ FB Messenger `m.me/owldayhouse`, `tel:+66924552450`, LINE
-- [ ] ไม่มี `<form>` ส่งเมลที่ไหนเลย
+- [x] ทุก route ข้างบนมีไฟล์ `app/<route>/page.tsx` (เนื้อหา placeholder ได้)
+- [x] `<Nav/>` sticky, โลโก้ ODH, เมนูครบ, ปุ่ม "เริ่มเลย ฿3,900" → `/talon`
+- [x] `<Footer/>` มีที่อยู่เชียงใหม่จริง, โทร 092-455-2450, Facebook/IG/LinkedIn, ลิงก์ภายใน
+- [x] ปุ่มติดต่อทั้งหมดชี้ FB Messenger `m.me/owldayhouse`, `tel:+66924552450`, LINE
+- [x] ไม่มี `<form>` ส่งเมลที่ไหนเลย
 
 **Claude Code Prompt**
 ```
