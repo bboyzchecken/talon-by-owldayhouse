@@ -1,0 +1,15 @@
+@import "tailwindcss";
+@import "@odh/brand/theme.css";
+
+/* Tailwind v4 skips node_modules — explicitly scan the shared UI package. */
+@source "../../../packages/ui/src";
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

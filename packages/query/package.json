@@ -1,0 +1,30 @@
+{
+  "name": "@odh/query",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.62.7",
+    "axios": "^1.7.9"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@odh/eslint-config": "workspace:*",
+    "@odh/tsconfig": "workspace:*",
+    "@types/node": "^22.10.2",
+    "@types/react": "^19.0.2",
+    "eslint": "^9.17.0",
+    "react": "^19.0.0",
+    "typescript": "^5.7.2"
+  }
+}

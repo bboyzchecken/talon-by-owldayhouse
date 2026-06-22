@@ -92,12 +92,12 @@ odh-web/
 **Goal:** วางโครง monorepo ว่าง ๆ ให้พร้อม (pnpm + turbo) build/lint ได้แม้ยังไม่มีโค้ดจริง
 
 **Checklist**
-- [ ] `pnpm-workspace.yaml` ครอบ `apps/*` และ `packages/*`
-- [ ] `turbo.json` มี pipeline `build`, `dev`, `lint`, `typecheck`
-- [ ] root `package.json` มี scripts ที่เรียก turbo
-- [ ] `.nvmrc` (Node 20), `.gitignore` (node_modules, .next, out, .turbo, .env*)
-- [ ] `packages/tsconfig` + `packages/eslint-config` ใช้ร่วมได้
-- [ ] `pnpm install` สำเร็จ, `pnpm turbo run lint` ผ่าน (no-op ได้)
+- [x] `pnpm-workspace.yaml` ครอบ `apps/*` และ `packages/*`
+- [x] `turbo.json` มี pipeline `build`, `dev`, `lint`, `typecheck` *(turbo 2.x ใช้คีย์ `tasks`)*
+- [x] root `package.json` มี scripts ที่เรียก turbo
+- [x] `.nvmrc` (Node 20), `.gitignore` (node_modules, .next, out, .turbo, .env*)
+- [x] `packages/tsconfig` + `packages/eslint-config` ใช้ร่วมได้
+- [x] `pnpm install` สำเร็จ, `pnpm turbo run lint` ผ่าน (no-op ได้)
 
 **Claude Code Prompt**
 ```
@@ -134,10 +134,10 @@ odh-web/
 - ความรู้สึก: โครงสะอาด whitespace เยอะ = น่าเชื่อถือ; gradient navy→navy เข้ม + glow ทอง + motion เบา = ตื่นเต้น "การเดินทางครั้งใหม่"
 
 **Checklist**
-- [ ] `packages/brand`: export tokens (object TS) + Tailwind v4 `@theme` CSS + ฟอนต์ config
-- [ ] `packages/ui`: `<OwlMark/>`, `<Button/>` (navy/gold/ghost), `<Card/>`, `<Badge/>`, `<SectionHeading/>`
-- [ ] ทุก component พึ่ง tokens จาก brand ไม่ฮาร์ดโค้ดสีซ้ำ
-- [ ] มีไฟล์ตัวอย่าง/story สั้น ๆ ให้ดูว่า render ได้
+- [x] `packages/brand`: export tokens (object TS) + Tailwind v4 `@theme` CSS + ฟอนต์ config
+- [x] `packages/ui`: `<OwlMark/>`, `<Button/>` (navy/gold/ghost), `<Card/>`, `<Badge/>`, `<SectionHeading/>`
+- [x] ทุก component พึ่ง tokens จาก brand ไม่ฮาร์ดโค้ดสีซ้ำ
+- [x] มีไฟล์ตัวอย่าง/story สั้น ๆ ให้ดูว่า render ได้ *(`Showcase` + README + พรีวิวในแชท)*
 
 **Claude Code Prompt**
 ```
@@ -167,11 +167,11 @@ packages/ui (React + Tailwind, ใช้ tokens จาก brand):
 **Goal:** ตั้ง `apps/web` ให้รันได้ + export เป็น static (`out/`) + ฟอนต์/แบรนด์ติด
 
 **Checklist**
-- [ ] `apps/web` รัน `pnpm --filter web dev` ได้
-- [ ] `next.config.ts`: `output: 'export'`, `images: { unoptimized: true }`, `trailingSlash: true`
-- [ ] Tailwind v4 ติดตั้ง + import `@odh/brand/theme.css`
-- [ ] `app/layout.tsx` ใส่ฟอนต์จาก `packages/brand`, lang="th", base metadata
-- [ ] `pnpm --filter web build` ออก `apps/web/out/` มี `index.html`
+- [x] `apps/web` รัน `pnpm --filter web dev` ได้
+- [x] `next.config.ts`: `output: 'export'`, `images: { unoptimized: true }`, `trailingSlash: true`
+- [x] Tailwind v4 ติดตั้ง + import `@odh/brand/theme.css`
+- [x] `app/layout.tsx` ใส่ฟอนต์จาก `packages/brand`, lang="th", base metadata
+- [x] `pnpm --filter web build` ออก `apps/web/out/` มี `index.html`
 
 **Claude Code Prompt**
 ```
