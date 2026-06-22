@@ -9,8 +9,10 @@
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
+    "build:web": "turbo run build --filter web",
     "lint": "turbo run lint",
-    "typecheck": "turbo run typecheck"
+    "typecheck": "turbo run typecheck",
+    "deploy:web": "pnpm build:web && bash infra/ftp-deploy/deploy.sh"
   },
   "devDependencies": {
     "turbo": "^2.3.3"

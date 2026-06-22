@@ -364,11 +364,11 @@ components/Footer.tsx:
 **Goal:** ออก `out/` แล้วส่งขึ้นโฮสด้วย FTP ให้ทำซ้ำได้ด้วยคำสั่งเดียว
 
 **Checklist**
-- [ ] `pnpm build` ออก `apps/web/out/` ครบ (มี html ทุก route, sitemap, robots, assets)
-- [ ] เช็ค `out/` เปิดด้วย static server แล้วลิงก์/รูป/route ทำงาน (trailingSlash)
-- [ ] สคริปต์ `infra/ftp-deploy/` อัปโหลด `out/` ขึ้นโฮส (lftp mirror) อ่าน credential จาก env
-- [ ] ตั้ง caching headers/`.htaccess` ที่โฮส (ถ้า Apache) สำหรับ asset hashed
-- [ ] โดเมน owldayhouse.com ชี้ถูก, ทดสอบ live, ส่ง sitemap เข้า Google Search Console
+- [x] `pnpm build` (และ `pnpm build:web`) ออก `apps/web/out/` ครบ (html ทุก route, sitemap, robots, manifest, og.png, assets)
+- [x] เช็ค `out/` ลิงก์/รูป/route ใช้ได้ (ลิงก์ภายในมี trailingSlash, asset `_next` มีจริง, 404.html ครบ)
+- [x] สคริปต์ `infra/ftp-deploy/deploy.sh` อัปโหลด `out/` (lftp mirror --reverse --delete) อ่าน credential จาก env + preflight กันรันถ้า env/lftp ไม่พร้อม
+- [x] ตัวอย่าง `.htaccess` (`infra/ftp-deploy/htaccess.example`): gzip + cache `_next/static` immutable + 404
+- [ ] โดเมน owldayhouse.com ชี้ถูก, ทดสอบ live, ส่ง sitemap เข้า Google Search Console *(ops: ต้องมี FTP creds จริง + DNS — ดู checklist ใน README)*
 
 **Claude Code Prompt**
 ```

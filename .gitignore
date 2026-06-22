@@ -13,6 +13,9 @@ dist
 # turbo cache
 .turbo
 
+# typescript incremental build cache
+*.tsbuildinfo
+
 # env files
 .env*
 !.env.example
