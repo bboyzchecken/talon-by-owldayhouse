@@ -20,7 +20,7 @@ export function TalonLaunch() {
               </h2>
               <p className="mt-3 text-paper/80">
                 แพ็กเกจเว็บไซต์หน้าเดียวสำหรับร้านค้า/SME ที่อยากมีหน้าร้านออนไลน์ดูโปรเร็ว ๆ —
-                ทีมคนไทยทำให้ครบ พร้อมดูแลต่อให้เว็บยังหาลูกค้าได้ทุกวัน
+                ทีม ODH ทำให้ครบ พร้อมดูแลต่อให้เว็บยังหาลูกค้าได้ทุกวัน
               </p>
             </div>
             <Button variant="gold" size="lg" asChild className="shrink-0">

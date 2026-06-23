@@ -11,7 +11,7 @@ import { Reveal } from "@/components/Reveal";
 export const metadata = pageMeta({
   title: "บริการของเรา",
   description:
-    "รับทำเว็บไซต์ เว็บแอป ระบบองค์กร และงานกราฟิกในเชียงใหม่ — ทีมคนไทยดูแลตั้งแต่ออกแบบจนถึงหลังส่งมอบ",
+    "รับทำเว็บไซต์ เว็บแอป ระบบองค์กร และงานกราฟิกในเชียงใหม่ — ทีมงานดูแลตั้งแต่ออกแบบจนถึงหลังส่งมอบ",
   path: "/services/",
 });
 
@@ -61,7 +61,7 @@ export default function ServicesPage() {
       <div className="mt-12 rounded-2xl border border-line bg-white p-8 text-center shadow-card">
         <h2 className="font-display text-2xl font-bold text-navy">ไม่แน่ใจว่าควรเริ่มตรงไหน?</h2>
         <p className="mx-auto mt-2 max-w-xl text-muted">
-          ทักมาเล่าโจทย์ให้ฟัง เดี๋ยวทีมคนไทยแนะนำตรงๆ ว่าธุรกิจคุณควรเริ่มที่บริการไหนให้คุ้มที่สุด
+          ทักมาเล่าโจทย์ให้ฟัง เดี๋ยวทีมงานแนะนำตรงๆ ว่าธุรกิจคุณควรเริ่มที่บริการไหนให้คุ้มที่สุด
         </p>
         <Button variant="gold" size="lg" className="mt-6" asChild>
           <a href={contact.messenger} target="_blank" rel="noopener noreferrer">

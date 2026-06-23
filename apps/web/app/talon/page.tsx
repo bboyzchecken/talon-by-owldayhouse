@@ -13,7 +13,7 @@ import { breadcrumbSchema, faqSchema, talonServiceSchema } from "@/lib/structure
 export const metadata = pageMeta({
   title: "Talon — เว็บไซต์ ฿3,900 เสร็จใน 5 วัน",
   description:
-    "Talon เว็บไซต์โปร เสร็จไวใน 5 วัน เริ่มต้น ฿3,900 — ทีมคนไทยทำให้ครบ ดูแลต่อจริง แพ็กดูแลรายเดือนเดือนแรกฟรี",
+    "Talon เว็บไซต์โปร เสร็จไวใน 5 วัน เริ่มต้น ฿3,900 — ทีมงานทำให้ครบ ดูแลต่อจริง แพ็กดูแลรายเดือนเดือนแรกฟรี",
   path: "/talon/",
 });
 
@@ -50,7 +50,7 @@ export default function TalonPage() {
           </h1>
           <p className="mx-auto mt-4 max-w-xl text-lg text-paper/80">
             แพ็กเกจเว็บหน้าเดียวสำหรับร้านค้า/SME ที่อยากมีหน้าร้านออนไลน์ดูโปร — เริ่ม {talon.price}{" "}
-            ทีมคนไทยทำให้ครบ พร้อมดูแลต่อให้เว็บยังหาลูกค้าได้
+            ทีมงานทำให้ครบ พร้อมดูแลต่อให้เว็บยังหาลูกค้าได้
           </p>
           <div className="mt-8 flex flex-col items-center gap-3">
             <MessengerCta location="hero">เริ่มเลย {talon.price}</MessengerCta>
@@ -81,7 +81,7 @@ export default function TalonPage() {
         <div className="mx-auto max-w-5xl px-6 py-20">
           <SectionHeading
             eyebrow="ทางออก"
-            title="เสร็จไว ดูแลต่อ โดยทีมคนไทย"
+            title="เสร็จไว ดูแลต่อ โดยทีมงานคนไทย"
             subtitle="Talon ทำให้คุณได้เว็บโปร เร็ว คุ้ม และมีทีมดูแลต่อจริง — จบครบในที่เดียว"
           />
           <div className="mt-10 grid gap-5 md:grid-cols-3">

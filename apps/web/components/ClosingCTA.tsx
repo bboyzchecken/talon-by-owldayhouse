@@ -16,7 +16,7 @@ export function ClosingCTA() {
       <Reveal className="relative mx-auto max-w-3xl px-6 py-24 text-center">
         <h2 className="font-display text-3xl font-bold sm:text-4xl">พร้อมให้เว็บช่วยหาลูกค้าให้คุณหรือยัง?</h2>
         <p className="mx-auto mt-4 max-w-xl text-paper/80">
-          ทักมาเล่าธุรกิจให้ฟังได้เลย ไม่มีฟอร์มยุ่งยาก — ทีมคนไทยตอบเอง แนะนำตรง ๆ
+          ทักมาเล่าธุรกิจให้ฟังได้เลย ไม่มีฟอร์มยุ่งยาก — ทีมงานตอบเอง แนะนำตรง ๆ
           ว่าควรเริ่มยังไงให้คุ้มและได้ลูกค้าจริง ไม่ขายเกินจำเป็น
         </p>
         <div className="mt-8 flex justify-center">

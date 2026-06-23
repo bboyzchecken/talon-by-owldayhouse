@@ -61,7 +61,7 @@ export const talonServiceSchema = {
   serviceType: "รับทำเว็บไซต์",
   provider: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
   areaServed: "TH",
-  description: "บริการทำเว็บไซต์เสร็จไวใน 5 วัน เริ่มต้น 3,900 บาท พร้อมทีมคนไทยดูแลต่อ",
+  description: "บริการทำเว็บไซต์เสร็จไวใน 5 วัน เริ่มต้น 3,900 บาท พร้อมทีมงานคนไทยดูแลต่อ",
   offers: { "@type": "Offer", price: "3900", priceCurrency: "THB", url: `${SITE_URL}/talon/` },
 };
 

@@ -16,7 +16,7 @@ export const ladder: readonly LadderStep[] = [
     name: "เว็บหน้าเดียว (Talon)",
     priceFrom: "฿3,900",
     tagline: "แพ็กเกจโปรโมชัน เว็บหน้าเดียวเสร็จไวใน 5 วัน",
-    features: ["หน้าเดียวจบ ดูโปร", "ผูก Messenger / LINE", "ทีมคนไทยดูแลต่อ"],
+    features: ["หน้าเดียวจบ ดูโปร", "ผูก Messenger / LINE", "ทีมงานดูแลต่อ"],
     href: "/talon",
   },
   {
