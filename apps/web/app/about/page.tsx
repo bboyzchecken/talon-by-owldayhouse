@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Building2, FileCheck, MapPin, Users } from "lucide-react";
 import { Button, Card, SectionHeading } from "@odh/ui";
 import { company, contact } from "@/content/site";
@@ -30,16 +31,25 @@ export default function AboutPage() {
         title="ซอฟต์แวร์เฮาส์เชียงใหม่ ที่โตไปกับลูกค้า"
         subtitle="เริ่มจากเว็บเล็กๆ จนถึงระบบระดับองค์กร — ด้วยทีมเดิมที่อยู่กับคุณจริง"
       />
-      <div className="mt-8 max-w-2xl space-y-4 text-muted">
-        <p>
-          Owl Day House คือซอฟต์แวร์เฮาส์จากเชียงใหม่ ที่เชื่อว่าธุรกิจทุกขนาดควรเริ่มมีเว็บที่ดีได้
-          โดยไม่ต้องลงทุนก้อนใหญ่ตั้งแต่วันแรก เราจึงออกแบบบริการให้เริ่มเล็กได้ แล้วต่อยอดขึ้นไปเรื่อยๆ
-          ตามการเติบโตของคุณ
-        </p>
-        <p>
-          นี่คือการเดินทางครั้งใหม่ของเรา — จากเว็บแรกราคา ฿3,900 ไปจนถึงระบบที่รองรับคนทั้งองค์กรหรือทั้งมหาวิทยาลัย
-          โดยมีทีมคนไทยคอยดูแล แก้ไข และพัฒนาต่อให้ ไม่ปล่อยให้คุณงมเอง
-        </p>
+      <div className="mt-8 grid items-center gap-10 lg:grid-cols-2">
+        <div className="space-y-4 text-muted">
+          <p>
+            Owl Day House คือซอฟต์แวร์เฮาส์จากเชียงใหม่ ที่เชื่อว่าธุรกิจทุกขนาดควรเริ่มมีเว็บที่ดีได้
+            โดยไม่ต้องลงทุนก้อนใหญ่ตั้งแต่วันแรก เราจึงออกแบบบริการให้เริ่มเล็กได้ แล้วต่อยอดขึ้นไปเรื่อย ๆ
+            ตามการเติบโตของคุณ
+          </p>
+          <p>
+            เราไม่ได้แค่ทำเว็บให้เสร็จแล้วจากไป — แต่อยู่ดูแล แก้ไข และพัฒนาต่อด้วยทีมคนไทยชุดเดิม
+            ตั้งแต่เว็บแรกราคา ฿3,900 ไปจนถึงระบบที่รองรับคนทั้งองค์กรหรือทั้งมหาวิทยาลัย
+          </p>
+        </div>
+        <Image
+          src="/illustrations/design-collaboration.svg"
+          alt="ทีม Owl Day House ทำงานร่วมกันเพื่อดูแลลูกค้า"
+          width={440}
+          height={330}
+          className="mx-auto w-full max-w-md"
+        />
       </div>
 
       <div className="mt-12 grid gap-4 sm:grid-cols-2">

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { AlertTriangle, Check, ShieldCheck, Sparkles, Users } from "lucide-react";
 import { Badge, Button, Card, SectionHeading } from "@odh/ui";
 import { contact } from "@/content/site";
@@ -41,12 +42,13 @@ export default function TalonPage() {
           className="pointer-events-none absolute left-1/2 top-[-120px] h-[440px] w-[440px] -translate-x-1/2 rounded-full bg-gold/20 blur-[120px]"
         />
         <div className="relative mx-auto max-w-4xl px-6 py-24 text-center sm:py-32">
-          <Badge variant="gold">NEW · Talon</Badge>
+          <Badge variant="gold">แพ็กเกจโปรโมชัน</Badge>
           <h1 className="mt-5 font-display text-4xl font-bold leading-tight sm:text-5xl">
-            เว็บไซต์โปร <span className="text-gold">เสร็จไวใน 5 วัน</span>
+            Talon — เว็บไซต์หน้าเดียว <span className="text-gold">เสร็จใน 5 วัน</span>
           </h1>
           <p className="mx-auto mt-4 max-w-xl text-lg text-paper/80">
-            เริ่มต้น {talon.price} — ทีมคนไทยทำให้เสร็จไว ครบ จบ พร้อมดูแลต่อ
+            แพ็กเกจเว็บหน้าเดียวสำหรับร้านค้า/SME ที่อยากมีหน้าร้านออนไลน์ดูโปร — เริ่ม {talon.price}{" "}
+            ทีมคนไทยทำให้ครบ พร้อมดูแลต่อให้เว็บยังหาลูกค้าได้
           </p>
           <div className="mt-8 flex justify-center">
             <Button variant="gold" size="lg" asChild>
@@ -103,25 +105,36 @@ export default function TalonPage() {
       {/* what you get */}
       <section className="mx-auto max-w-5xl px-6 py-20">
         <SectionHeading
-          eyebrow="สิ่งที่ได้"
+          eyebrow="สิ่งที่ได้ในแพ็กเกจ"
           title={`${talon.name} — ${talon.price}`}
-          subtitle={talon.period}
+          subtitle={`${talon.headline} · ${talon.period}`}
         />
-        <Card className="mt-8">
-          <ul className="grid gap-3 sm:grid-cols-2">
-            {talon.includes.map((item) => (
-              <li key={item} className="flex items-start gap-2.5">
-                <Check size={18} className="mt-0.5 shrink-0 text-gold" />
-                <span className="text-navy">{item}</span>
-              </li>
-            ))}
-          </ul>
-          <Button variant="gold" size="lg" asChild className="mt-8">
-            <a href={contact.messenger} target="_blank" rel="noopener noreferrer">
-              เริ่มเลย {talon.price}
-            </a>
-          </Button>
-        </Card>
+        <div className="mt-8 grid items-center gap-8 lg:grid-cols-2">
+          <Card>
+            <ul className="grid gap-3">
+              {talon.includes.map((item) => (
+                <li key={item} className="flex items-start gap-2.5">
+                  <Check size={18} className="mt-0.5 shrink-0 text-gold" />
+                  <span className="text-navy">{item}</span>
+                </li>
+              ))}
+            </ul>
+            <Button variant="gold" size="lg" asChild className="mt-8">
+              <a href={contact.messenger} target="_blank" rel="noopener noreferrer">
+                เริ่มเลย {talon.price}
+              </a>
+            </Button>
+          </Card>
+          <Reveal delay={0.1}>
+            <Image
+              src="/illustrations/remote-ideation.svg"
+              alt="ทีม Owl Day House ออกแบบและสร้างเว็บไซต์ให้ลูกค้า"
+              width={440}
+              height={330}
+              className="mx-auto w-full max-w-md"
+            />
+          </Reveal>
+        </div>
       </section>
 
       {/* care plans */}

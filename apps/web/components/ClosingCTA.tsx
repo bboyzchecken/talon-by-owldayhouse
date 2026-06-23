@@ -15,9 +15,10 @@ export function ClosingCTA() {
         className="pointer-events-none absolute left-1/2 bottom-[-140px] h-[420px] w-[420px] -translate-x-1/2 rounded-full bg-gold/20 blur-[120px]"
       />
       <Reveal className="relative mx-auto max-w-3xl px-6 py-24 text-center">
-        <h2 className="font-display text-3xl font-bold sm:text-4xl">พร้อมเริ่มเว็บแรกของคุณหรือยัง?</h2>
+        <h2 className="font-display text-3xl font-bold sm:text-4xl">พร้อมให้เว็บช่วยหาลูกค้าให้คุณหรือยัง?</h2>
         <p className="mx-auto mt-4 max-w-xl text-paper/80">
-          ทักมาคุยได้เลย ไม่มีฟอร์มให้กรอกยุ่งยาก — ทีมคนไทยตอบเอง แนะนำตรงๆ ว่าควรเริ่มขั้นไหน
+          ทักมาเล่าธุรกิจให้ฟังได้เลย ไม่มีฟอร์มยุ่งยาก — ทีมคนไทยตอบเอง แนะนำตรง ๆ
+          ว่าควรเริ่มยังไงให้คุ้มและได้ลูกค้าจริง ไม่ขายเกินจำเป็น
         </p>
         <div className="mt-8 flex justify-center">
           <Button variant="gold" size="lg" asChild>

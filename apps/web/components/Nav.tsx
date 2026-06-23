@@ -12,7 +12,7 @@ export function Nav() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/10 bg-navy/80 text-paper backdrop-blur supports-[backdrop-filter]:bg-navy/70">
+    <header className="sticky top-0 z-50 border-b border-gold/20 bg-navy-deep text-paper shadow-lg shadow-black/30">
       <nav className="mx-auto flex h-16 max-w-6xl items-center gap-4 px-6">
         <Link href="/" className="flex items-center" onClick={() => setOpen(false)} aria-label="Owl Day House — หน้าแรก">
           <OwlLogo height={30} className="text-paper" />
@@ -54,7 +54,7 @@ export function Nav() {
       </nav>
 
       {open ? (
-        <div className="border-t border-white/10 bg-navy lg:hidden">
+        <div className="border-t border-white/10 bg-navy-deep lg:hidden">
           <ul className="mx-auto flex max-w-6xl flex-col px-6 py-3">
             {navLinks.map((link) => (
               <li key={link.href}>

@@ -14,17 +14,18 @@ export function TalonLaunch() {
           />
           <div className="relative flex flex-col items-start gap-6 lg:flex-row lg:items-center lg:justify-between">
             <div className="max-w-2xl">
-              <Badge variant="gold">NEW</Badge>
+              <Badge variant="gold">แพ็กเกจโปรโมชัน</Badge>
               <h2 className="mt-4 font-display text-3xl font-bold leading-tight text-paper sm:text-4xl">
-                Talon — เว็บไซต์โปร <span className="text-gold">เสร็จไวใน 5 วัน</span>
+                Talon — เว็บหน้าเดียว <span className="text-gold">เสร็จใน 5 วัน เริ่ม ฿3,900</span>
               </h2>
               <p className="mt-3 text-paper/80">
-                เริ่มต้น ฿3,900 — ทีมคนไทยทำให้เสร็จไว พร้อมดูแลต่อ ไม่ทิ้งกลางทาง
+                แพ็กเกจเว็บไซต์หน้าเดียวสำหรับร้านค้า/SME ที่อยากมีหน้าร้านออนไลน์ดูโปรเร็ว ๆ —
+                ทีมคนไทยทำให้ครบ พร้อมดูแลต่อให้เว็บยังหาลูกค้าได้ทุกวัน
               </p>
             </div>
             <Button variant="gold" size="lg" asChild className="shrink-0">
               <Link href="/talon">
-                ดู Talon <ArrowRight size={18} />
+                ดูแพ็กเกจ Talon <ArrowRight size={18} />
               </Link>
             </Button>
           </div>

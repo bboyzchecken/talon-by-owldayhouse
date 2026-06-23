@@ -3,6 +3,7 @@
 
 export interface TalonPackage {
   name: string;
+  headline: string;
   price: string;
   period: string;
   includes: readonly string[];
@@ -18,14 +19,15 @@ export interface CarePlan {
 
 export const talon: TalonPackage = {
   name: "Talon",
+  headline: "แพ็กเกจเว็บไซต์หน้าเดียว เสร็จไวใน 5 วัน",
   price: "฿3,900",
-  period: "จ่ายครั้งเดียว",
+  period: "ราคาโปรโมชัน · จ่ายครั้งเดียว",
   includes: [
-    "เว็บดีไซน์โปร ออกแบบและปรับแต่งโดยทีมคนไทย",
-    "เนื้อหา + รูปภาพเริ่มต้น พร้อมใช้งาน",
-    "ปุ่มติดต่อ Messenger / โทร / LINE",
-    "เชื่อมโดเมนของคุณ + แสดงผลบนมือถือสวย",
-    "ส่งมอบใน 5 วันทำการ",
+    "เว็บไซต์หน้าเดียว (One-page) ดีไซน์โปร โหลดไว",
+    "ทีมคนไทยเขียนเนื้อหา + จัดวางให้ลูกค้ากล้าติดต่อ",
+    "ปุ่มติดต่อ Messenger / โทร / LINE ครบ",
+    "เชื่อมโดเมนของคุณเอง + แสดงผลสวยบนมือถือ",
+    "ส่งมอบใน 5 วันทำการ พร้อมออนไลน์จริง",
   ],
 };
 

@@ -13,10 +13,10 @@ export interface LadderStep {
 export const ladder: readonly LadderStep[] = [
   {
     step: "01",
-    name: "เว็บไว (Talon)",
+    name: "เว็บหน้าเดียว (Talon)",
     priceFrom: "฿3,900",
-    tagline: "แลนดิ้ง/เว็บโปรไฟล์ โปรเสร็จไวใน 5 วัน",
-    features: ["หน้าเดียวจบ ครบ", "ผูก Messenger / LINE", "ปรับแก้โดยทีมคนไทย"],
+    tagline: "แพ็กเกจโปรโมชัน เว็บหน้าเดียวเสร็จไวใน 5 วัน",
+    features: ["หน้าเดียวจบ ดูโปร", "ผูก Messenger / LINE", "ทีมคนไทยดูแลต่อ"],
     href: "/talon",
   },
   {

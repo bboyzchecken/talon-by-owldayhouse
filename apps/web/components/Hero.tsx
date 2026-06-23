@@ -34,7 +34,7 @@ export function Hero() {
           custom={0}
           className="font-display text-sm font-semibold uppercase tracking-[0.25em] text-gold"
         >
-          ODH · การเดินทางครั้งใหม่
+          รับทำเว็บไซต์ · เชียงใหม่
         </motion.span>
 
         <h1 className="font-display text-4xl font-bold leading-[1.1] sm:text-6xl">
@@ -49,7 +49,7 @@ export function Hero() {
           custom={1}
           className="max-w-xl text-lg text-paper/80"
         >
-          ทีมคนไทยทำให้เสร็จไว ดูแลต่อจริง — เริ่มเล็กได้ โตได้ ไม่ต้องย้ายเจ้า
+          เว็บที่ทำให้ธุรกิจคุณดูน่าเชื่อถือและได้ลูกค้าจริง — ทีมคนไทยดูแลต่อ เริ่มเล็กได้ โตได้
         </motion.p>
 
         <motion.div
