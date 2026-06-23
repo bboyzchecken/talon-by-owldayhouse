@@ -33,7 +33,8 @@ export const localBusinessSchema = {
   },
   // TODO: confirm exact coordinates of the office (approx. Saraphi, Chiang Mai).
   geo: { "@type": "GeoCoordinates", latitude: 18.71, longitude: 99.04 },
-  areaServed: "Chiang Mai",
+  // Registered office is Chiang Mai, but the team serves Bangkok + nationwide.
+  areaServed: ["เชียงใหม่", "กรุงเทพมหานคร", "ประเทศไทย"],
   sameAs,
   openingHoursSpecification: [
     {
@@ -73,5 +74,55 @@ export function breadcrumbSchema(name: string, path: string) {
       { "@type": "ListItem", position: 1, name: "หน้าแรก", item: `${SITE_URL}/` },
       { "@type": "ListItem", position: 2, name, item: `${SITE_URL}${path}` },
     ],
+  };
+}
+
+/** FAQPage schema — eligible for the FAQ rich result in Google search. */
+export function faqSchema(faqs: readonly { q: string; a: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map(({ q, a }) => ({
+      "@type": "Question",
+      name: q,
+      acceptedAnswer: { "@type": "Answer", text: a },
+    })),
+  };
+}
+
+interface ArticleSchemaInput {
+  title: string;
+  description: string;
+  path: string; // e.g. "/news/slug/"
+  datePublished: string; // ISO date
+  dateModified?: string;
+}
+
+/** BlogPosting schema for /news articles. */
+export function articleSchema({
+  title,
+  description,
+  path,
+  datePublished,
+  dateModified,
+}: ArticleSchemaInput) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: title,
+    description,
+    inLanguage: "th-TH",
+    mainEntityOfPage: `${SITE_URL}${path}`,
+    url: `${SITE_URL}${path}`,
+    datePublished,
+    dateModified: dateModified ?? datePublished,
+    image: `${SITE_URL}/og.png`,
+    author: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
+    publisher: {
+      "@type": "Organization",
+      name: SITE_NAME,
+      url: SITE_URL,
+      logo: { "@type": "ImageObject", url: LOGO_URL },
+    },
   };
 }

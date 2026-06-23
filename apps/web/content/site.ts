@@ -40,5 +40,6 @@ export const navLinks: readonly NavLink[] = [
   { href: "/work", label: "ผลงาน" },
   { href: "/packages", label: "แพ็กเกจ" },
   { href: "/talon", label: "Talon" },
+  { href: "/news", label: "บทความ" },
   { href: "/contact", label: "ติดต่อ" },
 ];

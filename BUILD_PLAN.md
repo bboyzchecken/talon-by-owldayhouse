@@ -486,9 +486,9 @@ layered/repository, JSON snake_case, error shape {"error":"..."}, port 5000, tz 
 - [ ] Analytics เก็บ event ได้ (Plausible/GA4)
 
 **Checklist (การตลาดต่อเนื่อง)**
-- [ ] หน้า `/talon` เป็น landing สำหรับยิงแคมเปญ/โพสต์ FB
+- [x] หน้า `/talon` เป็น landing สำหรับยิงแคมเปญ/โพสต์ FB — UTM→Messenger `ref` + GA4 `generate_lead` event + FAQ/FAQPage schema
 - [ ] เก็บรีวิว/เคสลูกค้ารายแรก ๆ มาขึ้น `/work`
-- [ ] เขียนบทความ/ข่าว (`/news` ภายหลัง) จับ keyword ท้องถิ่น = SEO ระยะยาว
+- [x] เขียนบทความ/ข่าว (`/news`) จับ keyword ท้องถิ่น = SEO ระยะยาว — โครง /news + 2 บทความ (BlogPosting schema, อยู่ใน sitemap/nav)
 - [ ] footer "by Owl Day House" บนเว็บไวลูกค้าทุกเว็บ = backlink + brand (จาก Talon)
 
 **Claude Code Prompt**

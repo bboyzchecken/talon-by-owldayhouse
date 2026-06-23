@@ -1,14 +1,14 @@
 import Image from "next/image";
 import { AlertTriangle, Check, ShieldCheck, Sparkles, Users } from "lucide-react";
-import { Badge, Button, Card, SectionHeading } from "@odh/ui";
-import { contact } from "@/content/site";
-import { talon } from "@/content/packages";
+import { Badge, Card, SectionHeading } from "@odh/ui";
+import { talon, talonFaqs } from "@/content/packages";
 import { CarePlans } from "@/components/CarePlans";
 import { ClosingCTA } from "@/components/ClosingCTA";
+import { MessengerCta } from "@/components/MessengerCta";
 import { Reveal } from "@/components/Reveal";
 import { JsonLd } from "@/components/JsonLd";
 import { pageMeta } from "@/lib/seo";
-import { breadcrumbSchema, talonServiceSchema } from "@/lib/structured-data";
+import { breadcrumbSchema, faqSchema, talonServiceSchema } from "@/lib/structured-data";
 
 export const metadata = pageMeta({
   title: "Talon — เว็บไซต์ ฿3,900 เสร็จใน 5 วัน",
@@ -33,7 +33,9 @@ const solutions = [
 export default function TalonPage() {
   return (
     <main>
-      <JsonLd data={[breadcrumbSchema("Talon", "/talon/"), talonServiceSchema]} />
+      <JsonLd
+        data={[breadcrumbSchema("Talon", "/talon/"), talonServiceSchema, faqSchema(talonFaqs)]}
+      />
       {/* hero */}
       <section className="relative overflow-hidden bg-navy text-paper">
         <div aria-hidden className="pointer-events-none absolute inset-0 bg-gradient-to-b from-navy to-navy-deep" />
@@ -50,12 +52,11 @@ export default function TalonPage() {
             แพ็กเกจเว็บหน้าเดียวสำหรับร้านค้า/SME ที่อยากมีหน้าร้านออนไลน์ดูโปร — เริ่ม {talon.price}{" "}
             ทีมคนไทยทำให้ครบ พร้อมดูแลต่อให้เว็บยังหาลูกค้าได้
           </p>
-          <div className="mt-8 flex justify-center">
-            <Button variant="gold" size="lg" asChild>
-              <a href={contact.messenger} target="_blank" rel="noopener noreferrer">
-                เริ่มเลย {talon.price}
-              </a>
-            </Button>
+          <div className="mt-8 flex flex-col items-center gap-3">
+            <MessengerCta location="hero">เริ่มเลย {talon.price}</MessengerCta>
+            <p className="text-sm text-paper/70">
+              เดือนแรกของแพ็กดูแลฟรี · ส่งมอบใน 5 วันทำการ · ออกใบกำกับภาษีได้
+            </p>
           </div>
         </div>
       </section>
@@ -119,11 +120,9 @@ export default function TalonPage() {
                 </li>
               ))}
             </ul>
-            <Button variant="gold" size="lg" asChild className="mt-8">
-              <a href={contact.messenger} target="_blank" rel="noopener noreferrer">
-                เริ่มเลย {talon.price}
-              </a>
-            </Button>
+            <MessengerCta location="package" className="mt-8">
+              เริ่มเลย {talon.price}
+            </MessengerCta>
           </Card>
           <Reveal delay={0.1}>
             <Image
@@ -160,6 +159,36 @@ export default function TalonPage() {
             <h3 className="font-display text-base font-bold text-navy">ผลงานระดับมหาวิทยาลัย</h3>
             <p className="mt-1 text-sm text-muted">เช่น ระบบลงทะเบียน reg.tu.ac.th</p>
           </Card>
+        </div>
+      </section>
+
+      {/* faq */}
+      <section className="bg-paper">
+        <div className="mx-auto max-w-3xl px-6 py-20">
+          <SectionHeading
+            align="center"
+            eyebrow="คำถามที่พบบ่อย"
+            title="ยังไม่แน่ใจ? เคลียร์ให้ก่อนทัก"
+          />
+          <div className="mt-10 grid gap-3">
+            {talonFaqs.map(({ q, a }) => (
+              <details
+                key={q}
+                className="group rounded-2xl border border-line bg-white/80 px-5 py-4 shadow-card backdrop-blur-sm [&_summary::-webkit-details-marker]:hidden"
+              >
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-display font-semibold text-navy">
+                  {q}
+                  <span
+                    aria-hidden
+                    className="shrink-0 text-gold transition-transform group-open:rotate-45"
+                  >
+                    +
+                  </span>
+                </summary>
+                <p className="mt-3 text-sm leading-relaxed text-muted">{a}</p>
+              </details>
+            ))}
+          </div>
         </div>
       </section>
 

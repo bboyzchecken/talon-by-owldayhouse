@@ -1,6 +1,5 @@
 import { ArrowRight } from "lucide-react";
-import { Button } from "@odh/ui";
-import { contact } from "@/content/site";
+import { MessengerCta } from "./MessengerCta";
 import { Reveal } from "./Reveal";
 
 export function ClosingCTA() {
@@ -21,11 +20,9 @@ export function ClosingCTA() {
           ว่าควรเริ่มยังไงให้คุ้มและได้ลูกค้าจริง ไม่ขายเกินจำเป็น
         </p>
         <div className="mt-8 flex justify-center">
-          <Button variant="gold" size="lg" asChild>
-            <a href={contact.messenger} target="_blank" rel="noopener noreferrer">
-              ทักเราเลย <ArrowRight size={18} />
-            </a>
-          </Button>
+          <MessengerCta location="closing">
+            ทักเราเลย <ArrowRight size={18} />
+          </MessengerCta>
         </div>
       </Reveal>
     </section>
