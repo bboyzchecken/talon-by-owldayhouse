@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { Badge } from "@odh/ui";
 import type { PortfolioItem } from "@/content/portfolio";
@@ -31,14 +30,14 @@ export function PortfolioCard({ item }: { item: PortfolioItem }) {
         <p className="mt-1 text-sm font-medium text-navy/70">{item.client}</p>
         <p className="mt-2 flex-1 text-sm text-muted">{item.result}</p>
         {item.url ? (
-          <Link
+          <a
             href={item.url}
             target="_blank"
             rel="noopener noreferrer"
             className="mt-4 inline-flex items-center gap-1 font-display text-sm font-semibold text-gold hover:underline"
           >
-            ดูระบบจริง <ArrowUpRight size={16} />
-          </Link>
+            {item.linkLabel ?? "ดูระบบจริง"} <ArrowUpRight size={16} />
+          </a>
         ) : null}
       </div>
     </article>

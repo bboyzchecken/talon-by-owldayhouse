@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" width="1600" height="1000">
+  <defs>
+    <linearGradient id="bbg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#14122a"/>
+      <stop offset="0.5" stop-color="#1b1938"/>
+      <stop offset="1" stop-color="#100e22"/>
+    </linearGradient>
+    <radialGradient id="bglow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#e9a41b" stop-opacity="0.26"/>
+      <stop offset="1" stop-color="#e9a41b" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="bgrid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="#e9a41b" stroke-opacity="0.13" stroke-width="1"/>
+    </pattern>
+    <pattern id="bgrid2" width="200" height="200" patternUnits="userSpaceOnUse">
+      <path d="M200 0H0V200" fill="none" stroke="#f0b94a" stroke-opacity="0.2" stroke-width="1"/>
+    </pattern>
+    <filter id="nglow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1600" height="1000" fill="url(#bbg)"/>
+  <rect width="1600" height="1000" fill="url(#bgrid)"/>
+  <rect width="1600" height="1000" fill="url(#bgrid2)"/>
+  <rect width="1600" height="1000" fill="url(#bglow)"/>
+
+  <!-- connectors (under nodes) -->
+  <g stroke="#f0b94a" stroke-width="1.6" fill="none" stroke-opacity="0.7" stroke-dasharray="6 6">
+    <path d="M640 470 L620 399"/>
+    <path d="M920 470 L1010 399"/>
+    <path d="M640 515 L596 523"/>
+    <path d="M920 540 L1018 523"/>
+    <path d="M700 590 L620 628"/>
+    <path d="M880 590 L1000 640"/>
+  </g>
+
+  <!-- central node: FRONTEND / UI -->
+  <g filter="url(#nglow)">
+    <rect x="640" y="440" width="280" height="150" rx="10" fill="#231f44" stroke="#f0b94a" stroke-width="1.8"/>
+  </g>
+  <text x="660" y="470" font-family="'Space Grotesk', monospace" font-size="15" fill="#fbefd3" letter-spacing="1">FRONTEND · UI</text>
+  <line x1="640" y1="482" x2="920" y2="482" stroke="#e9a41b" stroke-opacity="0.4"/>
+  <g fill="#fbefd3" fill-opacity="0.5">
+    <rect x="660" y="500" width="150" height="9" rx="4"/>
+    <rect x="660" y="518" width="110" height="9" rx="4"/>
+    <rect x="660" y="552" width="70" height="20" rx="10" fill="#e9a41b" fill-opacity="0.9"/>
+  </g>
+  <rect x="826" y="500" width="74" height="56" rx="6" fill="#e9a41b" fill-opacity="0.18" stroke="#f0b94a" stroke-opacity="0.5"/>
+
+  <!-- satellite nodes -->
+  <g font-family="'Space Grotesk', monospace" font-size="13" fill="#fbefd3">
+    <g filter="url(#nglow)">
+      <rect x="500" y="372" width="120" height="54" rx="8" fill="#231f44" stroke="#f0b94a" stroke-width="1.5"/>
+    </g>
+    <text x="560" y="404" text-anchor="middle">CDN</text>
+
+    <g filter="url(#nglow)">
+      <rect x="1010" y="372" width="138" height="54" rx="8" fill="#231f44" stroke="#f0b94a" stroke-width="1.5"/>
+    </g>
+    <text x="1079" y="404" text-anchor="middle">API GATEWAY</text>
+
+    <g filter="url(#nglow)">
+      <rect x="486" y="496" width="110" height="54" rx="8" fill="#231f44" stroke="#f0b94a" stroke-width="1.5"/>
+    </g>
+    <text x="541" y="528" text-anchor="middle">AUTH</text>
+
+    <g filter="url(#nglow)">
+      <rect x="1018" y="496" width="120" height="54" rx="8" fill="#231f44" stroke="#f0b94a" stroke-width="1.5"/>
+    </g>
+    <text x="1078" y="528" text-anchor="middle">QUEUE</text>
+
+    <g filter="url(#nglow)">
+      <rect x="506" y="628" width="130" height="54" rx="8" fill="#231f44" stroke="#f0b94a" stroke-width="1.5"/>
+    </g>
+    <text x="571" y="660" text-anchor="middle">CMS</text>
+
+    <!-- database cylinder -->
+    <g filter="url(#nglow)" fill="#231f44" stroke="#f0b94a" stroke-width="1.5">
+      <path d="M1000 616 v54 a60 13 0 0 0 120 0 v-54" fill="#231f44"/>
+      <ellipse cx="1060" cy="616" rx="60" ry="13" fill="#231f44"/>
+    </g>
+    <text x="1060" y="652" text-anchor="middle">DATABASE</text>
+  </g>
+
+  <!-- connection dots -->
+  <g fill="#ffce6a">
+    <circle cx="620" cy="399" r="3"/><circle cx="1010" cy="399" r="3"/>
+    <circle cx="596" cy="523" r="3"/><circle cx="1018" cy="523" r="3"/>
+    <circle cx="620" cy="628" r="3"/><circle cx="1000" cy="640" r="3"/>
+  </g>
+
+  <!-- blueprint crosshair ticks -->
+  <g stroke="#f0b94a" stroke-opacity="0.5" stroke-width="1">
+    <path d="M60 60 h28 M60 60 v28" fill="none"/>
+    <path d="M1540 60 h-28 M1540 60 v28" fill="none"/>
+    <path d="M60 940 h28 M60 940 v-28" fill="none"/>
+    <path d="M1540 940 h-28 M1540 940 v-28" fill="none"/>
+  </g>
+  <g font-family="'Space Grotesk', monospace" font-size="12" fill="#e9a41b" fill-opacity="0.75">
+    <text x="96" y="74">SYSTEM.MAP // v3</text>
+    <text x="96" y="930">scale 1:1 · owldayhouse engineering</text>
+    <text x="1300" y="930">x:1600 y:1000</text>
+  </g>
+
+  <!-- stray "code" lines for texture -->
+  <g font-family="'Space Grotesk', monospace" font-size="12.5" fill="#fbefd3" fill-opacity="0.4">
+    <text x="190" y="300">async function scale(site) {</text>
+    <text x="210" y="322">  return site.grow({ uptime: 99.9 })</text>
+    <text x="190" y="344">}</text>
+  </g>
+</svg>

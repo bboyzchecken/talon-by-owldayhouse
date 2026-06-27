@@ -10,6 +10,8 @@ export interface PortfolioItem {
   url?: string;
   status?: "live" | "closed";
   featured?: boolean;
+  /** Override the card's link label (defaults to "ดูระบบจริง"). */
+  linkLabel?: string;
 }
 
 export const portfolio: readonly PortfolioItem[] = [
@@ -51,6 +53,17 @@ export const portfolio: readonly PortfolioItem[] = [
     result: "เว็บไซต์บริษัทวัสดุก่อสร้าง uPVC — วางโครงเนื้อหา ดีไซน์ และระบบจัดการให้ดูน่าเชื่อถือ",
     image: "/portfolio/intersant.jpg",
     status: "closed",
+  },
+  {
+    title: "Interactive Showcase — เอฟเฟกต์ Spotlight Reveal",
+    client: "Owl Day House",
+    category: "โชว์เคส / Interactive",
+    result:
+      "เดโมงานหน้าเว็บเชิงโต้ตอบ — เลื่อนเคอร์เซอร์ส่องสปอตไลต์ทะลุดีไซน์ที่เสร็จสวย ลงไปเห็นโครงสร้างระบบเบื้องหลัง สื่อแนวคิด “จากเว็บแรก ฿3,900 สู่ระบบระดับองค์กร” ทำด้วยเทคนิคที่เน้นความเร็ว (CSS mask + LCP) ไม่ใช้ canvas",
+    image: "/showcase/reveal/surface.svg",
+    url: "/showcase/reveal/",
+    status: "live",
+    linkLabel: "เปิดดูโชว์เคส",
   },
 ];
 

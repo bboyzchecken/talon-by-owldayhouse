@@ -32,12 +32,16 @@ export const social = {
 export interface NavLink {
   href: string;
   label: string;
+  /** Render as a plain <a> (full navigation) instead of next/link — e.g. the
+   *  interactive Showcase sub-app served statically outside the Next routes. */
+  external?: boolean;
 }
 
 export const navLinks: readonly NavLink[] = [
   { href: "/about", label: "เราคือใคร" },
   { href: "/services", label: "เราทำอะไร" },
   { href: "/work", label: "ผลงาน" },
+  { href: "/showcase/reveal/", label: "โชว์เคส", external: true },
   { href: "/packages", label: "แพ็กเกจ" },
   { href: "/talon", label: "Talon" },
   { href: "/news", label: "บทความ" },

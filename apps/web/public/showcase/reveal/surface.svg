@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" width="1600" height="1000">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1b1938"/>
+      <stop offset="0.5" stop-color="#28254c"/>
+      <stop offset="1" stop-color="#14122a"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.46" r="0.6">
+      <stop offset="0" stop-color="#e9a41b" stop-opacity="0.16"/>
+      <stop offset="0.55" stop-color="#e9a41b" stop-opacity="0.05"/>
+      <stop offset="1" stop-color="#e9a41b" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2a2750"/>
+      <stop offset="1" stop-color="#1d1b3c"/>
+    </linearGradient>
+    <linearGradient id="shot" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e9a41b" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#28254c" stop-opacity="0.3"/>
+    </linearGradient>
+    <linearGradient id="vign" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#100e22" stop-opacity="0.5"/>
+      <stop offset="0.3" stop-color="#100e22" stop-opacity="0"/>
+      <stop offset="0.72" stop-color="#100e22" stop-opacity="0"/>
+      <stop offset="1" stop-color="#100e22" stop-opacity="0.72"/>
+    </linearGradient>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="30" stdDeviation="40" flood-color="#08071a" flood-opacity="0.6"/>
+    </filter>
+    <pattern id="grid" width="56" height="56" patternUnits="userSpaceOnUse">
+      <path d="M56 0H0V56" fill="none" stroke="#fbf8f1" stroke-opacity="0.04" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <rect width="1600" height="1000" fill="url(#bg)"/>
+  <rect width="1600" height="1000" fill="url(#grid)"/>
+  <rect width="1600" height="1000" fill="url(#glow)"/>
+
+  <!-- faint owl-mark watermark (brand) -->
+  <g fill="#fbf8f1" fill-opacity="0.035" transform="translate(579,239) scale(7.9)">
+    <path d="M44.3453 28.9961L40.7451 29.7864C42.691 35.6924 42.3156 42.1285 39.6968 47.7627C35.3147 57.1503 24.9695 57.9492 17.116 56.1603C9.26261 54.3714 5.40463 44.1414 5.40463 44.1414C5.79129 55.6566 9.06498 60.3548 9.06498 60.3548L13.0604 58.4356C17.9065 61.145 31.2591 63.594 40.7451 53.225C50.2311 42.8561 44.3453 28.9961 44.3453 28.9961Z"/>
+    <path d="M9.3829 32.4016C8.24137 35.1904 7.94332 38.2587 8.52642 41.2187C9.10951 44.1787 10.5476 46.8976 12.6589 49.0319C14.7703 51.1662 17.4602 52.6202 20.3888 53.2101C23.3174 53.7999 26.3533 53.4992 29.1129 52.346C31.8725 51.1928 34.2319 49.2388 35.8932 46.7308C37.5545 44.2229 38.443 41.2735 38.4464 38.2554C38.4499 35.2373 37.5682 32.2859 35.9127 29.774C34.2573 27.2622 31.9023 25.3026 29.1454 24.1429L28.6126 23.9518L43.4087 20.1481L38.9664 7.99023L8.70411 24.4902L5.40463 29.8744L11.952 28.1897C10.8765 29.4444 10.0089 30.8667 9.3829 32.4016ZM18.044 38.2113C18.044 37.3525 18.296 36.513 18.7681 35.7989C19.2401 35.0849 19.9111 34.5283 20.6961 34.1997C21.4811 33.8711 22.345 33.7851 23.1784 33.9526C24.0117 34.1202 24.7772 34.5337 25.3781 35.141C25.9789 35.7482 26.3881 36.5219 26.5538 37.3642C26.7196 38.2065 26.6345 39.0795 26.3094 39.8729C25.9842 40.6664 25.4335 41.3445 24.727 41.8216C24.0205 42.2987 23.1899 42.5534 22.3402 42.5534C21.2008 42.5534 20.108 42.0959 19.3023 41.2816C18.4966 40.4673 18.044 39.3629 18.044 38.2113ZM33.8712 38.2113C33.8757 39.5424 33.6201 40.8613 33.1189 42.0923C32.6178 43.3233 31.881 44.4421 30.9509 45.3846C30.0209 46.327 28.9157 47.0745 27.6991 47.5842C26.4824 48.0938 25.1781 48.3556 23.8611 48.3544C23.2059 48.3547 22.5524 48.2877 21.9106 48.1547C24.1814 47.7019 26.2262 46.4664 27.6959 44.6592C29.1656 42.8521 29.969 40.5853 29.969 38.246C29.969 35.9067 29.1656 33.64 27.6959 31.8328C26.2262 30.0257 24.1814 28.7902 21.9106 28.3373C22.5533 28.2115 23.2064 28.1475 23.8611 28.1463C26.5062 28.1463 29.0436 29.2053 30.9181 31.0916C32.7925 32.9779 33.8512 35.5379 33.8626 38.2113H33.8712Z"/>
+  </g>
+
+  <!-- Browser window: the polished, finished website (the "surface") -->
+  <g filter="url(#soft)">
+    <rect x="470" y="338" width="660" height="416" rx="18" fill="url(#card)" stroke="#fbf8f1" stroke-opacity="0.10"/>
+    <path d="M470 356a18 18 0 0 1 18-18h624a18 18 0 0 1 18 18v30H470z" fill="#16142e"/>
+    <circle cx="498" cy="371" r="5.5" fill="#6e6b86"/>
+    <circle cx="518" cy="371" r="5.5" fill="#6e6b86"/>
+    <circle cx="538" cy="371" r="5.5" fill="#6e6b86"/>
+    <rect x="612" y="363" width="360" height="16" rx="8" fill="#fbf8f1" fill-opacity="0.06"/>
+    <text x="628" y="375" font-family="'Space Grotesk', sans-serif" font-size="11" fill="#cfc8e8" fill-opacity="0.8">owldayhouse.com</text>
+  </g>
+
+  <!-- page content inside the window -->
+  <g>
+    <rect x="506" y="430" width="300" height="26" rx="6" fill="#fbf8f1" fill-opacity="0.92"/>
+    <rect x="506" y="468" width="232" height="26" rx="6" fill="#fbf8f1" fill-opacity="0.55"/>
+    <rect x="506" y="516" width="320" height="11" rx="5" fill="#fbf8f1" fill-opacity="0.26"/>
+    <rect x="506" y="534" width="280" height="11" rx="5" fill="#fbf8f1" fill-opacity="0.18"/>
+    <!-- gold CTA pill (brand) -->
+    <rect x="506" y="566" width="148" height="40" rx="20" fill="#e9a41b"/>
+    <rect x="528" y="582" width="104" height="9" rx="4.5" fill="#28254c" fill-opacity="0.85"/>
+    <!-- hero visual -->
+    <rect x="858" y="430" width="240" height="176" rx="14" fill="url(#shot)" stroke="#fbf8f1" stroke-opacity="0.10"/>
+    <circle cx="978" cy="500" r="30" fill="#fbf8f1" fill-opacity="0.2"/>
+    <path d="M970 488l22 12-22 12z" fill="#fbf8f1" fill-opacity="0.9"/>
+    <!-- feature cards row -->
+    <g>
+      <rect x="506" y="640" width="184" height="86" rx="12" fill="#fbf8f1" fill-opacity="0.05" stroke="#fbf8f1" stroke-opacity="0.07"/>
+      <rect x="744" y="640" width="184" height="86" rx="12" fill="#fbf8f1" fill-opacity="0.05" stroke="#fbf8f1" stroke-opacity="0.07"/>
+      <rect x="982" y="640" width="116" height="86" rx="12" fill="#fbf8f1" fill-opacity="0.05" stroke="#fbf8f1" stroke-opacity="0.07"/>
+      <circle cx="528" cy="664" r="9" fill="#e9a41b" fill-opacity="0.9"/>
+      <circle cx="766" cy="664" r="9" fill="#e9a41b" fill-opacity="0.6"/>
+      <circle cx="1004" cy="664" r="9" fill="#e9a41b" fill-opacity="0.45"/>
+      <rect x="528" y="686" width="120" height="9" rx="4.5" fill="#fbf8f1" fill-opacity="0.3"/>
+      <rect x="766" y="686" width="120" height="9" rx="4.5" fill="#fbf8f1" fill-opacity="0.3"/>
+      <rect x="528" y="702" width="84" height="8" rx="4" fill="#fbf8f1" fill-opacity="0.18"/>
+      <rect x="766" y="702" width="84" height="8" rx="4" fill="#fbf8f1" fill-opacity="0.18"/>
+    </g>
+  </g>
+
+  <rect width="1600" height="1000" fill="url(#vign)"/>
+</svg>

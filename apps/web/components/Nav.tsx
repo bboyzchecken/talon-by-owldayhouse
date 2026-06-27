@@ -21,17 +21,21 @@ export function Nav() {
         <ul className="ml-auto hidden items-center gap-6 lg:flex">
           {navLinks.map((link) => {
             const active = pathname === link.href;
+            const className = cn(
+              "font-display text-sm transition-colors",
+              active ? "text-gold" : "text-paper/80 hover:text-gold",
+            );
             return (
               <li key={link.href}>
-                <Link
-                  href={link.href}
-                  className={cn(
-                    "font-display text-sm transition-colors",
-                    active ? "text-gold" : "text-paper/80 hover:text-gold",
-                  )}
-                >
-                  {link.label}
-                </Link>
+                {link.external ? (
+                  <a href={link.href} className={className}>
+                    {link.label}
+                  </a>
+                ) : (
+                  <Link href={link.href} className={className}>
+                    {link.label}
+                  </Link>
+                )}
               </li>
             );
           })}
@@ -58,13 +62,23 @@ export function Nav() {
           <ul className="mx-auto flex max-w-6xl flex-col px-6 py-3">
             {navLinks.map((link) => (
               <li key={link.href}>
-                <Link
-                  href={link.href}
-                  onClick={() => setOpen(false)}
-                  className="block py-2.5 font-display text-paper/90 hover:text-gold"
-                >
-                  {link.label}
-                </Link>
+                {link.external ? (
+                  <a
+                    href={link.href}
+                    onClick={() => setOpen(false)}
+                    className="block py-2.5 font-display text-paper/90 hover:text-gold"
+                  >
+                    {link.label}
+                  </a>
+                ) : (
+                  <Link
+                    href={link.href}
+                    onClick={() => setOpen(false)}
+                    className="block py-2.5 font-display text-paper/90 hover:text-gold"
+                  >
+                    {link.label}
+                  </Link>
+                )}
               </li>
             ))}
             <li className="py-2">
