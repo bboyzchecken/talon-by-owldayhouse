@@ -2,9 +2,7 @@ import base from "@odh/eslint-config";
 import nextPlugin from "@next/eslint-plugin-next";
 
 export default [
-  // public/showcase/** is a self-contained, pre-built static sub-app (the Reveal
-  // showcase from talon-pipeline) — don't lint its bundled/minified output.
-  { ignores: ["next-env.d.ts", ".next/**", "out/**", "public/showcase/**"] },
+  { ignores: ["next-env.d.ts", ".next/**", "out/**"] },
   ...base,
   {
     files: ["**/*.{ts,tsx}"],

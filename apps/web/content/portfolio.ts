@@ -60,7 +60,7 @@ export const portfolio: readonly PortfolioItem[] = [
     category: "โชว์เคส / Interactive",
     result:
       "เดโมงานหน้าเว็บเชิงโต้ตอบ — เลื่อนเคอร์เซอร์ส่องสปอตไลต์ทะลุดีไซน์ที่เสร็จสวย ลงไปเห็นโครงสร้างระบบเบื้องหลัง สื่อแนวคิด “จากเว็บแรก ฿3,900 สู่ระบบระดับองค์กร” ทำด้วยเทคนิคที่เน้นความเร็ว (CSS mask + LCP) ไม่ใช้ canvas",
-    image: "/showcase/reveal/surface.svg",
+    image: "/showcase/surface.svg",
     url: "/showcase/reveal/",
     status: "live",
     linkLabel: "เปิดดูโชว์เคส",
