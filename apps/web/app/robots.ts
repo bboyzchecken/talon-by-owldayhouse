@@ -5,7 +5,8 @@ export const dynamic = "force-static";
 
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: { userAgent: "*", allow: "/" },
+    // /owl-docs/ is a hidden internal tool — keep it out of the index.
+    rules: { userAgent: "*", allow: "/", disallow: "/owl-docs/" },
     sitemap: `${SITE_URL}/sitemap.xml`,
     host: SITE_URL,
   };

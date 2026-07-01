@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Owl Day House · เครื่องสร้างเอกสาร (ใบเสนอราคา / ใบแจ้งหนี้ / ใบเสร็จ-ใบกำกับภาษี)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --gold:#E9A41B; --navy:#28254C;
+    --ink:#000; --line:#000;
+    --bg:#eceaf2; --panel:#fff; --muted:#6b6880; --border:#d8d5e4;
+    --doc-font:'Sarabun','Loma','IBM Plex Sans Thai','TH Sarabun New',sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:var(--doc-font); background:var(--bg); color:var(--navy);
+    -webkit-print-color-adjust:exact; print-color-adjust:exact;
+  }
+
+  /* ---------- App shell ---------- */
+  .app{display:grid; grid-template-columns:380px 1fr; min-height:100vh}
+  .editor{background:var(--panel); border-right:1px solid var(--border); padding:0; overflow-y:auto; height:100vh; position:sticky; top:0}
+  .brandbar{background:var(--navy); color:#fff; padding:14px 18px; display:flex; align-items:center; gap:10px; position:sticky; top:0; z-index:5}
+  .brandbar svg{width:26px;height:26px;flex:0 0 auto}
+  .brandbar b{font-size:15px; font-weight:700; letter-spacing:.2px}
+  .brandbar span{display:block; font-size:10px; color:#cdc9e0; font-weight:400}
+  .ed-pad{padding:14px 16px 60px}
+
+  .toolbar{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px}
+  .toolbar button{font-family:inherit}
+  .btn{border:1px solid var(--border); background:#fff; color:var(--navy); padding:7px 10px; border-radius:8px; font-size:12px; cursor:pointer; font-weight:600}
+  .btn:hover{border-color:var(--gold)}
+  .btn.sample{font-size:11px; padding:6px 9px}
+  .btn.primary{background:var(--gold); border-color:var(--gold); color:#1c1a33}
+  .btn.primary:hover{filter:brightness(1.05)}
+
+  .grp{border:1px solid var(--border); border-radius:10px; margin-bottom:10px; overflow:hidden}
+  .grp>summary{cursor:pointer; list-style:none; padding:9px 12px; font-weight:700; font-size:12.5px; background:#faf9fd; color:var(--navy); display:flex; justify-content:space-between; align-items:center}
+  .grp>summary::-webkit-details-marker{display:none}
+  .grp>summary::after{content:'▾'; color:var(--muted); font-size:11px}
+  .grp[open]>summary::after{content:'▴'}
+  .grp .body{padding:10px 12px}
+
+  label.f{display:block; margin-bottom:8px}
+  label.f>span{display:block; font-size:10.5px; color:var(--muted); margin-bottom:3px; font-weight:600}
+  .f input, .f textarea, .f select{
+    width:100%; border:1px solid var(--border); border-radius:7px; padding:6px 8px;
+    font-family:inherit; font-size:12px; color:var(--navy); background:#fff;
+  }
+  .f input:focus,.f textarea:focus,.f select:focus{outline:none; border-color:var(--gold)}
+  .f textarea{resize:vertical; min-height:48px; line-height:1.35}
+  .row2{display:grid; grid-template-columns:1fr 1fr; gap:8px}
+  .row3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px}
+  .chk{display:flex; align-items:center; gap:7px; font-size:11.5px; color:var(--navy); margin-bottom:8px}
+  .chk input{width:auto}
+
+  /* items */
+  .item{border:1px solid var(--border); border-radius:8px; padding:9px; margin-bottom:8px; background:#fcfbfe; position:relative}
+  .item .del{position:absolute; top:6px; right:6px; border:none; background:#f3f0fa; color:#a33; width:22px;height:22px;border-radius:6px; cursor:pointer; font-size:13px; line-height:1}
+  .item .del:hover{background:#fde2e2}
+  .additem{width:100%; border:1px dashed var(--border); background:#fff; color:var(--muted); padding:8px; border-radius:8px; cursor:pointer; font-size:12px; font-weight:600}
+  .additem:hover{border-color:var(--gold); color:var(--navy)}
+
+  .note{font-size:10.5px; color:var(--muted); line-height:1.4; margin:2px 0 10px}
+  .calc{font-size:11px; color:var(--navy); background:#faf9fd; border:1px solid var(--border); border-radius:8px; padding:8px 10px; margin-top:6px}
+  .calc div{display:flex; justify-content:space-between; padding:1px 0}
+  .calc b{font-weight:700}
+
+  /* ---------- Preview area ---------- */
+  .preview{padding:26px; display:flex; justify-content:center; align-items:flex-start}
+  .pagewrap{filter:drop-shadow(0 6px 24px rgba(40,37,76,.18))}
+
+  /* ============================================================
+     DOCUMENT  (A4) — faithful reproduction
+     ============================================================ */
+  .page{
+    width:210mm; min-height:297mm; background:#fff; color:var(--ink);
+    padding:13mm 15mm 11mm; box-sizing:border-box;
+    font-family:var(--doc-font); font-size:11px; line-height:1.28;
+    position:relative; display:flex; flex-direction:column;
+  }
+  .page *{box-sizing:border-box}
+
+  /* header */
+  .d-head{display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px}
+  .d-title .th{font-size:25px; font-weight:700; line-height:1.05; letter-spacing:.2px}
+  .d-title .en{font-size:17px; font-weight:700; margin-top:1px; display:flex; align-items:flex-end; gap:8px}
+  .d-title .en .copy{font-size:11px; font-weight:400; color:#000; padding-bottom:2px}
+  .d-logo{width:62px; height:62px; flex:0 0 auto}
+  .d-logo svg{width:100%; height:100%}
+
+  /* info block */
+  .d-info{border-top:1.4px solid var(--line); display:grid; grid-template-columns:61% 39%}
+  .d-info .cell{padding:7px 0 7px 0}
+  .d-info .l{padding-right:10px}
+  .d-info .r{padding-left:12px}
+  .d-info .top{border-bottom:1px solid var(--line)}
+  .kv{display:flex; gap:6px; align-items:baseline}
+  .kv .k{flex:0 0 auto; min-width:62px; font-weight:700; color:#000}
+  .kv .k .en{font-weight:400}
+  .kv .v{flex:1 1 auto; word-break:break-word}
+  .stack .k{min-width:54px}
+  .lines>div{margin-bottom:1px}
+  .between{display:flex; justify-content:space-between; gap:10px}
+  .meta .k{min-width:96px}
+
+  /* items table */
+  .d-tbl{width:100%; border-collapse:collapse; table-layout:fixed; margin-top:0}
+  .d-tbl th,.d-tbl td{border:1px solid var(--line); padding:4px 6px; vertical-align:top}
+  .d-tbl thead th{border-top:1.4px solid var(--line); text-align:center; font-weight:700; line-height:1.12; padding:5px 4px}
+  .d-tbl thead .en{font-weight:400; font-size:10px; display:block}
+  .d-tbl td.desc{white-space:pre-line; line-height:1.32}
+  .d-tbl td.num{text-align:right; white-space:nowrap}
+  .d-tbl td.ctr{text-align:center; white-space:nowrap}
+  .d-tbl .filler td{border-left:1px solid var(--line); border-right:1px solid var(--line); border-top:none; border-bottom:none; height:100%}
+  .d-tblbox{flex:1 1 auto; display:flex; flex-direction:column}
+  .d-tblbox table{flex:0 0 auto}
+  .d-fill{flex:1 1 auto; border-left:1px solid var(--line); border-right:1px solid var(--line); display:grid; grid-template-columns:var(--colgrid)}
+  .d-fill > div{border-right:1px solid var(--line)}
+  .d-fill > div:last-child{border-right:none}
+
+  /* summary */
+  .d-sum{width:100%; border-collapse:collapse; table-layout:fixed}
+  .d-sum td{border:1px solid var(--line); padding:5px 7px; vertical-align:top}
+  .d-sum .remark{vertical-align:top}
+  .d-sum .remark .h{font-weight:700}
+  .d-sum .slabel{text-align:right; font-weight:400}
+  .d-sum .sval{text-align:right; white-space:nowrap; width:18%}
+  .d-sum .bold{font-weight:700}
+  .d-sum .band{background:#ececec; font-weight:700}
+  .d-sum .band .baht{text-align:right; font-weight:400}
+  .col-remark{width:46%}
+  .col-lab{width:36%}
+
+  /* footer */
+  .d-foot{display:flex; gap:14px; margin-top:14px; align-items:flex-start}
+  .d-pay{flex:1 1 auto; font-size:10.5px}
+  .d-pay .h{font-weight:700; margin-bottom:3px}
+  .pay-tbl{border-collapse:collapse; font-size:10.5px}
+  .pay-tbl th,.pay-tbl td{padding:2px 12px 2px 0; text-align:left; font-weight:400; vertical-align:top}
+  .pay-tbl th{font-weight:700}
+  .pay-line{display:flex; gap:6px; align-items:flex-start; margin-top:5px}
+  .pay-line .box{flex:0 0 auto; width:13px;height:13px;border:1px solid #000; display:inline-flex; align-items:center; justify-content:center; font-size:11px; line-height:1; margin-top:1px}
+  .pay-line .tx b{font-weight:700}
+  .pay-sub{color:#000; margin:1px 0 0 19px; font-size:10px}
+  .dot{letter-spacing:1px}
+
+  .d-sign{flex:0 0 auto; width:62%; display:flex; gap:10px}
+  .sign-col{flex:1 1 0; text-align:center; font-size:10.5px}
+  .sign-col .h{font-weight:700; margin-bottom:30px; white-space:nowrap}
+  .sign-col .stamp{height:42px; display:flex; align-items:center; justify-content:center; gap:6px}
+  .sign-col .stamp svg{width:26px;height:26px}
+  .stamp .nm{ text-align:left; line-height:1.05}
+  .stamp .nm b{font-size:8.5px; font-weight:700; letter-spacing:.3px}
+  .stamp .nm span{font-size:6.5px; letter-spacing:1.5px; display:block}
+  .sign-col .ln{font-size:11px; letter-spacing:1px; margin-top:6px}
+  .sign-col .dt{margin-top:2px}
+
+  .d-pageno{margin-top:auto; padding-top:10px; text-align:center; font-size:10.5px}
+
+  /* PAID watermark */
+  .d-watermark{position:absolute; left:0; right:0; top:46%; text-align:center; transform:rotate(-20deg); pointer-events:none; z-index:3}
+  .d-watermark span{font-size:74px; font-weight:700; color:#e07b7b; opacity:.55; letter-spacing:6px; border:0}
+
+  .hint{font-size:11px;color:var(--muted);max-width:740px;margin:0 auto 18px;line-height:1.5;background:#fff;border:1px solid var(--border);border-radius:10px;padding:12px 14px}
+  .hint b{color:var(--navy)}
+  kbd{background:#f1eff7;border:1px solid var(--border);border-bottom-width:2px;border-radius:4px;padding:0 5px;font-size:11px;font-family:ui-monospace,monospace}
+
+  @media print{
+    @page{ size:A4; margin:0 }
+    body{background:#fff}
+    .editor,.brandbar,.hint{display:none !important}
+    .app{display:block}
+    .preview{padding:0; display:block}
+    .pagewrap{filter:none}
+    .page{margin:0; box-shadow:none}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ===================== EDITOR ===================== -->
+  <aside class="editor">
+    <div class="brandbar">
+      <span id="brandlogo"></span>
+      <div><b>Owl Day House</b><span>เครื่องสร้างเอกสาร</span></div>
+    </div>
+    <div class="ed-pad">
+
+      <div class="toolbar">
+        <button class="btn primary" onclick="window.focus();window.print()">🖨 พิมพ์ / บันทึก PDF</button>
+        <button class="btn" onclick="exportJSON()">⬇ บันทึกไฟล์</button>
+        <button class="btn" onclick="document.getElementById('importFile').click()">⬆ เปิดไฟล์</button>
+        <input type="file" id="importFile" accept="application/json,.json" style="display:none" onchange="importJSON(event)">
+      </div>
+      <div class="toolbar">
+        <button class="btn sample" onclick="loadSample('qo')">ตัวอย่าง · ใบเสนอราคา</button>
+        <button class="btn sample" onclick="loadSample('iv')">ใบแจ้งหนี้</button>
+        <button class="btn sample" onclick="loadSample('rt')">ใบเสร็จ/กำกับภาษี</button>
+        <button class="btn sample" onclick="clearForm()">ล้างฟอร์ม</button>
+      </div>
+      <p class="note">💾 บันทึกอัตโนมัติในเบราว์เซอร์นี้ — เปิดใหม่แล้วข้อมูลล่าสุดยังอยู่ · ปุ่ม “บันทึกไฟล์/เปิดไฟล์” ใช้เก็บหรือย้ายใบเป็นไฟล์ .json</p>
+
+      <label class="f"><span>ประเภทเอกสาร</span>
+        <select id="docType" onchange="onTypeChange()">
+          <option value="quotation">ใบเสนอราคา · Quotation</option>
+          <option value="invoice">ใบแจ้งหนี้ · Invoice</option>
+          <option value="receipt">ใบเสร็จรับเงิน/ใบกำกับภาษี · Receipt/Tax Invoice</option>
+        </select>
+      </label>
+      <label class="f"><span>ป้ายฉบับ (มุมหัวเรื่อง)</span><input id="copy" value="ต้นฉบับ / original" oninput="update()"></label>
+
+      <details class="grp"><summary>ผู้ออก / Issuer</summary><div class="body">
+        <label class="f"><span>ชื่อบริษัท</span><input id="isName" oninput="update()"></label>
+        <label class="f"><span>ที่อยู่</span><textarea id="isAddr" oninput="update()"></textarea></label>
+        <div class="row2">
+          <label class="f"><span>เลขผู้เสียภาษี</span><input id="isTax" oninput="update()"></label>
+          <label class="f"><span>โทร (T)</span><input id="isTel" oninput="update()"></label>
+        </div>
+        <div class="row2">
+          <label class="f"><span>อีเมล (E)</span><input id="isEmail" oninput="update()"></label>
+          <label class="f"><span>เว็บไซต์ (W)</span><input id="isWeb" oninput="update()"></label>
+        </div>
+      </div></details>
+
+      <details class="grp" open><summary>ลูกค้า / Customer</summary><div class="body">
+        <label class="f"><span>ชื่อลูกค้า</span><input id="cuName" oninput="update()"></label>
+        <label class="f"><span>ที่อยู่</span><textarea id="cuAddr" oninput="update()"></textarea></label>
+        <div class="row2">
+          <label class="f"><span>เลขผู้เสียภาษี</span><input id="cuTax" oninput="update()"></label>
+          <label class="f"><span>อีเมล (E)</span><input id="cuEmail" oninput="update()"></label>
+        </div>
+        <div class="row2">
+          <label class="f"><span>ผู้ติดต่อ (Attention)</span><input id="cuAttn" oninput="update()"></label>
+          <label class="f"><span>โทร (T)</span><input id="cuTel" oninput="update()"></label>
+        </div>
+      </div></details>
+
+      <details class="grp" open><summary>เลขที่ &amp; วันที่</summary><div class="body">
+        <div class="row2">
+          <label class="f"><span>เลขที่ / No.</span><input id="mNo" oninput="update()"></label>
+          <label class="f"><span>วันที่ / Issuer Date</span><input id="mDate" oninput="update()"></label>
+        </div>
+        <div class="row2">
+          <label class="f" id="wrapValid"><span>ใช้ได้ถึง / Valid</span><input id="mValid" oninput="update()"></label>
+          <label class="f" id="wrapDue"><span>ครบกำหนด / Due Date</span><input id="mDue" oninput="update()"></label>
+          <label class="f"><span>อ้างอิง / Ref</span><input id="mRef" oninput="update()"></label>
+        </div>
+      </div></details>
+
+      <details class="grp" open><summary>รายการ / Items</summary><div class="body">
+        <label class="chk"><input type="checkbox" id="showUnit" onchange="update()"> แสดงคอลัมน์ "หน่วย / Unit"</label>
+        <div id="items"></div>
+        <button class="additem" onclick="addItem()">＋ เพิ่มรายการ</button>
+      </div></details>
+
+      <details class="grp" open><summary>ภาษี &amp; ยอดรวม</summary><div class="body">
+        <div class="row2">
+          <label class="f"><span>VAT (%)</span><input id="vatRate" type="number" step="0.01" value="7" oninput="update()"></label>
+          <label class="f"><span>หัก ณ ที่จ่าย (%)</span><input id="whtRate" type="number" step="0.01" value="3" oninput="update()"></label>
+        </div>
+        <label class="chk"><input type="checkbox" id="showWht" onchange="update()"> แสดง "หัก ณ ที่จ่าย / ยอดที่ต้องชำระ" ในกล่องสรุป (ปกติใช้กับใบแจ้งหนี้)</label>
+        <div class="calc" id="calcBox"></div>
+      </div></details>
+
+      <details class="grp"><summary>หมายเหตุ / Remarks</summary><div class="body">
+        <label class="f"><textarea id="remarks" oninput="update()" style="min-height:60px"></textarea></label>
+      </div></details>
+
+      <details class="grp"><summary>การชำระเงิน / Payment</summary><div class="body">
+        <label class="f"><span>รูปแบบ</span>
+          <select id="payStyle" onchange="update()">
+            <option value="none">ไม่แสดง (ใบเสนอราคา)</option>
+            <option value="bank">ตารางบัญชีธนาคาร (ใบแจ้งหนี้)</option>
+            <option value="lines">รายการชำระ + ติ๊กถูก (ใบเสร็จ)</option>
+          </select>
+        </label>
+        <div id="payBank">
+          <div class="row3">
+            <label class="f"><span>ธนาคาร</span><input id="bkBank" oninput="update()"></label>
+            <label class="f"><span>ชื่อบัญชี</span><input id="bkName" oninput="update()"></label>
+            <label class="f"><span>เลขที่บัญชี</span><input id="bkNo" oninput="update()"></label>
+          </div>
+        </div>
+        <div id="payLines">
+          <label class="f"><span>บรรทัดที่ 1 — ฉลาก (เช่น ธนาคาร)</span><input id="pl1lab" oninput="update()"></label>
+          <label class="f"><span>บรรทัดที่ 1 — ข้อความ</span><input id="pl1txt" oninput="update()"></label>
+          <label class="f"><span>บรรทัดที่ 2 — ฉลาก (เช่น หัก ณ ที่จ่าย)</span><input id="pl2lab" oninput="update()"></label>
+          <label class="f"><span>บรรทัดที่ 2 — ข้อความ</span><input id="pl2txt" oninput="update()"></label>
+          <p class="note">เว้นว่างฉลากไว้ = ซ่อนบรรทัดนั้น</p>
+        </div>
+      </div></details>
+
+      <details class="grp"><summary>ลายเซ็น &amp; ท้ายเอกสาร</summary><div class="body">
+        <label class="f"><span>ฉลากช่องซ้าย</span><input id="sgLeftLab" value="อนุมัติโดย / Approved by" oninput="update()"></label>
+        <label class="f"><span>ฉลากช่องขวา</span><input id="sgRightLab" oninput="update()"></label>
+        <div class="row2">
+          <label class="f"><span>วันที่ใต้ตราประทับ (ซ้าย)</span><input id="sgStampDate" oninput="update()"></label>
+          <label class="f"><span>วันที่ช่องขวา</span><input id="sgRightDate" oninput="update()" placeholder="เว้นว่าง = เส้นประ"></label>
+        </div>
+        <label class="chk"><input type="checkbox" id="paid" onchange="update()"> ประทับลายน้ำ "ชำระแล้ว"</label>
+        <label class="f"><span>โลโก้ (วาง URL รูป .png/.svg — เว้นว่าง = ใช้โลโก้ก้นหอยในตัว)</span><input id="logoUrl" oninput="update()" placeholder="https://..."></label>
+        <p class="note">โลโก้ในตัวเป็นก้นหอยจำลอง หากต้องการให้ตรงโลโก้จริงเป๊ะ ให้วาง URL ไฟล์โลโก้ของบริษัท</p>
+      </div></details>
+
+    </div>
+  </aside>
+
+  <!-- ===================== PREVIEW ===================== -->
+  <main class="preview">
+    <div>
+      <div class="hint">
+        <b>วิธีให้ออกมาตรงเป๊ะเป็น PDF:</b> กด <b>พิมพ์ / บันทึก PDF</b> → เลือกเครื่องพิมพ์เป็น <b>Save as PDF</b> → ตั้งกระดาษ <b>A4</b> และ <b>Margins = None</b> (ระยะขอบ = ไม่มี) → Save. &nbsp;ปุ่ม "ตัวอย่าง" ด้านซ้ายโหลดข้อมูลจากเอกสารต้นแบบทั้ง 3 ใบให้ดูเทียบได้ทันที
+      </div>
+      <div class="pagewrap"><div class="page" id="page"></div></div>
+    </div>
+  </main>
+</div>
+
+<script>
+/* ============ Thai baht text ============ */
+const TH_D=['ศูนย์','หนึ่ง','สอง','สาม','สี่','ห้า','หก','เจ็ด','แปด','เก้า'];
+const TH_P=['','สิบ','ร้อย','พัน','หมื่น','แสน'];
+function readGroup(n,hasHigher){
+  let s=String(n), out='', len=s.length;
+  for(let i=0;i<len;i++){
+    const d=+s[i], place=len-1-i;
+    if(d===0) continue;
+    if(place===0){ out += (d===1 && (len>1||hasHigher)) ? 'เอ็ด' : TH_D[d]; }
+    else if(place===1){ out += d===1?'สิบ': d===2?'ยี่สิบ': TH_D[d]+'สิบ'; }
+    else out += TH_D[d]+TH_P[place];
+  }
+  return out;
+}
+function readInt(n){
+  if(n===0) return TH_D[0];
+  let out='', mil=Math.floor(n/1000000), rest=n%1000000;
+  if(mil>0) out+=readInt(mil)+'ล้าน';
+  if(rest>0) out+=readGroup(rest, mil>0);
+  return out;
+}
+function bahtText(num){
+  num=Math.round((num+Number.EPSILON)*100)/100;
+  const baht=Math.floor(num), satang=Math.round((num-baht)*100);
+  let s = baht===0 ? 'ศูนย์บาท' : readInt(baht)+'บาท';
+  s += satang===0 ? 'ถ้วน' : readInt(satang)+'สตางค์';
+  return s;
+}
+const fmt = n => (Number(n)||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const esc = t => String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+/* ============ ODH owl mark (default logo) ============ */
+/* Registered Owl Day House mark (symbol only), extracted from the brand artwork
+   (@odh/ui). fill is an inherited SVG property, so the paths pick up the svg's
+   fill; no width/height here — the container CSS (.brandbar/.d-logo/.stamp) sizes it. */
+function owlMarkSVG(color){
+  const c = color || '#28254C';
+  return `<svg viewBox="0 0 56 66" xmlns="http://www.w3.org/2000/svg" fill="${c}"><path d="M44.3453 28.9961L40.7451 29.7864C42.691 35.6924 42.3156 42.1285 39.6968 47.7627C35.3147 57.1503 24.9695 57.9492 17.116 56.1603C9.26261 54.3714 5.40463 44.1414 5.40463 44.1414C5.79129 55.6566 9.06498 60.3548 9.06498 60.3548L13.0604 58.4356C17.9065 61.145 31.2591 63.594 40.7451 53.225C50.2311 42.8561 44.3453 28.9961 44.3453 28.9961Z"/><path d="M9.3829 32.4016C8.24137 35.1904 7.94332 38.2587 8.52642 41.2187C9.10951 44.1787 10.5476 46.8976 12.6589 49.0319C14.7703 51.1662 17.4602 52.6202 20.3888 53.2101C23.3174 53.7999 26.3533 53.4992 29.1129 52.346C31.8725 51.1928 34.2319 49.2388 35.8932 46.7308C37.5545 44.2229 38.443 41.2735 38.4464 38.2554C38.4499 35.2373 37.5682 32.2859 35.9127 29.774C34.2573 27.2622 31.9023 25.3026 29.1454 24.1429L28.6126 23.9518L43.4087 20.1481L38.9664 7.99023L8.70411 24.4902L5.40463 29.8744L11.952 28.1897C10.8765 29.4444 10.0089 30.8667 9.3829 32.4016ZM18.044 38.2113C18.044 37.3525 18.296 36.513 18.7681 35.7989C19.2401 35.0849 19.9111 34.5283 20.6961 34.1997C21.4811 33.8711 22.345 33.7851 23.1784 33.9526C24.0117 34.1202 24.7772 34.5337 25.3781 35.141C25.9789 35.7482 26.3881 36.5219 26.5538 37.3642C26.7196 38.2065 26.6345 39.0795 26.3094 39.8729C25.9842 40.6664 25.4335 41.3445 24.727 41.8216C24.0205 42.2987 23.1899 42.5534 22.3402 42.5534C21.2008 42.5534 20.108 42.0959 19.3023 41.2816C18.4966 40.4673 18.044 39.3629 18.044 38.2113ZM33.8712 38.2113C33.8757 39.5424 33.6201 40.8613 33.1189 42.0923C32.6178 43.3233 31.881 44.4421 30.9509 45.3846C30.0209 46.327 28.9157 47.0745 27.6991 47.5842C26.4824 48.0938 25.1781 48.3556 23.8611 48.3544C23.2059 48.3547 22.5524 48.2877 21.9106 48.1547C24.1814 47.7019 26.2262 46.4664 27.6959 44.6592C29.1656 42.8521 29.969 40.5853 29.969 38.246C29.969 35.9067 29.1656 33.64 27.6959 31.8328C26.2262 30.0257 24.1814 28.7902 21.9106 28.3373C22.5533 28.2115 23.2064 28.1475 23.8611 28.1463C26.5062 28.1463 29.0436 29.2053 30.9181 31.0916C32.7925 32.9779 33.8512 35.5379 33.8626 38.2113H33.8712Z"/><path d="M23.7063 8.88436L18.2931 11.8283L21.1887 7.46015L17.2104 5.21094L8.70398 20.8686L27.1088 10.8036L23.7063 8.88436Z"/></svg>`;
+}
+document.getElementById('brandlogo').innerHTML = owlMarkSVG('#E9A41B');
+
+/* ============ State / collect ============ */
+function val(id){ const e=document.getElementById(id); return e? e.value : ''; }
+function chk(id){ const e=document.getElementById(id); return e? e.checked : false; }
+
+/* ============ Persistence: autosave (localStorage) + export/import JSON ============ */
+const STORAGE_KEY='owl-docs-state-v1';
+const FIELDS=['docType','copy','isName','isAddr','isTax','isTel','isEmail','isWeb',
+  'cuName','cuAddr','cuTax','cuEmail','cuAttn','cuTel','mNo','mDate','mValid','mDue','mRef',
+  'showUnit','vatRate','whtRate','showWht','remarks','payStyle','bkBank','bkName','bkNo',
+  'pl1lab','pl1txt','pl2lab','pl2txt','sgLeftLab','sgRightLab','sgStampDate','sgRightDate','paid','logoUrl'];
+function collectData(){
+  const d={};
+  FIELDS.forEach(f=>{ const e=document.getElementById(f); if(!e) return; d[f]= e.type==='checkbox'? e.checked : e.value; });
+  d.items=items;
+  return d;
+}
+function saveState(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(collectData())); }catch(e){} }
+function loadState(){ try{ const s=localStorage.getItem(STORAGE_KEY); return s? JSON.parse(s):null; }catch(e){ return null; } }
+function exportJSON(){
+  const blob=new Blob([JSON.stringify(collectData(),null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download=((val('docType')||'doc')+'-'+(val('mNo')||'draft')+'.json').replace(/\s+/g,'_');
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+function importJSON(ev){
+  const file=ev.target.files&&ev.target.files[0];
+  ev.target.value='';
+  if(!file) return;
+  const reader=new FileReader();
+  reader.onload=()=>{ try{ applyData(JSON.parse(reader.result)); update(); }catch(err){ alert('ไฟล์ JSON ไม่ถูกต้อง'); } };
+  reader.readAsText(file);
+}
+
+let items=[];
+function itemTemplate(it={}){ return {id:it.id||'',desc:it.desc||'',qty:(it.qty??1),unit:it.unit||'',price:(it.price??0)}; }
+function renderItems(){
+  const box=document.getElementById('items'); box.innerHTML='';
+  items.forEach((it,idx)=>{
+    const el=document.createElement('div'); el.className='item';
+    el.innerHTML=`
+      <button class="del" title="ลบ" onclick="removeItem(${idx})">✕</button>
+      <label class="f"><span>รหัส / ID No.</span><input value="${esc(it.id)}" oninput="setItem(${idx},'id',this.value)"></label>
+      <label class="f"><span>คำอธิบาย / Description (กด Enter ขึ้นบรรทัดใหม่ได้)</span><textarea oninput="setItem(${idx},'desc',this.value)" style="min-height:84px">${esc(it.desc)}</textarea></label>
+      <div class="row3">
+        <label class="f"><span>จำนวน</span><input type="number" step="0.01" value="${it.qty}" oninput="setItem(${idx},'qty',this.value)"></label>
+        <label class="f"><span>หน่วย</span><input value="${esc(it.unit)}" oninput="setItem(${idx},'unit',this.value)"></label>
+        <label class="f"><span>ราคา/หน่วย</span><input type="number" step="0.01" value="${it.price}" oninput="setItem(${idx},'price',this.value)"></label>
+      </div>`;
+    box.appendChild(el);
+  });
+}
+function setItem(i,k,v){ items[i][k]= (k==='qty'||k==='price')? (parseFloat(v)||0) : v; renderDoc(); }
+function addItem(){ items.push(itemTemplate()); renderItems(); renderDoc(); }
+function removeItem(i){ items.splice(i,1); renderItems(); renderDoc(); }
+
+/* ============ UI toggles per type ============ */
+function onTypeChange(){
+  const t=val('docType');
+  if(t==='quotation'){
+    val('sgRightLab')||0;
+    document.getElementById('sgRightLab').value='ยอมรับใบเสนอราคา / Accepted by';
+    document.getElementById('showUnit').checked=true;
+    document.getElementById('showWht').checked=false;
+    document.getElementById('payStyle').value='none';
+    document.getElementById('paid').checked=false;
+  }else if(t==='invoice'){
+    document.getElementById('sgRightLab').value='ผู้รับใบแจ้งหนี้ / Accepted by';
+    document.getElementById('showUnit').checked=false;
+    document.getElementById('showWht').checked=true;
+    document.getElementById('payStyle').value='bank';
+    document.getElementById('paid').checked=false;
+  }else{
+    document.getElementById('sgRightLab').value='รับชำระ / Received by';
+    document.getElementById('showUnit').checked=false;
+    document.getElementById('showWht').checked=false;
+    document.getElementById('payStyle').value='lines';
+    document.getElementById('paid').checked=true;
+  }
+  update();
+}
+function syncVisibility(){
+  const t=val('docType');
+  document.getElementById('wrapValid').style.display = t==='quotation'?'block':'none';
+  document.getElementById('wrapDue').style.display   = t==='invoice'?'block':'none';
+  const ps=val('payStyle');
+  document.getElementById('payBank').style.display  = ps==='bank'?'block':'none';
+  document.getElementById('payLines').style.display = ps==='lines'?'block':'none';
+}
+
+function update(){ syncVisibility(); renderDoc(); }
+
+/* ============ Render document ============ */
+function calcTotals(){
+  const pretax=items.reduce((a,it)=>a+(it.qty*it.price),0);
+  const vat=pretax*(parseFloat(val('vatRate'))||0)/100;
+  const grand=pretax+vat;
+  const wht=pretax*(parseFloat(val('whtRate'))||0)/100;
+  const net=grand-wht;
+  return {pretax,vat,grand,wht,net};
+}
+
+function logoHTML(){
+  const u=val('logoUrl').trim();
+  if(u) return `<img src="${esc(u)}" style="width:100%;height:100%;object-fit:contain">`;
+  return owlMarkSVG('#28254C');
+}
+function stampLogo(){
+  const u=val('logoUrl').trim();
+  const ic = u? `<img src="${esc(u)}" style="width:26px;height:26px;object-fit:contain">` : owlMarkSVG('#28254C');
+  return `<div class="stamp"><div style="width:26px;height:26px">${ic}</div>
+    <div class="nm"><b>OWL DAY HOUSE CO.,LTD.</b><span>THE SOFTWARE HOUSE</span></div></div>`;
+}
+
+function titleFor(t){
+  if(t==='quotation') return {th:'ใบเสนอราคา', en:'Quotation'};
+  if(t==='invoice')   return {th:'ใบแจ้งหนี้', en:'Invoice'};
+  return {th:'ใบเสร็จรับเงิน/ใบกำกับภาษี', en:'Receipt/Tax Invoice'};
+}
+
+function renderDoc(){
+  const t=val('docType');
+  const showUnit=chk('showUnit');
+  const showWht=chk('showWht');
+  const T=calcTotals();
+  const ttl=titleFor(t);
+
+  /* ----- meta rows (right column) ----- */
+  let metaRows = `<div class="kv meta"><div class="k">เลขที่ <span class="en">/ No.</span></div><div class="v">${esc(val('mNo'))}</div></div>
+    <div class="kv meta"><div class="k">วันที่ <span class="en">/ Issuer Date</span></div><div class="v">${esc(val('mDate'))}</div></div>`;
+  if(t==='quotation') metaRows += `<div class="kv meta"><div class="k">ใช้ได้ถึง <span class="en">/ Valid</span></div><div class="v">${esc(val('mValid'))}</div></div>`;
+  if(t==='invoice')   metaRows += `<div class="kv meta"><div class="k">ครบกำหนด <span class="en">/ Due Date</span></div><div class="v">${esc(val('mDue'))}</div></div>`;
+  metaRows += `<div class="kv meta"><div class="k">อ้างอิง <span class="en">/ Ref</span></div><div class="v">${esc(val('mRef'))}</div></div>`;
+
+  /* ----- table columns ----- */
+  const cols = showUnit
+    ? [['รหัส','ID No.','12%'],['คำอธิบาย','Description',''],['จำนวน','Quantity','9%'],['หน่วย','Unit','8%'],['ราคาต่อหน่วย','Unit Price','15%'],['มูลค่าก่อนภาษี','Pre-Tax Amount','16%']]
+    : [['รหัส','ID No.','12%'],['คำอธิบาย','Description',''],['จำนวน','Quantity','11%'],['ราคาต่อหน่วย','Unit Price','17%'],['มูลค่าก่อนภาษี','Pre-Tax Amount','18%']];
+  const colgrid = cols.map(c=> c[2]||'1fr').join(' ');
+  let thead='<tr>'+cols.map(c=>`<th style="${c[2]?`width:${c[2]}`:''}">${c[0]}<span class="en">${c[1]}</span></th>`).join('')+'</tr>';
+  let tbody = items.map(it=>{
+    let cells = `<td class="ctr">${esc(it.id)}</td><td class="desc">${esc(it.desc)}</td><td class="num">${fmt(it.qty)}</td>`;
+    if(showUnit) cells += `<td class="ctr">${esc(it.unit)}</td>`;
+    cells += `<td class="num">${fmt(it.price)}</td><td class="num">${fmt(it.qty*it.price)}</td>`;
+    return '<tr>'+cells+'</tr>';
+  }).join('');
+
+  /* ----- summary ----- */
+  let sum = `<table class="d-sum"><colgroup><col class="col-remark"><col class="col-lab"><col style="width:18%"></colgroup>`;
+  const remark = `<td class="remark" rowspan="3"><div class="h">หมายเหตุ /Remarks</div><div style="white-space:pre-line">${esc(val('remarks'))}</div></td>`;
+  sum += `<tr>${remark}<td class="slabel">ราคาสุทธิสินค้าที่เสียภาษี (บาท) / Pre-VAT Amount</td><td class="sval">${fmt(T.pretax)}</td></tr>`;
+  sum += `<tr><td class="slabel">ภาษีมูลค่าเพิ่ม (บาท) / VAT</td><td class="sval">${fmt(T.vat)}</td></tr>`;
+  sum += `<tr><td class="slabel bold">จำนวนเงินรวมทั้งสิ้น (บาท) / Grand Total</td><td class="sval bold">${fmt(T.grand)}</td></tr>`;
+  sum += `<tr><td class="band">จำนวนเงินรวมทั้งสิ้น</td><td class="band baht" colspan="2">${esc(bahtText(T.grand))}</td></tr>`;
+  if(showWht){
+    sum += `<tr><td style="border:none;background:#fff"></td><td class="slabel">ภาษีถูกหัก ณ ที่จ่าย (บาท) / Withheld Tax</td><td class="sval">${fmt(T.wht)}</td></tr>`;
+    sum += `<tr><td style="border:none;background:#fff"></td><td class="slabel bold">จำนวนเงินที่ต้องชำระ (บาท) / Net to Pay</td><td class="sval bold">${fmt(T.net)}</td></tr>`;
+  }
+  sum += `</table>`;
+
+  /* ----- payment ----- */
+  const ps=val('payStyle');
+  let pay='';
+  if(ps==='bank'){
+    pay = `<div class="d-pay"><div class="h">การชำระเงิน / Payment</div>
+      <table class="pay-tbl"><tr><th>ธนาคาร</th><th>ชื่อบัญชี</th><th>เลขที่บัญชี</th></tr>
+      <tr><td>• ${esc(val('bkBank'))}</td><td>${esc(val('bkName'))}</td><td>${esc(val('bkNo'))}</td></tr></table></div>`;
+  }else if(ps==='lines'){
+    const dots='.'.repeat(60);
+    let L='';
+    [['pl1lab','pl1txt'],['pl2lab','pl2txt']].forEach(([la,tx])=>{
+      const lab=val(la).trim(); if(!lab) return;
+      L += `<div class="pay-line"><span class="box">✔</span><div class="tx"><b>${esc(lab)}:</b> ${esc(val(tx))}</div></div>
+            <div class="pay-sub">ข้อมูลเพิ่มเติม <span class="dot">${dots}</span></div>`;
+    });
+    pay = `<div class="d-pay"><div class="h">การชำระเงิน / Payment</div>${L}</div>`;
+  }else{
+    pay = `<div class="d-pay"></div>`;
+  }
+
+  /* ----- signatures ----- */
+  const rightDate = val('sgRightDate').trim();
+  const rightDateHTML = rightDate? esc(rightDate) : '<span class="dot">.............................</span>';
+  const sign = `<div class="d-sign">
+      <div class="sign-col"><div class="h">${esc(val('sgLeftLab'))}</div>${stampLogo()}<div class="dt">วันที่ / Date ${esc(val('sgStampDate'))}</div></div>
+      <div class="sign-col"><div class="h">${esc(val('sgRightLab'))}</div><div class="stamp"></div><div class="ln">..................................................</div><div class="dt">วันที่ / Date ${rightDateHTML}</div></div>
+    </div>`;
+
+  const watermark = chk('paid') ? `<div class="d-watermark"><span>ชำระแล้ว</span></div>` : '';
+
+  /* ----- assemble ----- */
+  document.getElementById('page').innerHTML = `
+    ${watermark}
+    <div class="d-head">
+      <div class="d-title"><div class="th">${esc(ttl.th)}</div><div class="en">${esc(ttl.en)} <span class="copy">( ${esc(val('copy'))} )</span></div></div>
+      <div class="d-logo">${logoHTML()}</div>
+    </div>
+
+    <div class="d-info">
+      <div class="cell l top">
+        <div class="kv stack"><div class="k">ผู้ออก<br><span class="en">Issuer</span></div>
+          <div class="v"><div style="font-weight:400">${esc(val('isName'))}</div><div style="white-space:pre-line">${esc(val('isAddr'))}</div></div></div>
+      </div>
+      <div class="cell r top">
+        <div class="lines">
+          <div class="between"><span><b>เลขผู้เสียภาษี</b> <span class="en">/ Tax ID</span></span><span>${esc(val('isTax'))}</span></div>
+          <div class="between"><span>T: ${esc(val('isTel'))}</span><span>E: ${esc(val('isEmail'))}</span></div>
+          <div>W: ${esc(val('isWeb'))}</div>
+        </div>
+      </div>
+
+      <div class="cell l">
+        <div class="kv"><div class="k">ลูกค้า <span class="en">/ Customer</span></div><div class="v">${esc(val('cuName'))}</div></div>
+        <div class="kv"><div class="k">ที่อยู่ <span class="en">/ Address</span></div><div class="v" style="white-space:pre-line">${esc(val('cuAddr'))}</div></div>
+        <div class="kv"><div class="k">เลขผู้เสียภาษี<span class="en">/ Tax ID</span></div><div class="v between"><span>${esc(val('cuTax'))}</span><span>E: ${esc(val('cuEmail'))}</span></div></div>
+        <div class="kv"><div class="k">ผู้ติดต่อ<span class="en">/ Attention</span></div><div class="v between"><span>${esc(val('cuAttn'))}</span><span>T: ${esc(val('cuTel'))}</span></div></div>
+      </div>
+      <div class="cell r">${metaRows}</div>
+    </div>
+
+    <div class="d-tblbox" style="--colgrid:${colgrid}">
+      <table class="d-tbl"><thead>${thead}</thead><tbody>${tbody}</tbody></table>
+      <div class="d-fill">${cols.map(()=>'<div></div>').join('')}</div>
+    </div>
+
+    ${sum}
+
+    <div class="d-foot">${pay}${sign}</div>
+
+    <div class="d-pageno">หน้า 1/1</div>
+  `;
+
+  /* calc box in editor */
+  let cb=`<div><span>ราคาก่อนภาษี</span><b>${fmt(T.pretax)}</b></div>
+          <div><span>VAT</span><b>${fmt(T.vat)}</b></div>
+          <div><span>รวมทั้งสิ้น</span><b>${fmt(T.grand)}</b></div>`;
+  if(showWht) cb+=`<div><span>หัก ณ ที่จ่าย</span><b>${fmt(T.wht)}</b></div><div><span>ยอดที่ต้องชำระ</span><b>${fmt(T.net)}</b></div>`;
+  cb+=`<div style="margin-top:4px;border-top:1px solid var(--border);padding-top:4px"><span>ตัวอักษร</span></div><div style="display:block;font-weight:700">${esc(bahtText(showWht?T.grand:T.grand))}</div>`;
+  document.getElementById('calcBox').innerHTML=cb;
+
+  saveState();
+}
+
+/* ============ Samples ============ */
+const SAMPLES={
+  base:{ isName:'บริษัท อาวล์ เดย์ เฮ้าส์ จำกัด (สำนักงานใหญ่)',
+    isAddr:'เลขที่ 114/104 หมู่บ้าน กาญจน์กนกวิลล์ 5 น้ำโฮม หมู่ที่ 12 ตำบลสันกำแพง อำเภอสันกำแพง จังหวัดเชียงใหม่ 50130',
+    isTax:'0505563011424', isTel:'0924552450', isEmail:'owldayhouse@gmail.com', isWeb:'https://www.owldayhouse.com/' },
+  qo:{ docType:'quotation', copy:'ต้นฉบับ / original',
+    cuName:'บริษัท เจ็ทแพ็ค ครีเอชั่น จำกัด (สำนักงานใหญ่)',
+    cuAddr:'เลขที่ 101 ซอย สมบูรณ์พัฒนา 3 แขวงรัชดาภิเษก เขตดินแดง กรุงเทพมหานคร 10400',
+    cuTax:'0105561117300', cuEmail:'admin@jetpackmotion.com', cuAttn:'ธัชนนท์ คิดอ่าน', cuTel:'-',
+    mNo:'QO-20240500001', mDate:'20/05/2024', mValid:'27/05/2024', mDue:'', mRef:'-',
+    showUnit:true, vatRate:7, whtRate:3, showWht:false,
+    remarks:'1. เมื่อลูกค้ายอมรับขอบเขตจะไม่สามารถเปลี่ยนแปลงแก้ไขโครงสร้างหรือการทำงานได้\n2. ระยะเวลาการทำงานไม่รวมวันหยุดและระยะเวลารอความคิดเห็นจากผู้ว่าจ้าง',
+    payStyle:'none',
+    sgLeftLab:'อนุมัติโดย / Approved by', sgRightLab:'ยอมรับใบเสนอราคา / Accepted by', sgStampDate:'20/05/2024', sgRightDate:'',
+    paid:false, logoUrl:'',
+    items:[{id:'P00006', qty:1, unit:'ปี', price:86000,
+      desc:'บริการบำรุงรักษา :\nSupport SDK iOS\n1. แก้ไขปัญหา Missing API declaration\n1.1. NSPrivacyAccessedAPICategoryDiskSpace\n1.2. NSPrivacyAccessedAPICategoryFileTimestamp\n1.3. NSPrivacyAccessedAPICategoryUserDefaults\n1.4. NSPrivacyAccessedAPICategorySystemBootTim\n2. แอปพลิเคชันที่บำรุงรักษา\n2.1. Fan Delivery (iOS)\n2.2. Fan Laundry (iOS)'}] },
+  iv:{ docType:'invoice', copy:'ต้นฉบับ / original',
+    cuName:'บริษัท โพสต์.เมลล์.บอกซ์ (ประเทศไทย) จำกัด (สาขาที่ 00002)',
+    cuAddr:'เลขที่ 79 ศูนย์การค้าเซ็นทรัลพลาซ่า รัชดา- พระราม 3 ชั้นที่ บี2 ห้อง พีบี 2/1 แขวงช่องนนทรี เขตยานนาวา กรุงเทพมหานคร 10120',
+    cuTax:'0105543088344', cuEmail:'-', cuAttn:'-', cuTel:'-',
+    mNo:'IV-20240400001', mDate:'17/04/2024', mValid:'', mDue:'24/04/2024', mRef:'-',
+    showUnit:false, vatRate:7, whtRate:3, showWht:true,
+    remarks:'-',
+    payStyle:'bank', bkBank:'กสิกรไทย', bkName:'อาวล์ เดย์เฮ้าส์', bkNo:'0741957671',
+    sgLeftLab:'อนุมัติโดย / Approved by', sgRightLab:'ผู้รับใบแจ้งหนี้ / Accepted by', sgStampDate:'17/04/2024', sgRightDate:'',
+    paid:false, logoUrl:'',
+    items:[{id:'P00010', qty:1, unit:'', price:3220, desc:'บริการจัดหาโฮสและโดเมน :\npostmailbox.co.th (16/04/2024 - 15/04/2025)'}] },
+  rt:{ docType:'receipt', copy:'ต้นฉบับ / original',
+    cuName:'บริษัท โพสต์.เมลล์.บอกซ์ (ประเทศไทย) จำกัด (สาขาที่ 00002)',
+    cuAddr:'เลขที่ 79 ศูนย์การค้าเซ็นทรัลพลาซ่า รัชดา- พระราม 3 ชั้นที่ บี2 ห้อง พีบี 2/1 แขวงช่องนนทรี เขตยานนาวา กรุงเทพมหานคร 10120',
+    cuTax:'0105543088344', cuEmail:'-', cuAttn:'-', cuTel:'-',
+    mNo:'RT-20240400001', mDate:'17/04/2024', mValid:'', mDue:'', mRef:'IV-20240400001',
+    showUnit:false, vatRate:7, whtRate:3, showWht:false,
+    remarks:'-',
+    payStyle:'lines', pl1lab:'ธนาคาร', pl1txt:'กสิกรไทย-0741957671 วันที่ 17/04/2024 ยอดรวม 3,348.80 บาท',
+    pl2lab:'หัก ณ ที่จ่าย', pl2txt:'# WTR-20240400001 ยอดรวม 96.60 บาท',
+    sgLeftLab:'อนุมัติโดย / Approved by', sgRightLab:'รับชำระ / Received by', sgStampDate:'17/04/2024', sgRightDate:'',
+    paid:true, logoUrl:'',
+    items:[{id:'P00010', qty:1, unit:'', price:3220, desc:'บริการจัดหาโฮสและโดเมน :\npostmailbox.co.th (16/04/2024 - 15/04/2025)'}] }
+};
+
+function setIf(id,v){ const e=document.getElementById(id); if(e==null) return; if(e.type==='checkbox') e.checked=!!v; else e.value=(v==null?'':v); }
+function applyData(d){
+  FIELDS.forEach(f=>{ if(f in d) setIf(f,d[f]); });
+  if(d.items){ items = d.items.map(itemTemplate); renderItems(); }
+}
+function loadSample(key){
+  // reset payment/bank fields that may carry over
+  ['bkBank','bkName','bkNo','pl1lab','pl1txt','pl2lab','pl2txt'].forEach(id=>setIf(id,''));
+  applyData(SAMPLES.base);
+  applyData(SAMPLES[key]);
+  update();
+}
+function clearForm(){
+  applyData(SAMPLES.base);
+  ['copy'].forEach(()=>setIf('copy','ต้นฉบับ / original'));
+  ['cuName','cuAddr','cuTax','cuEmail','cuAttn','cuTel','mNo','mDate','mValid','mDue','mRef','remarks','bkBank','bkName','bkNo','pl1lab','pl1txt','pl2lab','pl2txt','sgStampDate','sgRightDate','logoUrl'].forEach(id=>setIf(id,''));
+  setIf('cuTel','-'); setIf('cuAttn','-'); setIf('mRef','-');
+  items=[itemTemplate({qty:1,price:0})]; renderItems();
+  onTypeChange();
+}
+
+/* init — restore the last autosaved draft, else start from the quotation sample */
+const _saved=loadState();
+if(_saved){ applyData(_saved); update(); }
+else { loadSample('qo'); }
+</script>
+</body>
+</html>
