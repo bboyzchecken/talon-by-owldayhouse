@@ -673,20 +673,24 @@ function paginate(P){
   // Measure the fixed "chrome" (header + info + column header + footer) and the
   // tail block ONCE, then pack rows against a fixed pixel budget. This is more
   // reliable than measuring the whole page (the flex filler masks overflow).
-  const mp = shell(true); mp.style.visibility = 'hidden'; wrap.appendChild(mp);
-  const cs = getComputedStyle(mp);
-  const A4_H = mp.getBoundingClientRect().height;
-  const H = el => el ? el.getBoundingClientRect().height : 0;
-  const headH   = H(mp.querySelector('.d-head')) + 6;   // + .d-head margin-bottom
-  const infoH   = H(mp.querySelector('.d-info'));
-  const theadH  = H(mp.querySelector('.d-tbl thead'));
-  const pagenoH = H(mp.querySelector('.d-pageno'));
-  const tailH   = H(mp.querySelector('.d-sum')) + H(mp.querySelector('.d-foot')) + 14; // + .d-foot margin-top
-  wrap.removeChild(mp);
-  const SAFE = 8;                              // cushion against sub-pixel rounding
-  const chrome = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom) + headH + infoH + theadH + pagenoH + SAFE;
-  const normalBudget = A4_H - chrome;
-  const tailBudget   = A4_H - chrome - tailH;
+  // Measure the fixed overhead empirically: collapse min-height so a row-less
+  // page reports its true content height (header+info+column-header+footer, plus
+  // the tail on a tail page). Summing pieces by hand drifted by a few px.
+  const measureShell = withTail => {
+    const el = shell(withTail); el.style.visibility = 'hidden';
+    wrap.appendChild(el);
+    const full = el.getBoundingClientRect().height;   // with min-height:297mm
+    el.style.minHeight = '0';
+    const bare = el.getBoundingClientRect().height;    // overhead with no rows
+    wrap.removeChild(el);
+    return { full, bare };
+  };
+  const norm = measureShell(false);
+  const tail = measureShell(true);
+  const A4_H = norm.full;
+  const SAFE = 10;                             // cushion against sub-pixel rounding
+  const normalBudget = A4_H - norm.bare - SAFE;
+  const tailBudget   = A4_H - tail.bare - SAFE;
 
   function fill(tailIdx){
     wrap.innerHTML = '';
