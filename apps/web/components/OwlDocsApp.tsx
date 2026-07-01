@@ -97,7 +97,7 @@ export function OwlDocsApp() {
               setError(false);
             }}
             autoComplete="off"
-            className="w-full rounded-lg border border-line bg-white px-3 py-2 font-body text-navy outline-none focus:border-gold"
+            className="w-full rounded-lg border border-line bg-white px-3 py-2 text-base font-body text-navy outline-none focus:border-gold"
           />
         </label>
 

@@ -175,9 +175,26 @@
     body{background:#fff}
     .editor,.brandbar,.hint{display:none !important}
     .app{display:block}
-    .preview{padding:0; display:block}
+    .preview{padding:0; display:block; overflow:visible}
     .pagewrap{filter:none}
-    .page{margin:0; box-shadow:none}
+    .page{margin:0; box-shadow:none; zoom:1 !important; transform:none !important}
+  }
+
+  /* ---------- Mobile (urgent editing on a phone) ---------- */
+  /* `screen and` so these never leak into print (A4 print canvas is ~794px wide). */
+  @media screen and (max-width:860px){
+    .app{display:block}
+    .editor{position:static; height:auto; width:100%; overflow:visible;
+      border-right:none; border-bottom:1px solid var(--border)}
+    .ed-pad{padding:12px 12px 40px}
+    .row2,.row3{grid-template-columns:1fr}
+    /* 16px inputs stop iOS from auto-zooming the page on focus */
+    .f input,.f textarea,.f select{font-size:16px}
+    .btn{padding:9px 12px; font-size:13px}
+    .btn.sample{font-size:12px}
+    .preview{padding:12px; display:block; overflow-x:auto}
+    .pagewrap{margin:0 auto}
+    .hint{margin:0 0 12px; font-size:12px}
   }
 </style>
 </head>
@@ -795,10 +812,30 @@ function clearForm(){
   onTypeChange();
 }
 
+/* ---------- Mobile: scale the A4 page to fit the viewport width ---------- */
+/* Uses `zoom` (reflows, unlike transform) so the shrunk page takes no extra
+   space. Print resets it via @media print { .page{ zoom:1 !important } }. */
+function fitPreview(){
+  const page=document.getElementById('page');
+  const preview=document.querySelector('.preview');
+  if(!page||!preview) return;
+  if(window.matchMedia('(max-width:860px)').matches){
+    const A4=794;                          // 210mm @ 96dpi
+    const avail=preview.clientWidth-24;    // minus .preview mobile padding
+    page.style.zoom = Math.min(1, avail/A4);
+  } else {
+    page.style.zoom = '';
+  }
+}
+window.addEventListener('resize', fitPreview);
+window.addEventListener('orientationchange', fitPreview);
+try{ window.matchMedia('(max-width:860px)').addEventListener('change', fitPreview); }catch(e){}
+
 /* init — restore the last autosaved draft, else start from the quotation sample */
 const _saved=loadState();
 if(_saved){ applyData(_saved); update(); }
 else { loadSample('qo'); }
+fitPreview();
 </script>
 </body>
 </html>
