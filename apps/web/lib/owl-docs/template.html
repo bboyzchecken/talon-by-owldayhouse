@@ -72,7 +72,7 @@
 
   /* ---------- Preview area ---------- */
   .preview{padding:26px; display:flex; justify-content:center; align-items:flex-start}
-  .pagewrap{filter:drop-shadow(0 6px 24px rgba(40,37,76,.18))}
+  .pagewrap{display:flex; flex-direction:column; align-items:center; gap:16px}
 
   /* ============================================================
      DOCUMENT  (A4) — faithful reproduction
@@ -82,6 +82,7 @@
     padding:13mm 15mm 11mm; box-sizing:border-box;
     font-family:var(--doc-font); font-size:11px; line-height:1.28;
     position:relative; display:flex; flex-direction:column;
+    box-shadow:0 6px 24px rgba(40,37,76,.18);
   }
   .page *{box-sizing:border-box}
 
@@ -176,8 +177,9 @@
     .editor,.brandbar,.hint{display:none !important}
     .app{display:block}
     .preview{padding:0; display:block; overflow:visible}
-    .pagewrap{filter:none}
-    .page{margin:0; box-shadow:none; zoom:1 !important; transform:none !important}
+    .pagewrap{display:block; gap:0; zoom:1 !important}
+    .page{margin:0; box-shadow:none; zoom:1 !important; transform:none !important; break-inside:avoid}
+    .page + .page{break-before:page}
   }
 
   /* ---------- Mobile (urgent editing on a phone) ---------- */
@@ -348,7 +350,7 @@
       <div class="hint">
         <b>วิธีให้ออกมาตรงเป๊ะเป็น PDF:</b> กด <b>พิมพ์ / บันทึก PDF</b> → เลือกเครื่องพิมพ์เป็น <b>Save as PDF</b> → ตั้งกระดาษ <b>A4</b> และ <b>Margins = None</b> (ระยะขอบ = ไม่มี) → Save. &nbsp;ปุ่ม "ตัวอย่าง" ด้านซ้ายโหลดข้อมูลจากเอกสารต้นแบบทั้ง 3 ใบให้ดูเทียบได้ทันที
       </div>
-      <div class="pagewrap"><div class="page" id="page"></div></div>
+      <div class="pagewrap" id="pagewrap"></div>
     </div>
   </main>
 </div>
@@ -535,13 +537,8 @@ function renderDoc(){
     ? [['รหัส','ID No.','12%'],['คำอธิบาย','Description',''],['จำนวน','Quantity','9%'],['หน่วย','Unit','8%'],['ราคาต่อหน่วย','Unit Price','15%'],['มูลค่าก่อนภาษี','Pre-Tax Amount','16%']]
     : [['รหัส','ID No.','12%'],['คำอธิบาย','Description',''],['จำนวน','Quantity','11%'],['ราคาต่อหน่วย','Unit Price','17%'],['มูลค่าก่อนภาษี','Pre-Tax Amount','18%']];
   const colgrid = cols.map(c=> c[2]||'1fr').join(' ');
+  const fillCells = cols.map(()=>'<div></div>').join('');
   let thead='<tr>'+cols.map(c=>`<th style="${c[2]?`width:${c[2]}`:''}">${c[0]}<span class="en">${c[1]}</span></th>`).join('')+'</tr>';
-  let tbody = items.map(it=>{
-    let cells = `<td class="ctr">${esc(it.id)}</td><td class="desc">${esc(it.desc)}</td><td class="num">${fmt(it.qty)}</td>`;
-    if(showUnit) cells += `<td class="ctr">${esc(it.unit)}</td>`;
-    cells += `<td class="num">${fmt(it.price)}</td><td class="num">${fmt(it.qty*it.price)}</td>`;
-    return '<tr>'+cells+'</tr>';
-  }).join('');
 
   /* ----- summary ----- */
   let sum = `<table class="d-sum"><colgroup><col class="col-remark"><col class="col-lab"><col style="width:18%"></colgroup>`;
@@ -586,14 +583,14 @@ function renderDoc(){
 
   const watermark = chk('paid') ? `<div class="d-watermark"><span>ชำระแล้ว</span></div>` : '';
 
-  /* ----- assemble ----- */
-  document.getElementById('page').innerHTML = `
-    ${watermark}
+  /* ----- reusable page pieces (header + info repeat on every page) ----- */
+  const headHTML = `
     <div class="d-head">
       <div class="d-title"><div class="th">${esc(ttl.th)}</div><div class="en">${esc(ttl.en)} <span class="copy">( ${esc(val('copy'))} )</span></div></div>
       <div class="d-logo">${logoHTML()}</div>
-    </div>
+    </div>`;
 
+  const infoHTML = `
     <div class="d-info">
       <div class="cell l top">
         <div class="kv stack"><div class="k">ผู้ออก<br><span class="en">Issuer</span></div>
@@ -614,19 +611,12 @@ function renderDoc(){
         <div class="kv"><div class="k">ผู้ติดต่อ<span class="en">/ Attention</span></div><div class="v between"><span>${esc(val('cuAttn'))}</span><span>T: ${esc(val('cuTel'))}</span></div></div>
       </div>
       <div class="cell r">${metaRows}</div>
-    </div>
+    </div>`;
 
-    <div class="d-tblbox" style="--colgrid:${colgrid}">
-      <table class="d-tbl"><thead>${thead}</thead><tbody>${tbody}</tbody></table>
-      <div class="d-fill">${cols.map(()=>'<div></div>').join('')}</div>
-    </div>
+  /* tail (summary + payment + signatures) shows once, on the last page */
+  const tailHTML = sum + `<div class="d-foot">${pay}${sign}</div>`;
 
-    ${sum}
-
-    <div class="d-foot">${pay}${sign}</div>
-
-    <div class="d-pageno">หน้า 1/1</div>
-  `;
+  paginate({ watermarkHTML:watermark, headHTML, infoHTML, colgrid, thead, fillCells, tailHTML, showUnit });
 
   /* calc box in editor */
   let cb=`<div><span>ราคาก่อนภาษี</span><b>${fmt(T.pretax)}</b></div>
@@ -638,6 +628,115 @@ function renderDoc(){
 
   renderEmail();
   saveState();
+  fitPreview();
+}
+
+/* ============ Multi-page pagination (A4 sheets, like the reference PDF) ============ */
+/* Splits a document across as many A4 .page sheets as needed:
+   - header + customer/issuer info + table column header repeat on every page
+   - a long description flows across the page break (continuation rows carry no
+     ID / qty / price — only the remaining text)
+   - the summary + payment + signatures block lands on the last page only
+   - each page shows "หน้า X/N".
+   Works by measuring real rendered heights, so wrapping is exact. */
+function splitDescLines(desc){
+  const s = String(desc==null?'':desc).split('\n');
+  return s.length ? s : [''];
+}
+function itemCells(it, descText, isFirst, showUnit){
+  const id    = isFirst ? esc(it.id) : '';
+  const qty   = isFirst ? fmt(it.qty) : '';
+  const unit  = isFirst ? esc(it.unit) : '';
+  const price = isFirst ? fmt(it.price) : '';
+  const amt   = isFirst ? fmt(it.qty*it.price) : '';
+  let c = `<td class="ctr">${id}</td><td class="desc">${esc(descText)}</td><td class="num">${qty}</td>`;
+  if(showUnit) c += `<td class="ctr">${unit}</td>`;
+  c += `<td class="num">${price}</td><td class="num">${amt}</td>`;
+  return c;
+}
+function paginate(P){
+  const wrap = document.getElementById('pagewrap');
+  wrap.style.zoom = '';                       // measure at 1:1 — fitPreview re-applies zoom after
+  wrap.innerHTML = '';
+
+  function shell(withTail){
+    const p = document.createElement('div');
+    p.className = 'page';
+    p.innerHTML =
+      (P.watermarkHTML || '') + P.headHTML + P.infoHTML +
+      `<div class="d-tblbox" style="--colgrid:${P.colgrid}"><table class="d-tbl"><thead>${P.thead}</thead><tbody></tbody></table><div class="d-fill">${P.fillCells}</div></div>` +
+      (withTail ? P.tailHTML : '') +
+      `<div class="d-pageno"></div>`;
+    return p;
+  }
+
+  // Measure the fixed "chrome" (header + info + column header + footer) and the
+  // tail block ONCE, then pack rows against a fixed pixel budget. This is more
+  // reliable than measuring the whole page (the flex filler masks overflow).
+  const mp = shell(true); mp.style.visibility = 'hidden'; wrap.appendChild(mp);
+  const cs = getComputedStyle(mp);
+  const A4_H = mp.getBoundingClientRect().height;
+  const H = el => el ? el.getBoundingClientRect().height : 0;
+  const headH   = H(mp.querySelector('.d-head')) + 6;   // + .d-head margin-bottom
+  const infoH   = H(mp.querySelector('.d-info'));
+  const theadH  = H(mp.querySelector('.d-tbl thead'));
+  const pagenoH = H(mp.querySelector('.d-pageno'));
+  const tailH   = H(mp.querySelector('.d-sum')) + H(mp.querySelector('.d-foot')) + 14; // + .d-foot margin-top
+  wrap.removeChild(mp);
+  const SAFE = 8;                              // cushion against sub-pixel rounding
+  const chrome = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom) + headH + infoH + theadH + pagenoH + SAFE;
+  const normalBudget = A4_H - chrome;
+  const tailBudget   = A4_H - chrome - tailH;
+
+  function fill(tailIdx){
+    wrap.innerHTML = '';
+    const pages = [];
+    let idx = 0, lastRowIdx = -1;
+    let page = shell(idx === tailIdx); wrap.appendChild(page); pages.push(page);
+    let tbody = page.querySelector('tbody');
+    let budget = idx === tailIdx ? tailBudget : normalBudget;
+    const fits = () => tbody.getBoundingClientRect().height <= budget;
+    const next = () => { idx++; page = shell(idx === tailIdx); wrap.appendChild(page); pages.push(page); tbody = page.querySelector('tbody'); budget = idx === tailIdx ? tailBudget : normalBudget; };
+
+    items.forEach(it => {
+      const lines = splitDescLines(it.desc);
+      let cursor = 0, first = true;
+      while(cursor < lines.length){
+        const tr = document.createElement('tr');
+        tr.innerHTML = itemCells(it, '', first, P.showUnit);
+        tbody.appendChild(tr);
+        const desc = tr.querySelector('.desc');
+        const buf = [];
+        while(cursor + buf.length < lines.length){
+          buf.push(lines[cursor + buf.length]);
+          desc.textContent = buf.join('\n');
+          if(!fits()){ buf.pop(); desc.textContent = buf.join('\n'); break; }
+        }
+        if(buf.length === 0){
+          tbody.removeChild(tr);
+          if(tbody.children.length > 0){ next(); continue; }   // page already has rows -> retry on a fresh page
+          // fresh page and not even one line fits -> force one line so we never loop forever
+          const f = document.createElement('tr');
+          f.innerHTML = itemCells(it, lines[cursor], first, P.showUnit);
+          tbody.appendChild(f); lastRowIdx = idx; cursor += 1; first = false;
+          if(cursor < lines.length) next();
+          continue;
+        }
+        lastRowIdx = idx; cursor += buf.length; first = false;
+        if(cursor < lines.length) next();       // remaining lines continue on the next page
+      }
+    });
+    while(pages.length - 1 < tailIdx) next();    // ensure the tail page exists (rows ended early)
+    return { pages, lastRowIdx };
+  }
+
+  // Settle which page carries the tail: it must be the last page. Reserving tail
+  // space can push a row onto a new page, so iterate until stable.
+  let tailIdx = 0, r = fill(0), guard = 0;
+  while(r.lastRowIdx > tailIdx && guard++ < 80){ tailIdx = r.lastRowIdx; r = fill(tailIdx); }
+
+  const N = r.pages.length;
+  r.pages.forEach((p, i) => { p.querySelector('.d-pageno').textContent = `หน้า ${i+1}/${N}`; });
 }
 
 /* ============ Email (compose + copy + mailto) ============ */
@@ -816,15 +915,15 @@ function clearForm(){
 /* Uses `zoom` (reflows, unlike transform) so the shrunk page takes no extra
    space. Print resets it via @media print { .page{ zoom:1 !important } }. */
 function fitPreview(){
-  const page=document.getElementById('page');
+  const wrap=document.getElementById('pagewrap');
   const preview=document.querySelector('.preview');
-  if(!page||!preview) return;
+  if(!wrap||!preview) return;
   if(window.matchMedia('(max-width:860px)').matches){
     const A4=794;                          // 210mm @ 96dpi
     const avail=preview.clientWidth-24;    // minus .preview mobile padding
-    page.style.zoom = Math.min(1, avail/A4);
+    wrap.style.zoom = Math.min(1, avail/A4);
   } else {
-    page.style.zoom = '';
+    wrap.style.zoom = '';
   }
 }
 window.addEventListener('resize', fitPreview);
