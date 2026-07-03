@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ข้อเสนอโครงการ — ระบบออกเอกสารราชการอิเล็กทรอนิกส์ (UP Docs) · Owl Day House</title>
+<!--
+  เอกสารเสนอราคา/นำเสนอ สำหรับ คณะบริหารธุรกิจและนิเทศศาสตร์ ม.พะเยา
+  วิธีใช้: เปิดไฟล์นี้ในเบราว์เซอร์ → Ctrl/Cmd+P → บันทึกเป็น PDF (A4) → ส่งให้เจ้าหน้าที่เข้าที่ประชุม
+  ตัวเลขราคา/ROI เป็นค่าตั้งต้น ปรับได้ตามที่ตกลง
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#28254C; --navy-deep:#1B1938; --gold:#E9A41B; --gold-soft:#FBEFD3; --paper:#FBF8F1;
+  --ink:#2b2942; --muted:#6a6785; --line:#e4e1d6;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:#e9e7df;color:var(--ink);font-family:'IBM Plex Sans Thai',sans-serif;font-size:15px;line-height:1.6}
+.display{font-family:'Space Grotesk','IBM Plex Sans Thai',sans-serif}
+
+/* กระดาษ A4 */
+.page{width:21cm;min-height:29.7cm;margin:14px auto;background:#fff;padding:1.8cm 1.9cm;box-shadow:0 6px 26px rgba(40,37,76,.18);position:relative}
+
+/* ปก */
+.cover{background:linear-gradient(150deg,var(--navy-deep),var(--navy));color:#fff}
+.brandbar{display:flex;align-items:center;gap:12px;border-bottom:2px solid var(--gold);padding-bottom:14px}
+.owl{width:38px;height:38px;flex:0 0 auto}
+.brandname{font-family:'Space Grotesk',sans-serif;font-weight:700;letter-spacing:.14em;font-size:15px}
+.brandname small{display:block;font-weight:500;letter-spacing:.28em;font-size:9px;opacity:.75;margin-top:2px}
+.cover .kicker{color:var(--gold);font-weight:600;letter-spacing:.05em;margin-top:5.5cm;font-size:15px}
+.cover h1{font-family:'Space Grotesk','IBM Plex Sans Thai',sans-serif;font-size:33px;line-height:1.25;margin:10px 0 4px;font-weight:700}
+.cover h1 .th{font-family:'IBM Plex Sans Thai',sans-serif}
+.cover .sub{font-size:17px;opacity:.9;margin-top:6px}
+.cover .to{margin-top:2.4cm;font-size:14px;opacity:.85;line-height:1.9}
+.cover .to b{color:#fff}
+.cover .foot{position:absolute;left:1.9cm;right:1.9cm;bottom:1.6cm;display:flex;justify-content:space-between;font-size:12px;opacity:.8;border-top:1px solid rgba(255,255,255,.25);padding-top:12px}
+
+/* เนื้อหา */
+h2.sec{font-family:'Space Grotesk','IBM Plex Sans Thai',sans-serif;color:var(--navy);font-size:20px;margin:0 0 4px;display:flex;align-items:baseline;gap:10px}
+h2.sec .n{color:var(--gold);font-weight:700}
+.sec-lead{color:var(--muted);margin:0 0 14px;font-size:14px}
+.block{margin-bottom:26px}
+p{margin:0 0 10px}
+ul.clean{list-style:none;padding:0;margin:0}
+ul.clean li{position:relative;padding-left:24px;margin-bottom:8px}
+ul.clean li::before{content:'';position:absolute;left:4px;top:9px;width:8px;height:8px;background:var(--gold);border-radius:2px;transform:rotate(45deg)}
+.callout{background:var(--gold-soft);border-left:4px solid var(--gold);border-radius:0 8px 8px 0;padding:12px 16px;margin:14px 0;font-size:14px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.card{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:var(--paper)}
+.card h3{margin:0 0 6px;font-size:15px;color:var(--navy)}
+.card p{font-size:13.5px;color:var(--muted);margin:0}
+
+table{width:100%;border-collapse:collapse;margin:10px 0;font-size:13.5px}
+th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+th{background:var(--navy);color:#fff;font-weight:600;font-family:'IBM Plex Sans Thai',sans-serif}
+tbody tr:nth-child(even){background:#faf8f2}
+.tier th{background:var(--navy-deep)}
+.tier .price{font-family:'Space Grotesk',sans-serif;font-weight:700;color:var(--navy);white-space:nowrap}
+.tier .free{color:#2e7d32}
+.yes{color:#2e7d32;font-weight:700}
+.no{color:#b23b3b}
+.roi-num{font-family:'Space Grotesk',sans-serif;font-weight:700;color:var(--navy)}
+
+.big-roi{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0}
+.big-roi .stat{background:var(--navy);color:#fff;border-radius:12px;padding:16px;text-align:center}
+.big-roi .stat .v{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:700;color:var(--gold)}
+.big-roi .stat .l{font-size:12px;opacity:.85;margin-top:4px}
+
+.steps{counter-reset:s;list-style:none;padding:0;margin:0}
+.steps li{counter-increment:s;position:relative;padding:6px 0 6px 40px;margin-bottom:4px}
+.steps li::before{content:counter(s);position:absolute;left:0;top:6px;width:26px;height:26px;background:var(--gold);color:var(--navy-deep);border-radius:50%;font-family:'Space Grotesk',sans-serif;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:14px}
+.contact{background:var(--navy);color:#fff;border-radius:14px;padding:18px 20px;margin-top:8px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.contact .l{font-size:12px;opacity:.7;letter-spacing:.04em}
+.contact .v{font-size:15px;font-weight:600}
+.note{font-size:11.5px;color:var(--muted);font-style:italic;margin-top:6px}
+.pagenum{position:absolute;right:1.9cm;bottom:1cm;font-size:11px;color:var(--muted)}
+
+@media print{
+  body{background:#fff}
+  .page{margin:0;box-shadow:none;width:auto;min-height:auto;padding:1.6cm 1.7cm;page-break-after:always}
+  .page:last-child{page-break-after:auto}
+  @page{size:A4;margin:0}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════ ปก ══════════ -->
+<section class="page cover">
+  <div class="brandbar">
+    <svg class="owl" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <circle cx="50" cy="50" r="46" stroke="#E9A41B" stroke-width="4"/>
+      <circle cx="36" cy="44" r="12" stroke="#E9A41B" stroke-width="4"/>
+      <circle cx="64" cy="44" r="12" stroke="#E9A41B" stroke-width="4"/>
+      <circle cx="36" cy="44" r="3.5" fill="#E9A41B"/>
+      <circle cx="64" cy="44" r="3.5" fill="#E9A41B"/>
+      <path d="M50 58 l6 9 h-12 z" fill="#E9A41B"/>
+    </svg>
+    <div class="brandname">OWL DAY HOUSE<small>THE SOFTWARE HOUSE · CHIANG MAI</small></div>
+  </div>
+
+  <div class="kicker">ข้อเสนอโครงการ / Project Proposal</div>
+  <h1><span class="th">ระบบออกเอกสารราชการ<br>อิเล็กทรอนิกส์</span> — UP Docs</h1>
+  <div class="sub">ออกหนังสือฝึกงาน · สหกิจศึกษา · CWIE ตรงระเบียบ ในคลิกเดียว</div>
+
+  <div class="to">
+    <b>จัดทำเสนอ</b><br>
+    คณะบริหารธุรกิจและนิเทศศาสตร์ มหาวิทยาลัยพะเยา<br><br>
+    <b>โดย</b> บริษัท อาวล์ เดย์ เฮ้าส์ จำกัด (Owl Day House Co., Ltd.)
+  </div>
+
+  <div class="foot">
+    <span>owldayhouse.com</span>
+    <span>เอกสารนำเสนอ · ปรับปรุงล่าสุด กรกฎาคม 2569</span>
+  </div>
+</section>
+
+<!-- ══════════ หน้า 2: สรุป + ปัญหา ══════════ -->
+<section class="page">
+  <div class="block">
+    <h2 class="sec"><span class="n">01</span> สรุปสำหรับผู้บริหาร</h2>
+    <p class="sec-lead">Executive Summary</p>
+    <p><b>UP Docs</b> คือเครื่องมือช่วยเจ้าหน้าที่คณะออกหนังสือราชการงานฝึกงาน/สหกิจศึกษา — กรอกข้อมูลครั้งเดียว ระบบจัดหน้าให้ตรงระเบียบมหาวิทยาลัย แปลงเลขไทย/พ.ศ. อัตโนมัติ ใส่ตราและหัวจดหมายให้ครบ แล้วสั่งพิมพ์เป็น PDF ได้ทันที — <b>จากเดิมที่ต้องพิมพ์และจัดหน้าเองใน Word ทีละฉบับ</b></p>
+    <p>ขณะนี้ทางคณะได้ทดลองใช้เวอร์ชันสาธิต (ฟรี) แล้ว เอกสารฉบับนี้เสนอแนวทางนำไปใช้จริงเป็นของคณะ พร้อมทางเลือกต่อยอดสู่ระบบระดับมหาวิทยาลัย</p>
+    <div class="callout">💡 ระบบสาธิตยัง <b>ให้คณะใช้ฟรีต่อไป</b> ระหว่างพิจารณา — ไม่มีเงื่อนไข ไม่มีค่าใช้จ่าย</div>
+  </div>
+
+  <div class="block">
+    <h2 class="sec"><span class="n">02</span> ปัญหาของงานเอกสารในปัจจุบัน</h2>
+    <p class="sec-lead">สิ่งที่เจ้าหน้าที่เจอทุกวัน</p>
+    <div class="grid2">
+      <div class="card"><h3>เสียเวลาซ้ำ ๆ</h3><p>พิมพ์และจัดหน้าใหม่ทุกฉบับ คัดลอกของเก่ามาแก้ ตั้งระยะ/เลขไทย/ย่อหน้าเองทุกครั้ง</p></div>
+      <div class="card"><h3>ผิดระเบียบง่าย</h3><p>จัดหน้าเพี้ยน เลขไทย/พ.ศ. ผิด ตราหรือหัวจดหมายไม่ตรงแบบที่มหาวิทยาลัยกำหนด</p></div>
+      <div class="card"><h3>ข้อมูลกรอกซ้ำ</h3><p>ชื่อนิสิต/สาขา/วันที่ ต้องพิมพ์ซ้ำหลายจุด และซ้ำอีกในใบตอบรับ เสี่ยงพิมพ์ไม่ตรงกัน</p></div>
+      <div class="card"><h3>ค้นย้อนหลังยาก</h3><p>เอกสารกระจายในเครื่องแต่ละคน หาเลขหนังสือ/ฉบับเดิมลำบาก ไม่มีคลังกลาง</p></div>
+    </div>
+  </div>
+
+  <div class="pagenum">Owl Day House · UP Docs Proposal · 2</div>
+</section>
+
+<!-- ══════════ หน้า 3: ทางแก้ ══════════ -->
+<section class="page">
+  <div class="block">
+    <h2 class="sec"><span class="n">03</span> ทางแก้: UP Docs (พร้อมใช้แล้ว)</h2>
+    <p class="sec-lead">สิ่งที่ระบบสาธิตทำได้ ณ วันนี้</p>
+    <ul class="clean">
+      <li><b>6 ตระกูลเอกสารครบ</b> — ขอความอนุเคราะห์ · ส่งตัว · ขอบคุณ · นอกหลักสูตร · ยกเลิก · พร้อมใบตอบรับ (ฝึกงาน/สหกิจ/CWIE)</li>
+      <li><b>กรอกครั้งเดียว เติมทุกจุด</b> — ชื่อนิสิต สาขา วันที่ ไหลไปทุกช่องอัตโนมัติ รวมถึงใบตอบรับที่พิมพ์แนบมาให้เลย</li>
+      <li><b>ตรงระเบียบเป๊ะ</b> — กระดาษ ระยะขอบ ฟอนต์ราชการ ตรามหาวิทยาลัยพะเยา และการจัดหน้าตามแบบที่บังคับใช้</li>
+      <li><b>เลขไทย/พ.ศ. อัตโนมัติ</b> — พิมพ์เลขอารบิก ระบบแปลงเป็นเลขไทยให้ · จำนวนแนบนับให้เอง</li>
+      <li><b>คุมได้ 1 หน้าเสมอ</b> — นิสิต 1–4 คน จดหมายจบใน 1 หน้าตามระเบียบหนังสือราชการ</li>
+      <li><b>ปุ่มเดียวจบ</b> — บันทึกเป็น PDF ตั้งชื่อไฟล์ให้ตามชื่อเอกสารอัตโนมัติ · บันทึกงานเก็บไว้ทำต่อได้</li>
+      <li><b>ใช้ง่ายสำหรับเจ้าหน้าที่</b> — เปิดผ่านเว็บ ไม่ต้องติดตั้ง ไม่ต้องอบรมนาน เลือกหลักสูตร→สาขาสัมพันธ์กันอัตโนมัติ</li>
+    </ul>
+    <div class="callout">พัฒนาโดยทีมวิศวกรซอฟต์แวร์คนไทยของ Owl Day House — ดูแล แก้ไข ต่อยอดได้ต่อเนื่อง สื่อสารภาษาไทย เข้าใจงานราชการไทย</div>
+  </div>
+
+  <div class="block">
+    <h2 class="sec"><span class="n">04</span> ประโยชน์ที่คณะได้รับ</h2>
+    <div class="grid2">
+      <div class="card"><h3>⏱ เร็วขึ้นหลายเท่า</h3><p>จากพิมพ์เอง ~15 นาที/ฉบับ เหลือ ~3 นาที/ฉบับ</p></div>
+      <div class="card"><h3>✓ ถูกต้องสม่ำเสมอ</h3><p>ทุกฉบับตรงระเบียบเหมือนกัน ลดงานแก้/ตีกลับ</p></div>
+      <div class="card"><h3>🙂 ลดภาระเจ้าหน้าที่</h3><p>งานซ้ำ ๆ ให้ระบบทำ เจ้าหน้าที่ไปโฟกัสงานอื่น</p></div>
+      <div class="card"><h3>🏛 ภาพลักษณ์ดี</h3><p>เอกสารถึงสถานประกอบการดูมืออาชีพ เป็นมาตรฐานเดียว</p></div>
+    </div>
+  </div>
+  <div class="pagenum">Owl Day House · UP Docs Proposal · 3</div>
+</section>
+
+<!-- ══════════ หน้า 4: ROI ══════════ -->
+<section class="page">
+  <div class="block">
+    <h2 class="sec"><span class="n">05</span> ผลตอบแทนที่คุ้มค่า (ROI)</h2>
+    <p class="sec-lead">ประเมินจากเวลาที่ประหยัด — ตัวเลขจริงวัดได้จากการใช้งาน</p>
+
+    <table>
+      <thead><tr><th>รายการ</th><th>เดิม (พิมพ์เอง)</th><th>ด้วย UP Docs</th></tr></thead>
+      <tbody>
+        <tr><td>เวลาต่อ 1 ฉบับ</td><td>~15 นาที</td><td class="yes">~3 นาที</td></tr>
+        <tr><td>ประหยัดต่อฉบับ</td><td colspan="2"><b class="roi-num">~12 นาที</b></td></tr>
+        <tr><td>ปริมาณเอกสาร/ปีการศึกษา (ประมาณ)</td><td colspan="2"><b class="roi-num">~800 ฉบับ</b> (8 สาขา รวมฝึกงาน/สหกิจ/ขอบคุณ/ส่งตัว)</td></tr>
+      </tbody>
+    </table>
+
+    <div class="big-roi">
+      <div class="stat"><div class="v">~160</div><div class="l">ชั่วโมงคน ประหยัดต่อปี</div></div>
+      <div class="stat"><div class="v">~20</div><div class="l">วันทำงาน (8 ชม.) ต่อปี</div></div>
+      <div class="stat"><div class="v">↓ ผิดพลาด</div><div class="l">งานแก้/ตีกลับลดลง</div></div>
+    </div>
+    <p class="note">* สมมติฐานตั้งต้น 800 ฉบับ/ปี × ประหยัด 12 นาที/ฉบับ = 9,600 นาที ≈ 160 ชม. ปรับตามปริมาณจริงของคณะได้</p>
+
+    <div class="callout">
+      📊 <b>วัด ROI จริงได้ ไม่ต้องเดา</b> — ระบบมีการเก็บสถิติการใช้งานแบบไม่ระบุตัวบุคคล (จำนวนเอกสารที่ออก แยกตามประเภท) ทำให้สิ้นภาคเรียนสรุปได้ว่า “คณะออกเอกสารจริงกี่ฉบับ ประหยัดไปเท่าไร” เป็นตัวเลขนำเสนอผู้บริหารได้ทันที
+    </div>
+    <p style="font-size:13px;color:var(--muted)">หมายเหตุความเป็นส่วนตัว: สถิติที่เก็บเป็น <b>จำนวนและประเภทเอกสารเท่านั้น</b> ไม่มีการเก็บชื่อนิสิต ชื่อสถานประกอบการ หรือเลขหนังสือออกนอกเครื่องผู้ใช้</p>
+  </div>
+  <div class="pagenum">Owl Day House · UP Docs Proposal · 4</div>
+</section>
+
+<!-- ══════════ หน้า 5: แพ็กเกจ ══════════ -->
+<section class="page">
+  <div class="block">
+    <h2 class="sec"><span class="n">06</span> แพ็กเกจและราคา</h2>
+    <p class="sec-lead">เลือกได้ตามความพร้อม เริ่มเล็กแล้วขยายได้</p>
+    <table class="tier">
+      <thead><tr><th style="width:20%">ขั้น</th><th style="width:44%">ได้อะไร</th><th style="width:20%">เหมาะกับ</th><th>ราคา</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><b>0 · ทดลอง</b><br>(ตอนนี้)</td>
+          <td>ใช้ครบทุกฟีเจอร์ผ่านเว็บ Owl Day House · บันทึก PDF ได้</td>
+          <td>ทดลองใช้จริงก่อนตัดสินใจ</td>
+          <td class="price free">ฟรี</td>
+        </tr>
+        <tr>
+          <td><b>1 · เป็นของคณะ</b><br>⭐ แนะนำ</td>
+          <td>ติดตั้งบนโดเมน/เครื่องของคณะ · เป็นเจ้าของ 100% · ฝังตรา+ฟอนต์ราชการ · ผู้ลงนาม/สาขาครบ · <b>บันทึกเป็น .docx แก้ไขต่อได้</b> · อบรมเจ้าหน้าที่ · ส่งมอบซอร์สโค้ด</td>
+          <td>คณะที่อยากใช้ระยะยาว เป็นของตัวเอง</td>
+          <td class="price">เริ่มต้น<br>฿39,000<br><span style="font-weight:400;font-size:11px;color:var(--muted)">ก้อนเดียว</span></td>
+        </tr>
+        <tr>
+          <td><b>2 · ระบบเต็ม</b><br>ระดับมหาวิทยาลัย</td>
+          <td>รองรับหลายคณะ · <b>เลขหนังสือรันอัตโนมัติ</b> · คลังเอกสาร+ค้นหาย้อนหลัง · บัญชีผู้ใช้+สิทธิ์ · เชื่อมระบบสารบรรณ/ทะเบียนนิสิต · สายอนุมัติ+ลายเซ็นดิจิทัล</td>
+          <td>ขยายทั้งมหาวิทยาลัย/หลายหน่วยงาน</td>
+          <td class="price">เริ่ม<br>฿250,000+<br><span style="font-weight:400;font-size:11px;color:var(--muted)">+ ดูแลรายปี</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="callout">ขั้น 1 มักเข้าเกณฑ์ <b>“วิธีเฉพาะเจาะจง”</b> ของการจัดซื้อจัดจ้างภาครัฐ (วงเงินไม่สูง) — ดำเนินการได้รวดเร็ว ไม่ต้องประมูล (โปรดให้ฝ่ายพัสดุยืนยันระเบียบล่าสุด)</div>
+    <p class="note">* ราคาเป็นค่าตั้งต้นสำหรับพิจารณา ปรับตามขอบเขตงานจริง · Owl Day House ออกใบเสนอราคา/ใบกำกับภาษีในนามนิติบุคคลได้</p>
+  </div>
+
+  <div class="block">
+    <h2 class="sec"><span class="n">07</span> ทำไมต้อง Owl Day House</h2>
+    <ul class="clean">
+      <li><b>ประสบการณ์ระบบราชการ/มหาวิทยาลัยจริง</b> — เคยพัฒนาระบบระดับมหาวิทยาลัย (เช่น ระบบทะเบียน reg.tu.ac.th มหาวิทยาลัยธรรมศาสตร์)</li>
+      <li><b>บริษัทไทย ทีมไทย</b> — สื่อสารภาษาไทย เข้าใจระเบียบเอกสารราชการ ดูแลต่อเนื่องหลังส่งมอบ</li>
+      <li><b>เริ่มเล็ก คุ้มค่า</b> — เริ่มจากสิ่งที่ใช้ได้จริงวันนี้ แล้วค่อยขยายเมื่อพร้อม ไม่ต้องลงทุนก้อนใหญ่ตั้งแต่แรก</li>
+    </ul>
+  </div>
+  <div class="pagenum">Owl Day House · UP Docs Proposal · 5</div>
+</section>
+
+<!-- ══════════ หน้า 6: ขั้นตอน + ติดต่อ ══════════ -->
+<section class="page">
+  <div class="block">
+    <h2 class="sec"><span class="n">08</span> ขั้นตอนถัดไป</h2>
+    <ol class="steps">
+      <li>คณะทดลองใช้ระบบสาธิตต่อเนื่อง เก็บข้อเสนอแนะจากเจ้าหน้าที่</li>
+      <li>นัดหารือขอบเขต (ตรา/ฟอนต์/ผู้ลงนาม/โดเมนที่จะติดตั้ง) และยืนยันแพ็กเกจ</li>
+      <li>Owl Day House จัดทำใบเสนอราคาตามระเบียบพัสดุ</li>
+      <li>ดำเนินการจัดซื้อจัดจ้าง → ติดตั้ง อบรม ส่งมอบ “เป็นของคณะ”</li>
+    </ol>
+  </div>
+
+  <div class="block">
+    <h2 class="sec"><span class="n">09</span> ติดต่อ</h2>
+    <div class="contact">
+      <div><div class="l">บริษัท</div><div class="v">อาวล์ เดย์ เฮ้าส์ จำกัด</div></div>
+      <div><div class="l">โทร</div><div class="v">092-455-2450</div></div>
+      <div><div class="l">Messenger</div><div class="v">m.me/owldayhouse</div></div>
+      <div><div class="l">เว็บไซต์</div><div class="v">owldayhouse.com</div></div>
+    </div>
+    <p style="margin-top:14px;color:var(--muted);font-size:13px">ห้อง B1 ชั้น 1 อาคาร TNC เลขที่ 172 ต.ไชยสถาน อ.สารภี จ.เชียงใหม่ 50140</p>
+  </div>
+
+  <div style="margin-top:2.2cm;text-align:center;color:var(--muted);font-size:13px">
+    <div style="font-family:'Space Grotesk',sans-serif;letter-spacing:.16em;color:var(--navy);font-weight:700">OWL DAY HOUSE</div>
+    <div style="margin-top:4px">เสร็จไว ดูแลต่อ โดยทีมงานคนไทย</div>
+  </div>
+  <div class="pagenum">Owl Day House · UP Docs Proposal · 6</div>
+</section>
+
+</body>
+</html>

@@ -10,9 +10,17 @@
 """
 import base64
 import json
+import os
 import pathlib
 
 ROOT = pathlib.Path(__file__).parent
+
+# Google Analytics 4 Measurement ID (แยก property ใต้บัญชี owldayhouse) — วัดการใช้งานเพื่อสรุป ROI
+# ตั้งค่าผ่าน env UP_DOCS_GA_ID หรือไฟล์ up-docs/assets/ga_id.txt · ไม่ตั้ง = ไม่โหลด GA ไม่ส่งข้อมูล
+ga_id = os.environ.get("UP_DOCS_GA_ID", "").strip()
+ga_file = ROOT / "assets/ga_id.txt"
+if not ga_id and ga_file.exists():
+    ga_id = ga_file.read_text(encoding="utf-8").strip()
 
 template = (ROOT / "template.html").read_text(encoding="utf-8")
 reference = json.loads((ROOT / "files/reference.json").read_text(encoding="utf-8"))
@@ -41,7 +49,9 @@ out = (
     .replace("__FONT_R__", font_regular)
     .replace("__FONT_B__", font_bold)
     .replace("__CREST__", crest)
+    .replace("__GA_ID__", ga_id)
 )
+print(f"GA4: {'เปิด (' + ga_id + ')' if ga_id else 'ปิด (ไม่ตั้งค่า — ไม่ส่งข้อมูล)'}")
 
 dest = ROOT.parent / "apps/web/lib/up-docs/template.html"
 dest.parent.mkdir(parents=True, exist_ok=True)

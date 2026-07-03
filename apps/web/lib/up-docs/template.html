@@ -138,6 +138,26 @@ textarea{resize:vertical;min-height:74px}
 }
 </style>
 <style id="pageSize">@page{size:letter;margin:0}</style>
+
+<!-- Google Analytics 4 — วัดการใช้งานจริงเพื่อสรุป ROI (แยก property ใต้บัญชี owldayhouse)
+     ⚠️ ส่งเฉพาะ ประเภทเอกสาร/โหมด/จำนวนนิสิต เท่านั้น — ไม่ส่งชื่อคน/บริษัท/เลขหนังสือ
+     (กันข้อมูลส่วนบุคคลของเอกสารราชการรั่วออกนอกระบบ)
+     Measurement ID เติมโดย build.py จาก env UP_DOCS_GA_ID หรือ up-docs/assets/ga_id.txt
+     ยังไม่ตั้งค่า = ไม่โหลดสคริปต์ ไม่ส่งข้อมูลใด ๆ -->
+<script>
+window.track = function(){};   // ค่าเริ่มต้น: no-op (เผื่อยังไม่ตั้ง GA)
+(function(){
+  var id = '';
+  if(!id || id.indexOf('G-') !== 0) return;   // ยังไม่ตั้งค่า → เงียบสนิท
+  var s = document.createElement('script'); s.async = 1;
+  s.src = 'https://www.googletagmanager.com/gtag/js?id=' + id;
+  document.head.appendChild(s);
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ dataLayer.push(arguments); }
+  window.gtag = gtag; gtag('js', new Date()); gtag('config', id, {anonymize_ip:true});
+  window.track = function(ev, params){ try{ gtag('event', ev, params||{}); }catch(e){} };
+})();
+</script>
 </head>
 <body>
 
@@ -287,6 +307,10 @@ function exportFilename(){ return docBaseName() + '.json'; }
 // พิมพ์/บันทึก PDF — ตั้งชื่อไฟล์ผ่าน document.title ของหน้าแม่ (Next.js) ชั่วคราว
 // เพราะเครื่องมือรันใน iframe และเบราว์เซอร์ดึงชื่อไฟล์ PDF จาก title ของหน้าบนสุด
 function printDoc(){
+  // event ROI หลัก: 1 การพิมพ์ ≈ 1 เอกสารที่ออกจริง ≈ เวลาที่ประหยัดเทียบพิมพ์เองใน Word
+  track('doc_print', { doc_type: state.docType, doc_mode: state.mode,
+                       student_count: effStudents().length,
+                       with_attachment: state.docType==='request' && state.printAttach });
   const name = docBaseName();
   const selfPrev = document.title;
   let parentDoc = null, parentPrev;
@@ -305,6 +329,7 @@ function exportJSON(){
   a.download = exportFilename();
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(()=>URL.revokeObjectURL(url), 1000);
+  track('doc_export', { doc_type: state.docType });
 }
 function importJSON(ev){
   const file = ev.target.files && ev.target.files[0];
@@ -312,7 +337,7 @@ function importJSON(ev){
   if(!file) return;
   const reader = new FileReader();
   reader.onload = () => {
-    try{ applyData(JSON.parse(reader.result)); }
+    try{ applyData(JSON.parse(reader.result)); track('doc_import', { doc_type: state.docType }); }
     catch(err){ alert('เปิดไฟล์ไม่ได้ — ไม่ใช่ไฟล์ .json ของ UP Docs'); }
   };
   reader.readAsText(file);
@@ -684,6 +709,7 @@ function renderCards(){
       state.docType = el.dataset.doc;
       const modes = TPL.documents[state.docType].modes || [];
       state.mode = modes[0] || 'internship';
+      track('doc_select', { doc_type: state.docType });
       openWorkspace();
     });
   });
