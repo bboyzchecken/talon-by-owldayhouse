@@ -57,3 +57,19 @@ dest = ROOT.parent / "apps/web/lib/up-docs/template.html"
 dest.parent.mkdir(parents=True, exist_ok=True)
 dest.write_text(out, encoding="utf-8")
 print(f"เขียน {dest} ({len(out)/1024:.0f} KB)")
+
+# ── Proposal (เอกสารเสนอราคา) — เผยแพร่เป็นหน้า static เปิดได้ที่ /up-docs/proposal/
+# ไม่มี gate, ไม่ลิงก์จากที่ไหน, noindex — ใช้เป็นลิงก์คุยกับคณะตอนประชุม
+# ไม่มี GA (คนละเรื่องกับ usage/ROI) — แนบรูป analytics-report.png เองภายหลังได้
+prop_src = ROOT / "proposal"
+prop_dest = ROOT.parent / "apps/web/public/up-docs/proposal"
+prop_dest.mkdir(parents=True, exist_ok=True)
+(prop_dest / "index.html").write_text(
+    (prop_src / "proposal.html").read_text(encoding="utf-8"), encoding="utf-8"
+)
+copied = ["index.html"]
+for extra in ("analytics-report.png", "analytics-report.jpg"):
+    if (prop_src / extra).exists():
+        (prop_dest / extra).write_bytes((prop_src / extra).read_bytes())
+        copied.append(extra)
+print(f"เผยแพร่ proposal → {prop_dest} ({', '.join(copied)})")

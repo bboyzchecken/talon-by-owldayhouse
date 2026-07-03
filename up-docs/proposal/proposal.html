@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
 <title>ข้อเสนอโครงการ — ระบบออกเอกสารราชการอิเล็กทรอนิกส์ (UP Docs) · Owl Day House</title>
 <!--
   เอกสารเสนอราคา/นำเสนอ สำหรับ คณะบริหารธุรกิจและนิเทศศาสตร์ ม.พะเยา
@@ -77,6 +78,8 @@ tbody tr:nth-child(even){background:#faf8f2}
 .contact .l{font-size:12px;opacity:.7;letter-spacing:.04em}
 .contact .v{font-size:15px;font-weight:600}
 .note{font-size:11.5px;color:var(--muted);font-style:italic;margin-top:6px}
+.report-img{max-width:100%;border:1px solid var(--line);border-radius:8px;box-shadow:0 3px 12px rgba(40,37,76,.12);margin:8px 0}
+.report-slot{border:2px dashed var(--gold);border-radius:12px;padding:26px;text-align:center;background:var(--paper);color:var(--muted);min-height:9cm;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;margin:8px 0}
 .pagenum{position:absolute;right:1.9cm;bottom:1cm;font-size:11px;color:var(--muted)}
 
 @media print{
@@ -274,6 +277,32 @@ tbody tr:nth-child(even){background:#faf8f2}
   </div>
   <div class="pagenum">Owl Day House · UP Docs Proposal · 6</div>
 </section>
+
+<!-- ══════════ ภาคผนวก: แนบรายงาน Analytics ══════════ -->
+<section class="page">
+  <div class="block">
+    <h2 class="sec"><span class="n">ก</span> ภาคผนวก: สถิติการใช้งานจริง</h2>
+    <p class="sec-lead">ข้อมูลจาก Google Analytics · วัดโดยไม่ระบุตัวบุคคล (นับเฉพาะจำนวนและประเภทเอกสาร)</p>
+    <p>ตัวเลขด้านล่างคือการใช้งานจริงของคณะในช่วงทดลอง — สะท้อนปริมาณเอกสารที่ออกและเวลาที่ประหยัดได้จริง ไม่ใช่ตัวเลขประมาณการ</p>
+    <img class="report-img" id="reportImg" src="analytics-report.png" alt="รายงานการใช้งาน UP Docs" style="display:none">
+    <div class="report-slot" id="reportSlot">
+      <div style="font-size:36px">📊</div>
+      <div style="color:var(--navy)"><b>พื้นที่แนบรายงาน Google Analytics</b></div>
+      <div style="font-size:13px;max-width:14cm">ส่งออก (Export) กราฟ/รายงานจาก GA พร็อพเพอร์ตี้ <b>“up docs”</b> เป็นรูปภาพ แล้วบันทึกชื่อ <b>analytics-report.png</b> ไว้โฟลเดอร์เดียวกับไฟล์นี้ — รูปจะขึ้นแทนกล่องนี้อัตโนมัติ</div>
+    </div>
+    <p class="note">พร็อพเพอร์ตี้แยกเฉพาะ UP Docs (G-3XWGSN9WKG) — ไม่ปะปนกับสถิติเว็บไซต์ Owl Day House</p>
+  </div>
+  <div class="pagenum">Owl Day House · UP Docs Proposal · ภาคผนวก</div>
+</section>
+
+<script>
+  // แสดงรูปรายงานถ้ามีไฟล์ analytics-report.png; ถ้าไม่มีให้โชว์กล่องคำแนะนำ
+  (function(){
+    var img = document.getElementById('reportImg'), slot = document.getElementById('reportSlot');
+    img.onload  = function(){ if(img.naturalWidth){ img.style.display='block'; slot.style.display='none'; } };
+    img.onerror = function(){ img.style.display='none'; slot.style.display='flex'; };
+  })();
+</script>
 
 </body>
 </html>

@@ -9,6 +9,11 @@ import { useEffect, useRef } from "react";
 // `pnpm build:web` to enable GA on the exported site.
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 
+// /up-docs is a separate client tool with its OWN GA4 property (inside its
+// iframe). Keep faculty usage out of the marketing property entirely so the two
+// analytics never mix — the marketing GA does not load or fire on these paths.
+const isExcluded = (path: string) => path.startsWith("/up-docs");
+
 declare global {
   interface Window {
     dataLayer?: unknown[];
@@ -27,10 +32,11 @@ export function Analytics() {
       isFirstLoad.current = false;
       return;
     }
+    if (isExcluded(pathname)) return; // never report /up-docs to the marketing property
     window.gtag("event", "page_view", { page_path: pathname });
   }, [pathname]);
 
-  if (!GA_ID) return null;
+  if (!GA_ID || isExcluded(pathname)) return null;
 
   return (
     <>
