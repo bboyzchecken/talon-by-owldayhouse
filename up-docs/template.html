@@ -101,18 +101,19 @@ textarea{resize:vertical;min-height:74px}
 .rgt{text-align:right}
 .ind2{text-indent:2.5cm}   /* เยื้องบรรทัดแรก 2.5cm ตาม format ราชการ (ระยะย่อหน้า ๒.๕ ซม.) */
 .ind1{text-indent:1.27cm}
-/* บล็อกคำลงท้าย/ผู้ลงนาม "กึ่งกลางค่อนขวา" ตาม format ราชการ —
-   ต้นฉบับ .docx ใช้ TAB@7.75cm (="ขอแสดงความนับถือ" เริ่มที่กึ่งกลางหน้าแล้วยื่นขวา)
-   ทำเป็น center บนแกน ~57%: margin-left 14% → center=(14+100)/2=57% (.sheet นำหน้าให้ชนะ .sheet p{margin:0}) */
-.sheet .sig-align{margin-left:14%;margin-right:0;text-align:center}
+/* คำลงท้าย + วันที่ + บล็อกผู้ลงนาม — ตาม format ราชการ (แกะจาก .docx จริง):
+   วันที่ และ "ขอแสดงความนับถือ" ใช้ TAB@7.75cm เดียวกัน = เริ่มต้นที่แกนกึ่งกลางหน้ากระดาษ
+   ชื่อ/ตำแหน่งผู้ลงนาม จัดกึ่งกลางรอบแนวข้อความ "ขอแสดงความนับถือ" (ขยับตามคำลงท้าย) */
+.sheet .center-tab{margin-left:7.75cm;text-align:left}   /* เริ่มที่ 7.75cm จากกั้นหน้า (.sheet ชนะ .sheet p{margin:0}) */
+.sheet .sig-align{margin-left:1.9cm;margin-right:0;text-align:center}  /* โซน 1.9→ขวาสุด → กึ่งกลาง 9.25cm = แนวกลางข้อความ "ขอแสดงความนับถือ" (7.75 + ~2.95/2) */
 .docheader{display:flex;justify-content:space-between;align-items:flex-start}
 .dh-right p{text-align:left}
 /* ตรา ม.พะเยา กึ่งกลาง "หน้ากระดาษ" (ไม่ใช่กรอบข้อความ) ตามแผนผังราชการ —
    ชดเชยขอบซ้าย/ขวาที่ไม่เท่ากันด้วย (ขวา−ซ้าย)/2 */
 .crestwrap{text-align:center;margin-bottom:0.1cm;margin-left:calc((var(--mr,2cm) - var(--ml,3cm))/2)}
 .crest{height:2.7cm;width:auto;display:inline-block}
-.sheet .datep{text-align:center;margin-top:6pt}   /* .sheet นำหน้าให้ margin-top ชนะ .sheet p{margin:0} */
-.sheet .stu{margin-left:1.27cm}    /* ลิสต์นิสิตเลขไทย เยื้องซ้าย 1.27ซม. (ต้องมี .sheet ไม่งั้นโดน .sheet p{margin:0} ทับ) */
+.sheet .datep{margin-left:7.75cm;text-align:left;margin-top:6pt}   /* วันที่เริ่มแกนเดียวกับ "ขอแสดงความนับถือ" (TAB@7.75cm จาก .docx) */
+.sheet .stu{margin-left:1.25cm;text-indent:1.25cm}   /* ลิสต์นิสิต: บรรทัดแรกเริ่ม 2.5cm = ตรงระยะย่อหน้า (docx: left1.27+firstLine1.27) */
 .doctitle{text-align:center;font-weight:bold;font-size:1.375em}  /* หัวใบตอบรับ 22pt */
 .sigspace{height:1.7cm}     /* เว้นที่เซ็นชื่อ */
 .sheet .closing-gap{margin-top:var(--closegap,24pt)}  /* เว้นก่อน "ขอแสดงความนับถือ" ~2 บรรทัด (.sheet นำหน้าให้ชนะ .sheet p{margin:0}) */
@@ -413,7 +414,8 @@ function paraHTML(b, modeObj){
   if(b.align==='thai_justify') cls.push('just');
   if(b.align==='center') cls.push('ctr');
   if(b.align==='right') cls.push('rgt');
-  if(b.align==='center_ish') cls.push('sig-align');
+  // center_ish: คำลงท้ายเริ่มที่แกน 7.75cm (ตรงกับวันที่) · บล็อกอื่น (ผู้ลงนาม) กึ่งกลางค่อนขวา
+  if(b.align==='center_ish') cls.push(b.type==='closing' ? 'center-tab' : 'sig-align');
   if(b.indent==='firstline2tab') cls.push('ind2');
   if(b.indent==='firstline1tab') cls.push('ind1');
   if(b.type==='title') cls.push('doctitle');
