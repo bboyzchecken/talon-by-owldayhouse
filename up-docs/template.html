@@ -234,6 +234,8 @@ const state = {
   date: {month: TH_MONTHS[now.getMonth()], yearBE: String(now.getFullYear()+543), full:false, day:''},
   students: [{name:'', phone:''}],
   signerId: 's1',
+  // ผู้ลงนามที่พิมพ์เอง (เมื่อเลือก "พิมพ์เอง…") — actingForDean=true แสดง "ปฏิบัติการแทน / คณบดีฯ"
+  customSigner: { name:'', position:'', actingForDean:true },
   printAttach: true,
 };
 
@@ -253,12 +255,14 @@ function collectData(){
   SAVED_KEYS.forEach(k => { d[k] = state[k]; });
   d.date = {...state.date};
   d.students = state.students.map(s => ({name:s.name, phone:s.phone}));
+  d.customSigner = {...state.customSigner};
   return d;
 }
 function applyData(d){
   if(!d || d.app!=='up-docs' || !DOC_META[d.docType]) throw new Error('ไม่ใช่ไฟล์ของ UP Docs');
   SAVED_KEYS.forEach(k => { if(d[k]!==undefined) state[k] = d[k]; });
   if(d.date) state.date = {...state.date, ...d.date};
+  if(d.customSigner) state.customSigner = {...state.customSigner, ...d.customSigner};
   if(Array.isArray(d.students) && d.students.length){
     state.students = d.students.slice(0,4).map(s => ({name:s.name||'', phone:s.phone||''}));
   }
@@ -345,10 +349,22 @@ function paraHTML(b, modeObj){
   if(before) st.push('margin-top:'+before+'pt');
   return `<p class="${cls.join(' ')}" style="${st.join(';')}">${tok(b.text, modeObj)}</p>`;
 }
+// สร้าง object ผู้ลงนามที่จะเรนเดอร์ (preset จาก REF หรือที่พิมพ์เอง)
+function currentSigner(){
+  if(state.signerId==='custom'){
+    const c = state.customSigner;
+    const title_lines = c.actingForDean
+      ? [ (c.position||'') + ' ปฏิบัติการแทน', 'คณบดีคณะบริหารธุรกิจและนิเทศศาสตร์' ]
+      : [ c.position||'' ];
+    return { name: c.name, title_lines };
+  }
+  return REF.signers.find(s=>s.id===state.signerId) || REF.signers[0];
+}
 function signerHTML(){
-  const sg = REF.signers.find(s=>s.id===state.signerId) || REF.signers[0];
-  const lines = sg.title_lines.map(l=>`<p>${esc(l)}</p>`).join('');
-  return `<div class="sig-align"><div class="sigspace"></div><p>(${esc(sg.name)})</p>${lines}</div>`;
+  const sg = currentSigner();
+  const lines = sg.title_lines.map(l=>`<p>${l.trim() ? esc(l) : '<span class="miss">&nbsp;</span>'}</p>`).join('');
+  const nm = sg.name && sg.name.trim() ? esc(sg.name) : '<span class="miss">&nbsp;&nbsp;&nbsp;&nbsp;</span>';
+  return `<div class="sig-align"><div class="sigspace"></div><p>(${nm})</p>${lines}</div>`;
 }
 function renderBlock(b, modeObj){
   switch(b.type){
@@ -498,12 +514,18 @@ function studentsHTML(meta){
   return rows + addBtn + lockNote;
 }
 function signerHTMLForm(){
-  const opts = REF.signers.map(s=>{
-    const pending = s.name.includes('__');
-    return `<option value="${s.id}" ${pending?'disabled':''} ${state.signerId===s.id?'selected':''}>${pending?'(รอข้อมูลผู้ลงนาม)':esc(s.name)}</option>`;
-  }).join('');
+  const opts = REF.signers.map(s=>
+    `<option value="${s.id}" ${state.signerId===s.id?'selected':''}>${esc(s.name)}</option>`
+  ).join('') + `<option value="custom" ${state.signerId==='custom'?'selected':''}>พิมพ์เอง…</option>`;
+  const c = state.customSigner;
+  const custom = state.signerId==='custom' ? `
+    <div id="customSigner" style="margin-top:8px">
+      <input type="text" id="csName" placeholder="ชื่อ-สกุล (พร้อมคำนำหน้า/ยศ) เช่น ผู้ช่วยศาสตราจารย์ ดร.สมชาย ใจดี" value="${esc(c.name)}">
+      <input type="text" id="csPos" placeholder="ตำแหน่ง เช่น รองคณบดีฝ่ายวิชาการ" value="${esc(c.position)}" style="margin-top:6px">
+      <label class="chk"><input type="checkbox" id="csActing" ${c.actingForDean?'checked':''}> ลงนาม "ปฏิบัติการแทนคณบดี" (ถ้าไม่ติ๊ก = คณบดีลงนามเอง/ลงตามตำแหน่ง)</label>
+    </div>` : '';
   return `<label>ผู้ลงนาม</label><select id="signerSel">${opts}</select>
-    <div class="hint">รายชื่อผู้ลงนามอีก 5 ท่านอยู่ระหว่างรอข้อมูลจากคณะ</div>`;
+    <div class="hint">ค่าตั้งต้นคือ อ.กมลพงศ์ฯ · เลือก "พิมพ์เอง…" เพื่อกรอกผู้ลงนามท่านอื่น</div>${custom}`;
 }
 function renderForm(){
   const meta = DOC_META[state.docType];
@@ -532,13 +554,25 @@ function renderForm(){
     </div>
     <div class="printtip">💾 บันทึกอัตโนมัติในเบราว์เซอร์นี้ · ไฟล์ .json ใช้เก็บงานหรือย้ายไปทำต่อเครื่องอื่น</div>
     <datalist id="programList">${REF.programs.filter(p=>!p.includes('__')).map(p=>`<option value="${esc(p)}">`).join('')}</datalist>
-    <datalist id="majorList"><option value="การตลาดดิจิทัล"></datalist>`;
+    <datalist id="majorList">${REF.majors.filter(m=>!m.includes('__')).map(m=>`<option value="${esc(m)}">`).join('')}</datalist>`;
   bindForm();
 }
 function bindForm(){
   const panel = document.getElementById('formPanel');
   panel.querySelectorAll('[data-k]').forEach(el=>{
-    el.addEventListener('input', ()=>{ state[el.dataset.k] = el.value; renderPreview(); });
+    el.addEventListener('input', ()=>{
+      state[el.dataset.k] = el.value;
+      // เลือกสาขาที่รู้จัก → เติมหลักสูตรให้อัตโนมัติ (คู่จาก reference.major_to_program)
+      if(el.dataset.k==='major'){
+        const prog = (REF.major_to_program||{})[el.value.trim()];
+        if(prog && state.program!==prog){
+          state.program = prog;
+          const pIn = panel.querySelector('[data-k="program"]');
+          if(pIn) pIn.value = prog;
+        }
+      }
+      renderPreview();
+    });
   });
   panel.querySelectorAll('[data-dk]').forEach(el=>{
     el.addEventListener('input', ()=>{
@@ -560,7 +594,15 @@ function bindForm(){
   document.getElementById('addStu')?.addEventListener('click', ()=>{
     state.students.push({name:'',phone:''}); renderForm(); renderPreview();
   });
-  document.getElementById('signerSel').addEventListener('change', e=>{ state.signerId = e.target.value; renderPreview(); });
+  document.getElementById('signerSel').addEventListener('change', e=>{
+    state.signerId = e.target.value;
+    renderForm();      // re-render เพื่อโชว์/ซ่อนช่องพิมพ์เอง
+    renderPreview();
+  });
+  // ช่องพิมพ์ผู้ลงนามเอง
+  document.getElementById('csName')?.addEventListener('input', e=>{ state.customSigner.name = e.target.value; renderPreview(); });
+  document.getElementById('csPos')?.addEventListener('input', e=>{ state.customSigner.position = e.target.value; renderPreview(); });
+  document.getElementById('csActing')?.addEventListener('change', e=>{ state.customSigner.actingForDean = e.target.checked; renderPreview(); });
   document.getElementById('printAttach')?.addEventListener('change', e=>{ state.printAttach = e.target.checked; renderPreview(); });
   document.getElementById('printBtn').addEventListener('click', ()=>window.print());
   document.getElementById('exportBtn').addEventListener('click', exportJSON);
