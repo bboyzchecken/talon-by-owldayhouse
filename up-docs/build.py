@@ -22,12 +22,25 @@ templates = json.loads((ROOT / "files/templates.json").read_text(encoding="utf-8
 font_regular = base64.b64encode((ROOT / "assets/fonts/THSarabunNew.woff2").read_bytes()).decode()
 font_bold = base64.b64encode((ROOT / "assets/fonts/THSarabunNew-Bold.woff2").read_bytes()).decode()
 
+# ตรามหาวิทยาลัยพะเยา — วางไฟล์ชื่อ up-crest.svg หรือ up-crest.png ใน assets/logo/
+# มีไฟล์ = ฝังเป็น data URI บนหัวจดหมาย · ไม่มี = หัวจดหมายไม่มีตรา (ไม่ error)
+crest = ""
+for name, mime in (("up-crest.svg", "image/svg+xml"), ("up-crest.png", "image/png")):
+    p = ROOT / "assets/logo" / name
+    if p.exists():
+        crest = f"data:{mime};base64," + base64.b64encode(p.read_bytes()).decode()
+        print(f"ฝังตรา: {name} ({p.stat().st_size/1024:.0f} KB)")
+        break
+if not crest:
+    print("ไม่พบไฟล์ตราใน assets/logo/ (up-crest.svg|png) — หัวจดหมายจะไม่มีตรา")
+
 out = (
     template
     .replace("__REF_JSON__", json.dumps(reference, ensure_ascii=False))
     .replace("__TPL_JSON__", json.dumps(templates, ensure_ascii=False))
     .replace("__FONT_R__", font_regular)
     .replace("__FONT_B__", font_bold)
+    .replace("__CREST__", crest)
 )
 
 dest = ROOT.parent / "apps/web/lib/up-docs/template.html"

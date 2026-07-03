@@ -101,6 +101,8 @@ textarea{resize:vertical;min-height:74px}
 .sheet .sig-align{margin-left:30%;margin-right:0;text-align:center}  /* กึ่งกลางค่อนขวา ตามต้นฉบับ — .sheet นำหน้าให้ชนะ .sheet p{margin:0} */
 .docheader{display:flex;justify-content:space-between;align-items:flex-start}
 .dh-right p{text-align:left}
+.crest{display:block;height:2.8cm;width:auto;margin:0 auto 0.15cm}  /* ตรา ม.พะเยา เหนือบล็อกที่อยู่ (ASSETS.md) */
+.dh-left.with-crest{margin-top:2.95cm}  /* ดัน "ที่ อว..." ลงมาให้ตรงบรรทัดแรกของที่อยู่ */
 .datep{text-align:center;margin-top:6pt}
 .stu{margin-left:1.27cm}    /* ลิสต์นิสิตเลขไทย */
 .doctitle{text-align:center;font-weight:bold;font-size:1.375em}  /* หัวใบตอบรับ 22pt */
@@ -169,6 +171,8 @@ textarea{resize:vertical;min-height:74px}
 /* ===== ข้อมูลจากสเปก (gen จาก up-docs/files/ — อย่าแก้ตรงนี้ ให้แก้ JSON แล้ว build ใหม่) ===== */
 const REF = __REF_JSON__;
 const TPL = __TPL_JSON__;
+// ตรามหาวิทยาลัยพะเยา (data URI) — build.py ฝังให้เมื่อมีไฟล์ใน up-docs/assets/logo/ ไม่มีไฟล์ = หัวจดหมายไม่มีตรา
+const CREST_DATA = '__CREST__';
 
 /* ===== ค่าคงที่ / helper ===== */
 const TH_MONTHS = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
@@ -365,8 +369,9 @@ function renderBlock(b, modeObj){
 function headerHTML(){
   const c = TPL._shared_chrome.header;
   const right = c.right_lines.map(l=>`<p>${esc(l)}</p>`).join('');
-  return `<div class="docheader"><div class="dh-left"><p>${tok(c.left)}</p></div><div class="dh-right">${right}</div></div>`;
-  /* TODO(ask): ตรา ม.พะเยา หัวจดหมาย — รอไฟล์ + ตำแหน่งวาง (ASSETS.md) */
+  const crest = CREST_DATA
+    ? `<img class="crest" src="${CREST_DATA}" alt="ตรามหาวิทยาลัยพะเยา">` : '';
+  return `<div class="docheader"><div class="dh-left${crest?' with-crest':''}"><p>${tok(c.left)}</p></div><div class="dh-right">${crest}${right}</div></div>`;
 }
 function footerHTML(){
   return `<div class="docfooter">${TPL._shared_chrome.footer.lines.map(l=>`<p>${esc(l)}</p>`).join('')}</div>`;
