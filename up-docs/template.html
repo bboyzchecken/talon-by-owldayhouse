@@ -89,9 +89,12 @@ textarea{resize:vertical;min-height:74px}
   position:relative;background:#fff;color:#000;
   font-family:'TH Sarabun New','TH SarabunPSK','Sarabun',sans-serif;
   font-size:16pt;line-height:normal;overflow:hidden;
+  display:flex;flex-direction:column;   /* เนื้อหาบน · spacer ดันฟุตเตอร์ลงล่าง */
 }
 .sheet.letter{width:21.59cm;height:27.9cm}   /* Letter — ลดสูง 0.04cm กันหน้าเกินตอนพิมพ์ */
 .sheet.a4{width:21cm;height:29.66cm}         /* A4 เฉพาะใบนอกหลักสูตร */
+.sheet-flow{flex:0 0 auto}
+.sheet-spacer{flex:1 1 auto;min-height:0}    /* ช่องว่างยืดหยุ่น: ดันฟุตเตอร์ไว้ล่างสุด + ทำให้ตรวจล้นหน้าได้ */
 .sheet p{margin:0;white-space:pre-wrap}
 .just{text-align:justify}
 .ctr{text-align:center}
@@ -109,11 +112,16 @@ textarea{resize:vertical;min-height:74px}
 .stu{margin-left:1.27cm}    /* ลิสต์นิสิตเลขไทย */
 .doctitle{text-align:center;font-weight:bold;font-size:1.375em}  /* หัวใบตอบรับ 22pt */
 .sigspace{height:1.7cm}     /* เว้นที่เซ็นชื่อ */
-.docfooter{position:absolute;left:var(--ml,3cm);bottom:0.7cm}
+.sheet .closing-gap{margin-top:var(--closegap,24pt)}  /* เว้นก่อน "ขอแสดงความนับถือ" ~2 บรรทัด (.sheet นำหน้าให้ชนะ .sheet p{margin:0}) */
+.docfooter{margin-top:6pt}  /* อยู่ในลำดับ flow ล่างสุด (spacer ดันลงมา) */
 .docfooter p{text-align:left}
 .signwrap{width:9.5cm;margin-left:auto;text-align:center;margin-top:20pt}
 .signwrap p{margin-top:10pt}
 .blank{display:inline-block;min-width:4.5cm;border-bottom:1px dotted #000}
+/* ช่องกรอกในใบตอบรับ: เส้นประยืดเต็มบรรทัด ให้บริษัทเขียนได้ยาว ๆ */
+.fieldline{display:flex;align-items:flex-end;flex-wrap:nowrap}
+.fieldline .ftx{flex:0 0 auto;white-space:pre}
+.fieldline .ffill{flex:1 1 auto;min-width:1.5cm;height:1.05em;border-bottom:1px dotted #000;margin:0 4px}
 .miss{display:inline-block;min-width:2.8cm;border-bottom:1px dotted #999;background:var(--gold-soft)} /* ช่องที่ยังไม่กรอก — ไฮไลต์เฉพาะบนจอ */
 
 .app-footer{text-align:center;font-size:14px;color:#5a577a;padding:18px}
@@ -410,7 +418,9 @@ function paraHTML(b, modeObj){
   const HEADER_LINES = {subject:1, recipient:1, attach:1};
   const before = b.space_before_pt ?? (HEADER_LINES[b.type] ? 6 : 0);
   const st = [];
-  if(before) st.push('margin-top:'+before+'pt');
+  // "ขอแสดงความนับถือ" เว้นก่อนหน้า ~2 บรรทัด (ผ่านตัวแปร --closegap ที่ fitAll ปรับได้)
+  if(b.type==='closing') cls.push('closing-gap');
+  else if(before) st.push('margin-top:'+before+'pt');
   return `<p class="${cls.join(' ')}" style="${st.join(';')}">${tok(b.text, modeObj)}</p>`;
 }
 // สร้าง object ผู้ลงนามที่จะเรนเดอร์ (preset จาก REF หรือที่พิมพ์เอง)
@@ -447,7 +457,19 @@ function renderBlock(b, modeObj){
       return signerHTML();
     case 'signline':      // ช่องเซ็นของบริษัท (ใบตอบรับ)
       return `<div class="signwrap">${b.lines.map(l=>`<p>${esc(l)}</p>`).join('')}</div>`;
-    default:              // subject / recipient / attach / para / field / title / closing
+    case 'field':         // ช่องกรอกในใบตอบรับ
+      if(b.text.includes('{{blank}}')){   // มีช่องว่าง → เส้นประยืดเต็มบรรทัด (บริษัทเขียนเอง)
+        const parts = b.text.split('{{blank}}');
+        let inner = '';
+        parts.forEach((seg,idx)=>{
+          if(seg) inner += `<span class="ftx">${esc(seg)}</span>`;
+          if(idx < parts.length-1) inner += `<span class="ffill"></span>`;
+        });
+        const mt = b.space_before_pt ? `margin-top:${b.space_before_pt}pt` : '';
+        return `<div class="fieldline" style="${mt}">${inner}</div>`;
+      }
+      return paraHTML(b, modeObj);   // field ที่มีค่า (เช่น หน่วยงาน/บริษัท) → ย่อหน้าปกติ
+    default:              // subject / recipient / attach / para / title / closing
       return paraHTML(b, modeObj);
   }
 }
@@ -469,18 +491,19 @@ function sheetHTML(docKey, modeKey){
   const modeObj = d.modeText?.[modeKey] || {};
   const marginKey = d.margins==='acceptance_form' ? 'acceptance_form' : 'letter_head';
   const mg = REF.margins_cm[marginKey];
-  let html = '';
+  let flow = '';
   (d.chrome||[]).forEach(k=>{
-    if(k==='header') html += headerHTML();
-    if(k==='date')   html += `<p class="datep">${tok(TPL._shared_chrome.date.text)}</p>`;
+    if(k==='header') flow += headerHTML();
+    if(k==='date')   flow += `<p class="datep">${tok(TPL._shared_chrome.date.text)}</p>`;
   });
   const body = Array.isArray(d.body)
     ? d.body
     : (effStudents().length>1 && d.body.many ? d.body.many : d.body.single);
-  body.forEach(b=>{ html += renderBlock(b, modeObj); });
-  if(d.footer) html += footerHTML();
+  body.forEach(b=>{ flow += renderBlock(b, modeObj); });
+  const footer = d.footer ? footerHTML() : '';
   const pad = `padding:${mg.top}cm ${mg.right}cm ${mg.bottom}cm ${mg.left}cm;--ml:${mg.left}cm;--mr:${mg.right}cm`;
-  return `<div class="sheet ${d.paper}" style="${pad}">${html}</div>`;
+  // เนื้อหาอยู่ใน .sheet-flow · spacer ยืดดันฟุตเตอร์ให้อยู่ล่างสุดเสมอ (ไม่ทับเนื้อหา)
+  return `<div class="sheet ${d.paper}" style="${pad}"><div class="sheet-flow">${flow}</div><div class="sheet-spacer"></div>${footer}</div>`;
 }
 
 /* ===== พรีวิว + บังคับ 1 หน้า ===== */
@@ -505,18 +528,29 @@ function renderPreview(){
   saveState(); // autosave ทุกครั้งที่มีการแก้ไข
 }
 
-// วัดความสูงจริง ถ้าเกิน 1 หน้า ค่อย ๆ ลดฟอนต์ทีละ 0.25pt (ต่ำสุด 13pt) + เตือนบนจอ
+// บังคับ 1 หน้าเมื่อเนื้อหายาว (footer อยู่ใน flow แล้ว → วัดล้นได้จริง ไม่ทับ footer)
+// ลำดับปรับ: 1) ลดช่องว่างก่อน "ขอแสดงความนับถือ"  2) เลื่อนขึ้นชนโลโก้ได้ถึงครึ่งโลโก้  3) ย่อฟอนต์
 function fitAll(){
   const warns = [];
   document.querySelectorAll('#pages .sheet').forEach((sheet,i)=>{
     sheet.style.fontSize = '';
+    sheet.style.setProperty('--closegap','24pt');
+    const crestw = sheet.querySelector('.crestwrap');
+    if(crestw) crestw.style.marginBottom = '';
+    const over = () => sheet.scrollHeight > sheet.clientHeight + 1;
+
+    // 1) ลดช่องว่างก่อนคำลงท้าย 24 → 8pt
+    let gap = 24;
+    while(over() && gap > 8){ gap -= 2; sheet.style.setProperty('--closegap', gap+'pt'); }
+    // 2) เลื่อนเนื้อหาขึ้นชนโลโก้ได้ถึง ~ครึ่งโลโก้ (ดึง header ขึ้นใต้ตราไม่เกิน 1.35 ซม.)
+    let pull = 0;
+    while(over() && crestw && pull < 1.35){ pull += 0.15; crestw.style.marginBottom = (0.1 - pull).toFixed(2)+'cm'; }
+    // 3) ย่อฟอนต์ 16 → 13pt
     let size = 16;
-    while(sheet.scrollHeight > sheet.clientHeight+1 && size > 13){
-      size -= 0.25;
-      sheet.style.fontSize = size+'pt';
-    }
-    if(size < 16) warns.push(`หน้า ${i+1}: เนื้อหายาวกว่าปกติ ระบบย่อฟอนต์เหลือ ${size}pt เพื่อให้จบใน 1 หน้า`);
-    if(sheet.scrollHeight > sheet.clientHeight+1) warns.push(`หน้า ${i+1}: เนื้อหายังยาวเกินหน้า แม้ย่อฟอนต์แล้ว — ลองย่อข้อความ`);
+    while(over() && size > 13){ size -= 0.25; sheet.style.fontSize = size+'pt'; }
+
+    if(size < 16) warns.push(`หน้า ${i+1}: เนื้อหายาว ระบบย่อฟอนต์เหลือ ${size}pt เพื่อให้จบใน 1 หน้า`);
+    if(over()) warns.push(`หน้า ${i+1}: เนื้อหายังยาวเกินหน้า แม้ปรับแล้ว — ลองย่อข้อความ`);
   });
   const w = document.getElementById('fitWarn');
   w.style.display = warns.length ? 'block' : 'none';
