@@ -270,8 +270,9 @@ function applyData(d){
 }
 function saveState(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(collectData())); }catch(e){} }
 function loadState(){ try{ const s=localStorage.getItem(STORAGE_KEY); return s?JSON.parse(s):null; }catch(e){ return null; } }
-// ชื่อไฟล์ = ชื่อเอกสารไทย + เลขที่ + สถานประกอบการ + เวลา (ยูนีค เรียง/ค้นหาง่ายเมื่อเก็บเยอะ)
-function exportFilename(){
+// ชื่อฐาน = ชื่อเอกสารไทย + เลขที่ + สถานประกอบการ + เวลา (ยูนีค เรียง/ค้นหาง่ายเมื่อเก็บเยอะ)
+// ใช้ร่วมกันทั้งชื่อไฟล์ .json และชื่อไฟล์ PDF (เบราว์เซอร์ใช้ document.title เป็นชื่อไฟล์ตอน Save as PDF)
+function docBaseName(){
   const meta = DOC_META[state.docType];
   const parts = [meta.title];
   if(state.docNo)   parts.push('เลขที่' + state.docNo);
@@ -279,8 +280,22 @@ function exportFilename(){
   const d = new Date(), p = n => String(n).padStart(2,'0');
   parts.push(`${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}`);
   // ตัดอักขระต้องห้ามในชื่อไฟล์ + ยุบช่องว่างในแต่ละส่วนให้กระชับ
-  return parts.map(s => s.replace(/[\/\\:*?"<>|]+/g,'').replace(/\s+/g,'').trim())
-             .join('_') + '.json';
+  return parts.map(s => s.replace(/[\/\\:*?"<>|]+/g,'').replace(/\s+/g,'').trim()).join('_');
+}
+function exportFilename(){ return docBaseName() + '.json'; }
+
+// พิมพ์/บันทึก PDF — ตั้งชื่อไฟล์ผ่าน document.title ของหน้าแม่ (Next.js) ชั่วคราว
+// เพราะเครื่องมือรันใน iframe และเบราว์เซอร์ดึงชื่อไฟล์ PDF จาก title ของหน้าบนสุด
+function printDoc(){
+  const name = docBaseName();
+  const selfPrev = document.title;
+  let parentDoc = null, parentPrev;
+  try{ if(window.parent && window.parent !== window) parentDoc = window.parent.document; }catch(e){ parentDoc = null; }
+  document.title = name;
+  if(parentDoc){ parentPrev = parentDoc.title; parentDoc.title = name; }
+  const restore = ()=>{ document.title = selfPrev; if(parentDoc){ try{ parentDoc.title = parentPrev; }catch(e){} } };
+  window.addEventListener('afterprint', restore, {once:true});
+  window.print();
 }
 function exportJSON(){
   const blob = new Blob([JSON.stringify(collectData(),null,2)], {type:'application/json'});
@@ -636,7 +651,7 @@ function bindForm(){
   document.getElementById('csPos')?.addEventListener('input', e=>{ state.customSigner.position = e.target.value; renderPreview(); });
   document.getElementById('csActing')?.addEventListener('change', e=>{ state.customSigner.actingForDean = e.target.checked; renderPreview(); });
   document.getElementById('printAttach')?.addEventListener('change', e=>{ state.printAttach = e.target.checked; renderPreview(); });
-  document.getElementById('printBtn').addEventListener('click', ()=>window.print());
+  document.getElementById('printBtn').addEventListener('click', printDoc);
   document.getElementById('exportBtn').addEventListener('click', exportJSON);
   document.getElementById('importBtn').addEventListener('click', ()=>document.getElementById('importFile').click());
   document.getElementById('backBtn').addEventListener('click', ()=>{
