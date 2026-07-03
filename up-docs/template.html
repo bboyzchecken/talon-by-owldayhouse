@@ -145,6 +145,10 @@ textarea{resize:vertical;min-height:74px}
 <main>
   <!-- ขั้น 1: การ์ดเลือกประเภทเอกสาร -->
   <section id="docCards" class="no-print" aria-label="เลือกประเภทเอกสาร"></section>
+  <p id="openSaved" class="no-print" style="text-align:center;margin-top:16px">
+    <button class="chip" onclick="document.getElementById('importFile').click()">⬆ เปิดไฟล์ที่บันทึกไว้ (.json)</button>
+  </p>
+  <input type="file" id="importFile" accept="application/json,.json" style="display:none">
 
   <!-- ขั้น 2: ฟอร์ม + พรีวิวสด -->
   <div id="workspace" hidden>
@@ -229,6 +233,53 @@ const state = {
 
 // นิสิตที่ใช้จริงตามเพดานของใบนั้น (ใบ 1 คนใช้แค่คนแรก)
 const effStudents = () => state.students.slice(0, DOC_META[state.docType]?.stuMax || 4);
+
+/* ===== Persistence: autosave (localStorage) + บันทึก/เปิดไฟล์ .json =====
+   แพตเทิร์นเดียวกับ owl-docs — localStorage เป็น optional (try/catch)
+   ตามข้อกำหนดสเปก: ถ้าใช้ไม่ได้ (เช่นบน artifact preview) เครื่องมือยังทำงานปกติ */
+const STORAGE_KEY = 'up-docs-state-v1';
+const SAVED_KEYS = ['docType','mode','docNo','recipient','orgName','courseCode','program','major',
+  'semester','yearEduBE','dateStart','dateEnd','replyBy','yearLevel','refDocNo','refDate',
+  'cancelReason','signerId','printAttach'];
+
+function collectData(){
+  const d = {app:'up-docs', version:1};
+  SAVED_KEYS.forEach(k => { d[k] = state[k]; });
+  d.date = {...state.date};
+  d.students = state.students.map(s => ({name:s.name, phone:s.phone}));
+  return d;
+}
+function applyData(d){
+  if(!d || d.app!=='up-docs' || !DOC_META[d.docType]) throw new Error('ไม่ใช่ไฟล์ของ UP Docs');
+  SAVED_KEYS.forEach(k => { if(d[k]!==undefined) state[k] = d[k]; });
+  if(d.date) state.date = {...state.date, ...d.date};
+  if(Array.isArray(d.students) && d.students.length){
+    state.students = d.students.slice(0,4).map(s => ({name:s.name||'', phone:s.phone||''}));
+  }
+  openWorkspace();
+}
+function saveState(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(collectData())); }catch(e){} }
+function loadState(){ try{ const s=localStorage.getItem(STORAGE_KEY); return s?JSON.parse(s):null; }catch(e){ return null; } }
+function exportJSON(){
+  const blob = new Blob([JSON.stringify(collectData(),null,2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = ('updocs-'+state.docType+'-'+(state.docNo||'draft')+'.json').replace(/\s+/g,'_');
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 1000);
+}
+function importJSON(ev){
+  const file = ev.target.files && ev.target.files[0];
+  ev.target.value = '';
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try{ applyData(JSON.parse(reader.result)); }
+    catch(err){ alert('เปิดไฟล์ไม่ได้ — ไม่ใช่ไฟล์ .json ของ UP Docs'); }
+  };
+  reader.readAsText(file);
+}
 
 /* ===== token → ค่า ===== */
 function dateText(){
@@ -360,6 +411,7 @@ function renderPreview(){
   document.title = 'UP Docs — ' + meta.title;
   fitAll();
   rescale();
+  saveState(); // autosave ทุกครั้งที่มีการแก้ไข
 }
 
 // วัดความสูงจริง ถ้าเกิน 1 หน้า ค่อย ๆ ลดฟอนต์ทีละ 0.25pt (ต่ำสุด 13pt) + เตือนบนจอ
@@ -463,6 +515,11 @@ function renderForm(){
     ${attachOpt}
     <button class="printbtn" id="printBtn">🖨 พิมพ์ / บันทึกเป็น PDF</button>
     <div class="printtip">ในหน้าต่างพิมพ์ เลือกปลายทาง "Save as PDF" — ขนาดกระดาษถูกตั้งให้อัตโนมัติ</div>
+    <div class="row" style="margin-top:10px">
+      <button class="chip" id="exportBtn">⬇ บันทึกไฟล์</button>
+      <button class="chip" id="importBtn">⬆ เปิดไฟล์</button>
+    </div>
+    <div class="printtip">💾 บันทึกอัตโนมัติในเบราว์เซอร์นี้ · ไฟล์ .json ใช้เก็บงานหรือย้ายไปทำต่อเครื่องอื่น</div>
     <datalist id="programList">${REF.programs.filter(p=>!p.includes('__')).map(p=>`<option value="${esc(p)}">`).join('')}</datalist>
     <datalist id="majorList"><option value="การตลาดดิจิทัล"></datalist>`;
   bindForm();
@@ -495,13 +552,25 @@ function bindForm(){
   document.getElementById('signerSel').addEventListener('change', e=>{ state.signerId = e.target.value; renderPreview(); });
   document.getElementById('printAttach')?.addEventListener('change', e=>{ state.printAttach = e.target.checked; renderPreview(); });
   document.getElementById('printBtn').addEventListener('click', ()=>window.print());
+  document.getElementById('exportBtn').addEventListener('click', exportJSON);
+  document.getElementById('importBtn').addEventListener('click', ()=>document.getElementById('importFile').click());
   document.getElementById('backBtn').addEventListener('click', ()=>{
     state.docType = null;
     document.getElementById('workspace').hidden = true;
     document.getElementById('docCards').style.display = '';
+    document.getElementById('openSaved').style.display = '';
     document.getElementById('pages').innerHTML = '';
     document.title = 'UP Docs — เครื่องมือออกเอกสารฝึกงาน คณะบริหารธุรกิจและนิเทศศาสตร์ ม.พะเยา';
   });
+}
+
+// เปิดหน้าฟอร์ม+พรีวิวของ state.docType ปัจจุบัน (ใช้ทั้งตอนคลิกการ์ด/เปิดไฟล์/กู้ autosave)
+function openWorkspace(){
+  document.getElementById('docCards').style.display = 'none';
+  document.getElementById('openSaved').style.display = 'none';
+  document.getElementById('workspace').hidden = false;
+  renderForm();
+  renderPreview();
 }
 
 /* ===== หน้าเลือกเอกสาร (การ์ดใหญ่ ชัดเจน — แก้ปัญหา dropdown เดิมสับสน) ===== */
@@ -515,14 +584,18 @@ function renderCards(){
       state.docType = el.dataset.doc;
       const modes = TPL.documents[state.docType].modes || [];
       state.mode = modes[0] || 'internship';
-      document.getElementById('docCards').style.display = 'none';
-      document.getElementById('workspace').hidden = false;
-      renderForm();
-      renderPreview();
+      openWorkspace();
     });
   });
 }
 renderCards();
+document.getElementById('importFile').addEventListener('change', importJSON);
+
+// กู้งานล่าสุดจาก autosave (ถ้ามีและใช้ localStorage ได้)
+try{
+  const saved = loadState();
+  if(saved && DOC_META[saved.docType]) applyData(saved);
+}catch(e){ /* ไฟล์เก่าเสีย/ไม่มี — เริ่มหน้าเลือกการ์ดตามปกติ */ }
 </script>
 </body>
 </html>
