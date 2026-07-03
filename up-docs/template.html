@@ -101,15 +101,15 @@ textarea{resize:vertical;min-height:74px}
 .rgt{text-align:right}
 .ind2{text-indent:2.54cm}   /* เยื้องบรรทัดแรก 2 tab */
 .ind1{text-indent:1.27cm}
-.sheet .sig-align{margin-left:30%;margin-right:0;text-align:center}  /* กึ่งกลางค่อนขวา ตามต้นฉบับ — .sheet นำหน้าให้ชนะ .sheet p{margin:0} */
+.sheet .sig-align{margin-left:0;margin-right:0;text-align:center}  /* บล็อกคำลงท้าย/ผู้ลงนาม จัดกึ่งกลางหน้า (.sheet นำหน้าให้ชนะ .sheet p{margin:0}) */
 .docheader{display:flex;justify-content:space-between;align-items:flex-start}
 .dh-right p{text-align:left}
 /* ตรา ม.พะเยา กึ่งกลาง "หน้ากระดาษ" (ไม่ใช่กรอบข้อความ) ตามแผนผังราชการ —
    ชดเชยขอบซ้าย/ขวาที่ไม่เท่ากันด้วย (ขวา−ซ้าย)/2 */
 .crestwrap{text-align:center;margin-bottom:0.1cm;margin-left:calc((var(--mr,2cm) - var(--ml,3cm))/2)}
 .crest{height:2.7cm;width:auto;display:inline-block}
-.datep{text-align:center;margin-top:6pt}
-.stu{margin-left:1.27cm}    /* ลิสต์นิสิตเลขไทย */
+.sheet .datep{text-align:center;margin-top:6pt}   /* .sheet นำหน้าให้ margin-top ชนะ .sheet p{margin:0} */
+.sheet .stu{margin-left:1.27cm}    /* ลิสต์นิสิตเลขไทย เยื้องซ้าย 1.27ซม. (ต้องมี .sheet ไม่งั้นโดน .sheet p{margin:0} ทับ) */
 .doctitle{text-align:center;font-weight:bold;font-size:1.375em}  /* หัวใบตอบรับ 22pt */
 .sigspace{height:1.7cm}     /* เว้นที่เซ็นชื่อ */
 .sheet .closing-gap{margin-top:var(--closegap,24pt)}  /* เว้นก่อน "ขอแสดงความนับถือ" ~2 บรรทัด (.sheet นำหน้าให้ชนะ .sheet p{margin:0}) */
