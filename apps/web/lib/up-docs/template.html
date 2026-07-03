@@ -145,17 +145,29 @@ textarea{resize:vertical;min-height:74px}
      Measurement ID เติมโดย build.py จาก env UP_DOCS_GA_ID หรือ up-docs/assets/ga_id.txt
      ยังไม่ตั้งค่า = ไม่โหลดสคริปต์ ไม่ส่งข้อมูลใด ๆ -->
 <script>
-window.track = function(){};   // ค่าเริ่มต้น: no-op (เผื่อยังไม่ตั้ง GA)
+/* ส่ง event เข้า gtag ของ "หน้าแม่" (owldayhouse.com/up-docs) ซึ่งโหลด property up-docs
+   ด้วย URL จริง — เลี่ยงปัญหา iframe srcdoc ที่ page_location เป็น about:srcdoc แล้ว GA ไม่ขึ้น
+   ระบุ send_to = Measurement ID เพื่อยิงเข้า property up-docs เท่านั้น (ไม่ปนกับ GA เว็บตลาด)
+   กรณีเปิดไฟล์เดี่ยว (ไม่อยู่ใน iframe) และตั้ง GA_ID ไว้ → โหลด gtag ของตัวเองไว้ fallback */
+window.track = function(){};
 (function(){
-  var id = 'G-3XWGSN9WKG';
-  if(!id || id.indexOf('G-') !== 0) return;   // ยังไม่ตั้งค่า → เงียบสนิท
-  var s = document.createElement('script'); s.async = 1;
-  s.src = 'https://www.googletagmanager.com/gtag/js?id=' + id;
-  document.head.appendChild(s);
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){ dataLayer.push(arguments); }
-  window.gtag = gtag; gtag('js', new Date()); gtag('config', id, {anonymize_ip:true});
-  window.track = function(ev, params){ try{ gtag('event', ev, params||{}); }catch(e){} };
+  var GA_ID = 'G-3XWGSN9WKG';
+  var haveGA = GA_ID && GA_ID.indexOf('G-') === 0;
+  function parentGtag(){
+    try{ if(window.parent && window.parent !== window && typeof window.parent.gtag === 'function') return window.parent.gtag; }catch(e){}
+    return null;
+  }
+  if(haveGA && !parentGtag()){   // standalone: ไม่มีหน้าแม่ → โหลด gtag เอง
+    var s=document.createElement('script'); s.async=1;
+    s.src='https://www.googletagmanager.com/gtag/js?id='+GA_ID; document.head.appendChild(s);
+    window.dataLayer=window.dataLayer||[]; function gtag(){ dataLayer.push(arguments); }
+    window.gtag=gtag; gtag('js', new Date()); gtag('config', GA_ID);
+  }
+  window.track = function(ev, params){
+    var p = params || {}; if(haveGA) p.send_to = GA_ID;
+    var g = parentGtag() || (typeof window.gtag==='function' ? window.gtag : null);
+    if(g){ try{ g('event', ev, p); }catch(e){} }
+  };
 })();
 </script>
 </head>
