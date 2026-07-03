@@ -101,8 +101,10 @@ textarea{resize:vertical;min-height:74px}
 .sheet .sig-align{margin-left:30%;margin-right:0;text-align:center}  /* กึ่งกลางค่อนขวา ตามต้นฉบับ — .sheet นำหน้าให้ชนะ .sheet p{margin:0} */
 .docheader{display:flex;justify-content:space-between;align-items:flex-start}
 .dh-right p{text-align:left}
-.crest{display:block;height:2.8cm;width:auto;margin:0 auto 0.15cm}  /* ตรา ม.พะเยา เหนือบล็อกที่อยู่ (ASSETS.md) */
-.dh-left.with-crest{margin-top:2.95cm}  /* ดัน "ที่ อว..." ลงมาให้ตรงบรรทัดแรกของที่อยู่ */
+/* ตรา ม.พะเยา กึ่งกลาง "หน้ากระดาษ" (ไม่ใช่กรอบข้อความ) ตามแผนผังราชการ —
+   ชดเชยขอบซ้าย/ขวาที่ไม่เท่ากันด้วย (ขวา−ซ้าย)/2 */
+.crestwrap{text-align:center;margin-bottom:0.1cm;margin-left:calc((var(--mr,2cm) - var(--ml,3cm))/2)}
+.crest{height:2.7cm;width:auto;display:inline-block}
 .datep{text-align:center;margin-top:6pt}
 .stu{margin-left:1.27cm}    /* ลิสต์นิสิตเลขไทย */
 .doctitle{text-align:center;font-weight:bold;font-size:1.375em}  /* หัวใบตอบรับ 22pt */
@@ -336,8 +338,11 @@ function paraHTML(b, modeObj){
   if(b.indent==='firstline2tab') cls.push('ind2');
   if(b.indent==='firstline1tab') cls.push('ind1');
   if(b.type==='title') cls.push('doctitle');
+  // แผนผังราชการบังคับ: เรื่อง/เรียน/อ้างถึง/สิ่งที่ส่งมาด้วย เว้นก่อนหน้า 6pt (ทุกไฟล์ต้นฉบับมี before=6pt)
+  const HEADER_LINES = {subject:1, recipient:1, attach:1};
+  const before = b.space_before_pt ?? (HEADER_LINES[b.type] ? 6 : 0);
   const st = [];
-  if(b.space_before_pt) st.push('margin-top:'+b.space_before_pt+'pt');
+  if(before) st.push('margin-top:'+before+'pt');
   return `<p class="${cls.join(' ')}" style="${st.join(';')}">${tok(b.text, modeObj)}</p>`;
 }
 function signerHTML(){
@@ -369,9 +374,10 @@ function renderBlock(b, modeObj){
 function headerHTML(){
   const c = TPL._shared_chrome.header;
   const right = c.right_lines.map(l=>`<p>${esc(l)}</p>`).join('');
+  // ตรากึ่งกลางบนสุด (ครุฑ/ตราราชการ) แล้วตามด้วยแถว "ที่ อว..." ซ้าย / ที่อยู่ ขวา
   const crest = CREST_DATA
-    ? `<img class="crest" src="${CREST_DATA}" alt="ตรามหาวิทยาลัยพะเยา">` : '';
-  return `<div class="docheader"><div class="dh-left${crest?' with-crest':''}"><p>${tok(c.left)}</p></div><div class="dh-right">${crest}${right}</div></div>`;
+    ? `<div class="crestwrap"><img class="crest" src="${CREST_DATA}" alt="ตรามหาวิทยาลัยพะเยา"></div>` : '';
+  return `${crest}<div class="docheader"><div class="dh-left"><p>${tok(c.left)}</p></div><div class="dh-right">${right}</div></div>`;
 }
 function footerHTML(){
   return `<div class="docfooter">${TPL._shared_chrome.footer.lines.map(l=>`<p>${esc(l)}</p>`).join('')}</div>`;
@@ -393,7 +399,7 @@ function sheetHTML(docKey, modeKey){
     : (effStudents().length>1 && d.body.many ? d.body.many : d.body.single);
   body.forEach(b=>{ html += renderBlock(b, modeObj); });
   if(d.footer) html += footerHTML();
-  const pad = `padding:${mg.top}cm ${mg.right}cm ${mg.bottom}cm ${mg.left}cm;--ml:${mg.left}cm`;
+  const pad = `padding:${mg.top}cm ${mg.right}cm ${mg.bottom}cm ${mg.left}cm;--ml:${mg.left}cm;--mr:${mg.right}cm`;
   return `<div class="sheet ${d.paper}" style="${pad}">${html}</div>`;
 }
 
