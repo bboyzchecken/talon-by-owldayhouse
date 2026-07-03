@@ -270,12 +270,24 @@ function applyData(d){
 }
 function saveState(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(collectData())); }catch(e){} }
 function loadState(){ try{ const s=localStorage.getItem(STORAGE_KEY); return s?JSON.parse(s):null; }catch(e){ return null; } }
+// ชื่อไฟล์ = ชื่อเอกสารไทย + เลขที่ + สถานประกอบการ + เวลา (ยูนีค เรียง/ค้นหาง่ายเมื่อเก็บเยอะ)
+function exportFilename(){
+  const meta = DOC_META[state.docType];
+  const parts = [meta.title];
+  if(state.docNo)   parts.push('เลขที่' + state.docNo);
+  if(state.orgName) parts.push(state.orgName);
+  const d = new Date(), p = n => String(n).padStart(2,'0');
+  parts.push(`${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}`);
+  // ตัดอักขระต้องห้ามในชื่อไฟล์ + ยุบช่องว่างในแต่ละส่วนให้กระชับ
+  return parts.map(s => s.replace(/[\/\\:*?"<>|]+/g,'').replace(/\s+/g,'').trim())
+             .join('_') + '.json';
+}
 function exportJSON(){
   const blob = new Blob([JSON.stringify(collectData(),null,2)], {type:'application/json'});
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = ('updocs-'+state.docType+'-'+(state.docNo||'draft')+'.json').replace(/\s+/g,'_');
+  a.download = exportFilename();
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(()=>URL.revokeObjectURL(url), 1000);
 }
@@ -513,6 +525,27 @@ function studentsHTML(meta){
   const lockNote = meta.stuMax===1 ? '<div class="hint">แบบฟอร์มต้นฉบับของใบนี้รองรับนิสิต 1 คนต่อฉบับ</div>' : '';
   return rows + addBtn + lockNote;
 }
+// ===== dropdown หลักสูตร/สาขา ที่สัมพันธ์กัน (คณะเดียว: บริหารธุรกิจและนิเทศศาสตร์) =====
+function programsList(){ return REF.programs.filter(p=>!p.includes('__')); }
+function majorsForProgram(prog){
+  const map = REF.major_to_program || {};
+  const all = REF.majors.filter(m=>!m.includes('__'));
+  return prog ? all.filter(m => map[m]===prog) : all;   // ไม่เลือกหลักสูตร → โชว์ครบ 8
+}
+function selectHTML(key, label, placeholder, list){
+  const cur = state[key];
+  // ถ้าค่าปัจจุบันไม่อยู่ในลิสต์ (เช่นมาจากไฟล์เก่า/พิมพ์เอง) ยังคงโชว์เป็นตัวเลือกไว้
+  const extra = cur && !list.includes(cur) ? [cur] : [];
+  const opts = [`<option value="">${placeholder}</option>`]
+    .concat(list.concat(extra).map(v=>`<option ${cur===v?'selected':''}>${esc(v)}</option>`));
+  return `<label>${label}</label><select data-sel="${key}">${opts.join('')}</select>`;
+}
+function programSelectHTML(){ return selectHTML('program','หลักสูตร','— เลือกหลักสูตร —', programsList()); }
+function majorSelectHTML(){
+  // ถ้าใบนี้มีช่องหลักสูตรด้วย → กรองสาขาตามหลักสูตร; ถ้าไม่มี → โชว์ครบ 8
+  const hasProg = DOC_META[state.docType].fields.includes('program');
+  return selectHTML('major','สาขาวิชา','— เลือกสาขาวิชา —', majorsForProgram(hasProg ? state.program : ''));
+}
 function signerHTMLForm(){
   const opts = REF.signers.map(s=>
     `<option value="${s.id}" ${state.signerId===s.id?'selected':''}>${esc(s.name)}</option>`
@@ -534,7 +567,12 @@ function renderForm(){
   const modeChips = hasModes ? `<fieldset><legend>ประเภทการปฏิบัติงาน</legend><div class="modechips">${
     doc.modes.map(m=>`<button class="chip ${state.mode===m?'on':''}" data-mode="${m}">${MODE_LABEL[m]||m}</button>`).join('')
   }</div></fieldset>` : '';
-  const fieldsHTML = meta.fields.map(k => k==='date' ? dateInputHTML() : inputHTML(k)).join('');
+  const fieldsHTML = meta.fields.map(k =>
+    k==='date'    ? dateInputHTML() :
+    k==='program' ? programSelectHTML() :
+    k==='major'   ? majorSelectHTML() :
+    inputHTML(k)
+  ).join('');
   const attachOpt = state.docType==='request'
     ? `<label class="chk"><input type="checkbox" id="printAttach" ${state.printAttach?'checked':''}> พิมพ์ใบตอบรับแนบท้าย (รวม 2 หน้า)</label>` : '';
   document.getElementById('formPanel').innerHTML = `
@@ -552,25 +590,27 @@ function renderForm(){
       <button class="chip" id="exportBtn">⬇ บันทึกไฟล์</button>
       <button class="chip" id="importBtn">⬆ เปิดไฟล์</button>
     </div>
-    <div class="printtip">💾 บันทึกอัตโนมัติในเบราว์เซอร์นี้ · ไฟล์ .json ใช้เก็บงานหรือย้ายไปทำต่อเครื่องอื่น</div>
-    <datalist id="programList">${REF.programs.filter(p=>!p.includes('__')).map(p=>`<option value="${esc(p)}">`).join('')}</datalist>
-    <datalist id="majorList">${REF.majors.filter(m=>!m.includes('__')).map(m=>`<option value="${esc(m)}">`).join('')}</datalist>`;
+    <div class="printtip">💾 บันทึกอัตโนมัติในเบราว์เซอร์นี้ · ไฟล์ .json ใช้เก็บงานหรือย้ายไปทำต่อเครื่องอื่น</div>`;
   bindForm();
 }
 function bindForm(){
   const panel = document.getElementById('formPanel');
   panel.querySelectorAll('[data-k]').forEach(el=>{
-    el.addEventListener('input', ()=>{
-      state[el.dataset.k] = el.value;
-      // เลือกสาขาที่รู้จัก → เติมหลักสูตรให้อัตโนมัติ (คู่จาก reference.major_to_program)
-      if(el.dataset.k==='major'){
-        const prog = (REF.major_to_program||{})[el.value.trim()];
-        if(prog && state.program!==prog){
-          state.program = prog;
-          const pIn = panel.querySelector('[data-k="program"]');
-          if(pIn) pIn.value = prog;
-        }
+    el.addEventListener('input', ()=>{ state[el.dataset.k] = el.value; renderPreview(); });
+  });
+  // dropdown หลักสูตร ↔ สาขา (สัมพันธ์กัน)
+  panel.querySelectorAll('[data-sel]').forEach(el=>{
+    el.addEventListener('change', ()=>{
+      const key = el.dataset.sel;   // program | major
+      state[key] = el.value;
+      if(key==='major'){
+        const prog = (REF.major_to_program||{})[el.value];
+        if(prog) state.program = prog;          // เลือกสาขา → เติมหลักสูตร
+      }else if(key==='program'){
+        const valid = majorsForProgram(state.program);
+        if(state.major && !valid.includes(state.major)) state.major = ''; // สาขาเดิมไม่เข้าหลักสูตรใหม่ → ล้าง
       }
+      renderForm();   // rebuild ให้ตัวเลือกสองช่องสอดคล้องกัน
       renderPreview();
     });
   });
