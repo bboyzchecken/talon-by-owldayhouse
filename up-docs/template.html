@@ -231,7 +231,7 @@ const state = {
   dateStart:'', dateEnd:'', replyBy:'', yearLevel:'',
   refDocNo:'', refDate:'',
   cancelReason: DEFAULT_CANCEL_REASON,
-  date: {month: TH_MONTHS[now.getMonth()], yearBE: String(now.getFullYear()+543), full:false, day:''},
+  date: {day:'', month: TH_MONTHS[now.getMonth()], yearBE: String(now.getFullYear()+543)},
   students: [{name:'', phone:''}],
   signerId: 's1',
   // ผู้ลงนามที่พิมพ์เอง (เมื่อเลือก "พิมพ์เอง…") — actingForDean=true แสดง "ปฏิบัติการแทน / คณบดีฯ"
@@ -306,8 +306,8 @@ function importJSON(ev){
 /* ===== token → ค่า ===== */
 function dateText(){
   const d = state.date;
-  if(!d.month && !d.yearBE) return '';
-  const day = d.full && d.day ? thNum(d.day)+' ' : '';
+  if(!d.month && !d.yearBE && !d.day) return '';
+  const day = d.day ? thNum(d.day)+' ' : '';   // มีวัน = แสดงเต็ม / ไม่มี = เดือน+ปี ตามค่ามาตรฐานราชการ
   return (day + (d.month||'') + ' ' + thNum(d.yearBE||'')).trim();
 }
 function studentNamesInline(){
@@ -504,14 +504,11 @@ function dateInputHTML(){
   const monthOpts = TH_MONTHS.map(m=>`<option ${state.date.month===m?'selected':''}>${m}</option>`).join('');
   return `<label>วันที่ออกหนังสือ</label>
     <div class="row">
-      <select data-dk="month">${monthOpts}</select>
-      <input type="text" inputmode="numeric" data-dk="yearBE" value="${esc(state.date.yearBE)}" placeholder="พ.ศ.">
+      <input type="text" inputmode="numeric" data-dk="day" value="${esc(state.date.day)}" placeholder="วัน (ไม่บังคับ)" style="flex:0 0 26%">
+      <select data-dk="month" style="flex:1">${monthOpts}</select>
+      <input type="text" inputmode="numeric" data-dk="yearBE" value="${esc(state.date.yearBE)}" placeholder="พ.ศ." style="flex:0 0 26%">
     </div>
-    <label class="chk"><input type="checkbox" data-dk="full" ${state.date.full?'checked':''}> ระบุวันที่เต็ม (วัน เดือน ปี)</label>
-    <div id="dayWrap" style="${state.date.full?'':'display:none'};margin-top:6px">
-      <input type="text" inputmode="numeric" data-dk="day" value="${esc(state.date.day)}" placeholder="วันที่ เช่น 3">
-    </div>
-    <div class="hint">แสดงบนหนังสือเป็นเลขไทยอัตโนมัติ เช่น "${dateText()||TH_MONTHS[now.getMonth()]+' '+thNum(now.getFullYear()+543)}"</div>`;
+    <div class="hint">กรอกวันได้เลย (เว้นว่าง = แสดงเป็น "เดือน ปี" ตามแบบราชการ) · เลขไทยอัตโนมัติ เช่น "${dateText()||TH_MONTHS[now.getMonth()]+' '+thNum(now.getFullYear()+543)}"</div>`;
 }
 function studentsHTML(meta){
   const stu = state.students.slice(0, meta.stuMax);
@@ -615,12 +612,7 @@ function bindForm(){
     });
   });
   panel.querySelectorAll('[data-dk]').forEach(el=>{
-    el.addEventListener('input', ()=>{
-      const k = el.dataset.dk;
-      if(k==='full'){ state.date.full = el.checked; document.getElementById('dayWrap').style.display = el.checked?'':'none'; }
-      else state.date[k] = el.value;
-      renderPreview();
-    });
+    el.addEventListener('input', ()=>{ state.date[el.dataset.dk] = el.value; renderPreview(); });
   });
   panel.querySelectorAll('[data-sk]').forEach(el=>{
     el.addEventListener('input', ()=>{ state.students[+el.dataset.si][el.dataset.sk] = el.value; renderPreview(); });
