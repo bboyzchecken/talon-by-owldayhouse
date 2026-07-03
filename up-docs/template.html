@@ -99,9 +99,12 @@ textarea{resize:vertical;min-height:74px}
 .just{text-align:justify}
 .ctr{text-align:center}
 .rgt{text-align:right}
-.ind2{text-indent:2.54cm}   /* เยื้องบรรทัดแรก 2 tab */
+.ind2{text-indent:2.5cm}   /* เยื้องบรรทัดแรก 2.5cm ตาม format ราชการ (ระยะย่อหน้า ๒.๕ ซม.) */
 .ind1{text-indent:1.27cm}
-.sheet .sig-align{margin-left:0;margin-right:0;text-align:center}  /* บล็อกคำลงท้าย/ผู้ลงนาม จัดกึ่งกลางหน้า (.sheet นำหน้าให้ชนะ .sheet p{margin:0}) */
+/* บล็อกคำลงท้าย/ผู้ลงนาม "กึ่งกลางค่อนขวา" ตาม format ราชการ —
+   ต้นฉบับ .docx ใช้ TAB@7.75cm (="ขอแสดงความนับถือ" เริ่มที่กึ่งกลางหน้าแล้วยื่นขวา)
+   ทำเป็น center บนแกน ~57%: margin-left 14% → center=(14+100)/2=57% (.sheet นำหน้าให้ชนะ .sheet p{margin:0}) */
+.sheet .sig-align{margin-left:14%;margin-right:0;text-align:center}
 .docheader{display:flex;justify-content:space-between;align-items:flex-start}
 .dh-right p{text-align:left}
 /* ตรา ม.พะเยา กึ่งกลาง "หน้ากระดาษ" (ไม่ใช่กรอบข้อความ) ตามแผนผังราชการ —
