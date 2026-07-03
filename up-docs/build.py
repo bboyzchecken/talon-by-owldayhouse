@@ -2,7 +2,9 @@
 """build.py — ประกอบ UP Docs เป็น HTML ไฟล์เดียว
 
 อ่าน template.html + สเปก (files/templates.json, files/reference.json) + ฟอนต์ woff2
-แล้วเขียนผลลัพธ์ไปที่ apps/web/public/up-docs/index.html (deploy ไปกับเว็บ static)
+แล้วเขียนผลลัพธ์ไปที่ apps/web/lib/up-docs/template.html
+(ถูก import เป็น raw string เข้า /up-docs ซึ่ง gate ด้วยรหัสผ่าน — ห้ามวางใน public/
+เพราะไฟล์ใน public เข้าถึงตรงได้โดยไม่ผ่าน gate)
 
 วิธีใช้:  python3 up-docs/build.py
 """
@@ -28,7 +30,7 @@ out = (
     .replace("__FONT_B__", font_bold)
 )
 
-dest = ROOT.parent / "apps/web/public/up-docs/index.html"
+dest = ROOT.parent / "apps/web/lib/up-docs/template.html"
 dest.parent.mkdir(parents=True, exist_ok=True)
 dest.write_text(out, encoding="utf-8")
 print(f"เขียน {dest} ({len(out)/1024:.0f} KB)")
