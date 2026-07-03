@@ -35,54 +35,54 @@
 html,body{margin:0;padding:0}
 body{background:#EEECE4;color:var(--navy);font-family:'IBM Plex Sans Thai','TH Sarabun New',-apple-system,'Segoe UI',sans-serif}
 .app-header{background:linear-gradient(135deg,var(--navy-deep),var(--navy));color:#fff;padding:18px 22px;border-bottom:4px solid var(--gold)}
-.app-header h1{margin:0;font-size:20px}
-.app-header p{margin:4px 0 0;font-size:13px;opacity:.85}
+.app-header h1{margin:0;font-size:22px}
+.app-header p{margin:4px 0 0;font-size:15px;opacity:.85}
 main{max-width:1280px;margin:0 auto;padding:20px}
 
 /* การ์ดเลือกเอกสาร */
 #docCards{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
 .card{background:#fff;border:2px solid transparent;border-top:4px solid var(--navy);border-radius:12px;padding:16px;cursor:pointer;text-align:left;font:inherit;box-shadow:0 2px 8px rgba(40,37,76,.08);transition:.15s}
 .card:hover{border-color:var(--gold);transform:translateY(-2px)}
-.card h2{margin:0 0 6px;font-size:17px;color:var(--navy)}
-.card p{margin:0;font-size:13px;color:#5a577a;line-height:1.5}
-.card .tag{display:inline-block;margin-top:10px;font-size:11px;background:var(--gold-soft);color:#8a6410;border-radius:99px;padding:2px 10px}
+.card h2{margin:0 0 6px;font-size:19px;color:var(--navy)}
+.card p{margin:0;font-size:15px;color:#5a577a;line-height:1.5}
+.card .tag{display:inline-block;margin-top:10px;font-size:13px;background:var(--gold-soft);color:#8a6410;border-radius:99px;padding:2px 10px}
 
 /* workspace ฟอร์ม + พรีวิว */
 #workspace{display:grid;grid-template-columns:400px minmax(0,1fr);gap:20px;align-items:start}
 #workspace[hidden]{display:none}
 #formPanel{background:#fff;border-radius:12px;padding:18px;box-shadow:0 2px 8px rgba(40,37,76,.08)}
-#formPanel h2{margin:0 0 2px;font-size:17px}
-#formPanel .docsub{margin:0 0 12px;font-size:12px;color:#5a577a}
-.backbtn{background:none;border:none;color:var(--navy);font:inherit;font-size:13px;cursor:pointer;padding:0;margin-bottom:10px;text-decoration:underline}
+#formPanel h2{margin:0 0 2px;font-size:19px}
+#formPanel .docsub{margin:0 0 12px;font-size:14px;color:#5a577a}
+.backbtn{background:none;border:none;color:var(--navy);font:inherit;font-size:15px;cursor:pointer;padding:0;margin-bottom:10px;text-decoration:underline}
 fieldset{border:1px solid #e4e2d8;border-radius:10px;margin:0 0 14px;padding:10px 12px 12px}
-legend{font-size:12px;font-weight:600;color:#8a6410;padding:0 6px}
-label{display:block;font-size:12.5px;font-weight:600;margin:10px 0 4px}
+legend{font-size:14px;font-weight:600;color:#8a6410;padding:0 6px}
+label{display:block;font-size:14px;font-weight:600;margin:10px 0 4px}
 label:first-of-type{margin-top:0}
-input[type=text],input[type=number],select,textarea{width:100%;padding:8px 10px;border:1px solid #cfcdc0;border-radius:8px;font:inherit;font-size:14px;background:var(--paper)}
+input[type=text],input[type=number],select,textarea{width:100%;padding:8px 10px;border:1px solid #cfcdc0;border-radius:8px;font:inherit;font-size:16px;background:var(--paper)}
 input:focus,select:focus,textarea:focus{outline:2px solid var(--gold);border-color:var(--gold)}
 textarea{resize:vertical;min-height:74px}
-.hint{font-size:11px;color:#8b8875;margin-top:3px}
+.hint{font-size:13px;color:#8b8875;margin-top:3px}
 .row{display:flex;gap:8px}
 .row>*{flex:1}
-.chk{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:400;margin:8px 0 0;cursor:pointer}
+.chk{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:400;margin:8px 0 0;cursor:pointer}
 .chk input{width:auto}
 .modechips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px}
-.chip{border:1.5px solid #cfcdc0;background:#fff;border-radius:99px;padding:6px 14px;font:inherit;font-size:13px;cursor:pointer}
+.chip{border:1.5px solid #cfcdc0;background:#fff;border-radius:99px;padding:6px 14px;font:inherit;font-size:15px;cursor:pointer}
 .chip.on{background:var(--navy);border-color:var(--navy);color:#fff}
 .sturow{display:flex;gap:6px;margin-bottom:6px;align-items:center}
 .sturow input{flex:1}
 .sturow .stuphone{max-width:120px}
-.sturow .del{flex:0 0 auto;background:none;border:1px solid #cfcdc0;border-radius:8px;width:30px;height:30px;cursor:pointer;color:#a33;font-size:14px;line-height:1}
-.addstu{background:var(--gold-soft);border:1px dashed var(--gold);border-radius:8px;padding:7px 12px;font:inherit;font-size:13px;cursor:pointer;width:100%}
-.printbtn{width:100%;background:var(--gold);color:var(--navy-deep);border:none;border-radius:10px;padding:13px;font:inherit;font-size:16px;font-weight:700;cursor:pointer;margin-top:6px;box-shadow:0 3px 10px rgba(233,164,27,.4)}
+.sturow .del{flex:0 0 auto;background:none;border:1px solid #cfcdc0;border-radius:8px;width:34px;height:34px;cursor:pointer;color:#a33;font-size:16px;line-height:1}
+.addstu{background:var(--gold-soft);border:1px dashed var(--gold);border-radius:8px;padding:8px 12px;font:inherit;font-size:15px;cursor:pointer;width:100%}
+.printbtn{width:100%;background:var(--gold);color:var(--navy-deep);border:none;border-radius:10px;padding:13px;font:inherit;font-size:18px;font-weight:700;cursor:pointer;margin-top:6px;box-shadow:0 3px 10px rgba(233,164,27,.4)}
 .printbtn:hover{filter:brightness(1.05)}
-.printtip{font-size:11px;color:#8b8875;text-align:center;margin-top:6px}
+.printtip{font-size:13px;color:#8b8875;text-align:center;margin-top:6px}
 
 /* พรีวิว */
 #previewPanel{min-width:0}
-#fitWarn{display:none;background:var(--gold-soft);border:1px solid var(--gold);color:#7a5a0e;border-radius:8px;padding:8px 12px;font-size:13px;margin-bottom:10px}
+#fitWarn{display:none;background:var(--gold-soft);border:1px solid var(--gold);color:#7a5a0e;border-radius:8px;padding:8px 12px;font-size:15px;margin-bottom:10px}
 .sheetbox{margin:0 auto 18px;overflow:hidden;box-shadow:0 4px 18px rgba(40,37,76,.18)}
-.pagelabel{font-size:12px;color:#5a577a;text-align:center;margin:0 0 6px}
+.pagelabel{font-size:14px;color:#5a577a;text-align:center;margin:0 0 6px}
 
 /* ===== ตัวเอกสาร (สิ่งที่พิมพ์จริง) ===== */
 .sheet{
@@ -112,7 +112,7 @@ textarea{resize:vertical;min-height:74px}
 .blank{display:inline-block;min-width:4.5cm;border-bottom:1px dotted #000}
 .miss{display:inline-block;min-width:2.8cm;border-bottom:1px dotted #999;background:var(--gold-soft)} /* ช่องที่ยังไม่กรอก — ไฮไลต์เฉพาะบนจอ */
 
-.app-footer{text-align:center;font-size:12px;color:#5a577a;padding:18px}
+.app-footer{text-align:center;font-size:14px;color:#5a577a;padding:18px}
 .app-footer a{color:var(--navy)}
 
 /* มือถือ: ฟอร์มอยู่บน พรีวิวอยู่ล่าง */
