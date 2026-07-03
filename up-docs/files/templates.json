@@ -1,0 +1,645 @@
+{
+  "_comment": "เนื้อความเอกสารทั้งหมด แกะจาก .docx ต้นฉบับจริง แปลง placeholder (…….) เป็น {{token}} | body.single=นิสิต 1 คน, body.many=2–4 คน | mode phrases อยู่ใน modeText",
+  "_shared_chrome": {
+    "header": {
+      "type": "header_twocol",
+      "left": "ที่ {{docNo_prefix}}{{docNo}}",
+      "right_lines": [
+        "มหาวิทยาลัยพะเยา",
+        "ตำบลแม่กา อำเภอเมืองพะเยา",
+        "จังหวัดพะเยา ๕๖๐๐๐"
+      ],
+      "note": "ต้นฉบับดันบล็อกขวาด้วย tab — ใน HTML ใช้ 2 คอลัมน์ ซ้าย=เลขที่ ขวา=ที่อยู่ (ชิดค่อนขวา)"
+    },
+    "date": {
+      "type": "date",
+      "text": "{{dateText}}",
+      "align": "center",
+      "space_before_pt": 6
+    },
+    "closing": {
+      "type": "closing",
+      "text": "ขอแสดงความนับถือ",
+      "align": "center_ish"
+    },
+    "signer": {
+      "type": "signer",
+      "use": "{{signer}}",
+      "note": "บล็อกผู้ลงนามที่เลือก (ดู reference.signers)"
+    },
+    "footer": {
+      "type": "footer",
+      "lines": [
+        "คณะบริหารธุรกิจและนิเทศศาสตร์",
+        "โทร. ๐ ๕๔๔๖ ๖๖๖๖ ต่อ ๑๕๑๔",
+        "โทรสาร ๐ ๕๔๔๖ ๖๖๙๒"
+      ],
+      "note": "เฉพาะใบขอ/ส่งตัว (มุมซ้ายล่าง) ตามภาพ"
+    }
+  },
+  "documents": {
+    "request": {
+      "th_name": "หนังสือขอความอนุเคราะห์รับนิสิตเข้าฝึกงาน/สหกิจ/CWIE",
+      "paper": "letter",
+      "chrome": [
+        "header",
+        "date"
+      ],
+      "footer": true,
+      "prints_attachment": "acceptance",
+      "note": "พิมพ์ครั้งเดียวได้ใบนี้ + ใบตอบรับ (คนละหน้า) ตามโจทย์ข้อ 2",
+      "modes": [
+        "internship",
+        "coop",
+        "cwie"
+      ],
+      "modeText": {
+        "internship": {
+          "subject": "ขอความอนุเคราะห์รับนิสิตเข้าฝึกงาน",
+          "attachName": "ใบตอบรับนิสิตเข้ารับการฝึกงาน",
+          "courseTypeWord": "การฝึกงาน",
+          "activity": "เข้ารับการฝึกงาน",
+          "purpose": "เพื่อเป็นการเตรียมประสบการณ์ให้กับนิสิตก่อนสำเร็จการศึกษา นั้น"
+        },
+        "coop": {
+          "subject": "ขอความอนุเคราะห์รับนิสิตเข้าปฏิบัติสหกิจศึกษา",
+          "attachName": "ใบตอบรับนิสิตเข้ารับการปฏิบัติสหกิจศึกษา",
+          "courseTypeWord": "สหกิจศึกษา",
+          "activity": "เข้ารับปฏิบัติสหกิจศึกษา",
+          "purpose": "เพื่อเป็นการเตรียมประสบการณ์ก่อนสำเร็จการศึกษาออกไปประกอบอาชีพ นั้น"
+        },
+        "cwie": {
+          "subject": "ขอความอนุเคราะห์รับนิสิตเข้าปฏิบัติงานสหกิจศึกษาและการศึกษาเชิงบูรณาการกับการทำงาน (CWIE)",
+          "attachName": "ใบตอบรับนิสิตเข้ารับการสหกิจศึกษาและการศึกษาเชิงบูรณาการกับการทำงาน",
+          "courseTypeWord": "รายวิชาสหกิจศึกษาและการศึกษาเชิงบูรณาการ",
+          "activity": "เข้ารับปฏิบัติงานสหกิจศึกษาและการศึกษาเชิงบูรณาการกับการทำงาน",
+          "purpose": "เพื่อเป็นการเตรียมประสบการณ์ก่อนสำเร็จการศึกษาออกไปประกอบอาชีพ นั้น"
+        }
+      },
+      "fields": [
+        "docNo",
+        "dateText",
+        "recipient",
+        "courseCode",
+        "program",
+        "major",
+        "semester",
+        "yearEduBE",
+        "orgName",
+        "dateStart",
+        "dateEnd",
+        "replyBy",
+        "students(1-4)"
+      ],
+      "body": {
+        "single": [
+          {
+            "type": "subject",
+            "text": "เรื่อง  {{mode.subject}}"
+          },
+          {
+            "type": "recipient",
+            "text": "เรียน  {{recipient}}"
+          },
+          {
+            "type": "attach",
+            "text": "สิ่งที่ส่งมาด้วย  {{mode.attachName}} {{attachCount}} ฉบับ"
+          },
+          {
+            "type": "para",
+            "text": "ด้วย คณะบริหารธุรกิจและนิเทศศาสตร์ มหาวิทยาลัยพะเยา ได้เปิดสอนรายวิชา {{courseCode}} {{mode.courseTypeWord}} สำหรับนิสิตหลักสูตร{{program}} สาขาวิชา{{major}} ในภาคการศึกษา{{semester}} ปีการศึกษา {{yearEduBE}} {{mode.purpose}}",
+            "align": "thai_justify",
+            "indent": "firstline2tab",
+            "space_before_pt": 6
+          },
+          {
+            "type": "para",
+            "text": "คณะบริหารธุรกิจและนิเทศศาสตร์ มหาวิทยาลัยพะเยา พิจารณาเห็นว่าหน่วยงานของท่านเป็นหน่วยงานที่สามารถให้ความรู้และประสบการณ์ให้แก่นิสิตได้เป็นอย่างดี จึงขอความอนุเคราะห์ให้ {{student.1.name}} นิสิตสาขาวิชา{{major}} หมายเลขโทรศัพท์ {{student.1.phone}} {{mode.activity}} ณ {{orgName}} ตั้งแต่วันที่ {{dateStart}} ถึง {{dateEnd}} ทั้งนี้ โดยขอความอนุเคราะห์แจ้งผลการพิจารณาตามใบตอบรับที่ส่งมาพร้อมนี้ ภายในวันที่ {{replyBy}}",
+            "align": "thai_justify",
+            "indent": "firstline2tab",
+            "space_before_pt": 6
+          },
+          {
+            "type": "para",
+            "text": "จึงเรียนมาเพื่อโปรดพิจารณาให้ความอนุเคราะห์ จะขอบคุณยิ่ง",
+            "align": "thai_justify",
+            "indent": "firstline2tab",
+            "space_before_pt": 6
+          },
+          {
+            "type": "closing",
+            "text": "ขอแสดงความนับถือ",
+            "align": "center_ish"
+          },
+          {
+            "type": "signer",
+            "use": "{{signer}}",
+            "note": "บล็อกผู้ลงนามที่เลือก (ดู reference.signers)"
+          }
+        ],
+        "many": [
+          {
+            "type": "subject",
+            "text": "เรื่อง  {{mode.subject}}"
+          },
+          {
+            "type": "recipient",
+            "text": "เรียน  {{recipient}}"
+          },
+          {
+            "type": "attach",
+            "text": "สิ่งที่ส่งมาด้วย  {{mode.attachName}} {{attachCount}} ฉบับ"
+          },
+          {
+            "type": "para",
+            "text": "ด้วย คณะบริหารธุรกิจและนิเทศศาสตร์ มหาวิทยาลัยพะเยา ได้เปิดสอนรายวิชา {{courseCode}} {{mode.courseTypeWord}} สำหรับนิสิตหลักสูตร{{program}} สาขาวิชา{{major}} ในภาคการศึกษา{{semester}} ปีการศึกษา {{yearEduBE}} {{mode.purpose}}",
+            "align": "thai_justify",
+            "indent": "firstline2tab",
+            "space_before_pt": 6
+          },
+          {
+            "type": "para",
+            "text": "คณะบริหารธุรกิจและนิเทศศาสตร์ มหาวิทยาลัยพะเยา พิจารณาเห็นว่าหน่วยงานของท่านเป็นหน่วยงานที่สามารถให้ความรู้และประสบการณ์ให้แก่นิสิตได้เป็นอย่างดี จึงขอความอนุเคราะห์ให้ นิสิต{{mode.activity}} ณ {{orgName}} ตั้งแต่วันที่ {{dateStart}} ถึง {{dateEnd}} ทั้งนี้ โดยขอความอนุเคราะห์แจ้งผลการพิจารณาตามใบตอบรับที่ส่งมาพร้อมนี้ ภายในวันที่ {{replyBy}} โดยนิสิตจำนวน {{studentCount}} ราย มีดังนี้",
+            "align": "thai_justify",
+            "indent": "firstline2tab",
+            "space_before_pt": 6
+          },
+          {
+            "type": "list_numbered",
+            "item": "{{no}}.  {{student.name}} หมายเลขโทรศัพท์ {{student.phone}}",
+            "left_indent_cm": 1.27,
+            "space_before_pt": 12,
+            "note": "ต่อบรรทัดละคน เลขไทย ๑–๔"
+          },
+          {
+            "type": "para",
+            "text": "จึงเรียนมาเพื่อโปรดพิจารณาให้ความอนุเคราะห์ จะขอบคุณยิ่ง",
+            "align": "thai_justify",
+            "indent": "firstline2tab",
+            "space_before_pt": 6
+          },
+          {
+            "type": "closing",
+            "text": "ขอแสดงความนับถือ",
+            "align": "center_ish"
+          },
+          {
+            "type": "signer",
+            "use": "{{signer}}",
+            "note": "บล็อกผู้ลงนามที่เลือก (ดู reference.signers)"
+          }
+        ]
+      }
+    },
+    "acceptance": {
+      "th_name": "ใบตอบรับ (บริษัทลงนาม) — พิมพ์ต่อท้ายใบขอ",
+      "paper": "letter",
+      "margins": "acceptance_form",
+      "chrome": [],
+      "footer": false,
+      "note": "หน้าแนบให้ผู้ประกอบการเซ็น ข้อมูล org/ชื่อนิสิต/สาขา/วันที่ ดึงจากใบขออัตโนมัติ (โจทย์ข้อ 2). ไม่มีหัวครุฑ",
+      "modes": [
+        "internship",
+        "coop"
+      ],
+      "modeText": {
+        "internship": {
+          "titleLine2": "นิสิตเข้ารับการฝึกงาน",
+          "subject": "การตอบรับนิสิตเข้าฝึกงาน",
+          "activity": "เข้ารับการฝึกงาน"
+        },
+        "coop": {
+          "titleLine2": "นิสิตเข้ารับปฏิบัติสหกิจศึกษา",
+          "subject": "การตอบรับนิสิตปฏิบัติสหกิจศึกษา",
+          "activity": "เข้ารับปฏิบัติสหกิจศึกษา"
+        }
+      },
+      "fields": [
+        "orgName(auto)",
+        "major(auto)",
+        "students(auto)",
+        "dateStart(auto)",
+        "dateEnd(auto)",
+        "(บริษัทกรอกเอง: ข้าพเจ้า/ตำแหน่ง/ที่ตั้ง/โทร/ลงนาม)"
+      ],
+      "body": [
+        {
+          "type": "title",
+          "text": "ใบตอบรับ",
+          "align": "center",
+          "size_pt": 22
+        },
+        {
+          "type": "title",
+          "text": "{{mode.titleLine2}}",
+          "align": "center",
+          "size_pt": 22
+        },
+        {
+          "type": "subject",
+          "text": "เรื่อง  {{mode.subject}}",
+          "space_before_pt": 12
+        },
+        {
+          "type": "recipient",
+          "text": "เรียน  คณบดีคณะบริหารธุรกิจและนิเทศศาสตร์"
+        },
+        {
+          "type": "field",
+          "text": "ข้าพเจ้า {{blank}} ตำแหน่ง {{blank}}",
+          "note": "บริษัทเขียนเอง — เว้นเส้นประ",
+          "space_before_pt": 12
+        },
+        {
+          "type": "field",
+          "text": "หน่วยงาน/บริษัท  {{orgName}}",
+          "note": "เติมจากใบขอได้ หรือเว้นให้เขียน"
+        },
+        {
+          "type": "field",
+          "text": "สถานที่ตั้งทำงาน  {{blank}}"
+        },
+        {
+          "type": "field",
+          "text": "เบอร์โทรศัพท์  {{blank}}"
+        },
+        {
+          "type": "field",
+          "text": "ยินดีรับ {{studentNamesInline}} นิสิตสาขาวิชา{{major}} คณะบริหารธุรกิจและนิเทศศาสตร์ มหาวิทยาลัยพะเยา {{mode.activity}} ตั้งแต่วันที่ {{dateStart}} ถึง {{dateEnd}}",
+          "align": "thai_justify",
+          "note": "ชื่อนิสิต+สาขา+วันที่ ดึงจากใบขอ"
+        },
+        {
+          "type": "para",
+          "text": "จึงเรียนมาเพื่อโปรดทราบและพิจารณา",
+          "align": "thai_justify",
+          "indent": "firstline1tab",
+          "space_before_pt": 6
+        },
+        {
+          "type": "signline",
+          "lines": [
+            "ลงชื่อ.............................................................",
+            "(............................................................)",
+            "วันที่.........เดือน..........................พ.ศ. ............."
+          ],
+          "align": "right",
+          "space_before_pt": 12
+        }
+      ]
+    },
+    "sendoff": {
+      "th_name": "หนังสือส่งตัวนิสิตเข้ารับการฝึกงาน/สหกิจ/CWIE",
+      "paper": "letter",
+      "chrome": [
+        "header",
+        "date"
+      ],
+      "footer": true,
+      "modes": [
+        "internship",
+        "coop",
+        "cwie"
+      ],
+      "modeText": {
+        "internship": {
+          "subject": "ขอส่งตัวนิสิตเข้ารับการฝึกงาน",
+          "attachName": "ใบตอบรับนิสิตเข้าฝึกงาน",
+          "refActivity": "รับนิสิตฝึกงานเข้าฝึกงาน",
+          "activity": "เข้ารับการฝึกงาน"
+        },
+        "coop": {
+          "subject": "ขอส่งตัวนิสิตเข้ารับปฏิบัติสหกิจศึกษา",
+          "attachName": "ใบตอบรับนิสิตเข้ารับปฏิบัติสหกิจศึกษา",
+          "refActivity": "รับนิสิตปฏิบัติสหกิจศึกษา",
+          "activity": "เข้ารับปฏิบัติสหกิจศึกษา"
+        },
+        "cwie": {
+          "subject": "ขอส่งตัวนิสิตเข้ารับปฏิบัติงานสหกิจศึกษาและการศึกษาเชิงบูรณาการกับการทำงาน (CWIE)",
+          "attachName": "ใบตอบรับนิสิตเข้ารับปฏิบัติงานสหกิจศึกษาและการศึกษาเชิงบูรณาการกับการทำงาน",
+          "refActivity": "รับนิสิตปฏิบัติงานสหกิจศึกษาและการศึกษาเชิงบูรณาการกับการทำงาน",
+          "activity": "เข้ารับปฏิบัติงานสหกิจศึกษาและการศึกษาเชิงบูรณาการกับการทำงาน"
+        }
+      },
+      "fields": [
+        "docNo",
+        "dateText",
+        "recipient",
+        "orgName",
+        "major",
+        "students(1-4)",
+        "dateStart",
+        "dateEnd"
+      ],
+      "note": "ต้นฉบับเป็นแบบ 1 คน (inline). การใส่หลายคนยังไม่มีต้นแบบ → ดู DECISIONS.md ข้อ 5",
+      "body": {
+        "single": [
+          {
+            "type": "subject",
+            "text": "เรื่อง  {{mode.subject}}"
+          },
+          {
+            "type": "recipient",
+            "text": "เรียน  {{recipient}}"
+          },
+          {
+            "type": "attach",
+            "text": "สิ่งที่ส่งมาด้วย  {{mode.attachName}} {{attachCount}} ฉบับ"
+          },
+          {
+            "type": "para",
+            "text": "ตามที่ คณะบริหารธุรกิจและนิเทศศาสตร์ มหาวิทยาลัยพะเยา ได้ขอความอนุเคราะห์ {{orgName}} {{mode.refActivity}}ในหน่วยงานของท่าน นั้น",
+            "align": "thai_justify",
+            "indent": "firstline2tab",
+            "space_before_pt": 6
+          },
+          {
+            "type": "para",
+            "text": "ในการนี้ คณะบริหารธุรกิจและนิเทศศาสตร์ มหาวิทยาลัยพะเยา จึงขอส่งตัว{{student.1.name}} นิสิตสาขาวิชา{{major}} หมายเลขโทรศัพท์ {{student.1.phone}} {{mode.activity}}ในหน่วยงานของท่าน เพื่อเป็นการพัฒนาความรู้และสร้างประสบการณ์ทางด้านวิชาชีพ ระหว่างวันที่ {{dateStart}} ถึง {{dateEnd}}",
+            "align": "thai_justify",
+            "indent": "firstline2tab",
+            "space_before_pt": 6
+          },
+          {
+            "type": "para",
+            "text": "คณะบริหารธุรกิจและนิเทศศาสตร์ มหาวิทยาลัยพะเยา ขอขอบคุณหน่วยงานของท่านมา ณ โอกาสนี้และหวังว่าจะได้รับความร่วมมือจากท่านอีกในโอกาสต่อไป",
+            "align": "thai_justify",
+            "indent": "none",
+            "space_before_pt": 6
+          },
+          {
+            "type": "closing",
+            "text": "ขอแสดงความนับถือ",
+            "align": "center_ish"
+          },
+          {
+            "type": "signer",
+            "use": "{{signer}}",
+            "note": "บล็อกผู้ลงนามที่เลือก (ดู reference.signers)"
+          }
+        ]
+      }
+    },
+    "thanks": {
+      "th_name": "หนังสือขอบคุณสถานประกอบการ (ฝึกงาน/สหกิจ รวมใบเดียว)",
+      "paper": "letter",
+      "chrome": [
+        "header",
+        "date"
+      ],
+      "footer": false,
+      "modes": [
+        "combined"
+      ],
+      "modeText": {
+        "combined": {
+          "subject": "ขอขอบคุณที่ให้ความอนุเคราะห์ให้นิสิตเข้าฝึกงาน/ปฏิบัติสหกิจศึกษา"
+        }
+      },
+      "fields": [
+        "docNo",
+        "dateText",
+        "recipient",
+        "orgName",
+        "major",
+        "students(1-4)",
+        "dateStart",
+        "dateEnd"
+      ],
+      "note": "ใช้คำรวม 'ฝึกงาน/ปฏิบัติสหกิจศึกษา' ตามต้นฉบับ. โครง 1 คน vs หลายคน ต่างกัน",
+      "body": {
+        "single": [
+          {
+            "type": "subject",
+            "text": "เรื่อง  {{mode.subject}}"
+          },
+          {
+            "type": "recipient",
+            "text": "เรียน {{recipient}}"
+          },
+          {
+            "type": "para",
+            "text": "ตามที่ {{orgName}} ได้ให้ความอนุเคราะห์ให้{{student.1.name}} สาขาวิชา{{major}} คณะบริหารธุรกิจและนิเทศศาสตร์ มหาวิทยาลัยพะเยา เข้าฝึกงาน/ปฏิบัติสหกิจศึกษา ในระหว่างวันที่ {{dateStart}} ถึง {{dateEnd}} นั้น",
+            "align": "thai_justify",
+            "indent": "firstline1tab",
+            "space_before_pt": 6
+          },
+          {
+            "type": "para",
+            "text": "บัดนี้ นิสิตดังกล่าวได้รับการฝึกงาน/ปฏิบัติสหกิจศึกษาเสร็จสิ้น และบรรลุตามวัตถุประสงค์แล้ว ทางคณะบริหารธุรกิจและนิเทศศาสตร์ มหาวิทยาลัยพะเยา จึงขอขอบคุณหน่วยงานของท่านเป็นอย่างยิ่งที่ได้ให้ความอนุเคราะห์ให้นิสิตเข้ารับการฝึกงาน/ปฏิบัติสหกิจศึกษา",
+            "align": "thai_justify",
+            "indent": "firstline1tab",
+            "space_before_pt": 6
+          },
+          {
+            "type": "para",
+            "text": "จึงเรียนมาเพื่อโปรดทราบ และหวังว่าคงได้รับความร่วมมือจากท่านอีกในโอกาสต่อไป",
+            "align": "thai_justify",
+            "indent": "firstline1tab",
+            "space_before_pt": 6
+          },
+          {
+            "type": "closing",
+            "text": "ขอแสดงความนับถือ",
+            "align": "center_ish"
+          },
+          {
+            "type": "signer",
+            "use": "{{signer}}",
+            "note": "บล็อกผู้ลงนามที่เลือก (ดู reference.signers)"
+          }
+        ],
+        "many": [
+          {
+            "type": "subject",
+            "text": "เรื่อง  {{mode.subject}}"
+          },
+          {
+            "type": "recipient",
+            "text": "เรียน {{recipient}}"
+          },
+          {
+            "type": "para",
+            "text": "ตามที่ {{orgName}} ได้ให้ความอนุเคราะห์ให้นิสิต สาขาวิชา{{major}} คณะบริหารธุรกิจและนิเทศศาสตร์ มหาวิทยาลัยพะเยา เข้าฝึกงาน/ปฏิบัติสหกิจศึกษา ในระหว่างวันที่ {{dateStart}} ถึง {{dateEnd}} จำนวน {{studentCount}} คน คือ",
+            "align": "thai_justify",
+            "indent": "firstline1tab",
+            "space_before_pt": 6
+          },
+          {
+            "type": "list_names",
+            "item": "{{student.name}}",
+            "align": "center",
+            "note": "บรรทัดละคน (ต้นฉบับเป็นเส้นประ 3 บรรทัด)"
+          },
+          {
+            "type": "para",
+            "text": "บัดนี้ นิสิตดังกล่าวได้รับการฝึกงาน/ปฏิบัติสหกิจศึกษาเสร็จสิ้น และบรรลุตามวัตถุประสงค์แล้ว ทางคณะบริหารธุรกิจและนิเทศศาสตร์ มหาวิทยาลัยพะเยา จึงขอขอบคุณหน่วยงานของท่านเป็นอย่างยิ่งที่ได้ให้ความอนุเคราะห์ให้นิสิตเข้ารับการฝึกงาน/ปฏิบัติสหกิจศึกษา",
+            "align": "thai_justify",
+            "indent": "none",
+            "space_before_pt": 6
+          },
+          {
+            "type": "para",
+            "text": "จึงเรียนมาเพื่อโปรดทราบ และหวังว่าคงได้รับความร่วมมือจากท่านอีกในโอกาสต่อไป",
+            "align": "thai_justify",
+            "indent": "firstline1tab",
+            "space_before_pt": 6
+          },
+          {
+            "type": "closing",
+            "text": "ขอแสดงความนับถือ",
+            "align": "center_ish"
+          },
+          {
+            "type": "signer",
+            "use": "{{signer}}",
+            "note": "บล็อกผู้ลงนามที่เลือก (ดู reference.signers)"
+          }
+        ]
+      }
+    },
+    "extracurricular": {
+      "th_name": "ขอความอนุเคราะห์รับนิสิตเข้าฝึกงานระหว่างปิดภาคการศึกษา (นอกหลักสูตร)",
+      "paper": "a4",
+      "chrome": [
+        "header",
+        "date"
+      ],
+      "footer": true,
+      "note": "ต้นฉบับเป็น A4 (ต่างจากใบอื่น) + 1 คน. typo ต้นฉบับ 'ด้วยด้วย' — ดู DECISIONS.md ข้อ 1,6",
+      "modes": [
+        "single"
+      ],
+      "modeText": {
+        "single": {}
+      },
+      "fields": [
+        "docNo",
+        "dateText",
+        "recipient",
+        "student.1.name",
+        "program",
+        "major",
+        "yearLevel",
+        "dateStart",
+        "dateEnd"
+      ],
+      "body": {
+        "single": [
+          {
+            "type": "subject",
+            "text": "เรื่อง  ขอความอนุเคราะห์รับนิสิตเข้าฝึกงานระหว่างปิดภาคการศึกษา (นอกหลักสูตร)"
+          },
+          {
+            "type": "recipient",
+            "text": "เรียน  {{recipient}}"
+          },
+          {
+            "type": "para",
+            "text": "ด้วย คณะบริหารธุรกิจและนิเทศศาสตร์ มหาวิทยาลัยพะเยา มีนโยบายสนับสนุนให้นิสิตเข้ารับฝึกงานในหน่วยงานภาครัฐและเอกชน โดยมีวัตถุประสงค์เพื่อให้นิสิตมีโอกาสเพิ่มพูนความรู้ ทักษะและประสบการณ์ ในการทำงานภาคปฏิบัตินอกเหนือทฤษฎีที่ได้จากการศึกษาในชั้นเรียน อีกทั้งยังเป็นการเสริมพื้นฐานทางด้านอาชีพให้กับนิสิตและสามารถนำไปประยุกต์ใช้ในการทำงานที่มีคุณภาพต่อไปในอนาคต นั้น",
+            "align": "thai_justify",
+            "indent": "firstline2tab",
+            "space_before_pt": 6,
+            "note": "ต้นฉบับมี 'ด้วยด้วย' (พิมพ์ซ้ำ) — แก้เป็น 'ด้วย' ที่นี่ รอยืนยัน"
+          },
+          {
+            "type": "para",
+            "text": "ในการนี้ คณะบริหารธุรกิจและนิเทศศาสตร์ มหาวิทยาลัยพะเยา พิจารณาเห็นว่าหน่วยงานของท่านมีความพร้อมในการให้ความรู้และประสบการณ์วิชาชีพแก่นิสิตในช่วงเวลาปิดภาคการศึกษา จึงขอความอนุเคราะห์รับนิสิตเข้าฝึกงานระหว่างปิดภาคการศึกษา (นอกหลักสูตร) {{student.1.name}} นิสิตหลักสูตร{{program}} สาขาวิชา{{major}} ชั้นปีที่ {{yearLevel}} เข้ารับการฝึกงาน ในหน่วยงานของท่าน ตั้งแต่วันที่ {{dateStart}} ถึงวันที่ {{dateEnd}}",
+            "align": "thai_justify",
+            "indent": "firstline2tab",
+            "space_before_pt": 6
+          },
+          {
+            "type": "para",
+            "text": "จึงเรียนมาเพื่อโปรดพิจารณาให้ความอนุเคราะห์ จะขอบคุณยิ่ง",
+            "align": "thai_justify",
+            "indent": "firstline2tab",
+            "space_before_pt": 6
+          },
+          {
+            "type": "closing",
+            "text": "ขอแสดงความนับถือ",
+            "align": "center_ish"
+          },
+          {
+            "type": "signer",
+            "use": "{{signer}}",
+            "note": "บล็อกผู้ลงนามที่เลือก (ดู reference.signers)"
+          }
+        ]
+      }
+    },
+    "cancel": {
+      "th_name": "หนังสือขอยกเลิกเข้ารับการฝึกงาน",
+      "paper": "letter",
+      "chrome": [
+        "header",
+        "date"
+      ],
+      "footer": true,
+      "note": "อ้างเลขหนังสือเดิม. ต้นฉบับมีข้อความเหตุผล default (ลงทะเบียนไม่ครบหน่วยกิต) + typo 'ไม่ทราบเข้ารับ'→ควร 'ไม่สามารถ' รอยืนยัน (DECISIONS.md ข้อ 6)",
+      "modes": [
+        "single"
+      ],
+      "modeText": {
+        "single": {}
+      },
+      "fields": [
+        "docNo",
+        "dateText",
+        "recipient",
+        "refDocNo",
+        "refDate",
+        "orgName",
+        "student.1.name",
+        "major",
+        "dateRange",
+        "cancelReason"
+      ],
+      "body": {
+        "single": [
+          {
+            "type": "subject",
+            "text": "เรื่อง  ขอยกเลิกเข้ารับการฝึกงาน"
+          },
+          {
+            "type": "recipient",
+            "text": "เรียน  {{recipient}}"
+          },
+          {
+            "type": "para",
+            "text": "อ้างถึงหนังสือ ที่ อว ๗๓๒๕/{{refDocNo}} ลงวันที่ {{refDate}} เรื่อง ขอความอนุเคราะห์รับนิสิตฝึกงาน ทางคณะบริหารธุรกิจและนิเทศศาสตร์ มหาวิทยาลัยพะเยา ได้ขอความอนุเคราะห์บริษัท{{orgName}} รับ{{student.1.name}} สาขาวิชา{{major}} เข้ารับการฝึกงาน ในระหว่างวันที่ {{dateRange}} โดยมีวัตถุประสงค์เพื่อเป็นการเตรียมประสบการณ์ให้กับนิสิตก่อนสำเร็จการศึกษา นั้น",
+            "align": "thai_justify",
+            "indent": "firstline2tab",
+            "space_before_pt": 6
+          },
+          {
+            "type": "para",
+            "text": "ในการนี้ทาง คณะบริหารธุรกิจและนิเทศศาสตร์ มหาวิทยาลัยพะเยา ทราบซึ้งในความอนุเคราะห์ของทางบริษัท{{orgName}} เป็นอย่างยิ่ง แต่{{cancelReason}} ทั้งนี้จึงขอเรียนแจ้งยกเลิกการเข้ารับการฝึกงานของ{{student.1.name}} สาขาวิชา{{major}} ในระหว่างวันที่ {{dateRange}} ทั้งนี้หวังว่าทางบริษัทจะให้ความอนุเคราะห์แก่ทางมหาวิทยาลัยพะเยาต่อไปในอนาคต",
+            "align": "thai_justify",
+            "indent": "firstline2tab",
+            "space_before_pt": 6,
+            "note": "cancelReason default = 'เนื่องด้วยนิสิตมีปัญหาเกี่ยวกับการลงทะเบียนเรียนไม่ครบตามจำนวนหน่วยกิตของมหาวิทยาลัย ทำให้นิสิตไม่สามารถเข้ารับการฝึกงานได้' (แก้ไขได้)"
+          },
+          {
+            "type": "para",
+            "text": "จึงเรียนมาเพื่อโปรดทราบ จักขอบคุณยิ่ง",
+            "align": "thai_justify",
+            "indent": "firstline2tab",
+            "space_before_pt": 6
+          },
+          {
+            "type": "closing",
+            "text": "ขอแสดงความนับถือ",
+            "align": "center_ish"
+          },
+          {
+            "type": "signer",
+            "use": "{{signer}}",
+            "note": "บล็อกผู้ลงนามที่เลือก (ดู reference.signers)"
+          }
+        ]
+      }
+    }
+  }
+}
