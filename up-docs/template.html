@@ -658,6 +658,9 @@
       const TPL = __TPL_JSON__;
       // ตรามหาวิทยาลัยพะเยา (data URI) — build.py ฝังให้เมื่อมีไฟล์ใน up-docs/assets/logo/ ไม่มีไฟล์ = หัวจดหมายไม่มีตรา
       const CREST_DATA = "__CREST__";
+      // ฟอนต์ TH Sarabun New (subset TTF, base64) สำหรับฝังลงไฟล์ .docx
+      const TTF_R = "__TTF_R__";
+      const TTF_B = "__TTF_B__";
 
       /* ===== ค่าคงที่ / helper ===== */
       const TH_MONTHS = [
@@ -1473,8 +1476,47 @@
           "</w:pPr></w:pPrDefault></w:docDefaults>" +
           '<w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:qFormat/></w:style>' +
           "</w:styles>";
+        // ── ฝังฟอนต์ TH Sarabun New (obfuscated TTF ตาม ECMA-376) — Word/LibreOffice เรนเดอร์ตรง PDF แม้เครื่องไม่มีฟอนต์
+        //    obfuscate = XOR 32 ไบต์แรกด้วยคีย์จาก GUID (ใช้ไบต์ซ้ำ 0xA1 เลี่ยงปัญหาลำดับไบต์ .NET GUID)
+        //    altName "Sarabun" = ให้ Google Docs (ไม่รับฟอนต์ฝัง) fallback ไปฟอนต์ Sarabun ของ Google
+        const hasFont = TTF_R && TTF_R.indexOf("__") !== 0;
+        let embedTag = "",
+          odttfCT = "",
+          fontTableCT = "";
+        if (hasFont) {
+          const FKEY = "{A1A1A1A1-A1A1-A1A1-A1A1-A1A1A1A1A1A1}";
+          const obf = (b64) => {
+            const a = b64ToBytes(b64),
+              n = Math.min(32, a.length);
+            for (let i = 0; i < n; i++) a[i] ^= 0xa1;
+            return a;
+          };
+          media.push({ name: "word/fonts/font1.odttf", data: obf(TTF_R) });
+          media.push({ name: "word/fonts/font2.odttf", data: obf(TTF_B) });
+          const fontTableXml =
+            '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:fonts xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">' +
+            '<w:font w:name="TH Sarabun New"><w:altName w:val="Sarabun"/><w:charset w:val="00"/><w:family w:val="roman"/><w:pitch w:val="variable"/>' +
+            '<w:embedRegular r:id="rIdFontR" w:fontKey="' + FKEY + '"/>' +
+            '<w:embedBold r:id="rIdFontB" w:fontKey="' + FKEY + '"/>' +
+            "</w:font></w:fonts>";
+          const fontTableRels =
+            '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
+            '<Relationship Id="rIdFontR" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/font" Target="fonts/font1.odttf"/>' +
+            '<Relationship Id="rIdFontB" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/font" Target="fonts/font2.odttf"/>' +
+            "</Relationships>";
+          media.push({ name: "word/fontTable.xml", data: strBytes(fontTableXml) });
+          media.push({ name: "word/_rels/fontTable.xml.rels", data: strBytes(fontTableRels) });
+          rels.push(
+            '<Relationship Id="rIdFontTable" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/fontTable" Target="fontTable.xml"/>',
+          );
+          embedTag = "<w:embedTrueTypeFonts/><w:embedSystemFonts/>";
+          odttfCT = '<Default Extension="odttf" ContentType="application/vnd.openxmlformats-officedocument.obfuscatedFont"/>';
+          fontTableCT = '<Override PartName="/word/fontTable.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.fontTable+xml"/>';
+        }
         const settingsXml =
-          '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:settings xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:defaultTabStop w:val="720"/></w:settings>';
+          '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:settings xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">' +
+          embedTag +
+          '<w:defaultTabStop w:val="720"/></w:settings>';
         rels.push(
           '<Relationship Id="rIdStyles" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>',
           '<Relationship Id="rIdSettings" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/settings" Target="settings.xml"/>',
@@ -1482,9 +1524,12 @@
         const ct =
           '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/>' +
           (crest ? '<Default Extension="png" ContentType="image/png"/>' : "") +
+          odttfCT +
           '<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>' +
           '<Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>' +
-          '<Override PartName="/word/settings.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.settings+xml"/></Types>';
+          '<Override PartName="/word/settings.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.settings+xml"/>' +
+          fontTableCT +
+          "</Types>";
         const rootRels =
           '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>';
         const docRels =

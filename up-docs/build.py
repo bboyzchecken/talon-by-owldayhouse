@@ -30,6 +30,43 @@ templates = json.loads((ROOT / "files/templates.json").read_text(encoding="utf-8
 font_regular = base64.b64encode((ROOT / "assets/fonts/THSarabunNew.woff2").read_bytes()).decode()
 font_bold = base64.b64encode((ROOT / "assets/fonts/THSarabunNew-Bold.woff2").read_bytes()).decode()
 
+
+# ── TTF (subset) สำหรับ "ฝังลงในไฟล์ .docx" — Word/LibreOffice เรนเดอร์ TH Sarabun ได้แม้เครื่องไม่มีฟอนต์
+def subset_ttf_b64(src):
+    from fontTools.subset import Subsetter, Options
+    from fontTools.ttLib import TTFont
+    import io
+
+    unis = (
+        set(range(0x20, 0x7F))
+        | {0xA0, 0xAB, 0xBB, 0x2026}
+        | set(range(0x0E00, 0x0E80))          # ไทย
+        | set(range(0x2013, 0x2015))          # – —
+        | set(range(0x2018, 0x201E))          # ' ' " "
+    )
+    font = TTFont(src)
+    opts = Options()
+    opts.name_IDs = ["*"]                     # เก็บชื่อฟอนต์ไว้ (Word ต้อง match ชื่อ)
+    opts.layout_features = ["*"]
+    opts.notdef_outline = True
+    ss = Subsetter(options=opts)
+    ss.populate(unicodes=unis)
+    ss.subset(font)
+    buf = io.BytesIO()
+    font.save(buf)
+    return base64.b64encode(buf.getvalue()).decode()
+
+
+try:
+    ttf_regular = subset_ttf_b64(ROOT / "assets/fonts/THSarabunNew.ttf")
+    ttf_bold = subset_ttf_b64(ROOT / "assets/fonts/THSarabunNew-Bold.ttf")
+    print("ฝังฟอนต์ .docx: TH Sarabun New (subset TTF, obfuscated ในเบราว์เซอร์)")
+except Exception as e:
+    # ไม่มี fontTools → ข้ามการฝังฟอนต์ (docx ยังใช้ได้ อ้างชื่อฟอนต์เฉย ๆ)
+    # ต้องใช้ python ที่มี fontTools เช่น /Library/Frameworks/Python.framework/Versions/3.11/bin/python3
+    ttf_regular = ttf_bold = ""
+    print(f"⚠️  ข้ามการฝังฟอนต์ .docx (ไม่มี fontTools?): {e}")
+
 # ตรามหาวิทยาลัยพะเยา — วางไฟล์ชื่อ up-crest.svg หรือ up-crest.png ใน assets/logo/
 # มีไฟล์ = ฝังเป็น data URI บนหัวจดหมาย · ไม่มี = หัวจดหมายไม่มีตรา (ไม่ error)
 crest = ""
@@ -48,6 +85,8 @@ out = (
     .replace("__TPL_JSON__", json.dumps(templates, ensure_ascii=False))
     .replace("__FONT_R__", font_regular)
     .replace("__FONT_B__", font_bold)
+    .replace("__TTF_R__", ttf_regular)
+    .replace("__TTF_B__", ttf_bold)
     .replace("__CREST__", crest)
     .replace("__GA_ID__", ga_id)
 )
