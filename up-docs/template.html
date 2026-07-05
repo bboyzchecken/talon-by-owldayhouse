@@ -394,18 +394,13 @@
       .ind1 {
         text-indent: 1.27cm;
       }
-      /* คำลงท้าย + วันที่ + บล็อกผู้ลงนาม — ตาม format ราชการ (แกะจาก .docx จริง):
-   วันที่ และ "ขอแสดงความนับถือ" ใช้ TAB@7.75cm เดียวกัน = เริ่มต้นที่แกนกึ่งกลางหน้ากระดาษ
-   ชื่อ/ตำแหน่งผู้ลงนาม จัดกึ่งกลางรอบแนวข้อความ "ขอแสดงความนับถือ" (ขยับตามคำลงท้าย) */
-      .sheet .center-tab {
-        margin-left: 7.75cm;
-        text-align: left;
-      } /* เริ่มที่ 7.75cm จากกั้นหน้า (.sheet ชนะ .sheet p{margin:0}) */
+      /* วันที่ + คำลงท้าย + บล็อกผู้ลงนาม — จัด "กึ่งกลางหน้ากระดาษ" ให้ตรงแนวตรา
+   (ชดเชยขอบซ้าย/ขวาไม่เท่ากันด้วย (ขวา−ซ้าย)/2 แบบเดียวกับตรา) */
       .sheet .sig-align {
-        margin-left: 1.9cm;
+        margin-left: calc((var(--mr, 2cm) - var(--ml, 3cm)) / 2);
         margin-right: 0;
         text-align: center;
-      } /* โซน 1.9→ขวาสุด → กึ่งกลาง 9.25cm = แนวกลางข้อความ "ขอแสดงความนับถือ" (7.75 + ~2.95/2) */
+      }
       .docheader {
         display: flex;
         justify-content: space-between;
@@ -427,10 +422,10 @@
         display: inline-block;
       }
       .sheet .datep {
-        margin-left: 7.75cm;
-        text-align: left;
+        margin-left: calc((var(--mr, 2cm) - var(--ml, 3cm)) / 2);
+        text-align: center;
         margin-top: 6pt;
-      } /* วันที่เริ่มแกนเดียวกับ "ขอแสดงความนับถือ" (TAB@7.75cm จาก .docx) */
+      } /* วันที่ กึ่งกลางหน้ากระดาษ = ตรงแนวตรา */
       .sheet .stu {
         margin-left: 1.25cm;
         text-indent: 1.25cm;
@@ -1181,9 +1176,10 @@
           '<w:spacing w:before="' +
           (o.before || 0) +
           '" w:after="0" w:line="240" w:lineRule="auto"/>';
-        if (o.indLeft != null || o.indFirst != null) {
+        if (o.indLeft != null || o.indFirst != null || o.indRight != null) {
           p += "<w:ind";
           if (o.indLeft != null) p += ' w:left="' + o.indLeft + '"';
+          if (o.indRight != null) p += ' w:right="' + o.indRight + '"';
           if (o.indFirst != null) p += ' w:firstLine="' + o.indFirst + '"';
           p += "/>";
         }
@@ -1197,18 +1193,14 @@
           return v && v.html ? "" : v || "";
         });
       }
+      // กึ่งกลางหน้ากระดาษ (ตรงแนวตรา): jc center + เยื้องขวา 1cm ชดเชยขอบซ้าย/ขวาไม่เท่ากัน
+      const PAGECTR = { jc: "center", indRight: 567 };
       function dxSigner() {
         const sg = currentSigner();
         let out = "";
-        for (let i = 0; i < 3; i++)
-          out += dxPara("", { indLeft: TW(1.9), jc: "center" }); // เว้น 3 บรรทัดเซ็นชื่อ (ตาม format)
-        out += dxPara(dxRun("(" + (sg.name || "") + ")"), {
-          indLeft: TW(1.9),
-          jc: "center",
-        });
-        sg.title_lines.forEach(
-          (l) => (out += dxPara(dxRun(l), { indLeft: TW(1.9), jc: "center" })),
-        );
+        for (let i = 0; i < 3; i++) out += dxPara("", PAGECTR); // เว้น 3 บรรทัดเซ็นชื่อ (ตาม format)
+        out += dxPara(dxRun("(" + (sg.name || "") + ")"), PAGECTR);
+        sg.title_lines.forEach((l) => (out += dxPara(dxRun(l), PAGECTR)));
         return out;
       }
       function dxField(b, modeObj, contentW) {
@@ -1247,18 +1239,13 @@
           case "para": {
             const o = {
               before: b.space_before_pt != null ? b.space_before_pt * 20 : 120,
+              indFirst: TW(2.5), // ทุกย่อหน้าเนื้อความ เยื้องบรรทัดแรก 2.5cm ให้ตรงกันหมด
             };
             if (b.align && JCMAP[b.align]) o.jc = JCMAP[b.align];
-            if (b.indent === "firstline2tab") o.indFirst = TW(2.5);
-            else if (b.indent === "firstline1tab") o.indFirst = TW(1.27);
             return dxPara(dxRun(tokPlain(b.text, modeObj)), o);
           }
           case "closing":
-            return dxPara(dxRun(b.text), {
-              indLeft: TW(1.9),
-              jc: "center",
-              before: 240,
-            });
+            return dxPara(dxRun(b.text), { jc: "center", indRight: 567, before: 240 });
           case "signer":
             return dxSigner();
           case "list_numbered":
@@ -1390,9 +1377,10 @@
           if (k === "header") paras += dxHeader(crest, imgRel, contentW);
           if (k === "date")
             paras += dxPara(dxRun(dateText()), {
-              indLeft: TW(7.75),
+              jc: "center",
+              indRight: 567,
               before: 120,
-            });
+            }); // วันที่ กึ่งกลางหน้า (ตรงแนวตรา)
         });
         const body = Array.isArray(d.body)
           ? d.body
@@ -1552,6 +1540,7 @@
           case "dateText":
             return dateText();
           case "attachCount":
+            return thNum(1); // สิ่งที่ส่งมาด้วย = ๑ ฉบับ เสมอ (ใช้รวมกันได้ ไม่ยึดจำนวนนิสิต)
           case "studentCount":
             return thNum(stu.length);
           case "yearEduBE":
@@ -1590,11 +1579,12 @@
         if (b.align === "thai_justify") cls.push("just");
         if (b.align === "center") cls.push("ctr");
         if (b.align === "right") cls.push("rgt");
-        // center_ish: คำลงท้ายเริ่มที่แกน 7.75cm (ตรงกับวันที่) · บล็อกอื่น (ผู้ลงนาม) กึ่งกลางค่อนขวา
-        if (b.align === "center_ish")
-          cls.push(b.type === "closing" ? "center-tab" : "sig-align");
-        if (b.indent === "firstline2tab") cls.push("ind2");
-        if (b.indent === "firstline1tab") cls.push("ind1");
+        // center_ish (คำลงท้าย/ผู้ลงนาม): กึ่งกลางหน้ากระดาษ = ตรงแนวตรา
+        if (b.align === "center_ish") cls.push("sig-align");
+        // ทุกย่อหน้าเนื้อความ เยื้องบรรทัดแรก 2.5cm ให้ตรงกันหมด (บางย่อหน้าต้นฉบับไม่เยื้อง)
+        if (b.type === "para") cls.push("ind2");
+        else if (b.indent === "firstline2tab") cls.push("ind2");
+        else if (b.indent === "firstline1tab") cls.push("ind1");
         if (b.type === "title") cls.push("doctitle");
         // แผนผังราชการบังคับ: เรื่อง/เรียน/อ้างถึง/สิ่งที่ส่งมาด้วย เว้นก่อนหน้า 6pt (ทุกไฟล์ต้นฉบับมี before=6pt)
         const HEADER_LINES = { subject: 1, recipient: 1, attach: 1 };
