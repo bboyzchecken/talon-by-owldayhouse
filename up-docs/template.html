@@ -429,10 +429,10 @@
         display: inline-block;
       }
       .sheet .datep {
-        text-align: center;
+        margin-left: calc(50% + (var(--mr, 2cm) - var(--ml, 3cm)) / 2);
+        text-align: left;
         margin-top: 6pt;
-        transform: translateX(calc((var(--mr, 2cm) - var(--ml, 3cm)) / 2));
-      } /* วันที่ จุดกึ่งกลาง = กึ่งกลางหน้า = ตรงแนวตรา */
+      } /* วันที่: เลขตัวแรกเริ่มที่กึ่งกลางหน้า (แนวตรา) แล้วยื่นขวา — เหมือน ข ของคำลงท้าย */
       .sheet .stu {
         margin-left: 1.25cm;
         text-indent: 1.25cm;
@@ -1396,10 +1396,9 @@
           if (k === "header") paras += dxHeader(crest, imgRel, contentW);
           if (k === "date")
             paras += dxPara(dxRun(dateText()), {
-              jc: "center",
-              indRight: 567,
+              indLeft: DXCLOSE,
               before: 120,
-            }); // วันที่ กึ่งกลางหน้า (ตรงแนวตรา)
+            }); // วันที่ เลขตัวแรกเริ่มที่กึ่งกลางหน้า (เหมือนคำลงท้าย)
         });
         const body = Array.isArray(d.body)
           ? d.body
