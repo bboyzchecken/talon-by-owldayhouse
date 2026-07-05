@@ -1151,7 +1151,7 @@
 
       const TW = (cm) => Math.round(cm * 567); // ซม. → twips
       const JCMAP = {
-        thai_justify: "both", // justify มาตรฐาน (Google Docs/LibreOffice รองรับแน่ · thaiDistribute เด้งเป็นชิดซ้ายในบางแอป)
+        thai_justify: "thaiDistribute", // กระจายแบบไทย ตามต้นฉบับราชการ — Word เรนเดอร์สวย ไม่มีช่องว่างถ่างเป็นรู (แบบ "both")
         center: "center",
         right: "right",
       };
@@ -1361,8 +1361,14 @@
           pw = isA4 ? 11906 : 12240,
           ph = isA4 ? 16838 : 15840;
         const contentW = pw - TW(mg.left) - TW(mg.right);
+        // footer จริงของ Word (ปักล่างหน้า ไม่ไหลไปกินเนื้อหา/ตกหน้า 2) — footerReference ต้องมาก่อน pgSz
+        const footerRef = d.footer
+          ? '<w:footerReference w:type="default" r:id="rIdFooter"/>'
+          : "";
         const sectPr =
-          '<w:sectPr><w:pgSz w:w="' +
+          "<w:sectPr>" +
+          footerRef +
+          '<w:pgSz w:w="' +
           pw +
           '" w:h="' +
           ph +
@@ -1374,7 +1380,7 @@
           TW(mg.bottom) +
           '" w:left="' +
           TW(mg.left) +
-          '" w:header="720" w:footer="720" w:gutter="0"/></w:sectPr>';
+          '" w:header="720" w:footer="567" w:gutter="0"/></w:sectPr>';
         let paras = "";
         (d.chrome || []).forEach((k) => {
           if (k === "header") paras += dxHeader(crest, imgRel, contentW);
@@ -1393,10 +1399,7 @@
         body.forEach((b) => {
           paras += dxBlock(b, modeObj, contentW);
         });
-        if (d.footer)
-          paras += TPL._shared_chrome.footer.lines
-            .map((l) => dxPara(dxRun(l), { before: 120 }))
-            .join("");
+        // footer ไม่อยู่ใน flow แล้ว — ย้ายไป word/footer1.xml (buildDocxBlob) ปักล่างหน้า
         return { paras, sectPr };
       }
       function crestPng() {
@@ -1440,6 +1443,19 @@
           rels.push(
             '<Relationship Id="rIdImg" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/crest.png"/>',
           );
+        }
+        // footer จริง (word/footer1.xml) — ถ้าใบไหนมี footer:true → ปักท้ายหน้าล่างซ้าย
+        let footerCT = "";
+        if (jobs.some((j) => TPL.documents[j.key].footer)) {
+          const ftr =
+            '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:ftr xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">' +
+            TPL._shared_chrome.footer.lines.map((l) => dxPara(dxRun(l))).join("") +
+            "</w:ftr>";
+          media.push({ name: "word/footer1.xml", data: strBytes(ftr) });
+          rels.push(
+            '<Relationship Id="rIdFooter" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer" Target="footer1.xml"/>',
+          );
+          footerCT = '<Override PartName="/word/footer1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.footer+xml"/>';
         }
         const secs = jobs.map((j, i) =>
           dxSection(
@@ -1529,6 +1545,7 @@
           '<Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>' +
           '<Override PartName="/word/settings.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.settings+xml"/>' +
           fontTableCT +
+          footerCT +
           "</Types>";
         const rootRels =
           '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>';
