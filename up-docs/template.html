@@ -1171,13 +1171,13 @@
           sz +
           '"/><w:szCs w:val="' +
           sz +
-          '"/></w:rPr><w:t xml:space="preserve">' +
+          '"/><w:cs/></w:rPr><w:t xml:space="preserve">' + // <w:cs/> = complex script → Word ตัดคำ/จัดบรรทัดแบบไทย (ไม่งั้นถ่างตัวอักษร)
           xesc(text) +
           "</w:t></w:r>"
         );
       }
       const DXTAB =
-        '<w:r><w:rPr><w:rFonts w:ascii="TH Sarabun New" w:hAnsi="TH Sarabun New" w:cs="TH Sarabun New"/><w:sz w:val="32"/><w:szCs w:val="32"/></w:rPr><w:tab/></w:r>';
+        '<w:r><w:rPr><w:rFonts w:ascii="TH Sarabun New" w:hAnsi="TH Sarabun New" w:cs="TH Sarabun New"/><w:sz w:val="32"/><w:szCs w:val="32"/><w:cs/></w:rPr><w:tab/></w:r>';
       function dxPara(runs, o) {
         o = o || {};
         let p = "<w:pPr>";
@@ -1495,7 +1495,7 @@
         const stylesXml =
           '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">' +
           "<w:docDefaults><w:rPrDefault><w:rPr>" +
-          '<w:rFonts w:ascii="TH Sarabun New" w:hAnsi="TH Sarabun New" w:cs="TH Sarabun New"/><w:sz w:val="32"/><w:szCs w:val="32"/><w:lang w:val="th-TH" w:bidi="th-TH"/>' +
+          '<w:rFonts w:ascii="TH Sarabun New" w:hAnsi="TH Sarabun New" w:cs="TH Sarabun New"/><w:sz w:val="32"/><w:szCs w:val="32"/><w:cs/><w:lang w:val="th-TH" w:bidi="th-TH"/>' +
           "</w:rPr></w:rPrDefault><w:pPrDefault><w:pPr>" +
           '<w:spacing w:after="0" w:line="240" w:lineRule="auto"/>' +
           "</w:pPr></w:pPrDefault></w:docDefaults>" +
