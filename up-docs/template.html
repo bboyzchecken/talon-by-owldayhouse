@@ -394,10 +394,15 @@
       .ind1 {
         text-indent: 1.27cm;
       }
-      /* วันที่ + คำลงท้าย + บล็อกผู้ลงนาม — จัด "กึ่งกลางหน้ากระดาษ" ให้ตรงแนวตรา
-   (ชดเชยขอบซ้าย/ขวาไม่เท่ากันด้วย (ขวา−ซ้าย)/2 แบบเดียวกับตรา) */
+      /* วันที่ = จัดกึ่งกลางหน้า (จุดกึ่งกลางวันที่ = แนวตรา) — ดู .datep ด้านล่าง
+   "ขอแสดงความนับถือ" = ตัว ข เริ่มพอดีที่กึ่งกลางหน้า (แนวตรา) แล้วยื่นขวา (ชิดซ้ายจากจุดนั้น)
+   ผู้ลงนาม = จัดกึ่งกลางรอบแนวข้อความ "ขอแสดงความนับถือ" (margin-left 1.9cm → center ~9.25cm) */
+      .sheet .closing-start {
+        margin-left: calc(50% + (var(--mr, 2cm) - var(--ml, 3cm)) / 2);
+        text-align: left;
+      }
       .sheet .sig-align {
-        margin-left: calc((var(--mr, 2cm) - var(--ml, 3cm)) / 2);
+        margin-left: 1.9cm;
         margin-right: 0;
         text-align: center;
       }
@@ -411,10 +416,12 @@
       }
       /* ตรา ม.พะเยา กึ่งกลาง "หน้ากระดาษ" (ไม่ใช่กรอบข้อความ) ตามแผนผังราชการ —
    ชดเชยขอบซ้าย/ขวาที่ไม่เท่ากันด้วย (ขวา−ซ้าย)/2 */
+      /* ใช้ transform:translateX (ไม่ใช่ negative margin) เพื่อเลื่อนสู่กึ่งกลาง "หน้ากระดาษ" จริง
+         — negative margin ทำ block กว้างขึ้น จุดกึ่งกลางเลยเพี้ยน (ได้ (ขวา−ซ้าย)/4 แทน /2) */
       .crestwrap {
         text-align: center;
         margin-bottom: 0.1cm;
-        margin-left: calc((var(--mr, 2cm) - var(--ml, 3cm)) / 2);
+        transform: translateX(calc((var(--mr, 2cm) - var(--ml, 3cm)) / 2));
       }
       .crest {
         height: 2.7cm;
@@ -422,10 +429,10 @@
         display: inline-block;
       }
       .sheet .datep {
-        margin-left: calc((var(--mr, 2cm) - var(--ml, 3cm)) / 2);
         text-align: center;
         margin-top: 6pt;
-      } /* วันที่ กึ่งกลางหน้ากระดาษ = ตรงแนวตรา */
+        transform: translateX(calc((var(--mr, 2cm) - var(--ml, 3cm)) / 2));
+      } /* วันที่ จุดกึ่งกลาง = กึ่งกลางหน้า = ตรงแนวตรา */
       .sheet .stu {
         margin-left: 1.25cm;
         text-indent: 1.25cm;
@@ -1196,14 +1203,15 @@
           return v && v.html ? "" : v || "";
         });
       }
-      // กึ่งกลางหน้ากระดาษ (ตรงแนวตรา): jc center + เยื้องขวา 1cm ชดเชยขอบซ้าย/ขวาไม่เท่ากัน
-      const PAGECTR = { jc: "center", indRight: 567 };
+      // ผู้ลงนาม: jc center + เยื้องซ้าย 1.9cm → กึ่งกลาง ~9.25cm = แนวกลางข้อความ "ขอแสดงความนับถือ"
+      const SIGNCTR = { jc: "center", indLeft: 1077 };
+      let DXCLOSE = 4419; // เยื้องซ้ายของ "ขอแสดงความนับถือ" = กึ่งกลางหน้าจากกั้นหน้า (ตั้งต่อ section ใน dxSection)
       function dxSigner() {
         const sg = currentSigner();
         let out = "";
-        for (let i = 0; i < 3; i++) out += dxPara("", PAGECTR); // เว้น 3 บรรทัดเซ็นชื่อ (ตาม format)
-        out += dxPara(dxRun("(" + (sg.name || "") + ")"), PAGECTR);
-        sg.title_lines.forEach((l) => (out += dxPara(dxRun(l), PAGECTR)));
+        for (let i = 0; i < 3; i++) out += dxPara("", SIGNCTR); // เว้น 3 บรรทัดเซ็นชื่อ (ตาม format)
+        out += dxPara(dxRun("(" + (sg.name || "") + ")"), SIGNCTR);
+        sg.title_lines.forEach((l) => (out += dxPara(dxRun(l), SIGNCTR)));
         return out;
       }
       function dxField(b, modeObj, contentW) {
@@ -1248,7 +1256,8 @@
             return dxPara(dxRun(tokPlain(b.text, modeObj)), o);
           }
           case "closing":
-            return dxPara(dxRun(b.text), { jc: "center", indRight: 567, before: 240 });
+            // "ข" เริ่มที่กึ่งกลางหน้า (แนวตรา) แล้วยื่นขวา — ชิดซ้ายจากจุดนั้น
+            return dxPara(dxRun(b.text), { indLeft: DXCLOSE, before: 240 });
           case "signer":
             return dxSigner();
           case "list_numbered":
@@ -1300,7 +1309,7 @@
           const cy = Math.round(2.7 * 360000),
             cx = Math.round((cy * crest.w) / crest.h);
           out +=
-            '<w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:drawing>' +
+            '<w:p><w:pPr><w:ind w:right="567"/><w:jc w:val="center"/></w:pPr><w:r><w:drawing>' + // ตรา กึ่งกลางหน้า (เยื้องขวา 1cm เท่าวันที่)
             '<wp:inline distT="0" distB="0" distL="0" distR="0"><wp:extent cx="' +
             cx +
             '" cy="' +
@@ -1361,6 +1370,7 @@
           pw = isA4 ? 11906 : 12240,
           ph = isA4 ? 16838 : 15840;
         const contentW = pw - TW(mg.left) - TW(mg.right);
+        DXCLOSE = Math.round(pw / 2 - TW(mg.left)); // "ขอแสดงความนับถือ" เริ่มที่กึ่งกลางหน้า (จากกั้นหน้า)
         // footer จริงของ Word (ปักล่างหน้า ไม่ไหลไปกินเนื้อหา/ตกหน้า 2) — footerReference ต้องมาก่อน pgSz
         const footerRef = d.footer
           ? '<w:footerReference w:type="default" r:id="rIdFooter"/>'
@@ -1662,8 +1672,9 @@
         if (b.align === "thai_justify") cls.push("just");
         if (b.align === "center") cls.push("ctr");
         if (b.align === "right") cls.push("rgt");
-        // center_ish (คำลงท้าย/ผู้ลงนาม): กึ่งกลางหน้ากระดาษ = ตรงแนวตรา
-        if (b.align === "center_ish") cls.push("sig-align");
+        // "ขอแสดงความนับถือ" (closing): ตัว ข เริ่มที่กึ่งกลางหน้า (แนวตรา) · ผู้ลงนาม (div sig-align): กึ่งกลางรอบคำลงท้าย
+        if (b.align === "center_ish")
+          cls.push(b.type === "closing" ? "closing-start" : "sig-align");
         // ทุกย่อหน้าเนื้อความ เยื้องบรรทัดแรก 2.5cm ให้ตรงกันหมด (บางย่อหน้าต้นฉบับไม่เยื้อง)
         if (b.type === "para") cls.push("ind2");
         else if (b.indent === "firstline2tab") cls.push("ind2");
