@@ -1,11 +1,13 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="th">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex">
-<title>UP Docs — เครื่องมือออกเอกสารฝึกงาน คณะบริหารธุรกิจและนิเทศศาสตร์ ม.พะเยา</title>
-<!--
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>
+      UP Docs — เครื่องมือออกเอกสารฝึกงาน คณะบริหารธุรกิจและนิเทศศาสตร์ ม.พะเยา
+    </title>
+    <!--
   UP Docs — demo ฟรีโดย Owl Day House
   สร้างจากสเปกใน up-docs/files/ (templates.json + reference.json) ผ่าน up-docs/build.py
   ห้ามแก้ไฟล์ index.html ที่ gen แล้วโดยตรง — แก้ template.html / JSON แล้วรัน build.py ใหม่
@@ -14,656 +16,1960 @@
   TODO(ask): สลับฟอนต์เป็น TH Sarabun ๙ เมื่อได้ไฟล์จริง (ตอนนี้ฝัง TH Sarabun New v1.35)
   TODO(ask): ผู้ลงนาม s2–s6 + รายชื่อ 8 สาขา รอข้อมูล (DECISIONS.md D4, D5)
 -->
-<style>
-/* ===== ฟอนต์ราชการ (ฝังในไฟล์ — PDF ตรงทุกเครื่อง) ===== */
-@font-face{
-  font-family:'TH Sarabun New';
-  src:url(data:font/woff2;base64,__FONT_R__) format('woff2');
-  font-weight:normal;font-style:normal;
-}
-@font-face{
-  font-family:'TH Sarabun New';
-  src:url(data:font/woff2;base64,__FONT_B__) format('woff2');
-  font-weight:bold;font-style:normal;
-}
+    <style>
+      /* ===== ฟอนต์ราชการ (ฝังในไฟล์ — PDF ตรงทุกเครื่อง) ===== */
+      @font-face {
+        font-family: "TH Sarabun New";
+        src: url(data:font/woff2;base64,__FONT_R__) format("woff2");
+        font-weight: normal;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: "TH Sarabun New";
+        src: url(data:font/woff2;base64,__FONT_B__) format("woff2");
+        font-weight: bold;
+        font-style: normal;
+      }
 
-/* ===== UI หน้าจอ (ไม่ติดไปกับงานพิมพ์) — สีอ้างอิงแบรนด์ ODH ===== */
-:root{
-  --navy:#28254C; --navy-deep:#1B1938; --gold:#E9A41B; --gold-soft:#FBEFD3; --paper:#FBF8F1;
-}
-*{box-sizing:border-box}
-html,body{margin:0;padding:0}
-body{background:#EEECE4;color:var(--navy);font-family:'IBM Plex Sans Thai','TH Sarabun New',-apple-system,'Segoe UI',sans-serif}
-.app-header{background:linear-gradient(135deg,var(--navy-deep),var(--navy));color:#fff;padding:18px 22px;border-bottom:4px solid var(--gold)}
-.app-header h1{margin:0;font-size:24px}
-.app-header p{margin:4px 0 0;font-size:17px;opacity:.85}
-main{max-width:1280px;margin:0 auto;padding:20px}
+      /* ===== UI หน้าจอ (ไม่ติดไปกับงานพิมพ์) — สีอ้างอิงแบรนด์ ODH ===== */
+      :root {
+        --navy: #28254c;
+        --navy-deep: #1b1938;
+        --gold: #e9a41b;
+        --gold-soft: #fbefd3;
+        --paper: #fbf8f1;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: #eeece4;
+        color: var(--navy);
+        font-family:
+          "IBM Plex Sans Thai",
+          "TH Sarabun New",
+          -apple-system,
+          "Segoe UI",
+          sans-serif;
+      }
+      .app-header {
+        background: linear-gradient(135deg, var(--navy-deep), var(--navy));
+        color: #fff;
+        padding: 18px 22px;
+        border-bottom: 4px solid var(--gold);
+      }
+      .app-header h1 {
+        margin: 0;
+        font-size: 24px;
+      }
+      .app-header p {
+        margin: 4px 0 0;
+        font-size: 17px;
+        opacity: 0.85;
+      }
+      main {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 20px;
+      }
 
-/* การ์ดเลือกเอกสาร */
-#docCards{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
-.card{background:#fff;border:2px solid transparent;border-top:4px solid var(--navy);border-radius:12px;padding:16px;cursor:pointer;text-align:left;font:inherit;box-shadow:0 2px 8px rgba(40,37,76,.08);transition:.15s}
-.card:hover{border-color:var(--gold);transform:translateY(-2px)}
-.card h2{margin:0 0 6px;font-size:21px;color:var(--navy)}
-.card p{margin:0;font-size:17px;color:#5a577a;line-height:1.5}
-.card .tag{display:inline-block;margin-top:10px;font-size:14px;background:var(--gold-soft);color:#8a6410;border-radius:99px;padding:2px 10px}
+      /* การ์ดเลือกเอกสาร */
+      #docCards {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 14px;
+      }
+      .card {
+        background: #fff;
+        border: 2px solid transparent;
+        border-top: 4px solid var(--navy);
+        border-radius: 12px;
+        padding: 16px;
+        cursor: pointer;
+        text-align: left;
+        font: inherit;
+        box-shadow: 0 2px 8px rgba(40, 37, 76, 0.08);
+        transition: 0.15s;
+      }
+      .card:hover {
+        border-color: var(--gold);
+        transform: translateY(-2px);
+      }
+      .card h2 {
+        margin: 0 0 6px;
+        font-size: 21px;
+        color: var(--navy);
+      }
+      .card p {
+        margin: 0;
+        font-size: 17px;
+        color: #5a577a;
+        line-height: 1.5;
+      }
+      .card .tag {
+        display: inline-block;
+        margin-top: 10px;
+        font-size: 14px;
+        background: var(--gold-soft);
+        color: #8a6410;
+        border-radius: 99px;
+        padding: 2px 10px;
+      }
 
-/* workspace ฟอร์ม + พรีวิว */
-#workspace{display:grid;grid-template-columns:440px minmax(0,1fr);gap:20px;align-items:start}
-#workspace[hidden]{display:none}
-#formPanel{background:#fff;border-radius:12px;padding:18px;box-shadow:0 2px 8px rgba(40,37,76,.08)}
-#formPanel h2{margin:0 0 2px;font-size:21px}
-#formPanel .docsub{margin:0 0 12px;font-size:15px;color:#5a577a}
-.backbtn{background:none;border:none;color:var(--navy);font:inherit;font-size:16px;cursor:pointer;padding:0;margin-bottom:10px;text-decoration:underline}
-fieldset{border:1px solid #e4e2d8;border-radius:10px;margin:0 0 14px;padding:10px 12px 12px}
-legend{font-size:15px;font-weight:600;color:#8a6410;padding:0 6px}
-label{display:block;font-size:16px;font-weight:600;margin:10px 0 4px}
-label:first-of-type{margin-top:0}
-input[type=text],input[type=number],select,textarea{width:100%;padding:8px 10px;border:1px solid #cfcdc0;border-radius:8px;font:inherit;font-size:18px;background:var(--paper)}
-input:focus,select:focus,textarea:focus{outline:2px solid var(--gold);border-color:var(--gold)}
-textarea{resize:vertical;min-height:74px}
-.hint{font-size:14px;color:#8b8875;margin-top:3px}
-.row{display:flex;gap:8px}
-.row>*{flex:1}
-.chk{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:400;margin:8px 0 0;cursor:pointer}
-.chk input{width:auto}
-.modechips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px}
-.chip{border:1.5px solid #cfcdc0;background:#fff;border-radius:99px;padding:7px 16px;font:inherit;font-size:16px;cursor:pointer}
-.chip.on{background:var(--navy);border-color:var(--navy);color:#fff}
-.sturow{display:flex;gap:6px;margin-bottom:6px;align-items:center}
-.sturow input{flex:1}
-.sturow .stuphone{max-width:120px}
-.sturow .del{flex:0 0 auto;background:none;border:1px solid #cfcdc0;border-radius:8px;width:38px;height:38px;cursor:pointer;color:#a33;font-size:18px;line-height:1}
-.addstu{background:var(--gold-soft);border:1px dashed var(--gold);border-radius:8px;padding:9px 12px;font:inherit;font-size:16px;cursor:pointer;width:100%}
-.printbtn{width:100%;background:var(--gold);color:var(--navy-deep);border:none;border-radius:10px;padding:14px;font:inherit;font-size:20px;font-weight:700;cursor:pointer;margin-top:6px;box-shadow:0 3px 10px rgba(233,164,27,.4)}
-.printbtn:hover{filter:brightness(1.05)}
-.printtip{font-size:14px;color:#8b8875;text-align:center;margin-top:6px}
+      /* workspace ฟอร์ม + พรีวิว */
+      #workspace {
+        display: grid;
+        grid-template-columns: 440px minmax(0, 1fr);
+        gap: 20px;
+        align-items: start;
+      }
+      #workspace[hidden] {
+        display: none;
+      }
+      #formPanel {
+        background: #fff;
+        border-radius: 12px;
+        padding: 18px;
+        box-shadow: 0 2px 8px rgba(40, 37, 76, 0.08);
+      }
+      #formPanel h2 {
+        margin: 0 0 2px;
+        font-size: 21px;
+      }
+      #formPanel .docsub {
+        margin: 0 0 12px;
+        font-size: 15px;
+        color: #5a577a;
+      }
+      .backbtn {
+        background: none;
+        border: none;
+        color: var(--navy);
+        font: inherit;
+        font-size: 16px;
+        cursor: pointer;
+        padding: 0;
+        margin-bottom: 10px;
+        text-decoration: underline;
+      }
+      fieldset {
+        border: 1px solid #e4e2d8;
+        border-radius: 10px;
+        margin: 0 0 14px;
+        padding: 10px 12px 12px;
+      }
+      legend {
+        font-size: 15px;
+        font-weight: 600;
+        color: #8a6410;
+        padding: 0 6px;
+      }
+      label {
+        display: block;
+        font-size: 16px;
+        font-weight: 600;
+        margin: 10px 0 4px;
+      }
+      label:first-of-type {
+        margin-top: 0;
+      }
+      input[type="text"],
+      input[type="number"],
+      select,
+      textarea {
+        width: 100%;
+        padding: 8px 10px;
+        border: 1px solid #cfcdc0;
+        border-radius: 8px;
+        font: inherit;
+        font-size: 18px;
+        background: var(--paper);
+      }
+      input:focus,
+      select:focus,
+      textarea:focus {
+        outline: 2px solid var(--gold);
+        border-color: var(--gold);
+      }
+      textarea {
+        resize: vertical;
+        min-height: 74px;
+      }
+      .hint {
+        font-size: 14px;
+        color: #8b8875;
+        margin-top: 3px;
+      }
+      .row {
+        display: flex;
+        gap: 8px;
+      }
+      .row > * {
+        flex: 1;
+      }
+      .chk {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 16px;
+        font-weight: 400;
+        margin: 8px 0 0;
+        cursor: pointer;
+      }
+      .chk input {
+        width: auto;
+      }
+      .modechips {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 4px;
+      }
+      .chip {
+        border: 1.5px solid #cfcdc0;
+        background: #fff;
+        border-radius: 99px;
+        padding: 7px 16px;
+        font: inherit;
+        font-size: 16px;
+        cursor: pointer;
+      }
+      .chip.on {
+        background: var(--navy);
+        border-color: var(--navy);
+        color: #fff;
+      }
+      .sturow {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 6px;
+        align-items: center;
+      }
+      .sturow input {
+        flex: 1;
+      }
+      .sturow .stuphone {
+        max-width: 120px;
+      }
+      .sturow .del {
+        flex: 0 0 auto;
+        background: none;
+        border: 1px solid #cfcdc0;
+        border-radius: 8px;
+        width: 38px;
+        height: 38px;
+        cursor: pointer;
+        color: #a33;
+        font-size: 18px;
+        line-height: 1;
+      }
+      .addstu {
+        background: var(--gold-soft);
+        border: 1px dashed var(--gold);
+        border-radius: 8px;
+        padding: 9px 12px;
+        font: inherit;
+        font-size: 16px;
+        cursor: pointer;
+        width: 100%;
+      }
+      .printbtn {
+        width: 100%;
+        background: var(--gold);
+        color: var(--navy-deep);
+        border: none;
+        border-radius: 10px;
+        padding: 14px;
+        font: inherit;
+        font-size: 20px;
+        font-weight: 700;
+        cursor: pointer;
+        margin-top: 6px;
+        box-shadow: 0 3px 10px rgba(233, 164, 27, 0.4);
+      }
+      .printbtn:hover {
+        filter: brightness(1.05);
+      }
+      .docxbtn {
+        width: 100%;
+        background: var(--navy);
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        padding: 12px;
+        font: inherit;
+        font-size: 17px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 8px;
+      }
+      .docxbtn:hover {
+        filter: brightness(1.12);
+      }
+      .docxbtn:disabled {
+        opacity: 0.6;
+        cursor: default;
+      }
+      .printtip {
+        font-size: 14px;
+        color: #8b8875;
+        text-align: center;
+        margin-top: 6px;
+      }
 
-/* พรีวิว */
-#previewPanel{min-width:0}
-#fitWarn{display:none;background:var(--gold-soft);border:1px solid var(--gold);color:#7a5a0e;border-radius:8px;padding:8px 12px;font-size:16px;margin-bottom:10px}
-.sheetbox{margin:0 auto 18px;overflow:hidden;box-shadow:0 4px 18px rgba(40,37,76,.18)}
-.pagelabel{font-size:15px;color:#5a577a;text-align:center;margin:0 0 6px}
+      /* พรีวิว */
+      #previewPanel {
+        min-width: 0;
+      }
+      #fitWarn {
+        display: none;
+        background: var(--gold-soft);
+        border: 1px solid var(--gold);
+        color: #7a5a0e;
+        border-radius: 8px;
+        padding: 8px 12px;
+        font-size: 16px;
+        margin-bottom: 10px;
+      }
+      .sheetbox {
+        margin: 0 auto 18px;
+        overflow: hidden;
+        box-shadow: 0 4px 18px rgba(40, 37, 76, 0.18);
+      }
+      .pagelabel {
+        font-size: 15px;
+        color: #5a577a;
+        text-align: center;
+        margin: 0 0 6px;
+      }
 
-/* ===== ตัวเอกสาร (สิ่งที่พิมพ์จริง) ===== */
-.sheet{
-  position:relative;background:#fff;color:#000;
-  font-family:'TH Sarabun New','TH SarabunPSK','Sarabun',sans-serif;
-  font-size:16pt;line-height:normal;overflow:hidden;
-  display:flex;flex-direction:column;   /* เนื้อหาบน · spacer ดันฟุตเตอร์ลงล่าง */
-}
-.sheet.letter{width:21.59cm;height:27.9cm}   /* Letter — ลดสูง 0.04cm กันหน้าเกินตอนพิมพ์ */
-.sheet.a4{width:21cm;height:29.66cm}         /* A4 เฉพาะใบนอกหลักสูตร */
-.sheet-flow{flex:0 0 auto}
-.sheet-spacer{flex:1 1 auto;min-height:0}    /* ช่องว่างยืดหยุ่น: ดันฟุตเตอร์ไว้ล่างสุด + ทำให้ตรวจล้นหน้าได้ */
-.sheet p{margin:0;white-space:pre-wrap}
-.just{text-align:justify}
-.ctr{text-align:center}
-.rgt{text-align:right}
-.ind2{text-indent:2.5cm}   /* เยื้องบรรทัดแรก 2.5cm ตาม format ราชการ (ระยะย่อหน้า ๒.๕ ซม.) */
-.ind1{text-indent:1.27cm}
-/* คำลงท้าย + วันที่ + บล็อกผู้ลงนาม — ตาม format ราชการ (แกะจาก .docx จริง):
+      /* ===== ตัวเอกสาร (สิ่งที่พิมพ์จริง) ===== */
+      .sheet {
+        position: relative;
+        background: #fff;
+        color: #000;
+        font-family: "TH Sarabun New", "TH SarabunPSK", "Sarabun", sans-serif;
+        font-size: 16pt;
+        line-height: normal;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column; /* เนื้อหาบน · spacer ดันฟุตเตอร์ลงล่าง */
+      }
+      .sheet.letter {
+        width: 21.59cm;
+        height: 27.9cm;
+      } /* Letter — ลดสูง 0.04cm กันหน้าเกินตอนพิมพ์ */
+      .sheet.a4 {
+        width: 21cm;
+        height: 29.66cm;
+      } /* A4 เฉพาะใบนอกหลักสูตร */
+      .sheet-flow {
+        flex: 0 0 auto;
+      }
+      .sheet-spacer {
+        flex: 1 1 auto;
+        min-height: 0;
+      } /* ช่องว่างยืดหยุ่น: ดันฟุตเตอร์ไว้ล่างสุด + ทำให้ตรวจล้นหน้าได้ */
+      .sheet p {
+        margin: 0;
+        white-space: pre-wrap;
+      }
+      .just {
+        text-align: justify;
+      }
+      .ctr {
+        text-align: center;
+      }
+      .rgt {
+        text-align: right;
+      }
+      .ind2 {
+        text-indent: 2.5cm;
+      } /* เยื้องบรรทัดแรก 2.5cm ตาม format ราชการ (ระยะย่อหน้า ๒.๕ ซม.) */
+      .ind1 {
+        text-indent: 1.27cm;
+      }
+      /* คำลงท้าย + วันที่ + บล็อกผู้ลงนาม — ตาม format ราชการ (แกะจาก .docx จริง):
    วันที่ และ "ขอแสดงความนับถือ" ใช้ TAB@7.75cm เดียวกัน = เริ่มต้นที่แกนกึ่งกลางหน้ากระดาษ
    ชื่อ/ตำแหน่งผู้ลงนาม จัดกึ่งกลางรอบแนวข้อความ "ขอแสดงความนับถือ" (ขยับตามคำลงท้าย) */
-.sheet .center-tab{margin-left:7.75cm;text-align:left}   /* เริ่มที่ 7.75cm จากกั้นหน้า (.sheet ชนะ .sheet p{margin:0}) */
-.sheet .sig-align{margin-left:1.9cm;margin-right:0;text-align:center}  /* โซน 1.9→ขวาสุด → กึ่งกลาง 9.25cm = แนวกลางข้อความ "ขอแสดงความนับถือ" (7.75 + ~2.95/2) */
-.docheader{display:flex;justify-content:space-between;align-items:flex-start}
-.dh-right p{text-align:left}
-/* ตรา ม.พะเยา กึ่งกลาง "หน้ากระดาษ" (ไม่ใช่กรอบข้อความ) ตามแผนผังราชการ —
+      .sheet .center-tab {
+        margin-left: 7.75cm;
+        text-align: left;
+      } /* เริ่มที่ 7.75cm จากกั้นหน้า (.sheet ชนะ .sheet p{margin:0}) */
+      .sheet .sig-align {
+        margin-left: 1.9cm;
+        margin-right: 0;
+        text-align: center;
+      } /* โซน 1.9→ขวาสุด → กึ่งกลาง 9.25cm = แนวกลางข้อความ "ขอแสดงความนับถือ" (7.75 + ~2.95/2) */
+      .docheader {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+      }
+      .dh-right p {
+        text-align: left;
+      }
+      /* ตรา ม.พะเยา กึ่งกลาง "หน้ากระดาษ" (ไม่ใช่กรอบข้อความ) ตามแผนผังราชการ —
    ชดเชยขอบซ้าย/ขวาที่ไม่เท่ากันด้วย (ขวา−ซ้าย)/2 */
-.crestwrap{text-align:center;margin-bottom:0.1cm;margin-left:calc((var(--mr,2cm) - var(--ml,3cm))/2)}
-.crest{height:2.7cm;width:auto;display:inline-block}
-.sheet .datep{margin-left:7.75cm;text-align:left;margin-top:6pt}   /* วันที่เริ่มแกนเดียวกับ "ขอแสดงความนับถือ" (TAB@7.75cm จาก .docx) */
-.sheet .stu{margin-left:1.25cm;text-indent:1.25cm}   /* ลิสต์นิสิต: บรรทัดแรกเริ่ม 2.5cm = ตรงระยะย่อหน้า (docx: left1.27+firstLine1.27) */
-.doctitle{text-align:center;font-weight:bold;font-size:1.375em}  /* หัวใบตอบรับ 22pt */
-.sigspace{height:1.7cm}     /* เว้นที่เซ็นชื่อ */
-.sheet .closing-gap{margin-top:var(--closegap,24pt)}  /* เว้นก่อน "ขอแสดงความนับถือ" ~2 บรรทัด (.sheet นำหน้าให้ชนะ .sheet p{margin:0}) */
-.docfooter{margin-top:6pt}  /* อยู่ในลำดับ flow ล่างสุด (spacer ดันลงมา) */
-.docfooter p{text-align:left}
-.signwrap{width:9.5cm;margin-left:auto;text-align:center;margin-top:20pt}
-.signwrap p{margin-top:10pt}
-.blank{display:inline-block;min-width:4.5cm;border-bottom:1px dotted #000}
-/* ช่องกรอกในใบตอบรับ: เส้นประยืดเต็มบรรทัด ให้บริษัทเขียนได้ยาว ๆ */
-.fieldline{display:flex;align-items:flex-end;flex-wrap:nowrap}
-.fieldline .ftx{flex:0 0 auto;white-space:pre}
-.fieldline .ffill{flex:1 1 auto;min-width:1.5cm;height:1.05em;border-bottom:1px dotted #000;margin:0 4px}
-.miss{display:inline-block;min-width:2.8cm;border-bottom:1px dotted #999;background:var(--gold-soft)} /* ช่องที่ยังไม่กรอก — ไฮไลต์เฉพาะบนจอ */
+      .crestwrap {
+        text-align: center;
+        margin-bottom: 0.1cm;
+        margin-left: calc((var(--mr, 2cm) - var(--ml, 3cm)) / 2);
+      }
+      .crest {
+        height: 2.7cm;
+        width: auto;
+        display: inline-block;
+      }
+      .sheet .datep {
+        margin-left: 7.75cm;
+        text-align: left;
+        margin-top: 6pt;
+      } /* วันที่เริ่มแกนเดียวกับ "ขอแสดงความนับถือ" (TAB@7.75cm จาก .docx) */
+      .sheet .stu {
+        margin-left: 1.25cm;
+        text-indent: 1.25cm;
+      } /* ลิสต์นิสิต: บรรทัดแรกเริ่ม 2.5cm = ตรงระยะย่อหน้า (docx: left1.27+firstLine1.27) */
+      .doctitle {
+        text-align: center;
+        font-weight: bold;
+        font-size: 1.375em;
+      } /* หัวใบตอบรับ 22pt */
+      .sigspace {
+        height: 1.7cm;
+      } /* เว้นที่เซ็นชื่อ */
+      .sheet .closing-gap {
+        margin-top: var(--closegap, 24pt);
+      } /* เว้นก่อน "ขอแสดงความนับถือ" ~2 บรรทัด (.sheet นำหน้าให้ชนะ .sheet p{margin:0}) */
+      .docfooter {
+        margin-top: 6pt;
+      } /* อยู่ในลำดับ flow ล่างสุด (spacer ดันลงมา) */
+      .docfooter p {
+        text-align: left;
+      }
+      .signwrap {
+        width: 9.5cm;
+        margin-left: auto;
+        text-align: center;
+        margin-top: 20pt;
+      }
+      .signwrap p {
+        margin-top: 10pt;
+      }
+      .blank {
+        display: inline-block;
+        min-width: 4.5cm;
+        border-bottom: 1px dotted #000;
+      }
+      /* ช่องกรอกในใบตอบรับ: เส้นประยืดเต็มบรรทัด ให้บริษัทเขียนได้ยาว ๆ */
+      .fieldline {
+        display: flex;
+        align-items: flex-end;
+        flex-wrap: nowrap;
+      }
+      .fieldline .ftx {
+        flex: 0 0 auto;
+        white-space: pre;
+      }
+      .fieldline .ffill {
+        flex: 1 1 auto;
+        min-width: 1.5cm;
+        height: 1.05em;
+        border-bottom: 1px dotted #000;
+        margin: 0 4px;
+      }
+      .miss {
+        display: inline-block;
+        min-width: 2.8cm;
+        border-bottom: 1px dotted #999;
+        background: var(--gold-soft);
+      } /* ช่องที่ยังไม่กรอก — ไฮไลต์เฉพาะบนจอ */
 
-.app-footer{text-align:center;font-size:15px;color:#5a577a;padding:18px}
-.app-footer a{color:var(--navy)}
+      .app-footer {
+        text-align: center;
+        font-size: 15px;
+        color: #5a577a;
+        padding: 18px;
+      }
+      .app-footer a {
+        color: var(--navy);
+      }
 
-/* มือถือ: ฟอร์มอยู่บน พรีวิวอยู่ล่าง */
-@media(max-width:900px){
-  #workspace{grid-template-columns:1fr}
-  main{padding:12px}
-}
+      /* มือถือ: ฟอร์มอยู่บน พรีวิวอยู่ล่าง */
+      @media (max-width: 900px) {
+        #workspace {
+          grid-template-columns: 1fr;
+        }
+        main {
+          padding: 12px;
+        }
+      }
 
-/* ===== โหมดพิมพ์ ===== */
-@media print{
-  .no-print{display:none !important}
-  body{background:#fff}
-  main{max-width:none;padding:0;margin:0}
-  #fitWarn{display:none !important}
-  .sheetbox{margin:0 !important;width:auto !important;height:auto !important;box-shadow:none;overflow:visible;page-break-after:always}
-  .sheetbox:last-child{page-break-after:auto}
-  .sheet{transform:none !important}
-  .miss{background:none}
-}
-</style>
-<style id="pageSize">@page{size:letter;margin:0}</style>
+      /* ===== โหมดพิมพ์ ===== */
+      @media print {
+        .no-print {
+          display: none !important;
+        }
+        body {
+          background: #fff;
+        }
+        main {
+          max-width: none;
+          padding: 0;
+          margin: 0;
+        }
+        #fitWarn {
+          display: none !important;
+        }
+        .sheetbox {
+          margin: 0 !important;
+          width: auto !important;
+          height: auto !important;
+          box-shadow: none;
+          overflow: visible;
+          page-break-after: always;
+        }
+        .sheetbox:last-child {
+          page-break-after: auto;
+        }
+        .sheet {
+          transform: none !important;
+        }
+        .miss {
+          background: none;
+        }
+      }
+    </style>
+    <style id="pageSize">
+      @page {
+        size: letter;
+        margin: 0;
+      }
+    </style>
 
-<!-- Google Analytics 4 — วัดการใช้งานจริงเพื่อสรุป ROI (แยก property ใต้บัญชี owldayhouse)
+    <!-- Google Analytics 4 — วัดการใช้งานจริงเพื่อสรุป ROI (แยก property ใต้บัญชี owldayhouse)
      ⚠️ ส่งเฉพาะ ประเภทเอกสาร/โหมด/จำนวนนิสิต เท่านั้น — ไม่ส่งชื่อคน/บริษัท/เลขหนังสือ
      (กันข้อมูลส่วนบุคคลของเอกสารราชการรั่วออกนอกระบบ)
      Measurement ID เติมโดย build.py จาก env UP_DOCS_GA_ID หรือ up-docs/assets/ga_id.txt
      ยังไม่ตั้งค่า = ไม่โหลดสคริปต์ ไม่ส่งข้อมูลใด ๆ -->
-<script>
-/* ส่ง event เข้า gtag ของ "หน้าแม่" (owldayhouse.com/up-docs) ซึ่งโหลด property up-docs
+    <script>
+      /* ส่ง event เข้า gtag ของ "หน้าแม่" (owldayhouse.com/up-docs) ซึ่งโหลด property up-docs
    ด้วย URL จริง — เลี่ยงปัญหา iframe srcdoc ที่ page_location เป็น about:srcdoc แล้ว GA ไม่ขึ้น
    ระบุ send_to = Measurement ID เพื่อยิงเข้า property up-docs เท่านั้น (ไม่ปนกับ GA เว็บตลาด)
    กรณีเปิดไฟล์เดี่ยว (ไม่อยู่ใน iframe) และตั้ง GA_ID ไว้ → โหลด gtag ของตัวเองไว้ fallback */
-window.track = function(){};
-(function(){
-  var GA_ID = '__GA_ID__';
-  var haveGA = GA_ID && GA_ID.indexOf('G-') === 0;
-  function parentGtag(){
-    try{ if(window.parent && window.parent !== window && typeof window.parent.gtag === 'function') return window.parent.gtag; }catch(e){}
-    return null;
-  }
-  if(haveGA && !parentGtag()){   // standalone: ไม่มีหน้าแม่ → โหลด gtag เอง
-    var s=document.createElement('script'); s.async=1;
-    s.src='https://www.googletagmanager.com/gtag/js?id='+GA_ID; document.head.appendChild(s);
-    window.dataLayer=window.dataLayer||[]; function gtag(){ dataLayer.push(arguments); }
-    window.gtag=gtag; gtag('js', new Date()); gtag('config', GA_ID);
-  }
-  window.track = function(ev, params){
-    var p = params || {}; if(haveGA) p.send_to = GA_ID;
-    var g = parentGtag() || (typeof window.gtag==='function' ? window.gtag : null);
-    if(g){ try{ g('event', ev, p); }catch(e){} }
-  };
-})();
-</script>
-</head>
-<body>
+      window.track = function () {};
+      (function () {
+        var GA_ID = "__GA_ID__";
+        var haveGA = GA_ID && GA_ID.indexOf("G-") === 0;
+        function parentGtag() {
+          try {
+            if (
+              window.parent &&
+              window.parent !== window &&
+              typeof window.parent.gtag === "function"
+            )
+              return window.parent.gtag;
+          } catch (e) {}
+          return null;
+        }
+        if (haveGA && !parentGtag()) {
+          // standalone: ไม่มีหน้าแม่ → โหลด gtag เอง
+          var s = document.createElement("script");
+          s.async = 1;
+          s.src = "https://www.googletagmanager.com/gtag/js?id=" + GA_ID;
+          document.head.appendChild(s);
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          window.gtag = gtag;
+          gtag("js", new Date());
+          gtag("config", GA_ID);
+        }
+        window.track = function (ev, params) {
+          var p = params || {};
+          if (haveGA) p.send_to = GA_ID;
+          var g =
+            parentGtag() ||
+            (typeof window.gtag === "function" ? window.gtag : null);
+          if (g) {
+            try {
+              g("event", ev, p);
+            } catch (e) {}
+          }
+        };
+      })();
+    </script>
+  </head>
+  <body>
+    <header class="app-header no-print">
+      <h1>UP Docs — เครื่องมือออกเอกสารฝึกงาน / สหกิจศึกษา</h1>
+      <p>
+        คณะบริหารธุรกิจและนิเทศศาสตร์ มหาวิทยาลัยพะเยา · กรอกครั้งเดียว
+        เติมทุกจุด · พิมพ์เป็น PDF ได้ทันที
+      </p>
+    </header>
 
-<header class="app-header no-print">
-  <h1>UP Docs — เครื่องมือออกเอกสารฝึกงาน / สหกิจศึกษา</h1>
-  <p>คณะบริหารธุรกิจและนิเทศศาสตร์ มหาวิทยาลัยพะเยา · กรอกครั้งเดียว เติมทุกจุด · พิมพ์เป็น PDF ได้ทันที</p>
-</header>
+    <main>
+      <!-- ขั้น 1: การ์ดเลือกประเภทเอกสาร -->
+      <section
+        id="docCards"
+        class="no-print"
+        aria-label="เลือกประเภทเอกสาร"
+      ></section>
+      <p
+        id="openSaved"
+        class="no-print"
+        style="text-align: center; margin-top: 16px"
+      >
+        <button
+          class="chip"
+          onclick="document.getElementById('importFile').click()"
+        >
+          ⬆ เปิดไฟล์ที่บันทึกไว้ (.json)
+        </button>
+      </p>
+      <input
+        type="file"
+        id="importFile"
+        accept="application/json,.json"
+        style="display: none"
+      />
 
-<main>
-  <!-- ขั้น 1: การ์ดเลือกประเภทเอกสาร -->
-  <section id="docCards" class="no-print" aria-label="เลือกประเภทเอกสาร"></section>
-  <p id="openSaved" class="no-print" style="text-align:center;margin-top:16px">
-    <button class="chip" onclick="document.getElementById('importFile').click()">⬆ เปิดไฟล์ที่บันทึกไว้ (.json)</button>
-  </p>
-  <input type="file" id="importFile" accept="application/json,.json" style="display:none">
+      <!-- ขั้น 2: ฟอร์ม + พรีวิวสด -->
+      <div id="workspace" hidden>
+        <aside id="formPanel" class="no-print"></aside>
+        <section id="previewPanel">
+          <div id="fitWarn" class="no-print"></div>
+          <div id="pages"></div>
+        </section>
+      </div>
+    </main>
 
-  <!-- ขั้น 2: ฟอร์ม + พรีวิวสด -->
-  <div id="workspace" hidden>
-    <aside id="formPanel" class="no-print"></aside>
-    <section id="previewPanel">
-      <div id="fitWarn" class="no-print"></div>
-      <div id="pages"></div>
-    </section>
-  </div>
-</main>
+    <footer class="app-footer no-print">
+      เครื่องมือรุ่นสาธิต · พัฒนาโดย บริษัท อาวล์ เดย์ เฮ้าส์ จำกัด ·
+      <a href="https://owldayhouse.com">owldayhouse.com</a>
+    </footer>
 
-<footer class="app-footer no-print">
-  เครื่องมือรุ่นสาธิต · พัฒนาโดย บริษัท อาวล์ เดย์ เฮ้าส์ จำกัด · <a href="https://owldayhouse.com">owldayhouse.com</a>
-</footer>
+    <script>
+      "use strict";
+      /* ===== ข้อมูลจากสเปก (gen จาก up-docs/files/ — อย่าแก้ตรงนี้ ให้แก้ JSON แล้ว build ใหม่) ===== */
+      const REF = __REF_JSON__;
+      const TPL = __TPL_JSON__;
+      // ตรามหาวิทยาลัยพะเยา (data URI) — build.py ฝังให้เมื่อมีไฟล์ใน up-docs/assets/logo/ ไม่มีไฟล์ = หัวจดหมายไม่มีตรา
+      const CREST_DATA = "__CREST__";
 
-<script>
-'use strict';
-/* ===== ข้อมูลจากสเปก (gen จาก up-docs/files/ — อย่าแก้ตรงนี้ ให้แก้ JSON แล้ว build ใหม่) ===== */
-const REF = __REF_JSON__;
-const TPL = __TPL_JSON__;
-// ตรามหาวิทยาลัยพะเยา (data URI) — build.py ฝังให้เมื่อมีไฟล์ใน up-docs/assets/logo/ ไม่มีไฟล์ = หัวจดหมายไม่มีตรา
-const CREST_DATA = '__CREST__';
+      /* ===== ค่าคงที่ / helper ===== */
+      const TH_MONTHS = [
+        "มกราคม",
+        "กุมภาพันธ์",
+        "มีนาคม",
+        "เมษายน",
+        "พฤษภาคม",
+        "มิถุนายน",
+        "กรกฎาคม",
+        "สิงหาคม",
+        "กันยายน",
+        "ตุลาคม",
+        "พฤศจิกายน",
+        "ธันวาคม",
+      ];
+      const MODE_LABEL = {
+        internship: "ฝึกงาน",
+        coop: "สหกิจศึกษา",
+        cwie: "CWIE",
+      };
+      const DEFAULT_CANCEL_REASON =
+        "เนื่องด้วยนิสิตมีปัญหาเกี่ยวกับการลงทะเบียนเรียนไม่ครบตามจำนวนหน่วยกิตของมหาวิทยาลัย ทำให้นิสิตไม่สามารถเข้ารับการฝึกงานได้";
 
-/* ===== ค่าคงที่ / helper ===== */
-const TH_MONTHS = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
-const MODE_LABEL = {internship:'ฝึกงาน', coop:'สหกิจศึกษา', cwie:'CWIE'};
-const DEFAULT_CANCEL_REASON = 'เนื่องด้วยนิสิตมีปัญหาเกี่ยวกับการลงทะเบียนเรียนไม่ครบตามจำนวนหน่วยกิตของมหาวิทยาลัย ทำให้นิสิตไม่สามารถเข้ารับการฝึกงานได้';
+      // แปลงเลขอารบิก → เลขไทย (ผู้ใช้พิมพ์อารบิกได้ ระบบแปลงตอนเรนเดอร์)
+      const thNum = (s) => String(s).replace(/[0-9]/g, (d) => "๐๑๒๓๔๕๖๗๘๙"[d]);
+      const esc = (s) =>
+        String(s).replace(
+          /[&<>"]/g,
+          (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c],
+        );
 
-// แปลงเลขอารบิก → เลขไทย (ผู้ใช้พิมพ์อารบิกได้ ระบบแปลงตอนเรนเดอร์)
-const thNum = s => String(s).replace(/[0-9]/g, d => '๐๑๒๓๔๕๖๗๘๙'[d]);
-const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-
-/* ===== ข้อมูลประกอบ UI ต่อเอกสาร =====
+      /* ===== ข้อมูลประกอบ UI ต่อเอกสาร =====
    stuMax: ส่งตัว/นอกหลักสูตร/ยกเลิก ล็อก 1 คน — ต้นฉบับมีแค่โครง 1 คน
    TODO(ask): รูปแบบหลายคนของ 3 ใบนี้ รอเจ้าของตอบ (DECISIONS.md D-multi) */
-const DOC_META = {
-  request:        {title:'หนังสือขอความอนุเคราะห์', desc:'ขอรับนิสิตเข้าฝึกงาน / สหกิจ / CWIE — พิมพ์ครั้งเดียวได้พร้อมใบตอบรับ', tag:'พร้อมใบตอบรับ · 2 หน้า',
-                   stuMax:4, stuPhone:true, fields:['docNo','date','recipient','courseCode','program','major','semester','yearEduBE','orgName','dateStart','dateEnd','replyBy']},
-  sendoff:        {title:'หนังสือส่งตัวนิสิต', desc:'ส่งตัวนิสิตเข้ารับการฝึกงาน / สหกิจ / CWIE ณ สถานประกอบการ', tag:'3 โหมด',
-                   stuMax:1, stuPhone:true, fields:['docNo','date','recipient','orgName','major','dateStart','dateEnd']},
-  thanks:         {title:'หนังสือขอบคุณ', desc:'ขอบคุณสถานประกอบการหลังนิสิตฝึกงาน / ปฏิบัติสหกิจศึกษาเสร็จสิ้น', tag:'1–4 คน',
-                   stuMax:4, stuPhone:false, fields:['docNo','date','recipient','orgName','major','dateStart','dateEnd']},
-  extracurricular:{title:'ฝึกงานนอกหลักสูตร', desc:'ขอความอนุเคราะห์รับนิสิตฝึกงานระหว่างปิดภาคการศึกษา', tag:'กระดาษ A4',
-                   stuMax:1, stuPhone:false, fields:['docNo','date','recipient','program','major','yearLevel','dateStart','dateEnd']},
-  cancel:         {title:'หนังสือยกเลิกการฝึกงาน', desc:'แจ้งยกเลิกการเข้ารับการฝึกงาน อ้างอิงหนังสือฉบับเดิม', tag:'อ้างเลขหนังสือเดิม',
-                   stuMax:1, stuPhone:false, fields:['docNo','date','recipient','refDocNo','refDate','orgName','major','dateStart','dateEnd','cancelReason']},
-};
+      const DOC_META = {
+        request: {
+          title: "หนังสือขอความอนุเคราะห์",
+          desc: "ขอรับนิสิตเข้าฝึกงาน / สหกิจ / CWIE — พิมพ์ครั้งเดียวได้พร้อมใบตอบรับ",
+          tag: "พร้อมใบตอบรับ · 2 หน้า",
+          stuMax: 4,
+          stuPhone: true,
+          fields: [
+            "docNo",
+            "date",
+            "recipient",
+            "courseCode",
+            "program",
+            "major",
+            "semester",
+            "yearEduBE",
+            "orgName",
+            "dateStart",
+            "dateEnd",
+            "replyBy",
+          ],
+        },
+        sendoff: {
+          title: "หนังสือส่งตัวนิสิต",
+          desc: "ส่งตัวนิสิตเข้ารับการฝึกงาน / สหกิจ / CWIE ณ สถานประกอบการ",
+          tag: "3 โหมด",
+          stuMax: 1,
+          stuPhone: true,
+          fields: [
+            "docNo",
+            "date",
+            "recipient",
+            "orgName",
+            "major",
+            "dateStart",
+            "dateEnd",
+          ],
+        },
+        thanks: {
+          title: "หนังสือขอบคุณ",
+          desc: "ขอบคุณสถานประกอบการหลังนิสิตฝึกงาน / ปฏิบัติสหกิจศึกษาเสร็จสิ้น",
+          tag: "1–4 คน",
+          stuMax: 4,
+          stuPhone: false,
+          fields: [
+            "docNo",
+            "date",
+            "recipient",
+            "orgName",
+            "major",
+            "dateStart",
+            "dateEnd",
+          ],
+        },
+        extracurricular: {
+          title: "ฝึกงานนอกหลักสูตร",
+          desc: "ขอความอนุเคราะห์รับนิสิตฝึกงานระหว่างปิดภาคการศึกษา",
+          tag: "กระดาษ A4",
+          stuMax: 1,
+          stuPhone: false,
+          fields: [
+            "docNo",
+            "date",
+            "recipient",
+            "program",
+            "major",
+            "yearLevel",
+            "dateStart",
+            "dateEnd",
+          ],
+        },
+        cancel: {
+          title: "หนังสือยกเลิกการฝึกงาน",
+          desc: "แจ้งยกเลิกการเข้ารับการฝึกงาน อ้างอิงหนังสือฉบับเดิม",
+          tag: "อ้างเลขหนังสือเดิม",
+          stuMax: 1,
+          stuPhone: false,
+          fields: [
+            "docNo",
+            "date",
+            "recipient",
+            "refDocNo",
+            "refDate",
+            "orgName",
+            "major",
+            "dateStart",
+            "dateEnd",
+            "cancelReason",
+          ],
+        },
+      };
 
-// นิยามช่องกรอก (label / ตัวอย่าง / ชนิด)
-const FIELD_DEF = {
-  docNo:       {label:'เลขที่หนังสือ (ต่อท้าย อว ๗๓๒๕/)', hint:'เช่น 0590'},
-  recipient:   {label:'เรียน (ผู้รับหนังสือ)', hint:'เช่น ผู้จัดการฝ่ายทรัพยากรบุคคล บริษัท ใจดี จำกัด'},
-  orgName:     {label:'ชื่อสถานประกอบการ / หน่วยงาน', hint:'เช่น บริษัท ใจดี จำกัด — ใช้เติมทุกจุดรวมถึงใบตอบรับ'},
-  courseCode:  {label:'รหัสรายวิชา', hint:'เช่น 128382'},
-  program:     {label:'หลักสูตร', datalist:'programList'},
-  major:       {label:'สาขาวิชา', hint:'เช่น การตลาดดิจิทัล', datalist:'majorList'},
-  semester:    {label:'ภาคการศึกษา', select:['ต้น','ปลาย']},
-  yearEduBE:   {label:'ปีการศึกษา (พ.ศ.)', hint:'เช่น 2569', num:true},
-  dateStart:   {label:'วันเริ่มปฏิบัติงาน', hint:'เช่น 1 ธันวาคม 2569'},
-  dateEnd:     {label:'วันสิ้นสุด', hint:'เช่น 31 มีนาคม 2570'},
-  replyBy:     {label:'ขอผลตอบกลับภายในวันที่', hint:'เช่น 30 พฤศจิกายน 2569'},
-  yearLevel:   {label:'ชั้นปี', hint:'เช่น 3', num:true},
-  refDocNo:    {label:'เลขที่หนังสือเดิม (อว ๗๓๒๕/…)', hint:'เลขหนังสือขอความอนุเคราะห์ฉบับที่ยกเลิก'},
-  refDate:     {label:'ลงวันที่ (หนังสือเดิม)', hint:'เช่น 5 มิถุนายน 2569'},
-  cancelReason:{label:'เหตุผลการยกเลิก', textarea:true},
-};
+      // นิยามช่องกรอก (label / ตัวอย่าง / ชนิด)
+      const FIELD_DEF = {
+        docNo: { label: "เลขที่หนังสือ (ต่อท้าย อว ๗๓๒๕/)", hint: "เช่น 0590" },
+        recipient: {
+          label: "เรียน (ผู้รับหนังสือ)",
+          hint: "เช่น ผู้จัดการฝ่ายทรัพยากรบุคคล บริษัท ใจดี จำกัด",
+        },
+        orgName: {
+          label: "ชื่อสถานประกอบการ / หน่วยงาน",
+          hint: "เช่น บริษัท ใจดี จำกัด — ใช้เติมทุกจุดรวมถึงใบตอบรับ",
+        },
+        courseCode: { label: "รหัสรายวิชา", hint: "เช่น 128382" },
+        program: { label: "หลักสูตร", datalist: "programList" },
+        major: {
+          label: "สาขาวิชา",
+          hint: "เช่น การตลาดดิจิทัล",
+          datalist: "majorList",
+        },
+        semester: { label: "ภาคการศึกษา", select: ["ต้น", "ปลาย"] },
+        yearEduBE: { label: "ปีการศึกษา (พ.ศ.)", hint: "เช่น 2569", num: true },
+        dateStart: { label: "วันเริ่มปฏิบัติงาน", hint: "เช่น 1 ธันวาคม 2569" },
+        dateEnd: { label: "วันสิ้นสุด", hint: "เช่น 31 มีนาคม 2570" },
+        replyBy: {
+          label: "ขอผลตอบกลับภายในวันที่",
+          hint: "เช่น 30 พฤศจิกายน 2569",
+        },
+        yearLevel: { label: "ชั้นปี", hint: "เช่น 3", num: true },
+        refDocNo: {
+          label: "เลขที่หนังสือเดิม (อว ๗๓๒๕/…)",
+          hint: "เลขหนังสือขอความอนุเคราะห์ฉบับที่ยกเลิก",
+        },
+        refDate: {
+          label: "ลงวันที่ (หนังสือเดิม)",
+          hint: "เช่น 5 มิถุนายน 2569",
+        },
+        cancelReason: { label: "เหตุผลการยกเลิก", textarea: true },
+      };
 
-/* ===== state เดียว — กรอกครั้งเดียวเติมทุกจุด ===== */
-const now = new Date();
-const state = {
-  docType: null,
-  mode: 'internship',
-  docNo:'', recipient:'', orgName:'', courseCode:'',
-  program:'บริหารธุรกิจบัณฑิต', major:'', semester:'ปลาย',
-  yearEduBE: String(now.getFullYear()+543),
-  dateStart:'', dateEnd:'', replyBy:'', yearLevel:'',
-  refDocNo:'', refDate:'',
-  cancelReason: DEFAULT_CANCEL_REASON,
-  date: {day:'', month: TH_MONTHS[now.getMonth()], yearBE: String(now.getFullYear()+543)},
-  students: [{name:'', phone:''}],
-  signerId: 's1',
-  // ผู้ลงนามที่พิมพ์เอง (เมื่อเลือก "พิมพ์เอง…") — actingForDean=true แสดง "ปฏิบัติการแทน / คณบดีฯ"
-  customSigner: { name:'', position:'', actingForDean:true },
-  printAttach: true,
-};
+      /* ===== state เดียว — กรอกครั้งเดียวเติมทุกจุด ===== */
+      const now = new Date();
+      const state = {
+        docType: null,
+        mode: "internship",
+        docNo: "",
+        recipient: "",
+        orgName: "",
+        courseCode: "",
+        program: "บริหารธุรกิจบัณฑิต",
+        major: "",
+        semester: "ปลาย",
+        yearEduBE: String(now.getFullYear() + 543),
+        dateStart: "",
+        dateEnd: "",
+        replyBy: "",
+        yearLevel: "",
+        refDocNo: "",
+        refDate: "",
+        cancelReason: DEFAULT_CANCEL_REASON,
+        date: {
+          day: "",
+          month: TH_MONTHS[now.getMonth()],
+          yearBE: String(now.getFullYear() + 543),
+        },
+        students: [{ name: "", phone: "" }],
+        signerId: "s1",
+        // ผู้ลงนามที่พิมพ์เอง (เมื่อเลือก "พิมพ์เอง…") — actingForDean=true แสดง "ปฏิบัติการแทน / คณบดีฯ"
+        customSigner: { name: "", position: "", actingForDean: true },
+        printAttach: true,
+      };
 
-// นิสิตที่ใช้จริงตามเพดานของใบนั้น (ใบ 1 คนใช้แค่คนแรก)
-const effStudents = () => state.students.slice(0, DOC_META[state.docType]?.stuMax || 4);
+      // นิสิตที่ใช้จริงตามเพดานของใบนั้น (ใบ 1 คนใช้แค่คนแรก)
+      const effStudents = () =>
+        state.students.slice(0, DOC_META[state.docType]?.stuMax || 4);
 
-/* ===== Persistence: autosave (localStorage) + บันทึก/เปิดไฟล์ .json =====
+      /* ===== Persistence: autosave (localStorage) + บันทึก/เปิดไฟล์ .json =====
    แพตเทิร์นเดียวกับ owl-docs — localStorage เป็น optional (try/catch)
    ตามข้อกำหนดสเปก: ถ้าใช้ไม่ได้ (เช่นบน artifact preview) เครื่องมือยังทำงานปกติ */
-const STORAGE_KEY = 'up-docs-state-v1';
-const SAVED_KEYS = ['docType','mode','docNo','recipient','orgName','courseCode','program','major',
-  'semester','yearEduBE','dateStart','dateEnd','replyBy','yearLevel','refDocNo','refDate',
-  'cancelReason','signerId','printAttach'];
+      const STORAGE_KEY = "up-docs-state-v1";
+      const SAVED_KEYS = [
+        "docType",
+        "mode",
+        "docNo",
+        "recipient",
+        "orgName",
+        "courseCode",
+        "program",
+        "major",
+        "semester",
+        "yearEduBE",
+        "dateStart",
+        "dateEnd",
+        "replyBy",
+        "yearLevel",
+        "refDocNo",
+        "refDate",
+        "cancelReason",
+        "signerId",
+        "printAttach",
+      ];
 
-function collectData(){
-  const d = {app:'up-docs', version:1};
-  SAVED_KEYS.forEach(k => { d[k] = state[k]; });
-  d.date = {...state.date};
-  d.students = state.students.map(s => ({name:s.name, phone:s.phone}));
-  d.customSigner = {...state.customSigner};
-  return d;
-}
-function applyData(d){
-  if(!d || d.app!=='up-docs' || !DOC_META[d.docType]) throw new Error('ไม่ใช่ไฟล์ของ UP Docs');
-  SAVED_KEYS.forEach(k => { if(d[k]!==undefined) state[k] = d[k]; });
-  if(d.date) state.date = {...state.date, ...d.date};
-  if(d.customSigner) state.customSigner = {...state.customSigner, ...d.customSigner};
-  if(Array.isArray(d.students) && d.students.length){
-    state.students = d.students.slice(0,4).map(s => ({name:s.name||'', phone:s.phone||''}));
-  }
-  openWorkspace();
-}
-function saveState(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(collectData())); }catch(e){} }
-function loadState(){ try{ const s=localStorage.getItem(STORAGE_KEY); return s?JSON.parse(s):null; }catch(e){ return null; } }
-// ชื่อฐาน = ชื่อเอกสารไทย + เลขที่ + สถานประกอบการ + เวลา (ยูนีค เรียง/ค้นหาง่ายเมื่อเก็บเยอะ)
-// ใช้ร่วมกันทั้งชื่อไฟล์ .json และชื่อไฟล์ PDF (เบราว์เซอร์ใช้ document.title เป็นชื่อไฟล์ตอน Save as PDF)
-function docBaseName(){
-  const meta = DOC_META[state.docType];
-  const parts = [meta.title];
-  if(state.docNo)   parts.push('เลขที่' + state.docNo);
-  if(state.orgName) parts.push(state.orgName);
-  const d = new Date(), p = n => String(n).padStart(2,'0');
-  parts.push(`${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}`);
-  // ตัดอักขระต้องห้ามในชื่อไฟล์ + ยุบช่องว่างในแต่ละส่วนให้กระชับ
-  return parts.map(s => s.replace(/[\/\\:*?"<>|]+/g,'').replace(/\s+/g,'').trim()).join('_');
-}
-function exportFilename(){ return docBaseName() + '.json'; }
-
-// พิมพ์/บันทึก PDF — ตั้งชื่อไฟล์ผ่าน document.title ของหน้าแม่ (Next.js) ชั่วคราว
-// เพราะเครื่องมือรันใน iframe และเบราว์เซอร์ดึงชื่อไฟล์ PDF จาก title ของหน้าบนสุด
-function printDoc(){
-  // event ROI หลัก: 1 การพิมพ์ ≈ 1 เอกสารที่ออกจริง ≈ เวลาที่ประหยัดเทียบพิมพ์เองใน Word
-  track('doc_print', { doc_type: state.docType, doc_mode: state.mode,
-                       student_count: effStudents().length,
-                       with_attachment: state.docType==='request' && state.printAttach });
-  const name = docBaseName();
-  const selfPrev = document.title;
-  let parentDoc = null, parentPrev;
-  try{ if(window.parent && window.parent !== window) parentDoc = window.parent.document; }catch(e){ parentDoc = null; }
-  document.title = name;
-  if(parentDoc){ parentPrev = parentDoc.title; parentDoc.title = name; }
-  const restore = ()=>{ document.title = selfPrev; if(parentDoc){ try{ parentDoc.title = parentPrev; }catch(e){} } };
-  window.addEventListener('afterprint', restore, {once:true});
-  window.print();
-}
-function exportJSON(){
-  const blob = new Blob([JSON.stringify(collectData(),null,2)], {type:'application/json'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = exportFilename();
-  document.body.appendChild(a); a.click(); a.remove();
-  setTimeout(()=>URL.revokeObjectURL(url), 1000);
-  track('doc_export', { doc_type: state.docType });
-}
-function importJSON(ev){
-  const file = ev.target.files && ev.target.files[0];
-  ev.target.value = '';
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = () => {
-    try{ applyData(JSON.parse(reader.result)); track('doc_import', { doc_type: state.docType }); }
-    catch(err){ alert('เปิดไฟล์ไม่ได้ — ไม่ใช่ไฟล์ .json ของ UP Docs'); }
-  };
-  reader.readAsText(file);
-}
-
-/* ===== token → ค่า ===== */
-function dateText(){
-  const d = state.date;
-  if(!d.month && !d.yearBE && !d.day) return '';
-  const day = d.day ? thNum(d.day)+' ' : '';   // มีวัน = แสดงเต็ม / ไม่มี = เดือน+ปี ตามค่ามาตรฐานราชการ
-  return (day + (d.month||'') + ' ' + thNum(d.yearBE||'')).trim();
-}
-function studentNamesInline(){
-  const names = effStudents().map(s=>s.name).filter(Boolean);
-  if(!names.length) return '';
-  if(names.length===1) return names[0];
-  return names.slice(0,-1).join(' , ') + ' และ' + names[names.length-1];
-}
-function resolveToken(key, modeObj){
-  const stu = effStudents();
-  if(key==='docNo_prefix') return REF.issuer.doc_no_prefix;
-  if(key==='blank') return {html:'<span class="blank">&nbsp;</span>'};
-  if(key.startsWith('mode.')) return modeObj?.[key.slice(5)] ?? '';
-  const m = key.match(/^student\.(\d)\.(name|phone)$/);
-  if(m){ const s = stu[+m[1]-1]; if(!s) return ''; return m[2]==='phone' ? thNum(s.phone) : s.name; }
-  switch(key){
-    case 'docNo': return thNum(state.docNo);
-    case 'dateText': return dateText();
-    case 'attachCount': case 'studentCount': return thNum(stu.length);
-    case 'yearEduBE': case 'yearLevel': case 'refDocNo': case 'courseCode': return thNum(state[key]);
-    case 'dateStart': case 'dateEnd': case 'replyBy': case 'refDate': return thNum(state[key]);
-    case 'dateRange': return (state.dateStart||state.dateEnd) ? thNum(state.dateStart)+' ถึง '+thNum(state.dateEnd) : '';
-    case 'studentNamesInline': return studentNamesInline();
-    default: return state[key] ?? '';
-  }
-}
-// แทน {{token}} ในข้อความ — ช่องว่างที่ยังไม่กรอกจะขึ้นเส้นประ (ไฮไลต์เฉพาะบนจอ)
-function tok(text, modeObj){
-  return text.replace(/\{\{([^}]+)\}\}|([^{]+|\{)/g, (all, key, lit) => {
-    if(lit !== undefined) return esc(lit);
-    const v = resolveToken(key.trim(), modeObj);
-    if(v && v.html) return v.html;
-    return v ? esc(v) : '<span class="miss">&nbsp;</span>';
-  });
-}
-
-/* ===== เรนเดอร์บล็อกเอกสารตามสเปก templates.json ===== */
-function paraHTML(b, modeObj){
-  const cls = [];
-  if(b.align==='thai_justify') cls.push('just');
-  if(b.align==='center') cls.push('ctr');
-  if(b.align==='right') cls.push('rgt');
-  // center_ish: คำลงท้ายเริ่มที่แกน 7.75cm (ตรงกับวันที่) · บล็อกอื่น (ผู้ลงนาม) กึ่งกลางค่อนขวา
-  if(b.align==='center_ish') cls.push(b.type==='closing' ? 'center-tab' : 'sig-align');
-  if(b.indent==='firstline2tab') cls.push('ind2');
-  if(b.indent==='firstline1tab') cls.push('ind1');
-  if(b.type==='title') cls.push('doctitle');
-  // แผนผังราชการบังคับ: เรื่อง/เรียน/อ้างถึง/สิ่งที่ส่งมาด้วย เว้นก่อนหน้า 6pt (ทุกไฟล์ต้นฉบับมี before=6pt)
-  const HEADER_LINES = {subject:1, recipient:1, attach:1};
-  const before = b.space_before_pt ?? (HEADER_LINES[b.type] ? 6 : 0);
-  const st = [];
-  // "ขอแสดงความนับถือ" เว้นก่อนหน้า ~2 บรรทัด (ผ่านตัวแปร --closegap ที่ fitAll ปรับได้)
-  if(b.type==='closing') cls.push('closing-gap');
-  else if(before) st.push('margin-top:'+before+'pt');
-  return `<p class="${cls.join(' ')}" style="${st.join(';')}">${tok(b.text, modeObj)}</p>`;
-}
-// สร้าง object ผู้ลงนามที่จะเรนเดอร์ (preset จาก REF หรือที่พิมพ์เอง)
-function currentSigner(){
-  if(state.signerId==='custom'){
-    const c = state.customSigner;
-    const title_lines = c.actingForDean
-      ? [ (c.position||'') + ' ปฏิบัติการแทน', 'คณบดีคณะบริหารธุรกิจและนิเทศศาสตร์' ]
-      : [ c.position||'' ];
-    return { name: c.name, title_lines };
-  }
-  return REF.signers.find(s=>s.id===state.signerId) || REF.signers[0];
-}
-function signerHTML(){
-  const sg = currentSigner();
-  const lines = sg.title_lines.map(l=>`<p>${l.trim() ? esc(l) : '<span class="miss">&nbsp;</span>'}</p>`).join('');
-  const nm = sg.name && sg.name.trim() ? esc(sg.name) : '<span class="miss">&nbsp;&nbsp;&nbsp;&nbsp;</span>';
-  return `<div class="sig-align"><div class="sigspace"></div><p>(${nm})</p>${lines}</div>`;
-}
-function renderBlock(b, modeObj){
-  switch(b.type){
-    case 'list_numbered': // รายชื่อนิสิต ๑.–๔. เยื้อง 1.27ซม.
-      return effStudents().map((s,i)=>{
-        const line = b.item
-          .replace('{{no}}', thNum(i+1))
-          .replace('{{student.name}}', s.name ? esc(s.name) : '<span class="miss">&nbsp;</span>')
-          .replace('{{student.phone}}', s.phone ? thNum(esc(s.phone)) : '<span class="miss">&nbsp;</span>');
-        const st = i===0 && b.space_before_pt ? `margin-top:${b.space_before_pt}pt` : '';
-        return `<p class="stu" style="${st}">${line}</p>`;
-      }).join('');
-    case 'list_names':    // ใบขอบคุณหลายคน — ชื่ออย่างเดียว กึ่งกลาง
-      return effStudents().map(s=>`<p class="ctr">${s.name ? esc(s.name) : '<span class="miss">&nbsp;</span>'}</p>`).join('');
-    case 'signer':
-      return signerHTML();
-    case 'signline':      // ช่องเซ็นของบริษัท (ใบตอบรับ)
-      return `<div class="signwrap">${b.lines.map(l=>`<p>${esc(l)}</p>`).join('')}</div>`;
-    case 'field':         // ช่องกรอกในใบตอบรับ
-      if(b.text.includes('{{blank}}')){   // มีช่องว่าง → เส้นประยืดเต็มบรรทัด (บริษัทเขียนเอง)
-        const parts = b.text.split('{{blank}}');
-        let inner = '';
-        parts.forEach((seg,idx)=>{
-          if(seg) inner += `<span class="ftx">${esc(seg)}</span>`;
-          if(idx < parts.length-1) inner += `<span class="ffill"></span>`;
+      function collectData() {
+        const d = { app: "up-docs", version: 1 };
+        SAVED_KEYS.forEach((k) => {
+          d[k] = state[k];
         });
-        const mt = b.space_before_pt ? `margin-top:${b.space_before_pt}pt` : '';
-        return `<div class="fieldline" style="${mt}">${inner}</div>`;
+        d.date = { ...state.date };
+        d.students = state.students.map((s) => ({
+          name: s.name,
+          phone: s.phone,
+        }));
+        d.customSigner = { ...state.customSigner };
+        return d;
       }
-      return paraHTML(b, modeObj);   // field ที่มีค่า (เช่น หน่วยงาน/บริษัท) → ย่อหน้าปกติ
-    default:              // subject / recipient / attach / para / title / closing
-      return paraHTML(b, modeObj);
-  }
-}
-function headerHTML(){
-  const c = TPL._shared_chrome.header;
-  const right = c.right_lines.map(l=>`<p>${esc(l)}</p>`).join('');
-  // ตรากึ่งกลางบนสุด (ครุฑ/ตราราชการ) แล้วตามด้วยแถว "ที่ อว..." ซ้าย / ที่อยู่ ขวา
-  const crest = CREST_DATA
-    ? `<div class="crestwrap"><img class="crest" src="${CREST_DATA}" alt="ตรามหาวิทยาลัยพะเยา"></div>` : '';
-  return `${crest}<div class="docheader"><div class="dh-left"><p>${tok(c.left)}</p></div><div class="dh-right">${right}</div></div>`;
-}
-function footerHTML(){
-  return `<div class="docfooter">${TPL._shared_chrome.footer.lines.map(l=>`<p>${esc(l)}</p>`).join('')}</div>`;
-}
+      function applyData(d) {
+        if (!d || d.app !== "up-docs" || !DOC_META[d.docType])
+          throw new Error("ไม่ใช่ไฟล์ของ UP Docs");
+        SAVED_KEYS.forEach((k) => {
+          if (d[k] !== undefined) state[k] = d[k];
+        });
+        if (d.date) state.date = { ...state.date, ...d.date };
+        if (d.customSigner)
+          state.customSigner = { ...state.customSigner, ...d.customSigner };
+        if (Array.isArray(d.students) && d.students.length) {
+          state.students = d.students
+            .slice(0, 4)
+            .map((s) => ({ name: s.name || "", phone: s.phone || "" }));
+        }
+        openWorkspace();
+      }
+      function saveState() {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(collectData()));
+        } catch (e) {}
+      }
+      function loadState() {
+        try {
+          const s = localStorage.getItem(STORAGE_KEY);
+          return s ? JSON.parse(s) : null;
+        } catch (e) {
+          return null;
+        }
+      }
+      // ชื่อฐาน = ชื่อเอกสารไทย + เลขที่ + สถานประกอบการ + เวลา (ยูนีค เรียง/ค้นหาง่ายเมื่อเก็บเยอะ)
+      // ใช้ร่วมกันทั้งชื่อไฟล์ .json และชื่อไฟล์ PDF (เบราว์เซอร์ใช้ document.title เป็นชื่อไฟล์ตอน Save as PDF)
+      function docBaseName() {
+        const meta = DOC_META[state.docType];
+        const parts = [meta.title];
+        if (state.docNo) parts.push("เลขที่" + state.docNo);
+        if (state.orgName) parts.push(state.orgName);
+        const d = new Date(),
+          p = (n) => String(n).padStart(2, "0");
+        parts.push(
+          `${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}`,
+        );
+        // ตัดอักขระต้องห้ามในชื่อไฟล์ + ยุบช่องว่างในแต่ละส่วนให้กระชับ
+        return parts
+          .map((s) =>
+            s
+              .replace(/[\/\\:*?"<>|]+/g, "")
+              .replace(/\s+/g, "")
+              .trim(),
+          )
+          .join("_");
+      }
+      function exportFilename() {
+        return docBaseName() + ".json";
+      }
 
-/* ===== ประกอบทั้งแผ่น ===== */
-function sheetHTML(docKey, modeKey){
-  const d = TPL.documents[docKey];
-  const modeObj = d.modeText?.[modeKey] || {};
-  const marginKey = d.margins==='acceptance_form' ? 'acceptance_form' : 'letter_head';
-  const mg = REF.margins_cm[marginKey];
-  let flow = '';
-  (d.chrome||[]).forEach(k=>{
-    if(k==='header') flow += headerHTML();
-    if(k==='date')   flow += `<p class="datep">${tok(TPL._shared_chrome.date.text)}</p>`;
-  });
-  const body = Array.isArray(d.body)
-    ? d.body
-    : (effStudents().length>1 && d.body.many ? d.body.many : d.body.single);
-  body.forEach(b=>{ flow += renderBlock(b, modeObj); });
-  const footer = d.footer ? footerHTML() : '';
-  const pad = `padding:${mg.top}cm ${mg.right}cm ${mg.bottom}cm ${mg.left}cm;--ml:${mg.left}cm;--mr:${mg.right}cm`;
-  // เนื้อหาอยู่ใน .sheet-flow · spacer ยืดดันฟุตเตอร์ให้อยู่ล่างสุดเสมอ (ไม่ทับเนื้อหา)
-  return `<div class="sheet ${d.paper}" style="${pad}"><div class="sheet-flow">${flow}</div><div class="sheet-spacer"></div>${footer}</div>`;
-}
+      // พิมพ์/บันทึก PDF — ตั้งชื่อไฟล์ผ่าน document.title ของหน้าแม่ (Next.js) ชั่วคราว
+      // เพราะเครื่องมือรันใน iframe และเบราว์เซอร์ดึงชื่อไฟล์ PDF จาก title ของหน้าบนสุด
+      function printDoc() {
+        // event ROI หลัก: 1 การพิมพ์ ≈ 1 เอกสารที่ออกจริง ≈ เวลาที่ประหยัดเทียบพิมพ์เองใน Word
+        track("doc_print", {
+          doc_type: state.docType,
+          doc_mode: state.mode,
+          student_count: effStudents().length,
+          with_attachment: state.docType === "request" && state.printAttach,
+        });
+        const name = docBaseName();
+        const selfPrev = document.title;
+        let parentDoc = null,
+          parentPrev;
+        try {
+          if (window.parent && window.parent !== window)
+            parentDoc = window.parent.document;
+        } catch (e) {
+          parentDoc = null;
+        }
+        document.title = name;
+        if (parentDoc) {
+          parentPrev = parentDoc.title;
+          parentDoc.title = name;
+        }
+        const restore = () => {
+          document.title = selfPrev;
+          if (parentDoc) {
+            try {
+              parentDoc.title = parentPrev;
+            } catch (e) {}
+          }
+        };
+        window.addEventListener("afterprint", restore, { once: true });
+        window.print();
+      }
+      function exportJSON() {
+        const blob = new Blob([JSON.stringify(collectData(), null, 2)], {
+          type: "application/json",
+        });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = exportFilename();
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        track("doc_export", { doc_type: state.docType });
+      }
+      function importJSON(ev) {
+        const file = ev.target.files && ev.target.files[0];
+        ev.target.value = "";
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            applyData(JSON.parse(reader.result));
+            track("doc_import", { doc_type: state.docType });
+          } catch (err) {
+            alert("เปิดไฟล์ไม่ได้ — ไม่ใช่ไฟล์ .json ของ UP Docs");
+          }
+        };
+        reader.readAsText(file);
+      }
 
-/* ===== พรีวิว + บังคับ 1 หน้า ===== */
-function renderPreview(){
-  if(!state.docType) return;
-  const meta = DOC_META[state.docType];
-  const doc = TPL.documents[state.docType];
-  const pagesEl = document.getElementById('pages');
-  const jobs = [{key:state.docType, mode:state.mode, label:doc.th_name}];
-  // ใบขอ → พิมพ์ใบตอบรับตามหลัง (โหมด cwie ใช้ใบตอบรับสหกิจ)
-  if(state.docType==='request' && state.printAttach){
-    jobs.push({key:'acceptance', mode: state.mode==='internship'?'internship':'coop', label:'ใบตอบรับ (เอกสารแนบ — บริษัทลงนาม)'});
-  }
-  pagesEl.innerHTML = jobs.map((j,i)=>
-    `<p class="pagelabel no-print">หน้า ${i+1} · ${esc(j.label)}</p><div class="sheetbox">${sheetHTML(j.key, j.mode)}</div>`
-  ).join('');
-  // @page ตามกระดาษของใบหลัก (letter ทุกใบ ยกเว้นนอกหลักสูตร = A4)
-  document.getElementById('pageSize').textContent = `@page{size:${doc.paper==='a4'?'A4':'letter'};margin:0}`;
-  document.title = 'UP Docs — ' + meta.title;
-  fitAll();
-  rescale();
-  saveState(); // autosave ทุกครั้งที่มีการแก้ไข
-}
+      /* ===== Export .docx (ฟีเจอร์ขาย — Word แก้ไขได้ ตรง format ราชการ) =====
+   สร้าง OOXML + ZIP เองในเบราว์เซอร์ ไม่มี dependency ภายนอก (ตามข้อกำหนด single-file) */
+      const _CRC = (() => {
+        const t = [];
+        for (let n = 0; n < 256; n++) {
+          let c = n;
+          for (let k = 0; k < 8; k++)
+            c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
+          t[n] = c >>> 0;
+        }
+        return t;
+      })();
+      function crc32(b) {
+        let c = 0xffffffff;
+        for (let i = 0; i < b.length; i++)
+          c = _CRC[(c ^ b[i]) & 0xff] ^ (c >>> 8);
+        return (c ^ 0xffffffff) >>> 0;
+      }
+      function strBytes(s) {
+        return new TextEncoder().encode(s);
+      }
+      function b64ToBytes(b64) {
+        const bin = atob(b64),
+          a = new Uint8Array(bin.length);
+        for (let i = 0; i < bin.length; i++) a[i] = bin.charCodeAt(i);
+        return a;
+      }
+      function xesc(s) {
+        return String(s).replace(
+          /[&<>"']/g,
+          (c) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&apos;",
+            })[c],
+        );
+      }
+      // ZIP แบบ store (ไม่บีบอัด) — DOCX เปิดได้ปกติ
+      function zipStore(files) {
+        const u16 = (n) => [n & 255, (n >>> 8) & 255],
+          u32 = (n) => [
+            n & 255,
+            (n >>> 8) & 255,
+            (n >>> 16) & 255,
+            (n >>> 24) & 255,
+          ];
+        const parts = [],
+          central = [];
+        let off = 0;
+        files.forEach((f) => {
+          const nb = strBytes(f.name),
+            crc = crc32(f.data),
+            sz = f.data.length;
+          parts.push(
+            new Uint8Array([
+              0x50,
+              0x4b,
+              3,
+              4,
+              ...u16(20),
+              ...u16(0),
+              ...u16(0),
+              ...u16(0),
+              ...u16(0),
+              ...u32(crc),
+              ...u32(sz),
+              ...u32(sz),
+              ...u16(nb.length),
+              ...u16(0),
+            ]),
+            nb,
+            f.data,
+          );
+          central.push({ crc, sz, nb, off });
+          off += 30 + nb.length + sz;
+        });
+        let cd = [],
+          cdSize = 0;
+        central.forEach((c) => {
+          cd.push(
+            new Uint8Array([
+              0x50,
+              0x4b,
+              1,
+              2,
+              ...u16(20),
+              ...u16(20),
+              ...u16(0),
+              ...u16(0),
+              ...u16(0),
+              ...u16(0),
+              ...u32(c.crc),
+              ...u32(c.sz),
+              ...u32(c.sz),
+              ...u16(c.nb.length),
+              ...u16(0),
+              ...u16(0),
+              ...u16(0),
+              ...u16(0),
+              ...u32(0),
+              ...u32(c.off),
+            ]),
+            c.nb,
+          );
+          cdSize += 46 + c.nb.length;
+        });
+        const end = new Uint8Array([
+          0x50,
+          0x4b,
+          5,
+          6,
+          ...u16(0),
+          ...u16(0),
+          ...u16(central.length),
+          ...u16(central.length),
+          ...u32(cdSize),
+          ...u32(off),
+          ...u16(0),
+        ]);
+        return new Blob([...parts, ...cd, end], {
+          type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        });
+      }
 
-// บังคับ 1 หน้าเมื่อเนื้อหายาว (footer อยู่ใน flow แล้ว → วัดล้นได้จริง ไม่ทับ footer)
-// ลำดับปรับ: 1) ลดช่องว่างก่อน "ขอแสดงความนับถือ"  2) เลื่อนขึ้นชนโลโก้ได้ถึงครึ่งโลโก้  3) ย่อฟอนต์
-function fitAll(){
-  const warns = [];
-  document.querySelectorAll('#pages .sheet').forEach((sheet,i)=>{
-    sheet.style.fontSize = '';
-    sheet.style.setProperty('--closegap','24pt');
-    const crestw = sheet.querySelector('.crestwrap');
-    if(crestw) crestw.style.marginBottom = '';
-    const over = () => sheet.scrollHeight > sheet.clientHeight + 1;
+      const TW = (cm) => Math.round(cm * 567); // ซม. → twips
+      const JCMAP = {
+        thai_justify: "thaiDistribute",
+        center: "center",
+        right: "right",
+      };
+      function dxRun(text, extra, sz) {
+        sz = sz || 32;
+        return (
+          '<w:r><w:rPr><w:rFonts w:ascii="TH Sarabun New" w:hAnsi="TH Sarabun New" w:cs="TH Sarabun New"/>' +
+          (extra || "") +
+          '<w:sz w:val="' +
+          sz +
+          '"/><w:szCs w:val="' +
+          sz +
+          '"/></w:rPr><w:t xml:space="preserve">' +
+          xesc(text) +
+          "</w:t></w:r>"
+        );
+      }
+      const DXTAB =
+        '<w:r><w:rPr><w:rFonts w:ascii="TH Sarabun New" w:hAnsi="TH Sarabun New" w:cs="TH Sarabun New"/><w:sz w:val="32"/><w:szCs w:val="32"/></w:rPr><w:tab/></w:r>';
+      function dxPara(runs, o) {
+        o = o || {};
+        let p = "<w:pPr>";
+        if (o.tabs) p += o.tabs;
+        p +=
+          '<w:spacing w:before="' +
+          (o.before || 0) +
+          '" w:after="0" w:line="240" w:lineRule="auto"/>';
+        if (o.indLeft != null || o.indFirst != null) {
+          p += "<w:ind";
+          if (o.indLeft != null) p += ' w:left="' + o.indLeft + '"';
+          if (o.indFirst != null) p += ' w:firstLine="' + o.indFirst + '"';
+          p += "/>";
+        }
+        if (o.jc) p += '<w:jc w:val="' + o.jc + '"/>';
+        p += "</w:pPr>";
+        return "<w:p>" + p + (runs || "") + "</w:p>";
+      }
+      function tokPlain(text, modeObj) {
+        return String(text).replace(/\{\{([^}]+)\}\}/g, (all, key) => {
+          const v = resolveToken(key.trim(), modeObj);
+          return v && v.html ? "" : v || "";
+        });
+      }
+      function dxSigner() {
+        const sg = currentSigner();
+        let out = "";
+        for (let i = 0; i < 3; i++)
+          out += dxPara("", { indLeft: TW(1.9), jc: "center" }); // เว้น 3 บรรทัดเซ็นชื่อ (ตาม format)
+        out += dxPara(dxRun("(" + (sg.name || "") + ")"), {
+          indLeft: TW(1.9),
+          jc: "center",
+        });
+        sg.title_lines.forEach(
+          (l) => (out += dxPara(dxRun(l), { indLeft: TW(1.9), jc: "center" })),
+        );
+        return out;
+      }
+      function dxField(b, modeObj, contentW) {
+        if (b.text.includes("{{blank}}")) {
+          const parts = b.text.split("{{blank}}"),
+            n = parts.length - 1;
+          let tabs = "<w:tabs>";
+          for (let i = 1; i <= n; i++)
+            tabs +=
+              '<w:tab w:val="left" w:leader="dot" w:pos="' +
+              Math.round((contentW * i) / n) +
+              '"/>';
+          tabs += "</w:tabs>";
+          let runs = "";
+          parts.forEach((seg, idx) => {
+            if (seg) runs += dxRun(tokPlain(seg, modeObj));
+            if (idx < parts.length - 1) runs += DXTAB;
+          });
+          return dxPara(runs, {
+            tabs,
+            before: b.space_before_pt ? b.space_before_pt * 20 : 0,
+          });
+        }
+        const o = { before: b.space_before_pt ? b.space_before_pt * 20 : 0 };
+        if (b.align && JCMAP[b.align]) o.jc = JCMAP[b.align];
+        return dxPara(dxRun(tokPlain(b.text, modeObj)), o);
+      }
+      function dxBlock(b, modeObj, contentW) {
+        switch (b.type) {
+          case "subject":
+          case "recipient":
+          case "attach":
+            return dxPara(dxRun(tokPlain(b.text, modeObj)), {
+              before: b.space_before_pt != null ? b.space_before_pt * 20 : 120,
+            });
+          case "para": {
+            const o = {
+              before: b.space_before_pt != null ? b.space_before_pt * 20 : 120,
+            };
+            if (b.align && JCMAP[b.align]) o.jc = JCMAP[b.align];
+            if (b.indent === "firstline2tab") o.indFirst = TW(2.5);
+            else if (b.indent === "firstline1tab") o.indFirst = TW(1.27);
+            return dxPara(dxRun(tokPlain(b.text, modeObj)), o);
+          }
+          case "closing":
+            return dxPara(dxRun(b.text), {
+              indLeft: TW(1.9),
+              jc: "center",
+              before: 240,
+            });
+          case "signer":
+            return dxSigner();
+          case "list_numbered":
+            return effStudents()
+              .map((s, i) => {
+                const line = b.item
+                  .replace("{{no}}", thNum(i + 1))
+                  .replace("{{student.name}}", s.name || "")
+                  .replace("{{student.phone}}", thNum(s.phone || ""));
+                return dxPara(dxRun(line), {
+                  indLeft: TW(1.25),
+                  indFirst: TW(1.25),
+                  before: i === 0 ? 240 : 0,
+                  jc: "thaiDistribute",
+                });
+              })
+              .join("");
+          case "list_names":
+            return effStudents()
+              .map((s) => dxPara(dxRun(s.name || ""), { jc: "center" }))
+              .join("");
+          case "title":
+            return dxPara(
+              dxRun(tokPlain(b.text, modeObj), "<w:b/><w:bCs/>", 44),
+              {
+                jc: "center",
+                before: b.space_before_pt ? b.space_before_pt * 20 : 0,
+              },
+            );
+          case "field":
+            return dxField(b, modeObj, contentW);
+          case "signline":
+            return b.lines
+              .map((l, i) =>
+                dxPara(dxRun(l), {
+                  indLeft: Math.max(0, contentW - TW(9.5)),
+                  before: i === 0 ? 240 : 0,
+                }),
+              )
+              .join("");
+          default:
+            return dxPara(dxRun(tokPlain(b.text, modeObj)), { before: 120 });
+        }
+      }
+      function dxHeader(crest, imgRel, contentW) {
+        const c = TPL._shared_chrome.header;
+        let out = "";
+        if (crest && imgRel) {
+          const cy = Math.round(2.7 * 360000),
+            cx = Math.round((cy * crest.w) / crest.h);
+          out +=
+            '<w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:drawing>' +
+            '<wp:inline distT="0" distB="0" distL="0" distR="0"><wp:extent cx="' +
+            cx +
+            '" cy="' +
+            cy +
+            '"/><wp:docPr id="1" name="crest"/>' +
+            '<a:graphic><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic>' +
+            '<pic:nvPicPr><pic:cNvPr id="1" name="crest"/><pic:cNvPicPr/></pic:nvPicPr>' +
+            '<pic:blipFill><a:blip r:embed="' +
+            imgRel +
+            '"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill>' +
+            '<pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="' +
+            cx +
+            '" cy="' +
+            cy +
+            '"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr>' +
+            "</pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r></w:p>";
+        }
+        const lw = Math.round(contentW * 0.5),
+          rw = contentW - lw;
+        const nb =
+          '<w:tblBorders><w:top w:val="none" w:sz="0" w:space="0"/><w:left w:val="none" w:sz="0" w:space="0"/><w:bottom w:val="none" w:sz="0" w:space="0"/><w:right w:val="none" w:sz="0" w:space="0"/><w:insideH w:val="none" w:sz="0" w:space="0"/><w:insideV w:val="none" w:sz="0" w:space="0"/></w:tblBorders>';
+        const lc =
+          '<w:tc><w:tcPr><w:tcW w:w="' +
+          lw +
+          '" w:type="dxa"/></w:tcPr>' +
+          dxPara(dxRun(tokPlain(c.left))) +
+          "</w:tc>";
+        const rc =
+          '<w:tc><w:tcPr><w:tcW w:w="' +
+          rw +
+          '" w:type="dxa"/></w:tcPr>' +
+          c.right_lines.map((l) => dxPara(dxRun(l))).join("") +
+          "</w:tc>";
+        out +=
+          '<w:tbl><w:tblPr><w:tblW w:w="' +
+          contentW +
+          '" w:type="dxa"/>' +
+          nb +
+          '<w:tblCellMar><w:left w:w="0" w:type="dxa"/><w:right w:w="0" w:type="dxa"/></w:tblCellMar></w:tblPr>' +
+          '<w:tblGrid><w:gridCol w:w="' +
+          lw +
+          '"/><w:gridCol w:w="' +
+          rw +
+          '"/></w:tblGrid><w:tr>' +
+          lc +
+          rc +
+          "</w:tr></w:tbl>";
+        return out;
+      }
+      function dxSection(docKey, modeKey, crest, imgRel) {
+        const d = TPL.documents[docKey],
+          modeObj = d.modeText?.[modeKey] || {};
+        const mg =
+          d.margins === "acceptance_form"
+            ? REF.margins_cm.acceptance_form
+            : REF.margins_cm.letter_head;
+        const isA4 = d.paper === "a4",
+          pw = isA4 ? 11906 : 12240,
+          ph = isA4 ? 16838 : 15840;
+        const contentW = pw - TW(mg.left) - TW(mg.right);
+        const sectPr =
+          '<w:sectPr><w:pgSz w:w="' +
+          pw +
+          '" w:h="' +
+          ph +
+          '"/><w:pgMar w:top="' +
+          TW(mg.top) +
+          '" w:right="' +
+          TW(mg.right) +
+          '" w:bottom="' +
+          TW(mg.bottom) +
+          '" w:left="' +
+          TW(mg.left) +
+          '" w:header="720" w:footer="720" w:gutter="0"/></w:sectPr>';
+        let paras = "";
+        (d.chrome || []).forEach((k) => {
+          if (k === "header") paras += dxHeader(crest, imgRel, contentW);
+          if (k === "date")
+            paras += dxPara(dxRun(dateText()), {
+              indLeft: TW(7.75),
+              before: 120,
+            });
+        });
+        const body = Array.isArray(d.body)
+          ? d.body
+          : effStudents().length > 1 && d.body.many
+            ? d.body.many
+            : d.body.single;
+        body.forEach((b) => {
+          paras += dxBlock(b, modeObj, contentW);
+        });
+        if (d.footer)
+          paras += TPL._shared_chrome.footer.lines
+            .map((l) => dxPara(dxRun(l), { before: 120 }))
+            .join("");
+        return { paras, sectPr };
+      }
+      function crestPng() {
+        return new Promise((resolve) => {
+          if (!CREST_DATA) {
+            resolve(null);
+            return;
+          }
+          const img = new Image();
+          img.onload = () => {
+            const h = 440,
+              w = Math.round((h * img.width) / img.height);
+            const cv = document.createElement("canvas");
+            cv.width = w;
+            cv.height = h;
+            cv.getContext("2d").drawImage(img, 0, 0, w, h);
+            resolve({
+              bytes: b64ToBytes(cv.toDataURL("image/png").split(",")[1]),
+              w,
+              h,
+            });
+          };
+          img.onerror = () => resolve(null);
+          img.src = CREST_DATA;
+        });
+      }
+      async function buildDocxBlob() {
+        const jobs = [{ key: state.docType, mode: state.mode }];
+        if (state.docType === "request" && state.printAttach)
+          jobs.push({
+            key: "acceptance",
+            mode: state.mode === "internship" ? "internship" : "coop",
+          });
+        const crest = await crestPng();
+        const media = [],
+          rels = [];
+        let imgRel = "";
+        if (crest) {
+          media.push({ name: "word/media/crest.png", data: crest.bytes });
+          imgRel = "rIdImg";
+          rels.push(
+            '<Relationship Id="rIdImg" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/crest.png"/>',
+          );
+        }
+        const secs = jobs.map((j, i) =>
+          dxSection(
+            j.key,
+            j.mode,
+            i === 0 ? crest : null,
+            i === 0 ? imgRel : "",
+          ),
+        );
+        let body = "";
+        secs.forEach((s, i) => {
+          body += s.paras;
+          body +=
+            i < secs.length - 1
+              ? "<w:p><w:pPr>" + s.sectPr + "</w:pPr></w:p>"
+              : s.sectPr;
+        });
+        const NS =
+          'xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"';
+        const documentXml =
+          '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document ' +
+          NS +
+          "><w:body>" +
+          body +
+          "</w:body></w:document>";
+        const ct =
+          '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/>' +
+          (crest ? '<Default Extension="png" ContentType="image/png"/>' : "") +
+          '<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>';
+        const rootRels =
+          '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>';
+        const docRels =
+          '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
+          rels.join("") +
+          "</Relationships>";
+        return zipStore([
+          { name: "[Content_Types].xml", data: strBytes(ct) },
+          { name: "_rels/.rels", data: strBytes(rootRels) },
+          { name: "word/_rels/document.xml.rels", data: strBytes(docRels) },
+          { name: "word/document.xml", data: strBytes(documentXml) },
+          ...media,
+        ]);
+      }
+      async function exportDocx() {
+        const btn = document.getElementById("docxBtn");
+        if (!btn) return;
+        const old = btn.textContent;
+        btn.textContent = "กำลังสร้างไฟล์ Word…";
+        btn.disabled = true;
+        try {
+          const blob = await buildDocxBlob();
+          const url = URL.createObjectURL(blob),
+            a = document.createElement("a");
+          a.href = url;
+          a.download = docBaseName() + ".docx";
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          setTimeout(() => URL.revokeObjectURL(url), 1000);
+          track("doc_docx", { doc_type: state.docType, doc_mode: state.mode });
+        } catch (e) {
+          alert("สร้างไฟล์ Word ไม่สำเร็จ: " + e.message);
+        } finally {
+          btn.textContent = old;
+          btn.disabled = false;
+        }
+      }
 
-    // 1) ลดช่องว่างก่อนคำลงท้าย 24 → 8pt
-    let gap = 24;
-    while(over() && gap > 8){ gap -= 2; sheet.style.setProperty('--closegap', gap+'pt'); }
-    // 2) เลื่อนเนื้อหาขึ้นชนโลโก้ได้ถึง ~ครึ่งโลโก้ (ดึง header ขึ้นใต้ตราไม่เกิน 1.35 ซม.)
-    let pull = 0;
-    while(over() && crestw && pull < 1.35){ pull += 0.15; crestw.style.marginBottom = (0.1 - pull).toFixed(2)+'cm'; }
-    // 3) ย่อฟอนต์ 16 → 13pt
-    let size = 16;
-    while(over() && size > 13){ size -= 0.25; sheet.style.fontSize = size+'pt'; }
+      /* ===== token → ค่า ===== */
+      function dateText() {
+        const d = state.date;
+        if (!d.month && !d.yearBE && !d.day) return "";
+        const day = d.day ? thNum(d.day) + " " : ""; // มีวัน = แสดงเต็ม / ไม่มี = เดือน+ปี ตามค่ามาตรฐานราชการ
+        return (day + (d.month || "") + " " + thNum(d.yearBE || "")).trim();
+      }
+      function studentNamesInline() {
+        const names = effStudents()
+          .map((s) => s.name)
+          .filter(Boolean);
+        if (!names.length) return "";
+        if (names.length === 1) return names[0];
+        return (
+          names.slice(0, -1).join(" , ") + " และ" + names[names.length - 1]
+        );
+      }
+      function resolveToken(key, modeObj) {
+        const stu = effStudents();
+        if (key === "docNo_prefix") return REF.issuer.doc_no_prefix;
+        if (key === "blank")
+          return { html: '<span class="blank">&nbsp;</span>' };
+        if (key.startsWith("mode.")) return modeObj?.[key.slice(5)] ?? "";
+        const m = key.match(/^student\.(\d)\.(name|phone)$/);
+        if (m) {
+          const s = stu[+m[1] - 1];
+          if (!s) return "";
+          return m[2] === "phone" ? thNum(s.phone) : s.name;
+        }
+        switch (key) {
+          case "docNo":
+            return thNum(state.docNo);
+          case "dateText":
+            return dateText();
+          case "attachCount":
+          case "studentCount":
+            return thNum(stu.length);
+          case "yearEduBE":
+          case "yearLevel":
+          case "refDocNo":
+          case "courseCode":
+            return thNum(state[key]);
+          case "dateStart":
+          case "dateEnd":
+          case "replyBy":
+          case "refDate":
+            return thNum(state[key]);
+          case "dateRange":
+            return state.dateStart || state.dateEnd
+              ? thNum(state.dateStart) + " ถึง " + thNum(state.dateEnd)
+              : "";
+          case "studentNamesInline":
+            return studentNamesInline();
+          default:
+            return state[key] ?? "";
+        }
+      }
+      // แทน {{token}} ในข้อความ — ช่องว่างที่ยังไม่กรอกจะขึ้นเส้นประ (ไฮไลต์เฉพาะบนจอ)
+      function tok(text, modeObj) {
+        return text.replace(/\{\{([^}]+)\}\}|([^{]+|\{)/g, (all, key, lit) => {
+          if (lit !== undefined) return esc(lit);
+          const v = resolveToken(key.trim(), modeObj);
+          if (v && v.html) return v.html;
+          return v ? esc(v) : '<span class="miss">&nbsp;</span>';
+        });
+      }
 
-    if(size < 16) warns.push(`หน้า ${i+1}: เนื้อหายาว ระบบย่อฟอนต์เหลือ ${size}pt เพื่อให้จบใน 1 หน้า`);
-    if(over()) warns.push(`หน้า ${i+1}: เนื้อหายังยาวเกินหน้า แม้ปรับแล้ว — ลองย่อข้อความ`);
-  });
-  const w = document.getElementById('fitWarn');
-  w.style.display = warns.length ? 'block' : 'none';
-  w.textContent = warns.join(' · ');
-}
+      /* ===== เรนเดอร์บล็อกเอกสารตามสเปก templates.json ===== */
+      function paraHTML(b, modeObj) {
+        const cls = [];
+        if (b.align === "thai_justify") cls.push("just");
+        if (b.align === "center") cls.push("ctr");
+        if (b.align === "right") cls.push("rgt");
+        // center_ish: คำลงท้ายเริ่มที่แกน 7.75cm (ตรงกับวันที่) · บล็อกอื่น (ผู้ลงนาม) กึ่งกลางค่อนขวา
+        if (b.align === "center_ish")
+          cls.push(b.type === "closing" ? "center-tab" : "sig-align");
+        if (b.indent === "firstline2tab") cls.push("ind2");
+        if (b.indent === "firstline1tab") cls.push("ind1");
+        if (b.type === "title") cls.push("doctitle");
+        // แผนผังราชการบังคับ: เรื่อง/เรียน/อ้างถึง/สิ่งที่ส่งมาด้วย เว้นก่อนหน้า 6pt (ทุกไฟล์ต้นฉบับมี before=6pt)
+        const HEADER_LINES = { subject: 1, recipient: 1, attach: 1 };
+        const before = b.space_before_pt ?? (HEADER_LINES[b.type] ? 6 : 0);
+        const st = [];
+        // "ขอแสดงความนับถือ" เว้นก่อนหน้า ~2 บรรทัด (ผ่านตัวแปร --closegap ที่ fitAll ปรับได้)
+        if (b.type === "closing") cls.push("closing-gap");
+        else if (before) st.push("margin-top:" + before + "pt");
+        return `<p class="${cls.join(" ")}" style="${st.join(";")}">${tok(b.text, modeObj)}</p>`;
+      }
+      // สร้าง object ผู้ลงนามที่จะเรนเดอร์ (preset จาก REF หรือที่พิมพ์เอง)
+      function currentSigner() {
+        if (state.signerId === "custom") {
+          const c = state.customSigner;
+          const title_lines = c.actingForDean
+            ? [
+                (c.position || "") + " ปฏิบัติการแทน",
+                "คณบดีคณะบริหารธุรกิจและนิเทศศาสตร์",
+              ]
+            : [c.position || ""];
+          return { name: c.name, title_lines };
+        }
+        return (
+          REF.signers.find((s) => s.id === state.signerId) || REF.signers[0]
+        );
+      }
+      function signerHTML() {
+        const sg = currentSigner();
+        const lines = sg.title_lines
+          .map(
+            (l) =>
+              `<p>${l.trim() ? esc(l) : '<span class="miss">&nbsp;</span>'}</p>`,
+          )
+          .join("");
+        const nm =
+          sg.name && sg.name.trim()
+            ? esc(sg.name)
+            : '<span class="miss">&nbsp;&nbsp;&nbsp;&nbsp;</span>';
+        return `<div class="sig-align"><div class="sigspace"></div><p>(${nm})</p>${lines}</div>`;
+      }
+      function renderBlock(b, modeObj) {
+        switch (b.type) {
+          case "list_numbered": // รายชื่อนิสิต ๑.–๔. เยื้อง 1.27ซม.
+            return effStudents()
+              .map((s, i) => {
+                const line = b.item
+                  .replace("{{no}}", thNum(i + 1))
+                  .replace(
+                    "{{student.name}}",
+                    s.name ? esc(s.name) : '<span class="miss">&nbsp;</span>',
+                  )
+                  .replace(
+                    "{{student.phone}}",
+                    s.phone
+                      ? thNum(esc(s.phone))
+                      : '<span class="miss">&nbsp;</span>',
+                  );
+                const st =
+                  i === 0 && b.space_before_pt
+                    ? `margin-top:${b.space_before_pt}pt`
+                    : "";
+                return `<p class="stu" style="${st}">${line}</p>`;
+              })
+              .join("");
+          case "list_names": // ใบขอบคุณหลายคน — ชื่ออย่างเดียว กึ่งกลาง
+            return effStudents()
+              .map(
+                (s) =>
+                  `<p class="ctr">${s.name ? esc(s.name) : '<span class="miss">&nbsp;</span>'}</p>`,
+              )
+              .join("");
+          case "signer":
+            return signerHTML();
+          case "signline": // ช่องเซ็นของบริษัท (ใบตอบรับ)
+            return `<div class="signwrap">${b.lines.map((l) => `<p>${esc(l)}</p>`).join("")}</div>`;
+          case "field": // ช่องกรอกในใบตอบรับ
+            if (b.text.includes("{{blank}}")) {
+              // มีช่องว่าง → เส้นประยืดเต็มบรรทัด (บริษัทเขียนเอง)
+              const parts = b.text.split("{{blank}}");
+              let inner = "";
+              parts.forEach((seg, idx) => {
+                if (seg) inner += `<span class="ftx">${esc(seg)}</span>`;
+                if (idx < parts.length - 1)
+                  inner += `<span class="ffill"></span>`;
+              });
+              const mt = b.space_before_pt
+                ? `margin-top:${b.space_before_pt}pt`
+                : "";
+              return `<div class="fieldline" style="${mt}">${inner}</div>`;
+            }
+            return paraHTML(b, modeObj); // field ที่มีค่า (เช่น หน่วยงาน/บริษัท) → ย่อหน้าปกติ
+          default: // subject / recipient / attach / para / title / closing
+            return paraHTML(b, modeObj);
+        }
+      }
+      function headerHTML() {
+        const c = TPL._shared_chrome.header;
+        const right = c.right_lines.map((l) => `<p>${esc(l)}</p>`).join("");
+        // ตรากึ่งกลางบนสุด (ครุฑ/ตราราชการ) แล้วตามด้วยแถว "ที่ อว..." ซ้าย / ที่อยู่ ขวา
+        const crest = CREST_DATA
+          ? `<div class="crestwrap"><img class="crest" src="${CREST_DATA}" alt="ตรามหาวิทยาลัยพะเยา"></div>`
+          : "";
+        return `${crest}<div class="docheader"><div class="dh-left"><p>${tok(c.left)}</p></div><div class="dh-right">${right}</div></div>`;
+      }
+      function footerHTML() {
+        return `<div class="docfooter">${TPL._shared_chrome.footer.lines.map((l) => `<p>${esc(l)}</p>`).join("")}</div>`;
+      }
 
-// ย่อพรีวิวให้พอดีความกว้างจอ (ตัวเอกสารขนาดจริงเป็น ซม.)
-function rescale(){
-  const panel = document.getElementById('previewPanel');
-  const avail = panel.clientWidth;
-  document.querySelectorAll('#pages .sheetbox').forEach(box=>{
-    const sheet = box.firstElementChild;
-    sheet.style.transform = '';
-    const w = sheet.offsetWidth, h = sheet.offsetHeight;
-    const s = Math.min(1, avail / w);
-    sheet.style.transform = `scale(${s})`;
-    sheet.style.transformOrigin = 'top left';
-    box.style.width  = (w*s)+'px';
-    box.style.height = (h*s)+'px';
-  });
-}
-window.addEventListener('resize', rescale);
+      /* ===== ประกอบทั้งแผ่น ===== */
+      function sheetHTML(docKey, modeKey) {
+        const d = TPL.documents[docKey];
+        const modeObj = d.modeText?.[modeKey] || {};
+        const marginKey =
+          d.margins === "acceptance_form" ? "acceptance_form" : "letter_head";
+        const mg = REF.margins_cm[marginKey];
+        let flow = "";
+        (d.chrome || []).forEach((k) => {
+          if (k === "header") flow += headerHTML();
+          if (k === "date")
+            flow += `<p class="datep">${tok(TPL._shared_chrome.date.text)}</p>`;
+        });
+        const body = Array.isArray(d.body)
+          ? d.body
+          : effStudents().length > 1 && d.body.many
+            ? d.body.many
+            : d.body.single;
+        body.forEach((b) => {
+          flow += renderBlock(b, modeObj);
+        });
+        const footer = d.footer ? footerHTML() : "";
+        const pad = `padding:${mg.top}cm ${mg.right}cm ${mg.bottom}cm ${mg.left}cm;--ml:${mg.left}cm;--mr:${mg.right}cm`;
+        // เนื้อหาอยู่ใน .sheet-flow · spacer ยืดดันฟุตเตอร์ให้อยู่ล่างสุดเสมอ (ไม่ทับเนื้อหา)
+        return `<div class="sheet ${d.paper}" style="${pad}"><div class="sheet-flow">${flow}</div><div class="sheet-spacer"></div>${footer}</div>`;
+      }
 
-/* ===== ฟอร์ม ===== */
-function inputHTML(key){
-  const f = FIELD_DEF[key];
-  if(f.select){
-    const opts = f.select.map(o=>`<option ${state[key]===o?'selected':''}>${o}</option>`).join('');
-    return `<label>${f.label}</label><select data-k="${key}">${opts}</select>`;
-  }
-  if(f.textarea) return `<label>${f.label}</label><textarea data-k="${key}">${esc(state[key])}</textarea>`;
-  const dl = f.datalist ? `list="${f.datalist}"` : '';
-  return `<label>${f.label}</label><input type="text" ${f.num?'inputmode="numeric"':''} data-k="${key}" value="${esc(state[key])}" ${dl}>` +
-         (f.hint?`<div class="hint">${f.hint}</div>`:'');
-}
-function dateInputHTML(){
-  const monthOpts = TH_MONTHS.map(m=>`<option ${state.date.month===m?'selected':''}>${m}</option>`).join('');
-  return `<label>วันที่ออกหนังสือ</label>
+      /* ===== พรีวิว + บังคับ 1 หน้า ===== */
+      function renderPreview() {
+        if (!state.docType) return;
+        const meta = DOC_META[state.docType];
+        const doc = TPL.documents[state.docType];
+        const pagesEl = document.getElementById("pages");
+        const jobs = [
+          { key: state.docType, mode: state.mode, label: doc.th_name },
+        ];
+        // ใบขอ → พิมพ์ใบตอบรับตามหลัง (โหมด cwie ใช้ใบตอบรับสหกิจ)
+        if (state.docType === "request" && state.printAttach) {
+          jobs.push({
+            key: "acceptance",
+            mode: state.mode === "internship" ? "internship" : "coop",
+            label: "ใบตอบรับ (เอกสารแนบ — บริษัทลงนาม)",
+          });
+        }
+        pagesEl.innerHTML = jobs
+          .map(
+            (j, i) =>
+              `<p class="pagelabel no-print">หน้า ${i + 1} · ${esc(j.label)}</p><div class="sheetbox">${sheetHTML(j.key, j.mode)}</div>`,
+          )
+          .join("");
+        // @page ตามกระดาษของใบหลัก (letter ทุกใบ ยกเว้นนอกหลักสูตร = A4)
+        document.getElementById("pageSize").textContent =
+          `@page{size:${doc.paper === "a4" ? "A4" : "letter"};margin:0}`;
+        document.title = "UP Docs — " + meta.title;
+        fitAll();
+        rescale();
+        saveState(); // autosave ทุกครั้งที่มีการแก้ไข
+      }
+
+      // บังคับ 1 หน้าเมื่อเนื้อหายาว (footer อยู่ใน flow แล้ว → วัดล้นได้จริง ไม่ทับ footer)
+      // ลำดับปรับ: 1) ลดช่องว่างก่อน "ขอแสดงความนับถือ"  2) เลื่อนขึ้นชนโลโก้ได้ถึงครึ่งโลโก้  3) ย่อฟอนต์
+      function fitAll() {
+        const warns = [];
+        document.querySelectorAll("#pages .sheet").forEach((sheet, i) => {
+          sheet.style.fontSize = "";
+          sheet.style.setProperty("--closegap", "24pt");
+          const crestw = sheet.querySelector(".crestwrap");
+          if (crestw) crestw.style.marginBottom = "";
+          const over = () => sheet.scrollHeight > sheet.clientHeight + 1;
+
+          // 1) ลดช่องว่างก่อนคำลงท้าย 24 → 8pt
+          let gap = 24;
+          while (over() && gap > 8) {
+            gap -= 2;
+            sheet.style.setProperty("--closegap", gap + "pt");
+          }
+          // 2) เลื่อนเนื้อหาขึ้นชนโลโก้ได้ถึง ~ครึ่งโลโก้ (ดึง header ขึ้นใต้ตราไม่เกิน 1.35 ซม.)
+          let pull = 0;
+          while (over() && crestw && pull < 1.35) {
+            pull += 0.15;
+            crestw.style.marginBottom = (0.1 - pull).toFixed(2) + "cm";
+          }
+          // 3) ย่อฟอนต์ 16 → 13pt
+          let size = 16;
+          while (over() && size > 13) {
+            size -= 0.25;
+            sheet.style.fontSize = size + "pt";
+          }
+
+          if (size < 16)
+            warns.push(
+              `หน้า ${i + 1}: เนื้อหายาว ระบบย่อฟอนต์เหลือ ${size}pt เพื่อให้จบใน 1 หน้า`,
+            );
+          if (over())
+            warns.push(
+              `หน้า ${i + 1}: เนื้อหายังยาวเกินหน้า แม้ปรับแล้ว — ลองย่อข้อความ`,
+            );
+        });
+        const w = document.getElementById("fitWarn");
+        w.style.display = warns.length ? "block" : "none";
+        w.textContent = warns.join(" · ");
+      }
+
+      // ย่อพรีวิวให้พอดีความกว้างจอ (ตัวเอกสารขนาดจริงเป็น ซม.)
+      function rescale() {
+        const panel = document.getElementById("previewPanel");
+        const avail = panel.clientWidth;
+        document.querySelectorAll("#pages .sheetbox").forEach((box) => {
+          const sheet = box.firstElementChild;
+          sheet.style.transform = "";
+          const w = sheet.offsetWidth,
+            h = sheet.offsetHeight;
+          const s = Math.min(1, avail / w);
+          sheet.style.transform = `scale(${s})`;
+          sheet.style.transformOrigin = "top left";
+          box.style.width = w * s + "px";
+          box.style.height = h * s + "px";
+        });
+      }
+      window.addEventListener("resize", rescale);
+
+      /* ===== ฟอร์ม ===== */
+      function inputHTML(key) {
+        const f = FIELD_DEF[key];
+        if (f.select) {
+          const opts = f.select
+            .map(
+              (o) =>
+                `<option ${state[key] === o ? "selected" : ""}>${o}</option>`,
+            )
+            .join("");
+          return `<label>${f.label}</label><select data-k="${key}">${opts}</select>`;
+        }
+        if (f.textarea)
+          return `<label>${f.label}</label><textarea data-k="${key}">${esc(state[key])}</textarea>`;
+        const dl = f.datalist ? `list="${f.datalist}"` : "";
+        return (
+          `<label>${f.label}</label><input type="text" ${f.num ? 'inputmode="numeric"' : ""} data-k="${key}" value="${esc(state[key])}" ${dl}>` +
+          (f.hint ? `<div class="hint">${f.hint}</div>` : "")
+        );
+      }
+      function dateInputHTML() {
+        const monthOpts = TH_MONTHS.map(
+          (m) =>
+            `<option ${state.date.month === m ? "selected" : ""}>${m}</option>`,
+        ).join("");
+        return `<label>วันที่ออกหนังสือ</label>
     <div class="row">
       <input type="text" inputmode="numeric" data-dk="day" value="${esc(state.date.day)}" placeholder="วัน (ไม่บังคับ)" style="flex:0 0 26%">
       <select data-dk="month" style="flex:1">${monthOpts}</select>
       <input type="text" inputmode="numeric" data-dk="yearBE" value="${esc(state.date.yearBE)}" placeholder="พ.ศ." style="flex:0 0 26%">
     </div>
-    <div class="hint">กรอกวันได้เลย (เว้นว่าง = แสดงเป็น "เดือน ปี" ตามแบบราชการ) · เลขไทยอัตโนมัติ เช่น "${dateText()||TH_MONTHS[now.getMonth()]+' '+thNum(now.getFullYear()+543)}"</div>`;
-}
-function studentsHTML(meta){
-  const stu = state.students.slice(0, meta.stuMax);
-  const rows = stu.map((s,i)=>`
+    <div class="hint">กรอกวันได้เลย (เว้นว่าง = แสดงเป็น "เดือน ปี" ตามแบบราชการ) · เลขไทยอัตโนมัติ เช่น "${dateText() || TH_MONTHS[now.getMonth()] + " " + thNum(now.getFullYear() + 543)}"</div>`;
+      }
+      function studentsHTML(meta) {
+        const stu = state.students.slice(0, meta.stuMax);
+        const rows = stu
+          .map(
+            (s, i) => `
     <div class="sturow">
       <input type="text" placeholder="ชื่อ-สกุล (พร้อมคำนำหน้า) เช่น นางสาวสมศรี ใจดี" data-sk="name" data-si="${i}" value="${esc(s.name)}">
-      ${meta.stuPhone?`<input class="stuphone" type="text" inputmode="numeric" placeholder="เบอร์โทร" data-sk="phone" data-si="${i}" value="${esc(s.phone)}">`:''}
-      ${stu.length>1?`<button class="del" data-del="${i}" title="ลบ">✕</button>`:''}
-    </div>`).join('');
-  const addBtn = stu.length < meta.stuMax ? `<button class="addstu" id="addStu">+ เพิ่มนิสิต (สูงสุด ${meta.stuMax} คน)</button>` : '';
-  const lockNote = meta.stuMax===1 ? '<div class="hint">แบบฟอร์มต้นฉบับของใบนี้รองรับนิสิต 1 คนต่อฉบับ</div>' : '';
-  return rows + addBtn + lockNote;
-}
-// ===== dropdown หลักสูตร/สาขา ที่สัมพันธ์กัน (คณะเดียว: บริหารธุรกิจและนิเทศศาสตร์) =====
-function programsList(){ return REF.programs.filter(p=>!p.includes('__')); }
-function majorsForProgram(prog){
-  const map = REF.major_to_program || {};
-  const all = REF.majors.filter(m=>!m.includes('__'));
-  return prog ? all.filter(m => map[m]===prog) : all;   // ไม่เลือกหลักสูตร → โชว์ครบ 8
-}
-function selectHTML(key, label, placeholder, list){
-  const cur = state[key];
-  // ถ้าค่าปัจจุบันไม่อยู่ในลิสต์ (เช่นมาจากไฟล์เก่า/พิมพ์เอง) ยังคงโชว์เป็นตัวเลือกไว้
-  const extra = cur && !list.includes(cur) ? [cur] : [];
-  const opts = [`<option value="">${placeholder}</option>`]
-    .concat(list.concat(extra).map(v=>`<option ${cur===v?'selected':''}>${esc(v)}</option>`));
-  return `<label>${label}</label><select data-sel="${key}">${opts.join('')}</select>`;
-}
-function programSelectHTML(){ return selectHTML('program','หลักสูตร','— เลือกหลักสูตร —', programsList()); }
-function majorSelectHTML(){
-  // ถ้าใบนี้มีช่องหลักสูตรด้วย → กรองสาขาตามหลักสูตร; ถ้าไม่มี → โชว์ครบ 8
-  const hasProg = DOC_META[state.docType].fields.includes('program');
-  return selectHTML('major','สาขาวิชา','— เลือกสาขาวิชา —', majorsForProgram(hasProg ? state.program : ''));
-}
-function signerHTMLForm(){
-  const opts = REF.signers.map(s=>
-    `<option value="${s.id}" ${state.signerId===s.id?'selected':''}>${esc(s.name)}</option>`
-  ).join('') + `<option value="custom" ${state.signerId==='custom'?'selected':''}>พิมพ์เอง…</option>`;
-  const c = state.customSigner;
-  const custom = state.signerId==='custom' ? `
+      ${meta.stuPhone ? `<input class="stuphone" type="text" inputmode="numeric" placeholder="เบอร์โทร" data-sk="phone" data-si="${i}" value="${esc(s.phone)}">` : ""}
+      ${stu.length > 1 ? `<button class="del" data-del="${i}" title="ลบ">✕</button>` : ""}
+    </div>`,
+          )
+          .join("");
+        const addBtn =
+          stu.length < meta.stuMax
+            ? `<button class="addstu" id="addStu">+ เพิ่มนิสิต (สูงสุด ${meta.stuMax} คน)</button>`
+            : "";
+        const lockNote =
+          meta.stuMax === 1
+            ? '<div class="hint">แบบฟอร์มต้นฉบับของใบนี้รองรับนิสิต 1 คนต่อฉบับ</div>'
+            : "";
+        return rows + addBtn + lockNote;
+      }
+      // ===== dropdown หลักสูตร/สาขา ที่สัมพันธ์กัน (คณะเดียว: บริหารธุรกิจและนิเทศศาสตร์) =====
+      function programsList() {
+        return REF.programs.filter((p) => !p.includes("__"));
+      }
+      function majorsForProgram(prog) {
+        const map = REF.major_to_program || {};
+        const all = REF.majors.filter((m) => !m.includes("__"));
+        return prog ? all.filter((m) => map[m] === prog) : all; // ไม่เลือกหลักสูตร → โชว์ครบ 8
+      }
+      function selectHTML(key, label, placeholder, list) {
+        const cur = state[key];
+        // ถ้าค่าปัจจุบันไม่อยู่ในลิสต์ (เช่นมาจากไฟล์เก่า/พิมพ์เอง) ยังคงโชว์เป็นตัวเลือกไว้
+        const extra = cur && !list.includes(cur) ? [cur] : [];
+        const opts = [`<option value="">${placeholder}</option>`].concat(
+          list
+            .concat(extra)
+            .map(
+              (v) =>
+                `<option ${cur === v ? "selected" : ""}>${esc(v)}</option>`,
+            ),
+        );
+        return `<label>${label}</label><select data-sel="${key}">${opts.join("")}</select>`;
+      }
+      function programSelectHTML() {
+        return selectHTML(
+          "program",
+          "หลักสูตร",
+          "— เลือกหลักสูตร —",
+          programsList(),
+        );
+      }
+      function majorSelectHTML() {
+        // ถ้าใบนี้มีช่องหลักสูตรด้วย → กรองสาขาตามหลักสูตร; ถ้าไม่มี → โชว์ครบ 8
+        const hasProg = DOC_META[state.docType].fields.includes("program");
+        return selectHTML(
+          "major",
+          "สาขาวิชา",
+          "— เลือกสาขาวิชา —",
+          majorsForProgram(hasProg ? state.program : ""),
+        );
+      }
+      function signerHTMLForm() {
+        const opts =
+          REF.signers
+            .map(
+              (s) =>
+                `<option value="${s.id}" ${state.signerId === s.id ? "selected" : ""}>${esc(s.name)}</option>`,
+            )
+            .join("") +
+          `<option value="custom" ${state.signerId === "custom" ? "selected" : ""}>พิมพ์เอง…</option>`;
+        const c = state.customSigner;
+        const custom =
+          state.signerId === "custom"
+            ? `
     <div id="customSigner" style="margin-top:8px">
       <input type="text" id="csName" placeholder="ชื่อ-สกุล (พร้อมคำนำหน้า/ยศ) เช่น ผู้ช่วยศาสตราจารย์ ดร.สมชาย ใจดี" value="${esc(c.name)}">
       <input type="text" id="csPos" placeholder="ตำแหน่ง เช่น รองคณบดีฝ่ายวิชาการ" value="${esc(c.position)}" style="margin-top:6px">
-      <label class="chk"><input type="checkbox" id="csActing" ${c.actingForDean?'checked':''}> ลงนาม "ปฏิบัติการแทนคณบดี" (ถ้าไม่ติ๊ก = คณบดีลงนามเอง/ลงตามตำแหน่ง)</label>
-    </div>` : '';
-  return `<label>ผู้ลงนาม</label><select id="signerSel">${opts}</select>
+      <label class="chk"><input type="checkbox" id="csActing" ${c.actingForDean ? "checked" : ""}> ลงนาม "ปฏิบัติการแทนคณบดี" (ถ้าไม่ติ๊ก = คณบดีลงนามเอง/ลงตามตำแหน่ง)</label>
+    </div>`
+            : "";
+        return `<label>ผู้ลงนาม</label><select id="signerSel">${opts}</select>
     <div class="hint">ค่าตั้งต้นคือ อ.กมลพงศ์ฯ · เลือก "พิมพ์เอง…" เพื่อกรอกผู้ลงนามท่านอื่น</div>${custom}`;
-}
-function renderForm(){
-  const meta = DOC_META[state.docType];
-  const doc = TPL.documents[state.docType];
-  const hasModes = (doc.modes||[]).length > 1;
-  const modeChips = hasModes ? `<fieldset><legend>ประเภทการปฏิบัติงาน</legend><div class="modechips">${
-    doc.modes.map(m=>`<button class="chip ${state.mode===m?'on':''}" data-mode="${m}">${MODE_LABEL[m]||m}</button>`).join('')
-  }</div></fieldset>` : '';
-  const fieldsHTML = meta.fields.map(k =>
-    k==='date'    ? dateInputHTML() :
-    k==='program' ? programSelectHTML() :
-    k==='major'   ? majorSelectHTML() :
-    inputHTML(k)
-  ).join('');
-  const attachOpt = state.docType==='request'
-    ? `<label class="chk"><input type="checkbox" id="printAttach" ${state.printAttach?'checked':''}> พิมพ์ใบตอบรับแนบท้าย (รวม 2 หน้า)</label>` : '';
-  document.getElementById('formPanel').innerHTML = `
+      }
+      function renderForm() {
+        const meta = DOC_META[state.docType];
+        const doc = TPL.documents[state.docType];
+        const hasModes = (doc.modes || []).length > 1;
+        const modeChips = hasModes
+          ? `<fieldset><legend>ประเภทการปฏิบัติงาน</legend><div class="modechips">${doc.modes
+              .map(
+                (m) =>
+                  `<button class="chip ${state.mode === m ? "on" : ""}" data-mode="${m}">${MODE_LABEL[m] || m}</button>`,
+              )
+              .join("")}</div></fieldset>`
+          : "";
+        const fieldsHTML = meta.fields
+          .map((k) =>
+            k === "date"
+              ? dateInputHTML()
+              : k === "program"
+                ? programSelectHTML()
+                : k === "major"
+                  ? majorSelectHTML()
+                  : inputHTML(k),
+          )
+          .join("");
+        const attachOpt =
+          state.docType === "request"
+            ? `<label class="chk"><input type="checkbox" id="printAttach" ${state.printAttach ? "checked" : ""}> พิมพ์ใบตอบรับแนบท้าย (รวม 2 หน้า)</label>`
+            : "";
+        document.getElementById("formPanel").innerHTML = `
     <button class="backbtn" id="backBtn">← เลือกเอกสารอื่น</button>
     <h2>${meta.title}</h2>
     <p class="docsub">${esc(doc.th_name)}</p>
@@ -673,106 +1979,158 @@ function renderForm(){
     <fieldset><legend>ผู้ลงนาม</legend>${signerHTMLForm()}</fieldset>
     ${attachOpt}
     <button class="printbtn" id="printBtn">🖨 พิมพ์ / บันทึกเป็น PDF</button>
-    <div class="printtip">ในหน้าต่างพิมพ์ เลือกปลายทาง "Save as PDF" — ขนาดกระดาษถูกตั้งให้อัตโนมัติ</div>
+    <button class="docxbtn" id="docxBtn">⬇ บันทึกเป็น Word (.docx) — แก้ไขต่อได้</button>
+    <div class="printtip">PDF สำหรับพิมพ์/ส่ง · Word (.docx) สำหรับแก้ไขต่อในโปรแกรม Word</div>
     <div class="row" style="margin-top:10px">
       <button class="chip" id="exportBtn">⬇ บันทึกไฟล์</button>
       <button class="chip" id="importBtn">⬆ เปิดไฟล์</button>
     </div>
     <div class="printtip">💾 บันทึกอัตโนมัติในเบราว์เซอร์นี้ · ไฟล์ .json ใช้เก็บงานหรือย้ายไปทำต่อเครื่องอื่น</div>`;
-  bindForm();
-}
-function bindForm(){
-  const panel = document.getElementById('formPanel');
-  panel.querySelectorAll('[data-k]').forEach(el=>{
-    el.addEventListener('input', ()=>{ state[el.dataset.k] = el.value; renderPreview(); });
-  });
-  // dropdown หลักสูตร ↔ สาขา (สัมพันธ์กัน)
-  panel.querySelectorAll('[data-sel]').forEach(el=>{
-    el.addEventListener('change', ()=>{
-      const key = el.dataset.sel;   // program | major
-      state[key] = el.value;
-      if(key==='major'){
-        const prog = (REF.major_to_program||{})[el.value];
-        if(prog) state.program = prog;          // เลือกสาขา → เติมหลักสูตร
-      }else if(key==='program'){
-        const valid = majorsForProgram(state.program);
-        if(state.major && !valid.includes(state.major)) state.major = ''; // สาขาเดิมไม่เข้าหลักสูตรใหม่ → ล้าง
+        bindForm();
       }
-      renderForm();   // rebuild ให้ตัวเลือกสองช่องสอดคล้องกัน
-      renderPreview();
-    });
-  });
-  panel.querySelectorAll('[data-dk]').forEach(el=>{
-    el.addEventListener('input', ()=>{ state.date[el.dataset.dk] = el.value; renderPreview(); });
-  });
-  panel.querySelectorAll('[data-sk]').forEach(el=>{
-    el.addEventListener('input', ()=>{ state.students[+el.dataset.si][el.dataset.sk] = el.value; renderPreview(); });
-  });
-  panel.querySelectorAll('[data-del]').forEach(el=>{
-    el.addEventListener('click', ()=>{ state.students.splice(+el.dataset.del,1); renderForm(); renderPreview(); });
-  });
-  panel.querySelectorAll('[data-mode]').forEach(el=>{
-    el.addEventListener('click', ()=>{ state.mode = el.dataset.mode; renderForm(); renderPreview(); });
-  });
-  document.getElementById('addStu')?.addEventListener('click', ()=>{
-    state.students.push({name:'',phone:''}); renderForm(); renderPreview();
-  });
-  document.getElementById('signerSel').addEventListener('change', e=>{
-    state.signerId = e.target.value;
-    renderForm();      // re-render เพื่อโชว์/ซ่อนช่องพิมพ์เอง
-    renderPreview();
-  });
-  // ช่องพิมพ์ผู้ลงนามเอง
-  document.getElementById('csName')?.addEventListener('input', e=>{ state.customSigner.name = e.target.value; renderPreview(); });
-  document.getElementById('csPos')?.addEventListener('input', e=>{ state.customSigner.position = e.target.value; renderPreview(); });
-  document.getElementById('csActing')?.addEventListener('change', e=>{ state.customSigner.actingForDean = e.target.checked; renderPreview(); });
-  document.getElementById('printAttach')?.addEventListener('change', e=>{ state.printAttach = e.target.checked; renderPreview(); });
-  document.getElementById('printBtn').addEventListener('click', printDoc);
-  document.getElementById('exportBtn').addEventListener('click', exportJSON);
-  document.getElementById('importBtn').addEventListener('click', ()=>document.getElementById('importFile').click());
-  document.getElementById('backBtn').addEventListener('click', ()=>{
-    state.docType = null;
-    document.getElementById('workspace').hidden = true;
-    document.getElementById('docCards').style.display = '';
-    document.getElementById('openSaved').style.display = '';
-    document.getElementById('pages').innerHTML = '';
-    document.title = 'UP Docs — เครื่องมือออกเอกสารฝึกงาน คณะบริหารธุรกิจและนิเทศศาสตร์ ม.พะเยา';
-  });
-}
+      function bindForm() {
+        const panel = document.getElementById("formPanel");
+        panel.querySelectorAll("[data-k]").forEach((el) => {
+          el.addEventListener("input", () => {
+            state[el.dataset.k] = el.value;
+            renderPreview();
+          });
+        });
+        // dropdown หลักสูตร ↔ สาขา (สัมพันธ์กัน)
+        panel.querySelectorAll("[data-sel]").forEach((el) => {
+          el.addEventListener("change", () => {
+            const key = el.dataset.sel; // program | major
+            state[key] = el.value;
+            if (key === "major") {
+              const prog = (REF.major_to_program || {})[el.value];
+              if (prog) state.program = prog; // เลือกสาขา → เติมหลักสูตร
+            } else if (key === "program") {
+              const valid = majorsForProgram(state.program);
+              if (state.major && !valid.includes(state.major)) state.major = ""; // สาขาเดิมไม่เข้าหลักสูตรใหม่ → ล้าง
+            }
+            renderForm(); // rebuild ให้ตัวเลือกสองช่องสอดคล้องกัน
+            renderPreview();
+          });
+        });
+        panel.querySelectorAll("[data-dk]").forEach((el) => {
+          el.addEventListener("input", () => {
+            state.date[el.dataset.dk] = el.value;
+            renderPreview();
+          });
+        });
+        panel.querySelectorAll("[data-sk]").forEach((el) => {
+          el.addEventListener("input", () => {
+            state.students[+el.dataset.si][el.dataset.sk] = el.value;
+            renderPreview();
+          });
+        });
+        panel.querySelectorAll("[data-del]").forEach((el) => {
+          el.addEventListener("click", () => {
+            state.students.splice(+el.dataset.del, 1);
+            renderForm();
+            renderPreview();
+          });
+        });
+        panel.querySelectorAll("[data-mode]").forEach((el) => {
+          el.addEventListener("click", () => {
+            state.mode = el.dataset.mode;
+            renderForm();
+            renderPreview();
+          });
+        });
+        document.getElementById("addStu")?.addEventListener("click", () => {
+          state.students.push({ name: "", phone: "" });
+          renderForm();
+          renderPreview();
+        });
+        document.getElementById("signerSel").addEventListener("change", (e) => {
+          state.signerId = e.target.value;
+          renderForm(); // re-render เพื่อโชว์/ซ่อนช่องพิมพ์เอง
+          renderPreview();
+        });
+        // ช่องพิมพ์ผู้ลงนามเอง
+        document.getElementById("csName")?.addEventListener("input", (e) => {
+          state.customSigner.name = e.target.value;
+          renderPreview();
+        });
+        document.getElementById("csPos")?.addEventListener("input", (e) => {
+          state.customSigner.position = e.target.value;
+          renderPreview();
+        });
+        document.getElementById("csActing")?.addEventListener("change", (e) => {
+          state.customSigner.actingForDean = e.target.checked;
+          renderPreview();
+        });
+        document
+          .getElementById("printAttach")
+          ?.addEventListener("change", (e) => {
+            state.printAttach = e.target.checked;
+            renderPreview();
+          });
+        document.getElementById("printBtn").addEventListener("click", printDoc);
+        document
+          .getElementById("docxBtn")
+          .addEventListener("click", exportDocx);
+        document
+          .getElementById("exportBtn")
+          .addEventListener("click", exportJSON);
+        document
+          .getElementById("importBtn")
+          .addEventListener("click", () =>
+            document.getElementById("importFile").click(),
+          );
+        document.getElementById("backBtn").addEventListener("click", () => {
+          state.docType = null;
+          document.getElementById("workspace").hidden = true;
+          document.getElementById("docCards").style.display = "";
+          document.getElementById("openSaved").style.display = "";
+          document.getElementById("pages").innerHTML = "";
+          document.title =
+            "UP Docs — เครื่องมือออกเอกสารฝึกงาน คณะบริหารธุรกิจและนิเทศศาสตร์ ม.พะเยา";
+        });
+      }
 
-// เปิดหน้าฟอร์ม+พรีวิวของ state.docType ปัจจุบัน (ใช้ทั้งตอนคลิกการ์ด/เปิดไฟล์/กู้ autosave)
-function openWorkspace(){
-  document.getElementById('docCards').style.display = 'none';
-  document.getElementById('openSaved').style.display = 'none';
-  document.getElementById('workspace').hidden = false;
-  renderForm();
-  renderPreview();
-}
+      // เปิดหน้าฟอร์ม+พรีวิวของ state.docType ปัจจุบัน (ใช้ทั้งตอนคลิกการ์ด/เปิดไฟล์/กู้ autosave)
+      function openWorkspace() {
+        document.getElementById("docCards").style.display = "none";
+        document.getElementById("openSaved").style.display = "none";
+        document.getElementById("workspace").hidden = false;
+        renderForm();
+        renderPreview();
+      }
 
-/* ===== หน้าเลือกเอกสาร (การ์ดใหญ่ ชัดเจน — แก้ปัญหา dropdown เดิมสับสน) ===== */
-function renderCards(){
-  document.getElementById('docCards').innerHTML = Object.entries(DOC_META).map(([k,m])=>`
+      /* ===== หน้าเลือกเอกสาร (การ์ดใหญ่ ชัดเจน — แก้ปัญหา dropdown เดิมสับสน) ===== */
+      function renderCards() {
+        document.getElementById("docCards").innerHTML = Object.entries(DOC_META)
+          .map(
+            ([k, m]) => `
     <button class="card" data-doc="${k}">
       <h2>${m.title}</h2><p>${m.desc}</p><span class="tag">${m.tag}</span>
-    </button>`).join('');
-  document.querySelectorAll('.card').forEach(el=>{
-    el.addEventListener('click', ()=>{
-      state.docType = el.dataset.doc;
-      const modes = TPL.documents[state.docType].modes || [];
-      state.mode = modes[0] || 'internship';
-      track('doc_select', { doc_type: state.docType });
-      openWorkspace();
-    });
-  });
-}
-renderCards();
-document.getElementById('importFile').addEventListener('change', importJSON);
+    </button>`,
+          )
+          .join("");
+        document.querySelectorAll(".card").forEach((el) => {
+          el.addEventListener("click", () => {
+            state.docType = el.dataset.doc;
+            const modes = TPL.documents[state.docType].modes || [];
+            state.mode = modes[0] || "internship";
+            track("doc_select", { doc_type: state.docType });
+            openWorkspace();
+          });
+        });
+      }
+      renderCards();
+      document
+        .getElementById("importFile")
+        .addEventListener("change", importJSON);
 
-// กู้งานล่าสุดจาก autosave (ถ้ามีและใช้ localStorage ได้)
-try{
-  const saved = loadState();
-  if(saved && DOC_META[saved.docType]) applyData(saved);
-}catch(e){ /* ไฟล์เก่าเสีย/ไม่มี — เริ่มหน้าเลือกการ์ดตามปกติ */ }
-</script>
-</body>
+      // กู้งานล่าสุดจาก autosave (ถ้ามีและใช้ localStorage ได้)
+      try {
+        const saved = loadState();
+        if (saved && DOC_META[saved.docType]) applyData(saved);
+      } catch (e) {
+        /* ไฟล์เก่าเสีย/ไม่มี — เริ่มหน้าเลือกการ์ดตามปกติ */
+      }
+    </script>
+  </body>
 </html>
