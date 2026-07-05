@@ -387,7 +387,7 @@
         "header",
         "date"
       ],
-      "footer": false,
+      "footer": true,
       "modes": [
         "combined"
       ],
