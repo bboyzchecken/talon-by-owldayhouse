@@ -424,7 +424,7 @@
         transform: translateX(calc((var(--mr, 2cm) - var(--ml, 3cm)) / 2));
       }
       .crest {
-        height: 2.7cm;
+        height: 3cm;
         width: auto;
         display: inline-block;
       }
@@ -714,7 +714,6 @@
             "docNo",
             "date",
             "recipient",
-            "courseCode",
             "program",
             "major",
             "semester",
@@ -1302,31 +1301,37 @@
             return dxPara(dxRun(tokPlain(b.text, modeObj)), { before: 120 });
         }
       }
+      // ตรา ม.พะเยา กึ่งกลางหน้า สูง 3 ซม. (docPr id ต้องไม่ซ้ำเมื่อมีหลายตราในไฟล์เดียว)
+      let _crestId = 0;
+      function dxCrest(crest, imgRel) {
+        if (!crest || !imgRel) return "";
+        _crestId++;
+        const id = _crestId;
+        const cy = Math.round(3 * 360000),
+          cx = Math.round((cy * crest.w) / crest.h);
+        return (
+          '<w:p><w:pPr><w:ind w:right="567"/><w:jc w:val="center"/></w:pPr><w:r><w:drawing>' + // กึ่งกลางหน้า (เยื้องขวา 1cm เท่าวันที่)
+          '<wp:inline distT="0" distB="0" distL="0" distR="0"><wp:extent cx="' +
+          cx +
+          '" cy="' +
+          cy +
+          '"/><wp:docPr id="' + id + '" name="crest' + id + '"/>' +
+          '<a:graphic><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic>' +
+          '<pic:nvPicPr><pic:cNvPr id="' + id + '" name="crest' + id + '"/><pic:cNvPicPr/></pic:nvPicPr>' +
+          '<pic:blipFill><a:blip r:embed="' +
+          imgRel +
+          '"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill>' +
+          '<pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="' +
+          cx +
+          '" cy="' +
+          cy +
+          '"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr>' +
+          "</pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r></w:p>"
+        );
+      }
       function dxHeader(crest, imgRel, contentW) {
         const c = TPL._shared_chrome.header;
-        let out = "";
-        if (crest && imgRel) {
-          const cy = Math.round(2.7 * 360000),
-            cx = Math.round((cy * crest.w) / crest.h);
-          out +=
-            '<w:p><w:pPr><w:ind w:right="567"/><w:jc w:val="center"/></w:pPr><w:r><w:drawing>' + // ตรา กึ่งกลางหน้า (เยื้องขวา 1cm เท่าวันที่)
-            '<wp:inline distT="0" distB="0" distL="0" distR="0"><wp:extent cx="' +
-            cx +
-            '" cy="' +
-            cy +
-            '"/><wp:docPr id="1" name="crest"/>' +
-            '<a:graphic><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic>' +
-            '<pic:nvPicPr><pic:cNvPr id="1" name="crest"/><pic:cNvPicPr/></pic:nvPicPr>' +
-            '<pic:blipFill><a:blip r:embed="' +
-            imgRel +
-            '"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill>' +
-            '<pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="' +
-            cx +
-            '" cy="' +
-            cy +
-            '"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr>' +
-            "</pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r></w:p>";
-        }
+        let out = dxCrest(crest, imgRel);
         const lw = Math.round(contentW * 0.5),
           rw = contentW - lw;
         const nb =
@@ -1394,6 +1399,7 @@
         let paras = "";
         (d.chrome || []).forEach((k) => {
           if (k === "header") paras += dxHeader(crest, imgRel, contentW);
+          if (k === "crest") paras += dxCrest(crest, imgRel); // ตราอย่างเดียว (ใบตอบรับ)
           if (k === "date")
             paras += dxPara(dxRun(dateText()), {
               indLeft: DXCLOSE,
@@ -1466,14 +1472,9 @@
           );
           footerCT = '<Override PartName="/word/footer1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.footer+xml"/>';
         }
-        const secs = jobs.map((j, i) =>
-          dxSection(
-            j.key,
-            j.mode,
-            i === 0 ? crest : null,
-            i === 0 ? imgRel : "",
-          ),
-        );
+        _crestId = 0; // รีเซ็ต id ตราให้เริ่มใหม่ทุกไฟล์
+        // ส่ง crest ให้ทุก section (ใบตอบรับก็มีตราแล้ว) — รูปฝังครั้งเดียว อ้าง rIdImg เดียวกัน
+        const secs = jobs.map((j) => dxSection(j.key, j.mode, crest, imgRel));
         let body = "";
         secs.forEach((s, i) => {
           body += s.paras;
@@ -1773,14 +1774,17 @@
             return paraHTML(b, modeObj);
         }
       }
+      // ตรากึ่งกลางบนสุด สูง 3 ซม. (ใช้ทั้งหัวจดหมายและใบตอบรับ)
+      function crestHTML() {
+        return CREST_DATA
+          ? `<div class="crestwrap"><img class="crest" src="${CREST_DATA}" alt="ตรามหาวิทยาลัยพะเยา"></div>`
+          : "";
+      }
       function headerHTML() {
         const c = TPL._shared_chrome.header;
         const right = c.right_lines.map((l) => `<p>${esc(l)}</p>`).join("");
-        // ตรากึ่งกลางบนสุด (ครุฑ/ตราราชการ) แล้วตามด้วยแถว "ที่ อว..." ซ้าย / ที่อยู่ ขวา
-        const crest = CREST_DATA
-          ? `<div class="crestwrap"><img class="crest" src="${CREST_DATA}" alt="ตรามหาวิทยาลัยพะเยา"></div>`
-          : "";
-        return `${crest}<div class="docheader"><div class="dh-left"><p>${tok(c.left)}</p></div><div class="dh-right">${right}</div></div>`;
+        // ตรากึ่งกลางบนสุด แล้วตามด้วยแถว "ที่ อว..." ซ้าย / ที่อยู่ ขวา
+        return `${crestHTML()}<div class="docheader"><div class="dh-left"><p>${tok(c.left)}</p></div><div class="dh-right">${right}</div></div>`;
       }
       function footerHTML() {
         return `<div class="docfooter">${TPL._shared_chrome.footer.lines.map((l) => `<p>${esc(l)}</p>`).join("")}</div>`;
@@ -1796,6 +1800,7 @@
         let flow = "";
         (d.chrome || []).forEach((k) => {
           if (k === "header") flow += headerHTML();
+          if (k === "crest") flow += crestHTML(); // ตราอย่างเดียว (ใบตอบรับ)
           if (k === "date")
             flow += `<p class="datep">${tok(TPL._shared_chrome.date.text)}</p>`;
         });
