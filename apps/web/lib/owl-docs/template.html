@@ -233,6 +233,8 @@
         </select>
       </label>
       <label class="f"><span>ป้ายฉบับ (มุมหัวเรื่อง)</span><input id="copy" value="ต้นฉบับ / original" oninput="update()"></label>
+      <label class="chk"><input type="checkbox" id="asPerson" onchange="onPersonToggle()"> <b>ออกในนามบุคคลธรรมดา</b> — ซ่อนโลโก้ · ไม่มี VAT · ไม่มีหัก ณ ที่จ่าย</label>
+      <p class="note">ติ๊กแล้วจะตั้งค่าทั้ง 3 อย่างให้อัตโนมัติ (ยังปรับแยกทีละอย่างได้ในหัวข้อด้านล่าง)</p>
 
       <details class="grp"><summary>ผู้ออก / Issuer</summary><div class="body">
         <label class="f"><span>ชื่อบริษัท</span><input id="isName" oninput="update()"></label>
@@ -279,6 +281,7 @@
       </div></details>
 
       <details class="grp" open><summary>ภาษี &amp; ยอดรวม</summary><div class="body">
+        <label class="chk"><input type="checkbox" id="noVat" onchange="update()"> ไม่มี VAT (ไม่ได้จดทะเบียนภาษีมูลค่าเพิ่ม / ออกในนามบุคคล)</label>
         <div class="row2">
           <label class="f"><span>VAT (%)</span><input id="vatRate" type="number" step="0.01" value="7" oninput="update()"></label>
           <label class="f"><span>หัก ณ ที่จ่าย (%)</span><input id="whtRate" type="number" step="0.01" value="3" oninput="update()"></label>
@@ -337,6 +340,7 @@
           <label class="f"><span>วันที่ช่องขวา</span><input id="sgRightDate" oninput="update()" placeholder="เว้นว่าง = เส้นประ"></label>
         </div>
         <label class="chk"><input type="checkbox" id="paid" onchange="update()"> ประทับลายน้ำ "ชำระแล้ว"</label>
+        <label class="chk"><input type="checkbox" id="hideLogo" onchange="update()"> ซ่อนโลโก้ + ตราประทับบริษัท (ใช้เมื่อออกในนามบุคคล)</label>
         <label class="f"><span>โลโก้ (วาง URL รูป .png/.svg — เว้นว่าง = ใช้โลโก้ ODH ในตัว)</span><input id="logoUrl" oninput="update()" placeholder="https://..."></label>
         <p class="note">ค่าเริ่มต้นเป็นโลโก้นกฮูก ODH ตัวจริง หากต้องการโลโก้แบบเต็ม (มีข้อความ) ให้วาง URL ไฟล์โลโก้ของบริษัท</p>
       </div></details>
@@ -405,7 +409,7 @@ function chk(id){ const e=document.getElementById(id); return e? e.checked : fal
 const STORAGE_KEY='owl-docs-state-v1';
 const FIELDS=['docType','copy','isName','isAddr','isTax','isTel','isEmail','isWeb',
   'cuName','cuAddr','cuTax','cuEmail','cuAttn','cuTel','mNo','mDate','mValid','mDue','mRef',
-  'showUnit','vatRate','whtRate','showWht','remarks','payStyle','bkBank','bkName','bkNo',
+  'showUnit','vatRate','whtRate','showWht','noVat','asPerson','hideLogo','remarks','payStyle','bkBank','bkName','bkNo',
   'pl1lab','pl1txt','pl2lab','pl2txt','sgLeftLab','sgRightLab','sgStampDate','sgRightDate','paid','logoUrl','mailDocUrl'];
 function collectData(){
   const d={};
@@ -477,6 +481,26 @@ function onTypeChange(){
     document.getElementById('payStyle').value='lines';
     document.getElementById('paid').checked=true;
   }
+  applyPersonMode();
+  update();
+}
+
+/* ออกในนามบุคคลธรรมดา: ซ่อนโลโก้/ตราประทับ, ไม่คิด VAT, ไม่แสดงหัก ณ ที่จ่าย.
+   ติ๊กออก = คืนค่าตามประเภทเอกสาร (ใบแจ้งหนี้แสดงหัก ณ ที่จ่ายเป็นค่าเริ่มต้น). */
+function applyPersonMode(){
+  if(!chk('asPerson')) return;
+  document.getElementById('hideLogo').checked=true;
+  document.getElementById('noVat').checked=true;
+  document.getElementById('showWht').checked=false;
+}
+function onPersonToggle(){
+  if(chk('asPerson')){
+    applyPersonMode();
+  }else{
+    document.getElementById('hideLogo').checked=false;
+    document.getElementById('noVat').checked=false;
+    document.getElementById('showWht').checked = val('docType')==='invoice';
+  }
   update();
 }
 function syncVisibility(){
@@ -486,6 +510,8 @@ function syncVisibility(){
   const ps=val('payStyle');
   document.getElementById('payBank').style.display  = ps==='bank'?'block':'none';
   document.getElementById('payLines').style.display = ps==='lines'?'block':'none';
+  document.getElementById('vatRate').disabled = chk('noVat');
+  document.getElementById('whtRate').disabled = !chk('showWht');
 }
 
 function update(){ syncVisibility(); renderDoc(); }
@@ -493,7 +519,7 @@ function update(){ syncVisibility(); renderDoc(); }
 /* ============ Render document ============ */
 function calcTotals(){
   const pretax=items.reduce((a,it)=>a+(it.qty*it.price),0);
-  const vat=pretax*(parseFloat(val('vatRate'))||0)/100;
+  const vat=chk('noVat')? 0 : pretax*(parseFloat(val('vatRate'))||0)/100;
   const grand=pretax+vat;
   const wht=pretax*(parseFloat(val('whtRate'))||0)/100;
   const net=grand-wht;
@@ -501,20 +527,25 @@ function calcTotals(){
 }
 
 function logoHTML(){
+  if(chk('hideLogo')) return '';
   const u=val('logoUrl').trim();
   if(u) return `<img src="${esc(u)}" style="width:100%;height:100%;object-fit:contain">`;
   return owlMarkSVG('#28254C');
 }
 function stampLogo(){
+  /* ออกในนามบุคคล = ไม่มีตราประทับบริษัท เหลือแค่เส้นลายเซ็น */
+  if(chk('hideLogo')) return `<div class="stamp"></div><div class="ln">..................................................</div>`;
   const u=val('logoUrl').trim();
   const ic = u? `<img src="${esc(u)}" style="width:26px;height:26px;object-fit:contain">` : owlMarkSVG('#28254C');
   return `<div class="stamp"><div style="width:26px;height:26px">${ic}</div>
     <div class="nm"><b>OWL DAY HOUSE CO.,LTD.</b><span>THE SOFTWARE HOUSE</span></div></div>`;
 }
 
-function titleFor(t){
+function titleFor(t, noVat){
   if(t==='quotation') return {th:'ใบเสนอราคา', en:'Quotation'};
   if(t==='invoice')   return {th:'ใบแจ้งหนี้', en:'Invoice'};
+  /* ไม่ได้จด VAT ออกใบกำกับภาษีไม่ได้ — เหลือแค่ใบเสร็จรับเงิน */
+  if(noVat)           return {th:'ใบเสร็จรับเงิน', en:'Receipt'};
   return {th:'ใบเสร็จรับเงิน/ใบกำกับภาษี', en:'Receipt/Tax Invoice'};
 }
 
@@ -522,8 +553,9 @@ function renderDoc(){
   const t=val('docType');
   const showUnit=chk('showUnit');
   const showWht=chk('showWht');
+  const noVat=chk('noVat');
   const T=calcTotals();
-  const ttl=titleFor(t);
+  const ttl=titleFor(t, noVat);
 
   /* ----- meta rows (right column) ----- */
   let metaRows = `<div class="kv meta"><div class="k">เลขที่ <span class="en">/ No.</span></div><div class="v">${esc(val('mNo'))}</div></div>
@@ -533,18 +565,22 @@ function renderDoc(){
   metaRows += `<div class="kv meta"><div class="k">อ้างอิง <span class="en">/ Ref</span></div><div class="v">${esc(val('mRef'))}</div></div>`;
 
   /* ----- table columns ----- */
+  const amtTh = noVat? 'จำนวนเงิน' : 'มูลค่าก่อนภาษี';
+  const amtEn = noVat? 'Amount' : 'Pre-Tax Amount';
   const cols = showUnit
-    ? [['รหัส','ID No.','12%'],['คำอธิบาย','Description',''],['จำนวน','Quantity','9%'],['หน่วย','Unit','8%'],['ราคาต่อหน่วย','Unit Price','15%'],['มูลค่าก่อนภาษี','Pre-Tax Amount','16%']]
-    : [['รหัส','ID No.','12%'],['คำอธิบาย','Description',''],['จำนวน','Quantity','11%'],['ราคาต่อหน่วย','Unit Price','17%'],['มูลค่าก่อนภาษี','Pre-Tax Amount','18%']];
+    ? [['รหัส','ID No.','12%'],['คำอธิบาย','Description',''],['จำนวน','Quantity','9%'],['หน่วย','Unit','8%'],['ราคาต่อหน่วย','Unit Price','15%'],[amtTh,amtEn,'16%']]
+    : [['รหัส','ID No.','12%'],['คำอธิบาย','Description',''],['จำนวน','Quantity','11%'],['ราคาต่อหน่วย','Unit Price','17%'],[amtTh,amtEn,'18%']];
   const colgrid = cols.map(c=> c[2]||'1fr').join(' ');
   const fillCells = cols.map(()=>'<div></div>').join('');
   let thead='<tr>'+cols.map(c=>`<th style="${c[2]?`width:${c[2]}`:''}">${c[0]}<span class="en">${c[1]}</span></th>`).join('')+'</tr>';
 
   /* ----- summary ----- */
   let sum = `<table class="d-sum"><colgroup><col class="col-remark"><col class="col-lab"><col style="width:18%"></colgroup>`;
-  const remark = `<td class="remark" rowspan="3"><div class="h">หมายเหตุ /Remarks</div><div style="white-space:pre-line">${esc(val('remarks'))}</div></td>`;
-  sum += `<tr>${remark}<td class="slabel">ราคาสุทธิสินค้าที่เสียภาษี (บาท) / Pre-VAT Amount</td><td class="sval">${fmt(T.pretax)}</td></tr>`;
-  sum += `<tr><td class="slabel">ภาษีมูลค่าเพิ่ม (บาท) / VAT</td><td class="sval">${fmt(T.vat)}</td></tr>`;
+  /* ไม่มี VAT = ตัดแถวภาษีออก กล่องหมายเหตุจึงคร่อม 2 แถวแทน 3 */
+  const remark = `<td class="remark" rowspan="${noVat?2:3}"><div class="h">หมายเหตุ /Remarks</div><div style="white-space:pre-line">${esc(val('remarks'))}</div></td>`;
+  const subLabel = noVat? 'รวมเป็นเงิน (บาท) / Sub-Total' : 'ราคาสุทธิสินค้าที่เสียภาษี (บาท) / Pre-VAT Amount';
+  sum += `<tr>${remark}<td class="slabel">${subLabel}</td><td class="sval">${fmt(T.pretax)}</td></tr>`;
+  if(!noVat) sum += `<tr><td class="slabel">ภาษีมูลค่าเพิ่ม (บาท) / VAT</td><td class="sval">${fmt(T.vat)}</td></tr>`;
   sum += `<tr><td class="slabel bold">จำนวนเงินรวมทั้งสิ้น (บาท) / Grand Total</td><td class="sval bold">${fmt(T.grand)}</td></tr>`;
   sum += `<tr><td class="band">จำนวนเงินรวมทั้งสิ้น</td><td class="band baht" colspan="2">${esc(bahtText(T.grand))}</td></tr>`;
   if(showWht){
@@ -587,7 +623,7 @@ function renderDoc(){
   const headHTML = `
     <div class="d-head">
       <div class="d-title"><div class="th">${esc(ttl.th)}</div><div class="en">${esc(ttl.en)} <span class="copy">( ${esc(val('copy'))} )</span></div></div>
-      <div class="d-logo">${logoHTML()}</div>
+      ${chk('hideLogo')? '' : `<div class="d-logo">${logoHTML()}</div>`}
     </div>`;
 
   const infoHTML = `
@@ -619,9 +655,9 @@ function renderDoc(){
   paginate({ watermarkHTML:watermark, headHTML, infoHTML, colgrid, thead, fillCells, tailHTML, showUnit });
 
   /* calc box in editor */
-  let cb=`<div><span>ราคาก่อนภาษี</span><b>${fmt(T.pretax)}</b></div>
-          <div><span>VAT</span><b>${fmt(T.vat)}</b></div>
-          <div><span>รวมทั้งสิ้น</span><b>${fmt(T.grand)}</b></div>`;
+  let cb=`<div><span>${noVat?'รวมเป็นเงิน':'ราคาก่อนภาษี'}</span><b>${fmt(T.pretax)}</b></div>`;
+  if(!noVat) cb+=`<div><span>VAT</span><b>${fmt(T.vat)}</b></div>`;
+  cb+=`<div><span>รวมทั้งสิ้น</span><b>${fmt(T.grand)}</b></div>`;
   if(showWht) cb+=`<div><span>หัก ณ ที่จ่าย</span><b>${fmt(T.wht)}</b></div><div><span>ยอดที่ต้องชำระ</span><b>${fmt(T.net)}</b></div>`;
   cb+=`<div style="margin-top:4px;border-top:1px solid var(--border);padding-top:4px"><span>ตัวอักษร</span></div><div style="display:block;font-weight:700">${esc(bahtText(showWht?T.grand:T.grand))}</div>`;
   document.getElementById('calcBox').innerHTML=cb;
@@ -762,7 +798,7 @@ function formatThaiDate(str){
 /* Build the notification email from the current document. */
 function buildEmail(){
   const t=val('docType');
-  const label=titleFor(t).th;
+  const label=titleFor(t, chk('noVat')).th;
   const no=val('mNo');
   const grand=fmt(calcTotals().grand);
   const cuName=val('cuName');
@@ -856,7 +892,8 @@ async function sendViaSMTP(){
 const SAMPLES={
   base:{ isName:'บริษัท อาวล์ เดย์ เฮ้าส์ จำกัด (สำนักงานใหญ่)',
     isAddr:'เลขที่ 114/104 หมู่บ้าน กาญจน์กนกวิลล์ 5 น้ำโฮม หมู่ที่ 12 ตำบลสันกำแพง อำเภอสันกำแพง จังหวัดเชียงใหม่ 50130',
-    isTax:'0505563011424', isTel:'0924552450', isEmail:'owldayhouse@gmail.com', isWeb:'https://www.owldayhouse.com/' },
+    isTax:'0505563011424', isTel:'0924552450', isEmail:'owldayhouse@gmail.com', isWeb:'https://www.owldayhouse.com/',
+    asPerson:false, noVat:false, hideLogo:false },
   qo:{ docType:'quotation', copy:'ต้นฉบับ / original',
     cuName:'บริษัท เจ็ทแพ็ค ครีเอชั่น จำกัด (สำนักงานใหญ่)',
     cuAddr:'เลขที่ 101 ซอย สมบูรณ์พัฒนา 3 แขวงรัชดาภิเษก เขตดินแดง กรุงเทพมหานคร 10400',
@@ -911,6 +948,7 @@ function clearForm(){
   ['copy'].forEach(()=>setIf('copy','ต้นฉบับ / original'));
   ['cuName','cuAddr','cuTax','cuEmail','cuAttn','cuTel','mNo','mDate','mValid','mDue','mRef','remarks','bkBank','bkName','bkNo','pl1lab','pl1txt','pl2lab','pl2txt','sgStampDate','sgRightDate','logoUrl','mailDocUrl'].forEach(id=>setIf(id,''));
   setIf('cuTel','-'); setIf('cuAttn','-'); setIf('mRef','-');
+  setIf('asPerson',false); setIf('noVat',false); setIf('hideLogo',false);
   items=[itemTemplate({qty:1,price:0})]; renderItems();
   onTypeChange();
 }
