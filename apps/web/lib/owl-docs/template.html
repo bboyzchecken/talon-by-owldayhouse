@@ -281,7 +281,12 @@
       </div></details>
 
       <details class="grp" open><summary>ภาษี &amp; ยอดรวม</summary><div class="body">
-        <label class="chk"><input type="checkbox" id="noVat" onchange="update()"> ไม่มี VAT (ไม่ได้จดทะเบียนภาษีมูลค่าเพิ่ม / ออกในนามบุคคล)</label>
+        <label class="f"><span>ประเภทราคา</span>
+          <select id="vatMode" onchange="update()">
+            <option value="ex">แยกภาษี — ราคาที่กรอกยังไม่รวม VAT (บวก VAT เพิ่ม)</option>
+            <option value="incl">รวมภาษี — ราคาที่กรอกรวม VAT แล้ว (VAT ใน)</option>
+            <option value="none">ไม่มี VAT — ไม่ได้จดทะเบียนภาษีมูลค่าเพิ่ม / ออกในนามบุคคล</option>
+          </select></label>
         <div class="row2">
           <label class="f"><span>VAT (%)</span><input id="vatRate" type="number" step="0.01" value="7" oninput="update()"></label>
           <label class="f"><span>หัก ณ ที่จ่าย (%)</span><input id="whtRate" type="number" step="0.01" value="3" oninput="update()"></label>
@@ -409,7 +414,7 @@ function chk(id){ const e=document.getElementById(id); return e? e.checked : fal
 const STORAGE_KEY='owl-docs-state-v1';
 const FIELDS=['docType','copy','isName','isAddr','isTax','isTel','isEmail','isWeb',
   'cuName','cuAddr','cuTax','cuEmail','cuAttn','cuTel','mNo','mDate','mValid','mDue','mRef',
-  'showUnit','vatRate','whtRate','showWht','noVat','asPerson','hideLogo','remarks','payStyle','bkBank','bkName','bkNo',
+  'showUnit','vatRate','whtRate','showWht','vatMode','asPerson','hideLogo','remarks','payStyle','bkBank','bkName','bkNo',
   'pl1lab','pl1txt','pl2lab','pl2txt','sgLeftLab','sgRightLab','sgStampDate','sgRightDate','paid','logoUrl','mailDocUrl'];
 function collectData(){
   const d={};
@@ -490,7 +495,7 @@ function onTypeChange(){
 function applyPersonMode(){
   if(!chk('asPerson')) return;
   document.getElementById('hideLogo').checked=true;
-  document.getElementById('noVat').checked=true;
+  setIf('vatMode','none');
   document.getElementById('showWht').checked=false;
 }
 function onPersonToggle(){
@@ -498,7 +503,7 @@ function onPersonToggle(){
     applyPersonMode();
   }else{
     document.getElementById('hideLogo').checked=false;
-    document.getElementById('noVat').checked=false;
+    setIf('vatMode','ex');
     document.getElementById('showWht').checked = val('docType')==='invoice';
   }
   update();
@@ -510,7 +515,7 @@ function syncVisibility(){
   const ps=val('payStyle');
   document.getElementById('payBank').style.display  = ps==='bank'?'block':'none';
   document.getElementById('payLines').style.display = ps==='lines'?'block':'none';
-  document.getElementById('vatRate').disabled = chk('noVat');
+  document.getElementById('vatRate').disabled = noVatMode();
   document.getElementById('whtRate').disabled = !chk('showWht');
 }
 
@@ -518,9 +523,13 @@ function update(){ syncVisibility(); renderDoc(); }
 
 /* ============ Render document ============ */
 function calcTotals(){
-  const pretax=items.reduce((a,it)=>a+(it.qty*it.price),0);
-  const vat=chk('noVat')? 0 : pretax*(parseFloat(val('vatRate'))||0)/100;
-  const grand=pretax+vat;
+  const sum=items.reduce((a,it)=>a+(it.qty*it.price),0);
+  const rate=noVatMode()? 0 : (parseFloat(val('vatRate'))||0);
+  /* VAT ใน: ราคาที่กรอกรวม VAT แล้ว → ถอดย้อนกลับ ยอดรวมทั้งสิ้น = ยอดที่กรอก */
+  const incl=rate>0 && val('vatMode')==='incl';
+  const grand=incl? sum : sum*(100+rate)/100;
+  const pretax=incl? Math.round(sum*10000/(100+rate))/100 : sum;
+  const vat=grand-pretax;
   const wht=pretax*(parseFloat(val('whtRate'))||0)/100;
   const net=grand-wht;
   return {pretax,vat,grand,wht,net};
@@ -541,6 +550,7 @@ function stampLogo(){
     <div class="nm"><b>OWL DAY HOUSE CO.,LTD.</b><span>THE SOFTWARE HOUSE</span></div></div>`;
 }
 
+function noVatMode(){ return val('vatMode')==='none'; }
 function titleFor(t, noVat){
   if(t==='quotation') return {th:'ใบเสนอราคา', en:'Quotation'};
   if(t==='invoice')   return {th:'ใบแจ้งหนี้', en:'Invoice'};
@@ -553,7 +563,7 @@ function renderDoc(){
   const t=val('docType');
   const showUnit=chk('showUnit');
   const showWht=chk('showWht');
-  const noVat=chk('noVat');
+  const noVat=noVatMode();
   const T=calcTotals();
   const ttl=titleFor(t, noVat);
 
@@ -565,8 +575,9 @@ function renderDoc(){
   metaRows += `<div class="kv meta"><div class="k">อ้างอิง <span class="en">/ Ref</span></div><div class="v">${esc(val('mRef'))}</div></div>`;
 
   /* ----- table columns ----- */
-  const amtTh = noVat? 'จำนวนเงิน' : 'มูลค่าก่อนภาษี';
-  const amtEn = noVat? 'Amount' : 'Pre-Tax Amount';
+  const vatIncl=val('vatMode')==='incl';
+  const amtTh = noVat? 'จำนวนเงิน' : vatIncl? 'จำนวนเงิน (รวม VAT)' : 'มูลค่าก่อนภาษี';
+  const amtEn = noVat? 'Amount' : vatIncl? 'Amount (VAT incl.)' : 'Pre-Tax Amount';
   const cols = showUnit
     ? [['รหัส','ID No.','12%'],['คำอธิบาย','Description',''],['จำนวน','Quantity','9%'],['หน่วย','Unit','8%'],['ราคาต่อหน่วย','Unit Price','15%'],[amtTh,amtEn,'16%']]
     : [['รหัส','ID No.','12%'],['คำอธิบาย','Description',''],['จำนวน','Quantity','11%'],['ราคาต่อหน่วย','Unit Price','17%'],[amtTh,amtEn,'18%']];
@@ -798,7 +809,7 @@ function formatThaiDate(str){
 /* Build the notification email from the current document. */
 function buildEmail(){
   const t=val('docType');
-  const label=titleFor(t, chk('noVat')).th;
+  const label=titleFor(t, noVatMode()).th;
   const no=val('mNo');
   const grand=fmt(calcTotals().grand);
   const cuName=val('cuName');
@@ -893,7 +904,7 @@ const SAMPLES={
   base:{ isName:'บริษัท อาวล์ เดย์ เฮ้าส์ จำกัด (สำนักงานใหญ่)',
     isAddr:'เลขที่ 114/104 หมู่บ้าน กาญจน์กนกวิลล์ 5 น้ำโฮม หมู่ที่ 12 ตำบลสันกำแพง อำเภอสันกำแพง จังหวัดเชียงใหม่ 50130',
     isTax:'0505563011424', isTel:'0924552450', isEmail:'owldayhouse@gmail.com', isWeb:'https://www.owldayhouse.com/',
-    asPerson:false, noVat:false, hideLogo:false },
+    asPerson:false, vatMode:'ex', hideLogo:false },
   qo:{ docType:'quotation', copy:'ต้นฉบับ / original',
     cuName:'บริษัท เจ็ทแพ็ค ครีเอชั่น จำกัด (สำนักงานใหญ่)',
     cuAddr:'เลขที่ 101 ซอย สมบูรณ์พัฒนา 3 แขวงรัชดาภิเษก เขตดินแดง กรุงเทพมหานคร 10400',
@@ -933,6 +944,8 @@ const SAMPLES={
 
 function setIf(id,v){ const e=document.getElementById(id); if(e==null) return; if(e.type==='checkbox') e.checked=!!v; else e.value=(v==null?'':v); }
 function applyData(d){
+  /* ข้อมูลเก่า (ก่อนมี vatMode) เก็บเป็น checkbox noVat/vatIncl */
+  if(!('vatMode' in d) && ('noVat' in d || 'vatIncl' in d)) d={...d, vatMode: d.noVat? 'none' : d.vatIncl? 'incl' : 'ex'};
   FIELDS.forEach(f=>{ if(f in d) setIf(f,d[f]); });
   if(d.items){ items = d.items.map(itemTemplate); renderItems(); }
 }
@@ -948,7 +961,7 @@ function clearForm(){
   ['copy'].forEach(()=>setIf('copy','ต้นฉบับ / original'));
   ['cuName','cuAddr','cuTax','cuEmail','cuAttn','cuTel','mNo','mDate','mValid','mDue','mRef','remarks','bkBank','bkName','bkNo','pl1lab','pl1txt','pl2lab','pl2txt','sgStampDate','sgRightDate','logoUrl','mailDocUrl'].forEach(id=>setIf(id,''));
   setIf('cuTel','-'); setIf('cuAttn','-'); setIf('mRef','-');
-  setIf('asPerson',false); setIf('noVat',false); setIf('hideLogo',false);
+  setIf('asPerson',false); setIf('vatMode','ex'); setIf('hideLogo',false);
   items=[itemTemplate({qty:1,price:0})]; renderItems();
   onTypeChange();
 }

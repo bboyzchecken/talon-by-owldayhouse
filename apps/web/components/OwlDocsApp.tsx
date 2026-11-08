@@ -15,7 +15,7 @@ import template from "@/lib/owl-docs/template.html";
 // Access in front of the /owl-docs/ path.
 
 // SHA-256 of the passphrase (never store the plaintext in the bundle).
-const PASS_HASH = "cc3f0d28bdd0feed938c93bc6672ca5d825505f660b293c79bf1c1dd20a56714";
+const PASS_HASH = "b03ddf3ca2e714a6548e7495e2a03f5e824eaac9837cd7f159c67b90fb4b7342";
 const UNLOCK_KEY = "owl-docs-unlocked";
 
 async function sha256Hex(text: string): Promise<string> {

@@ -8,9 +8,9 @@ import { PortfolioCard } from "@/components/PortfolioCard";
 import { Reveal } from "@/components/Reveal";
 
 export const metadata = pageMeta({
-  title: "ผลงาน",
+  title: "ผลงานรับทำเว็บไซต์และระบบองค์กร",
   description:
-    "ผลงาน Owl Day House — งานเว็บไซต์ ระบบองค์กร และงานราชการ/มหาวิทยาลัย เช่น ระบบลงทะเบียน reg.tu.ac.th",
+    "ผลงาน Owl Day House — งานเว็บไซต์ ระบบองค์กร และงานราชการ/มหาวิทยาลัย เช่น ระบบลงทะเบียน reg.tu.ac.th และแพลตฟอร์มงานรถ RodArea",
   path: "/work/",
 });
 
@@ -21,7 +21,7 @@ export default function WorkPage() {
       <SectionHeading
         as="h1"
         eyebrow="ผลงาน"
-        title="งานจริงที่เรารับผิดชอบ"
+        title="ผลงานเว็บไซต์และระบบที่เรารับผิดชอบจริง"
         subtitle="ตั้งแต่เว็บธุรกิจไปจนถึงระบบที่คนใช้จริงทั้งมหาวิทยาลัย"
       />
       <p className="mt-6 max-w-2xl text-muted">

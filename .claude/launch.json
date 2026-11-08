@@ -9,6 +9,12 @@
       "autoPort": true
     },
     {
+      "name": "web-out",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "3100", "--directory", "apps/web/out"],
+      "port": 3100
+    },
+    {
       "name": "up-docs",
       "runtimeExecutable": "python3",
       "runtimeArgs": ["-m", "http.server", "8932", "--directory", "/private/tmp/claude-501/-Users-jiraphatsintuwong-works-talon-by-owldayhouse/dde44d6d-3c38-43c1-a57b-97a76879141b/scratchpad/serve"],

@@ -10,12 +10,21 @@ const socialItems = [
   { href: social.linkedin, label: "LinkedIn", Icon: LinkedinIcon },
 ];
 
+// Keyword-rich internal links: every page passes link equity to the money pages.
+const popularLinks = [
+  { href: "/news/rab-tham-website-chiang-mai-rakha/", label: "รับทำเว็บไซต์ เชียงใหม่" },
+  { href: "/news/rab-tham-website-krungthep/", label: "รับทำเว็บไซต์ กรุงเทพ" },
+  { href: "/packages", label: "ราคารับทำเว็บไซต์" },
+  { href: "/talon", label: "เว็บไซต์เสร็จใน 5 วัน" },
+  { href: "/services", label: "รับทำเว็บแอปและระบบองค์กร" },
+];
+
 export function Footer() {
   const year = new Date().getFullYear();
 
   return (
     <footer className="bg-navy text-paper">
-      <div className="mx-auto grid max-w-6xl gap-10 px-6 py-16 md:grid-cols-[1.6fr_1fr_1.4fr]">
+      <div className="mx-auto grid max-w-6xl gap-10 px-6 py-16 md:grid-cols-[1.4fr_0.8fr_1.1fr_1.3fr]">
         <div>
           <OwlLogo height={34} className="text-paper" />
           <p className="mt-4 max-w-xs text-sm text-paper/70">
@@ -51,6 +60,19 @@ export function Footer() {
                     {link.label}
                   </Link>
                 )}
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        <nav aria-label="บริการยอดนิยม">
+          <h2 className="font-display text-sm font-semibold uppercase tracking-wider text-gold">บริการยอดนิยม</h2>
+          <ul className="mt-4 space-y-2.5 text-sm">
+            {popularLinks.map((link) => (
+              <li key={link.href}>
+                <Link href={link.href} className="text-paper/80 transition-colors hover:text-gold">
+                  {link.label}
+                </Link>
               </li>
             ))}
           </ul>

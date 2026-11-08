@@ -8,7 +8,7 @@ import { breadcrumbSchema } from "@/lib/structured-data";
 import { Reveal } from "@/components/Reveal";
 
 export const metadata = pageMeta({
-  title: "เราคือใคร",
+  title: "เกี่ยวกับเรา ซอฟต์แวร์เฮาส์เชียงใหม่",
   description:
     "Owl Day House ซอฟต์แวร์เฮาส์เชียงใหม่ บริษัทจดทะเบียน ออกใบกำกับภาษีได้ มีผลงานจริงทั้งเว็บและระบบองค์กร",
   path: "/about/",

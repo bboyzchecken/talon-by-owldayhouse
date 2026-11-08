@@ -4,10 +4,13 @@ import Script from "next/script";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
 
-// Google Analytics 4. Renders only when NEXT_PUBLIC_GA_ID is set, so dev/preview
-// builds stay clean. NEXT_PUBLIC_* is inlined at build time → set it before
-// `pnpm build:web` to enable GA on the exported site.
-const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
+// Google Analytics 4 (marketing site). The measurement ID is public,
+// so production builds default to it — .env* is gitignored, and relying on it
+// silently shipped the site with no tag. `pnpm dev` stays clean. Set
+// NEXT_PUBLIC_GA_ID at build time to override, or to empty to disable.
+const GA_ID =
+  process.env.NEXT_PUBLIC_GA_ID ??
+  (process.env.NODE_ENV === "production" ? "G-ZXV0J46ECG" : undefined);
 
 // /up-docs is a separate client tool with its OWN GA4 property (inside its
 // iframe). Keep faculty usage out of the marketing property entirely so the two

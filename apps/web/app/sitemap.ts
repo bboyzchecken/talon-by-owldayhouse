@@ -1,26 +1,33 @@
 import type { MetadataRoute } from "next";
-import { SITE_URL } from "@/lib/seo";
+import { SITE_UPDATED, SITE_URL } from "@/lib/seo";
 import { posts } from "@/content/news";
 
 export const dynamic = "force-static";
 
 // trailingSlash:true — keep URLs consistent with the exported pages.
-const routes = ["", "/about", "/services", "/talon", "/packages", "/work", "/contact", "/news"];
+const routes = [
+  "",
+  "/about",
+  "/services",
+  "/talon",
+  "/packages",
+  "/work",
+  "/showcase/reveal",
+  "/contact",
+  "/news",
+];
 
+// lastModified is a real content date, never the build time: Google ignores
+// <lastmod> on sites where it changes every build.
 export default function sitemap(): MetadataRoute.Sitemap {
-  const lastModified = new Date();
   const pages: MetadataRoute.Sitemap = routes.map((route) => ({
     url: `${SITE_URL}${route}/`,
-    lastModified,
-    changeFrequency: "monthly",
-    priority: route === "" ? 1 : route === "/talon" ? 0.9 : 0.8,
+    lastModified: SITE_UPDATED,
   }));
 
   const articles: MetadataRoute.Sitemap = posts.map((post) => ({
     url: `${SITE_URL}/news/${post.slug}/`,
-    lastModified: new Date(post.dateModified ?? post.datePublished),
-    changeFrequency: "yearly",
-    priority: 0.6,
+    lastModified: post.dateModified ?? post.datePublished,
   }));
 
   return [...pages, ...articles];

@@ -5,11 +5,11 @@ import { contact } from "@/content/site";
 import { services } from "@/content/services";
 import { pageMeta } from "@/lib/seo";
 import { JsonLd } from "@/components/JsonLd";
-import { breadcrumbSchema } from "@/lib/structured-data";
+import { breadcrumbSchema, servicesSchema } from "@/lib/structured-data";
 import { Reveal } from "@/components/Reveal";
 
 export const metadata = pageMeta({
-  title: "บริการของเรา",
+  title: "บริการรับทำเว็บไซต์ เว็บแอป และระบบองค์กร เชียงใหม่",
   description:
     "รับทำเว็บไซต์ เว็บแอป ระบบองค์กร และงานกราฟิกในเชียงใหม่ — ทีมงานดูแลตั้งแต่ออกแบบจนถึงหลังส่งมอบ",
   path: "/services/",
@@ -18,11 +18,11 @@ export const metadata = pageMeta({
 export default function ServicesPage() {
   return (
     <main className="mx-auto max-w-6xl px-6 py-20">
-      <JsonLd data={breadcrumbSchema("บริการ", "/services/")} />
+      <JsonLd data={[breadcrumbSchema("บริการ", "/services/"), ...servicesSchema]} />
       <SectionHeading
         as="h1"
         eyebrow="บริการ"
-        title="เราทำอะไร"
+        title="รับทำเว็บไซต์ เว็บแอป และระบบองค์กร"
         subtitle="เว็บไซต์ · เว็บ/โมบายแอป · ระบบองค์กร · งานกราฟิก — ครบในทีมเดียว"
       />
       <p className="mt-6 max-w-2xl text-muted">

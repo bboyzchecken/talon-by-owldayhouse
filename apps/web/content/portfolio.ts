@@ -1,5 +1,5 @@
-// Real client work. reg.tu.ac.th is still live; the others were sizeable
-// systems we built whose businesses have since closed (so no live link).
+// Real client work. Items with status "live" have a working link; "closed"
+// items were sizeable systems whose businesses have since shut down.
 
 export interface PortfolioItem {
   title: string;
@@ -25,6 +25,26 @@ export const portfolio: readonly PortfolioItem[] = [
     url: "https://reg.tu.ac.th",
     status: "live",
     featured: true,
+  },
+  {
+    title: "RodArea — แผนที่และปฏิทินงานรถทั่วไทย",
+    client: "RodArea",
+    category: "แพลตฟอร์ม / เว็บแอป",
+    result:
+      "รวมงานรถและคาร์มีทที่เคยกระจายอยู่ตามกลุ่ม Facebook / Line มาไว้บนแผนที่เดียว — โพสต์งานด้วยลิงก์ Google Maps ปักหมุดให้อัตโนมัติ พร้อมปฏิทินงาน กดสนใจเข้าร่วม และรีวิวหลังงาน",
+    image: "/portfolio/rodarea.webp",
+    url: "https://rodarea.com/",
+    status: "live",
+  },
+  {
+    title: "You want GPU? — ร้านการ์ดจอมือสองออนไลน์",
+    client: "You want GPU?",
+    category: "เว็บร้านค้า / E-commerce",
+    result:
+      "เว็บร้านการ์ดจอมือสองที่แสดงเฉพาะของจริงในร้าน — กรองตามรุ่น VRAM และช่วงราคา แยกเงื่อนไขรับประกันรายใบ มีเมนูตามหารุ่น และระบบหลังบ้านสำหรับเจ้าของร้าน",
+    image: "/portfolio/youwantgpu.webp",
+    url: "https://youwantgpu.com/",
+    status: "live",
   },
   {
     title: "PEZY — e-Marketplace สัญชาติไทย",

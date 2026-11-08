@@ -27,19 +27,21 @@ export function Hero() {
         className="pointer-events-none absolute left-1/2 top-[-120px] h-[480px] w-[480px] -translate-x-1/2 rounded-full bg-gold/20 blur-[120px]"
       />
       <div className="relative mx-auto flex max-w-4xl flex-col items-center gap-7 px-6 py-28 text-center sm:py-36">
-        <motion.span
-          variants={fadeUp}
-          initial="hidden"
-          animate="show"
-          custom={0}
-          className="font-display text-sm font-semibold uppercase tracking-[0.25em] text-gold"
-        >
-          รับทำเว็บไซต์ · เชียงใหม่
-        </motion.span>
-
-        <h1 className="font-display text-4xl font-bold leading-[1.1] sm:text-6xl">
-          จากเว็บแรก <span className="text-gold">฿3,900</span>
-          <br className="hidden sm:block" /> สู่ระบบระดับองค์กร
+        {/* The eyebrow is part of the H1 so the page's main heading carries the target keyword. */}
+        <h1 className="flex flex-col items-center gap-7">
+          <motion.span
+            variants={fadeUp}
+            initial="hidden"
+            animate="show"
+            custom={0}
+            className="font-display text-sm font-semibold uppercase tracking-[0.25em] text-gold"
+          >
+            รับทำเว็บไซต์ · เชียงใหม่
+          </motion.span>{" "}
+          <span className="font-display text-4xl font-bold leading-[1.1] sm:text-6xl">
+            จากเว็บแรก <span className="text-gold">฿3,900</span>
+            <br className="hidden sm:block" /> สู่ระบบระดับองค์กร
+          </span>
         </h1>
 
         <motion.p

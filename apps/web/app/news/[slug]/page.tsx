@@ -28,6 +28,7 @@ export async function generateMetadata({
     title: post.title,
     description: post.description,
     path: `/news/${slug}/`,
+    absoluteTitle: true,
   });
   return {
     ...base,
@@ -66,13 +67,14 @@ export default async function NewsArticlePage({
     <main>
       <JsonLd
         data={[
-          breadcrumbSchema(post.title, path),
+          breadcrumbSchema(post.title, path, { name: "บทความ", path: "/news/" }),
           articleSchema({
             title: post.title,
             description: post.description,
             path,
             datePublished: post.datePublished,
             dateModified: post.dateModified,
+            keywords: post.keywords,
           }),
         ]}
       />
@@ -86,7 +88,8 @@ export default async function NewsArticlePage({
         </Link>
 
         <p className="mt-8 font-display text-xs uppercase tracking-wider text-gold">
-          {formatDate(post.datePublished)} · อ่าน {post.readingMinutes} นาที
+          <time dateTime={post.datePublished}>{formatDate(post.datePublished)}</time> · อ่าน{" "}
+          {post.readingMinutes} นาที
         </p>
         <h1 className="mt-3 font-display text-3xl font-bold leading-tight text-navy sm:text-4xl">
           {post.title}

@@ -12,9 +12,9 @@ export const metadata = pageMeta({
 
 export default function ShowcaseRevealPage() {
   return (
-    <>
+    <main>
       <JsonLd data={breadcrumbSchema("โชว์เคส", "/showcase/reveal/")} />
       <RevealHero />
-    </>
+    </main>
   );
 }

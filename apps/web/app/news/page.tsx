@@ -5,10 +5,10 @@ import { posts } from "@/content/news";
 import { pageMeta } from "@/lib/seo";
 import { JsonLd } from "@/components/JsonLd";
 import { Reveal } from "@/components/Reveal";
-import { breadcrumbSchema } from "@/lib/structured-data";
+import { blogSchema, breadcrumbSchema } from "@/lib/structured-data";
 
 export const metadata = pageMeta({
-  title: "บทความ & ความรู้ทำเว็บไซต์",
+  title: "บทความทำเว็บไซต์ ราคา และการตลาดออนไลน์สำหรับ SME",
   description:
     "บทความจาก Owl Day House — ความรู้เรื่องทำเว็บไซต์ ราคา และการตลาดออนไลน์สำหรับธุรกิจและ SME เชียงใหม่",
   path: "/news/",
@@ -25,7 +25,7 @@ function formatDate(iso: string): string {
 export default function NewsPage() {
   return (
     <main className="mx-auto max-w-5xl px-6 py-20">
-      <JsonLd data={breadcrumbSchema("บทความ", "/news/")} />
+      <JsonLd data={[breadcrumbSchema("บทความ", "/news/"), blogSchema]} />
       <SectionHeading
         as="h1"
         eyebrow="บทความ"

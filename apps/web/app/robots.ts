@@ -5,9 +5,9 @@ export const dynamic = "force-static";
 
 export default function robots(): MetadataRoute.Robots {
   return {
-    // /owl-docs/ + /up-docs/ are hidden gated tools — keep them out of the index.
-    rules: { userAgent: "*", allow: "/", disallow: ["/owl-docs/", "/up-docs/"] },
+    // Hidden tools (/owl-docs/, /up-docs/) stay crawlable on purpose: they carry
+    // noindex, and a crawler blocked here could never read it.
+    rules: { userAgent: "*", allow: "/" },
     sitemap: `${SITE_URL}/sitemap.xml`,
-    host: SITE_URL,
   };
 }

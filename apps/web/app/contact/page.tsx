@@ -6,7 +6,7 @@ import { JsonLd } from "@/components/JsonLd";
 import { breadcrumbSchema } from "@/lib/structured-data";
 
 export const metadata = pageMeta({
-  title: "ติดต่อเรา",
+  title: "ติดต่อบริษัทรับทำเว็บไซต์ เชียงใหม่ โทร 092-455-2450",
   description:
     "ติดต่อ Owl Day House เชียงใหม่ ผ่าน Facebook Messenger, โทร 092-455-2450 หรือ LINE — ไม่มีฟอร์มให้กรอกยุ่งยาก",
   path: "/contact/",
@@ -22,7 +22,7 @@ export default function ContactPage() {
       <SectionHeading
         as="h1"
         eyebrow="ติดต่อ"
-        title="คุยกับเราได้เลย"
+        title="ติดต่อทีมรับทำเว็บไซต์ เชียงใหม่"
         subtitle="ไม่มีฟอร์มให้กรอกยุ่งยาก — ทักช่องทางที่สะดวกที่สุด เดี๋ยวทีมงานคนไทยตอบเอง"
       />
 
