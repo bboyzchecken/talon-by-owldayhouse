@@ -46,7 +46,7 @@
 .odh-eyehero__title span.l{display:block;white-space:nowrap}
 .odh-chip{display:inline-block;width:1.5em;height:.7em;margin-inline:.14em;border-radius:var(--radius-full);overflow:hidden;vertical-align:-.04em}
 .odh-chip img{width:100%;height:100%;object-fit:cover}
-.odh-eye{display:inline-block;width:.68em;height:.68em;margin-inline:.03em;border-radius:50%;background:var(--spark) url("/imagery/eye.webp") 50% 41%/260%;box-shadow:0 0 0 .025em var(--spark);vertical-align:-.01em}
+.odh-eye{display:inline-block;width:.68em;height:.68em;margin-inline:.03em;border-radius:50%;background:var(--spark) url("/imagery/owl-eye.webp") 50% 31%/216%;box-shadow:0 0 0 .025em var(--spark);vertical-align:-.01em}
 .odh-eyehero__meta{position:absolute;right:var(--edge);bottom:var(--space-5);width:min(400px,38%);display:flex;flex-direction:column;gap:var(--space-3)}
 .odh-eyehero__th{font-family:var(--font-display);font-size:24px;line-height:1.4;font-weight:600}
 .odh-eyehero__meta p:not(.odh-eyehero__th){color:var(--text-2)}

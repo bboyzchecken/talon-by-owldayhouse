@@ -8,7 +8,7 @@ import { Button } from "@odh/ui";
 import type { Copy } from "@/content/copy";
 import { clamp, ease, useScrollFrame } from "@/lib/hooks/useScrollFrame";
 
-const EYE = { width: 1920, height: 1088, pupilY: 0.415, irisShare: 0.62 };
+const EYE = { width: 1920, height: 1088, pupilY: 0.465, irisShare: 0.462 };
 
 interface EyeHeroProps {
   home: Copy["home"];
@@ -118,7 +118,7 @@ export function EyeHero({ home, workHref, contactHref }: EyeHeroProps) {
         </div>
 
         <div ref={layer} className="odh-eyehero__reveal" aria-hidden="true">
-          <Image ref={image} src="/imagery/eye.webp" alt="" width={EYE.width} height={EYE.height} sizes="100vw" priority />
+          <Image ref={image} src="/imagery/owl-eye.webp" alt="" width={EYE.width} height={EYE.height} sizes="100vw" priority />
           <div ref={scrim} className="odh-eyehero__scrim" />
           <p ref={say} className="odh-eyehero__say">
             {home.reveal[0]}
