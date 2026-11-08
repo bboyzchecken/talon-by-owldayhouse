@@ -11,7 +11,7 @@ export interface PortfolioItem {
   client: Text;
   category: Text;
   result: Text;
-  image: string;
+  image?: string;
   url?: string;
   status: "live" | "closed";
 }
@@ -52,7 +52,6 @@ export const portfolio: readonly PortfolioItem[] = [
       th: "แพลตฟอร์มซื้อขายออนไลน์ครบวงจร ทั้งเว็บและโมบายแอป พร้อมระบบร้านค้า สินค้า ตะกร้า และโปรโมชัน",
       en: "A full online marketplace on web and mobile, with stores, products, cart and promotions.",
     },
-    image: "/portfolio/pezy.jpg",
     status: "closed",
   },
   {
@@ -77,7 +76,6 @@ export const portfolio: readonly PortfolioItem[] = [
       th: "จับคู่ผู้เรียนกับติวเตอร์ทั้งเรียนเดี่ยวและกลุ่ม พร้อมระบบจอง คะแนนสะสม และแดชบอร์ดผู้สอนและผู้เรียน",
       en: "Matches learners with tutors for private and group classes, with booking, loyalty points and dashboards for both sides.",
     },
-    image: "/portfolio/speek.jpg",
     status: "closed",
   },
   {
@@ -89,10 +87,12 @@ export const portfolio: readonly PortfolioItem[] = [
       th: "เว็บไซต์บริษัทวัสดุก่อสร้าง uPVC วางโครงเนื้อหา ดีไซน์ และระบบจัดการให้ดูน่าเชื่อถือ",
       en: "A company website for a uPVC materials business, covering content structure, design and management.",
     },
-    image: "/portfolio/intersant.jpg",
     status: "closed",
   },
 ];
+
+export const liveWork = portfolio.filter((item) => item.status === "live");
+export const earlierWork = portfolio.filter((item) => item.status === "closed");
 
 export const clientNames: readonly string[] = [
   "Thammasat University",

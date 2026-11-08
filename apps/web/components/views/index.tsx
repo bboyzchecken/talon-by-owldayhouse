@@ -5,7 +5,7 @@ import type { Metadata } from "next";
 import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 import { Button } from "@odh/ui";
 import { JsonLd } from "@/components/JsonLd";
-import { MessengerCta } from "@/components/MessengerCta";
+import { EmailLink, MessengerCta } from "@/components/MessengerCta";
 import { CapabilityTag } from "@/components/site/CapabilityTag";
 import { EyeHero } from "@/components/site/EyeHero";
 import { ListTabs, type ListTab } from "@/components/site/ListTabs";
@@ -16,7 +16,7 @@ import { TouchDemo } from "@/components/site/TouchDemo";
 import { ContactClose, LogoMarquee, PageIntro, SectionHead, WorkEditorial } from "@/components/site/sections";
 import { getCopy } from "@/content/copy";
 import { posts } from "@/content/news";
-import { portfolio } from "@/content/portfolio";
+import { earlierWork, liveWork } from "@/content/portfolio";
 import { getService, getServices } from "@/content/services";
 import { company, contact } from "@/content/site";
 import { localeHref, type Locale } from "@/lib/i18n";
@@ -36,13 +36,6 @@ export function HomeView({ locale }: { locale: Locale }) {
   const copy = getCopy(locale);
   const href = (path: string) => localeHref(locale, path);
   const t = copy.home;
-  const workTab: ListTab = {
-    id: "work",
-    label: t.newsTabs.work,
-    items: portfolio
-      .filter((item) => item.status === "live")
-      .map((item) => ({ category: item.category[locale], title: item.title[locale], href: item.url ?? href("/work/"), external: Boolean(item.url) })),
-  };
   // Articles are published in Thai only.
   const newsTab: ListTab = {
     id: "news",
@@ -63,12 +56,14 @@ export function HomeView({ locale }: { locale: Locale }) {
       </section>
       <section className="odh-sec odh-wrap">
         <SectionHead label="Selected work">{t.workTitle}</SectionHead>
-        <WorkEditorial items={portfolio.slice(0, 4)} locale={locale} labels={copy.capability} />
+        <WorkEditorial items={liveWork} locale={locale} />
       </section>
       <LogoMarquee label={marqueeLabel[locale]} />
-      <section className="odh-sec odh-wrap">
-        <ListTabs tabs={locale === "th" ? [workTab, newsTab] : [workTab]} />
-      </section>
+      {locale === "th" ? (
+        <section className="odh-sec odh-wrap">
+          <ListTabs tabs={[newsTab]} />
+        </section>
+      ) : null}
       <ContactClose locale={locale} location="home-close" />
     </main>
   );
@@ -175,18 +170,13 @@ export function ServiceDetailView({ locale, slug }: { locale: Locale; slug: stri
 
       <section className="odh-wrap odh-two pb-24">
         <h2>{isPartner ? copy.capability.partner : t.toolsTitle}</h2>
-        <div>
-          <p className="odh-statementline">{isPartner ? t.partnerBody : t.toolsBody}</p>
-          <div className="mt-6">
-            <CapabilityTag kind={service.capability} labels={copy.capability} />
-          </div>
-        </div>
+        <p className="odh-statementline">{isPartner ? t.partnerBody : t.toolsBody}</p>
       </section>
 
       {isSoftware ? (
         <section className="odh-sec odh-wrap">
           <SectionHead label="Selected work">{t.relatedWork}</SectionHead>
-          <WorkEditorial items={portfolio.slice(0, 2)} locale={locale} labels={copy.capability} />
+          <WorkEditorial items={liveWork} locale={locale} />
         </section>
       ) : null}
 
@@ -214,11 +204,16 @@ export function ToolsView({ locale }: { locale: Locale }) {
           <div key={item.name} className="odh-tool">
             <h3>{item.name}</h3>
             <p>{item.description}</p>
-            <span className="odh-tool__tags">
-              <CapabilityTag kind={item.capability} labels={copy.capability} />
-            </span>
+            <span className="odh-tool__tags">{item.partner ? <CapabilityTag kind="partner" labels={copy.capability} /> : null}</span>
           </div>
         ))}
+      </section>
+      <section className="odh-sec odh-wrap odh-two">
+        <p className="odh-mono">{t.open.label}</p>
+        <div>
+          <h2>{t.open.title}</h2>
+          <p className="odh-lead">{t.open.body}</p>
+        </div>
       </section>
       <ContactClose locale={locale} location="tools-close" />
     </main>
@@ -240,19 +235,18 @@ export function WorkView({ locale }: { locale: Locale }) {
       <JsonLd data={breadcrumbSchema(locale, copy.nav.work, "/work/")} />
       <PageIntro label={t.label} title={t.title} lead={t.lead} />
       <section className="odh-wrap pb-24">
-        <WorkEditorial items={portfolio} locale={locale} labels={copy.capability} />
+        <WorkEditorial items={liveWork} locale={locale} showResult />
       </section>
-      <section className="odh-wrap pb-24">
+      <section className="odh-wrap pb-24 odh-two">
+        <h2>{t.earlier}</h2>
         <ul className="odh-lines">
-          {portfolio.map((item) => (
+          {earlierWork.map((item) => (
             <li key={item.slug} className="flex flex-col gap-2">
-              <span>{item.client[locale]}</span>
+              <span className="flex flex-wrap items-center justify-between gap-3">
+                {item.title[locale]}
+                <CapabilityTag kind="closed" labels={copy.capability} />
+              </span>
               <span className="odh-note font-body text-base">{item.result[locale]}</span>
-              {item.url ? (
-                <a className="odh-link self-start text-base" href={item.url} target="_blank" rel="noopener noreferrer">
-                  {t.viewSite} <ArrowUpRight size={16} />
-                </a>
-              ) : null}
             </li>
           ))}
         </ul>
@@ -323,10 +317,19 @@ export function ContactView({ locale }: { locale: Locale }) {
       <section className="odh-wrap pb-24">
         <div className="odh-ways">
           <div>
+            <h2>{t.email}</h2>
+            <p>{contact.email}</p>
+            <div className="odh-cta">
+              <Button variant={locale === "en" ? "key" : "line"} asChild>
+                <EmailLink location="contact-page">{t.emailCta}</EmailLink>
+              </Button>
+            </div>
+          </div>
+          <div>
             <h2>{t.messenger}</h2>
             <p>{t.messengerNote}</p>
             <div className="odh-cta">
-              <MessengerCta location="contact-page">
+              <MessengerCta location="contact-page" variant={locale === "en" ? "line" : "key"}>
                 {t.messengerCta} <ArrowRight size={18} />
               </MessengerCta>
             </div>

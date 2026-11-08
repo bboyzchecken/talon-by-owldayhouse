@@ -14,7 +14,7 @@ const inLanguage: Record<Locale, string> = { th: "th-TH", en: "en-US" };
 
 const areaServed: Record<Locale, string[]> = {
   th: ["เชียงใหม่", "กรุงเทพมหานคร", "ประเทศไทย"],
-  en: ["Chiang Mai", "Bangkok", "Thailand"],
+  en: ["Thailand", "Worldwide"],
 };
 
 const businessDescription: Record<Locale, string> = {
@@ -43,6 +43,7 @@ export function businessSchema(locale: Locale) {
     logo: LOGO_URL,
     image: OG_IMAGE_URL,
     telephone: "+66924552450",
+    email: "owldayhouse@gmail.com",
     address: {
       "@type": "PostalAddress",
       streetAddress: locale === "th" ? `${company.address.line} ต.ไชยสถาน` : "Room B1, 1st Floor, TNC Building, 172 Chai Sathan",
@@ -57,6 +58,7 @@ export function businessSchema(locale: Locale) {
     contactPoint: {
       "@type": "ContactPoint",
       telephone: "+66924552450",
+      email: "owldayhouse@gmail.com",
       contactType: "customer service",
       availableLanguage: ["th", "en"],
       areaServed: "TH",

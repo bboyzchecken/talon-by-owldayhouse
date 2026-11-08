@@ -20,6 +20,8 @@ export const contact = {
   phoneDisplayEn: "+66 92 455 2450",
   phoneTel: "tel:+66924552450",
   messenger: "https://m.me/owldayhouse",
+  email: "owldayhouse@gmail.com",
+  emailHref: "mailto:owldayhouse@gmail.com",
   // TODO: ยืนยัน LINE official account id ที่ถูกต้องกับลูกค้า
   line: "https://line.me/R/ti/p/@owldayhouse",
 } as const;

@@ -7,7 +7,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "Owl Day House",
     short_name: "ODH",
-    description: "Software, event experiences, KOL campaigns and digital marketing from Chiang Mai.",
+    description: "Brand Experience, Engineered.",
     start_url: "/",
     display: "standalone",
     background_color: colors.white,

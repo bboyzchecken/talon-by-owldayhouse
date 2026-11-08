@@ -1,12 +1,11 @@
 import type { ReactNode } from "react";
 import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
-import { getCopy, type Copy } from "@/content/copy";
+import { getCopy } from "@/content/copy";
 import { clientNames, type PortfolioItem } from "@/content/portfolio";
 import { contact, social } from "@/content/site";
 import type { Locale } from "@/lib/i18n";
-import { CapabilityTag } from "./CapabilityTag";
-import { MessengerLink } from "@/components/MessengerCta";
+import { EmailLink, MessengerLink } from "@/components/MessengerCta";
 
 export function PageIntro({ label, title, lead }: { label: string; title: string; lead?: string }) {
   return (
@@ -30,17 +29,24 @@ export function SectionHead({ label, children }: { label: string; children: Reac
 interface WorkEditorialProps {
   items: readonly PortfolioItem[];
   locale: Locale;
-  labels: Copy["capability"];
+  showResult?: boolean;
 }
 
-/** Portfolio placed off-grid like a magazine spread. */
-export function WorkEditorial({ items, locale, labels }: WorkEditorialProps) {
+/** Live work in equal frames, so every project reads as part of one set. */
+export function WorkEditorial({ items, locale, showResult }: WorkEditorialProps) {
   return (
     <div className="odh-work">
       {items.map((item) => {
         const picture = (
-          <div className="odh-work__img">
-            <Image src={item.image} alt={`${item.title[locale]}, ${item.client[locale]}`} width={1028} height={771} sizes="(max-width: 900px) 100vw, 58vw" />
+          <div className="odh-work__panel">
+            <div className="odh-work__win">
+              <div className="odh-work__bar" aria-hidden="true">
+                <i />
+                <i />
+                <i />
+              </div>
+              <Image src={item.image ?? ""} alt={`${item.title[locale]}, ${item.client[locale]}`} width={1280} height={640} sizes="(max-width: 900px) 100vw, 30vw" />
+            </div>
           </div>
         );
         return (
@@ -53,11 +59,9 @@ export function WorkEditorial({ items, locale, labels }: WorkEditorialProps) {
               picture
             )}
             <figcaption>
-              <div className="odh-work__top">
-                <span className="odh-mono">{item.category[locale]}</span>
-                <CapabilityTag kind={item.status} labels={labels} />
-              </div>
+              <span className="odh-mono">{item.category[locale]}</span>
               <h3>{item.title[locale]}</h3>
+              {showResult ? <p className="odh-work__result">{item.result[locale]}</p> : null}
             </figcaption>
           </figure>
         );
@@ -91,21 +95,31 @@ export function ContactClose({ locale, location }: { locale: Locale; location: s
             <a className="odh-link" href={contact.phoneTel}>
               {locale === "th" ? contact.phoneDisplay : contact.phoneDisplayEn}
             </a>
-            <a className="odh-link" href={social.facebook} target="_blank" rel="noopener noreferrer">
-              Facebook <ArrowUpRight size={16} />
-            </a>
+            <EmailLink location={`${location}-text`} className="odh-link">
+              {contact.email}
+            </EmailLink>
             <a className="odh-link" href={social.linkedin} target="_blank" rel="noopener noreferrer">
               LinkedIn <ArrowUpRight size={16} />
             </a>
           </div>
         </div>
-        <MessengerLink location={location} className="odh-disc">
-          <span>
-            {t.disc[0]}
-            <br />
-            {t.disc[1]}
-          </span>
-        </MessengerLink>
+        {locale === "en" ? (
+          <EmailLink location={location} className="odh-disc">
+            <span>
+              {t.disc[0]}
+              <br />
+              {t.disc[1]}
+            </span>
+          </EmailLink>
+        ) : (
+          <MessengerLink location={location} className="odh-disc">
+            <span>
+              {t.disc[0]}
+              <br />
+              {t.disc[1]}
+            </span>
+          </MessengerLink>
+        )}
       </div>
     </section>
   );

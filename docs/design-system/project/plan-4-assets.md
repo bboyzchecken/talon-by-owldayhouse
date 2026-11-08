@@ -21,8 +21,8 @@
 | Asset | การใช้งานต่อไป |
 | --- | --- |
 | โลโก้ใหม่ไม่มีคำบรรยาย, `OwlMark` | ทุกหน้า |
-| `reg-tu-ac-th.webp`, `rodarea.webp`, `youwantgpu.webp` | `WorkEditorial` |
-| `pezy.jpg`, `speek.jpg`, `intersant.jpg` | ภาพเล็กในหน้าผลงาน พร้อมป้ายปิดให้บริการ |
+| `reg-tu-ac-th.webp`, `rodarea.webp`, `youwantgpu.webp` | `WorkEditorial` ถ่ายใหม่ขนาดเท่ากัน |
+| `pezy.jpg`, `speek.jpg`, `intersant.jpg` | เลิกใช้ เป็นบอร์ดนำเสนอที่มีโลโก้เก่า งานเหล่านี้แสดงเป็นข้อความ |
 | `Illustrations`, `Showcase` | เอกสารและเครื่องมือภายในเท่านั้น |
 | `og.png`, `ODH_Banding*.svg` | เลิกใช้ ต้องทำใหม่ด้วยโลโก้ใหม่และไม่มีราคา |
 

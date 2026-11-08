@@ -40,6 +40,23 @@ export function MessengerLink({ children, location, className }: MessengerLinkPr
   );
 }
 
+/** Mail link for teams that do not use Messenger, with the same lead tracking. */
+export function EmailLink({ children, location, className }: MessengerLinkProps) {
+  const handleClick = useCallback(() => {
+    trackEvent("generate_lead", {
+      method: "email",
+      cta_location: location,
+      ...utmEventParams(readUtm()),
+    });
+  }, [location]);
+
+  return (
+    <a href={contact.emailHref} onClick={handleClick} onAuxClick={handleClick} className={className}>
+      {children}
+    </a>
+  );
+}
+
 interface MessengerCtaProps extends MessengerLinkProps {
   variant?: ButtonProps["variant"];
   size?: ButtonProps["size"];

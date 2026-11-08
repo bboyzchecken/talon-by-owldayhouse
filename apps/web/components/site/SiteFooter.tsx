@@ -52,6 +52,9 @@ export function SiteFooter({ locale }: { locale: Locale }) {
           <p className="odh-mono">{t.contact}</p>
           <ul>
             <li>
+              <a href={contact.emailHref}>{contact.email}</a>
+            </li>
+            <li>
               <a href={contact.phoneTel}>{locale === "th" ? contact.phoneDisplay : contact.phoneDisplayEn}</a>
             </li>
             <li>

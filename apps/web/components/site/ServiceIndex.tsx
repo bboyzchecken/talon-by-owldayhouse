@@ -67,7 +67,7 @@ export function ServiceIndex({ services, labels, basePath }: ServiceIndexProps) 
         >
           <span className="odh-mono">{service.pillar.toUpperCase()}</span>
           <h3>{service.title}</h3>
-          <CapabilityTag kind={service.capability} labels={labels} />
+          {service.capability === "partner" ? <CapabilityTag kind="partner" labels={labels} /> : <span />}
           <Image className="odh-index__thumb" src={service.image} alt="" width={144} height={144} />
         </Link>
       ))}

@@ -3,7 +3,7 @@
 import type { Locale } from "@/lib/i18n";
 
 export type Pillar = "Build" | "Activate" | "Grow";
-export type Capability = "ai" | "partner";
+export type Capability = "open" | "partner";
 
 interface ServiceBase {
   slug: string;
@@ -23,11 +23,11 @@ interface ServiceText {
 export type Service = ServiceBase & ServiceText;
 
 const base: readonly ServiceBase[] = [
-  { slug: "website-software", pillar: "Build", image: "/imagery/build.webp", capability: "ai" },
-  { slug: "event-interactive", pillar: "Activate", image: "/imagery/kiosk.webp", capability: "ai" },
-  { slug: "kol-influencer", pillar: "Activate", image: "/imagery/event-hall.webp", capability: "ai" },
-  { slug: "event-content", pillar: "Activate", image: "/imagery/camera.webp", capability: "ai" },
-  { slug: "digital-marketing", pillar: "Grow", image: "/imagery/grow.webp", capability: "ai" },
+  { slug: "website-software", pillar: "Build", image: "/imagery/build.webp", capability: "open" },
+  { slug: "event-interactive", pillar: "Activate", image: "/imagery/kiosk.webp", capability: "open" },
+  { slug: "kol-influencer", pillar: "Activate", image: "/imagery/event-hall.webp", capability: "open" },
+  { slug: "event-content", pillar: "Activate", image: "/imagery/camera.webp", capability: "open" },
+  { slug: "digital-marketing", pillar: "Grow", image: "/imagery/grow.webp", capability: "open" },
   { slug: "social-listening", pillar: "Grow", image: "/imagery/listening.webp", capability: "partner" },
 ];
 

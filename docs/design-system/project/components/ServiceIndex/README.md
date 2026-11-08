@@ -2,4 +2,4 @@
 
 - **ผู้ใช้ต้องส่ง** `items` ที่มี `title`, `pillar`, `image`, `capability`, `href`
 - บนจอสัมผัสจะแสดงภาพย่อแทนภาพลอย
-- ใช้ `partner` กับ Social Listening เสมอ
+- แสดงป้ายเฉพาะ `partner` บน Social Listening
