@@ -1,4 +1,4 @@
-// /news — static blog for long-term local SEO (Chiang Mai + Bangkok keywords → /talon).
+// /news — static Thai blog for long-term local SEO (Chiang Mai + Bangkok keywords).
 // Pure data: post metadata + ordering, used by the index page, [slug] metadata,
 // sitemap and JSON-LD. Article bodies live in content/news/<slug>.tsx and are
 // mapped in content/news/bodies.tsx (kept separate so this file has no JSX deps).
@@ -38,26 +38,26 @@ export const posts: readonly NewsPost[] = [
     slug: "rab-tham-website-krungthep",
     title: "รับทำเว็บไซต์ กรุงเทพ — ทีมที่ดูแลต่อจริง ไม่หายตัวหลังส่งงาน",
     description:
-      "หาคนรับทำเว็บไซต์ในกรุงเทพที่ราคาคุ้มและดูแลต่อจริง? Owl Day House ขยายมาดูแลลูกค้า กทม. แล้ว — ทำงานออนไลน์เต็มรูปแบบ นัดเจอได้ เริ่ม ฿3,900",
+      "หาคนรับทำเว็บไซต์ในกรุงเทพที่คุณภาพดีและดูแลต่อจริง? Owl Day House ดูแลลูกค้า กทม. ทำงานออนไลน์เต็มรูปแบบ และนัดเจอได้",
     datePublished: "2026-06-21",
+    dateModified: "2026-11-09",
     keywords: [
       "รับทำเว็บไซต์ กรุงเทพ",
       "รับทำเว็บไซต์ กทม",
       "บริษัทรับทำเว็บไซต์ กรุงเทพ",
-      "ทำเว็บไซต์ กรุงเทพ ราคา",
     ],
     readingMinutes: 5,
   },
   {
     slug: "rab-tham-website-chiang-mai-rakha",
-    title: "รับทำเว็บไซต์ เชียงใหม่ ราคาเท่าไหร่ ปี 2026? คู่มือเลือกให้คุ้มไม่โดนทิ้งกลางทาง",
+    title: "รับทำเว็บไซต์ เชียงใหม่ เลือกทีมอย่างไร? คู่มือก่อนจ้าง ไม่โดนทิ้งกลางทาง",
     description:
-      "เทียบราคารับทำเว็บไซต์ในเชียงใหม่ปี 2026 ตั้งแต่หลักพันถึงหลักแสน พร้อมวิธีเลือกเจ้าที่ดูแลต่อจริง ไม่หายตัวหลังส่งงาน",
+      "วิธีเลือกทีมรับทำเว็บไซต์ในเชียงใหม่ เว็บแต่ละแบบเหมาะกับธุรกิจแบบไหน และเช็กลิสต์ก่อนจ้างเพื่อให้ได้ทีมที่ดูแลต่อจริง",
     datePublished: "2026-06-20",
+    dateModified: "2026-11-09",
     keywords: [
       "รับทำเว็บไซต์ เชียงใหม่",
-      "รับทำเว็บไซต์ เชียงใหม่ ราคา",
-      "ทำเว็บไซต์ราคาถูก เชียงใหม่",
+      "เลือกบริษัททำเว็บไซต์",
       "บริษัทรับทำเว็บไซต์ เชียงใหม่",
     ],
     readingMinutes: 6,

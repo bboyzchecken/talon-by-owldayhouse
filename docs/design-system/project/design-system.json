@@ -1,0 +1,296 @@
+{
+  "v": 3,
+  "layout": "files",
+  "createdOnFiles": {
+    "v": 1,
+    "at": "2026-11-08T18:44:24Z"
+  },
+  "title": "Owl Day House",
+  "namespace": "ODH",
+  "libraries": [],
+  "sections": {},
+  "groups": [
+    "Logos",
+    "Imagery",
+    "Portfolio",
+    "Illustrations",
+    "Showcase"
+  ],
+  "assetGroups": {
+    "Logos": {
+      "name": "Logos",
+      "tile": "m",
+      "order": [
+        "owl-logo-lockup-navy.svg",
+        "owl-logo-lockup-white.svg",
+        "owl-mark-navy.svg"
+      ],
+      "files": {
+        "owl-logo-lockup-navy.svg": {
+          "name": "owl-logo-lockup-navy.svg",
+          "blob": "5df950021168b80db8fe8948cf2b31d5",
+          "size": 8328,
+          "type": "image/svg+xml"
+        },
+        "owl-logo-lockup-white.svg": {
+          "name": "owl-logo-lockup-white.svg",
+          "blob": "03de28b6594343f9800f736647969395",
+          "size": 8328,
+          "type": "image/svg+xml"
+        },
+        "owl-mark-navy.svg": {
+          "name": "owl-mark-navy.svg",
+          "blob": "028b23febe7cded2680654d713bd53c6",
+          "size": 2199,
+          "type": "image/svg+xml"
+        }
+      }
+    },
+    "Imagery": {
+      "name": "Imagery",
+      "tile": "l",
+      "order": [
+        "eye.webp",
+        "event-hall.webp",
+        "build.webp",
+        "kiosk.webp",
+        "camera.webp",
+        "grow.webp",
+        "listening.webp"
+      ],
+      "files": {
+        "eye.webp": {
+          "name": "eye.webp",
+          "blob": "14a21314739b3668b31f45508a0d88e4",
+          "size": 280888,
+          "type": "image/webp"
+        },
+        "event-hall.webp": {
+          "name": "event-hall.webp",
+          "blob": "86368cbd816be8435b9c92224445316c",
+          "size": 101912,
+          "type": "image/webp"
+        },
+        "build.webp": {
+          "name": "build.webp",
+          "blob": "41095b839225ac39f50b36871fce0989",
+          "size": 35092,
+          "type": "image/webp"
+        },
+        "kiosk.webp": {
+          "name": "kiosk.webp",
+          "blob": "5d43e0e1f08d9585139896a56a0c69bd",
+          "size": 47680,
+          "type": "image/webp"
+        },
+        "camera.webp": {
+          "name": "camera.webp",
+          "blob": "28d3037ba497ff7756986dfcfe833219",
+          "size": 49946,
+          "type": "image/webp"
+        },
+        "grow.webp": {
+          "name": "grow.webp",
+          "blob": "0d929e27870ce77d5e262777ac1242d4",
+          "size": 20886,
+          "type": "image/webp"
+        },
+        "listening.webp": {
+          "name": "listening.webp",
+          "blob": "5b23ec13c9e4f86307411a769ccd8628",
+          "size": 62486,
+          "type": "image/webp"
+        }
+      }
+    },
+    "Portfolio": {
+      "name": "Portfolio",
+      "tile": "l",
+      "order": [
+        "reg-tu-ac-th.webp",
+        "rodarea.webp",
+        "youwantgpu.webp",
+        "pezy.jpg",
+        "speek.jpg",
+        "intersant.jpg"
+      ],
+      "files": {
+        "reg-tu-ac-th.webp": {
+          "name": "reg-tu-ac-th.webp",
+          "blob": "286b64cd08aa262a96a245332635dc5d",
+          "size": 135834,
+          "type": "image/webp"
+        },
+        "rodarea.webp": {
+          "name": "rodarea.webp",
+          "blob": "d274149d415889ce4711d0e6e3ea4d2a",
+          "size": 30716,
+          "type": "image/webp"
+        },
+        "youwantgpu.webp": {
+          "name": "youwantgpu.webp",
+          "blob": "1eda65d8b0aeca2337a60973d0cdb5cc",
+          "size": 38110,
+          "type": "image/webp"
+        },
+        "pezy.jpg": {
+          "name": "pezy.jpg",
+          "blob": "3181d147c5c019e5b8b0067e9c624e26",
+          "size": 184976,
+          "type": "image/jpeg"
+        },
+        "speek.jpg": {
+          "name": "speek.jpg",
+          "blob": "ed4d5689b939d6fc39acd77e443ea4ef",
+          "size": 160539,
+          "type": "image/jpeg"
+        },
+        "intersant.jpg": {
+          "name": "intersant.jpg",
+          "blob": "8a0a5617102c1959a3eb2367c99d4fad",
+          "size": 152110,
+          "type": "image/jpeg"
+        }
+      }
+    },
+    "Illustrations": {
+      "name": "Illustrations",
+      "tile": "s",
+      "order": [
+        "001-message.svg",
+        "002-write.svg",
+        "003-layout.svg",
+        "004-responsive-design.svg",
+        "curriculum.svg",
+        "design-collaboration.svg",
+        "devices.svg",
+        "documents.svg",
+        "file.svg",
+        "graphic-design.svg",
+        "monitor.svg",
+        "office-building.svg",
+        "online-shopping.svg",
+        "remote-ideation.svg"
+      ],
+      "files": {
+        "001-message.svg": {
+          "name": "001-message.svg",
+          "blob": "5b9017298dda22622572f083d4be0b10",
+          "size": 3473,
+          "type": "image/svg+xml"
+        },
+        "002-write.svg": {
+          "name": "002-write.svg",
+          "blob": "efad76bd1cfe0dbe3b9ac0e86a173f77",
+          "size": 6911,
+          "type": "image/svg+xml"
+        },
+        "003-layout.svg": {
+          "name": "003-layout.svg",
+          "blob": "12e5d67ad13764937e6b06fa6c858691",
+          "size": 9602,
+          "type": "image/svg+xml"
+        },
+        "004-responsive-design.svg": {
+          "name": "004-responsive-design.svg",
+          "blob": "929076066a85945d4c89f7cedf7f057c",
+          "size": 8930,
+          "type": "image/svg+xml"
+        },
+        "curriculum.svg": {
+          "name": "curriculum.svg",
+          "blob": "2136af40082416c9e6186de58b09a4b3",
+          "size": 2738,
+          "type": "image/svg+xml"
+        },
+        "design-collaboration.svg": {
+          "name": "design-collaboration.svg",
+          "blob": "8bd514d65891146f524317ea8dbc88af",
+          "size": 96573,
+          "type": "image/svg+xml"
+        },
+        "devices.svg": {
+          "name": "devices.svg",
+          "blob": "ca9a7923bfbd08e1fd0fba90e332ff43",
+          "size": 9061,
+          "type": "image/svg+xml"
+        },
+        "documents.svg": {
+          "name": "documents.svg",
+          "blob": "0f1e25b30e48d657e7fafb6285d21ebc",
+          "size": 5100,
+          "type": "image/svg+xml"
+        },
+        "file.svg": {
+          "name": "file.svg",
+          "blob": "e860f64a2433da66de67aa66b8f589c3",
+          "size": 4805,
+          "type": "image/svg+xml"
+        },
+        "graphic-design.svg": {
+          "name": "graphic-design.svg",
+          "blob": "08121b29308c5521dfa5ce439537a43b",
+          "size": 7633,
+          "type": "image/svg+xml"
+        },
+        "monitor.svg": {
+          "name": "monitor.svg",
+          "blob": "1056cc2293bd0427e4202643437f012a",
+          "size": 3543,
+          "type": "image/svg+xml"
+        },
+        "office-building.svg": {
+          "name": "office-building.svg",
+          "blob": "801bd7b20d5f0b085e05e85eb2a43336",
+          "size": 7392,
+          "type": "image/svg+xml"
+        },
+        "online-shopping.svg": {
+          "name": "online-shopping.svg",
+          "blob": "a64c9b63abafa0b261939dd28cd3973c",
+          "size": 79971,
+          "type": "image/svg+xml"
+        },
+        "remote-ideation.svg": {
+          "name": "remote-ideation.svg",
+          "blob": "55b40916f9dbec817a8dae9e5a0dea39",
+          "size": 96621,
+          "type": "image/svg+xml"
+        }
+      }
+    },
+    "Showcase": {
+      "name": "Showcase",
+      "tile": "l",
+      "order": [
+        "surface.svg",
+        "blueprint.svg"
+      ],
+      "files": {
+        "surface.svg": {
+          "name": "surface.svg",
+          "blob": "fd3137d879202b9ea8cb57e25bd42f2c",
+          "size": 6863,
+          "type": "image/svg+xml"
+        },
+        "blueprint.svg": {
+          "name": "blueprint.svg",
+          "blob": "dd5bea9f40e0342b65efbc3336a97699",
+          "size": 5299,
+          "type": "image/svg+xml"
+        }
+      }
+    }
+  },
+  "blobs": {},
+  "docs": {
+    "readme": "project/README.md",
+    "sections": []
+  },
+  "lastChange": {
+    "by": "CHXQ",
+    "at": "2026-11-08T19:04:30Z",
+    "via": "Claude Code",
+    "note": "Redesign: white-first, key-point brand colour, scroll moments, logo without descriptor"
+  }
+}

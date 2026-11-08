@@ -1,0 +1,72 @@
+<!-- @dsCard group="Scroll moments" height=720 width=1280 -->
+<!doctype html>
+<html lang="th">
+<head><meta charset="utf-8"><title>ThreeActs</title></head>
+<body>
+<div class="odh-scroller" data-scroller style="--vh:720px"><div class="odh-hint"><span>เลื่อนในกรอบนี้</span></div><section class="odh-acts" data-acts><div class="odh-acts__pin"><div class="odh-acts__left"><p class="odh-mono" style="margin-bottom:12px">What we do</p><div class="odh-acts__ticks"><i><b></b></i><i><b></b></i><i><b></b></i></div><div class="odh-acts__word"><div class="odh-acts__track"><div>Build</div><div>Activate</div><div>Grow</div></div></div><div class="odh-acts__body"><div class="odh-acts__copy" style="opacity:1"><p>เว็บไซต์ แอป และระบบองค์กรที่ออกแบบให้ใช้งานจริงและพัฒนาต่อได้</p><ul><li>เว็บไซต์</li><li>เว็บแอปและโมบายแอป</li><li>ระบบองค์กร</li></ul></div><div class="odh-acts__copy"><p>เปลี่ยนอีเวนต์และแคมเปญให้คนอยากเข้าร่วม ด้วยเกมหน้างาน KOL และทีมถ่ายทำของเราเอง</p><ul><li>เกมบน Kiosk</li><li>KOL และ Influencer</li><li>ถ่ายทำและรีวิว</li></ul></div><div class="odh-acts__copy"><p>วางแผนการตลาดดิจิทัล ดูแลเพจ ยิงแอด และฟังเสียงลูกค้าเพื่อหาลูกค้าใหม่ให้แบรนด์</p><ul><li>Digital Marketing</li><li>ดูแล Social และเพจ</li><li>Social Listening</li></ul></div></div></div><div class="odh-acts__img"><figure><img src="/_blob/41095b839225ac39f50b36871fce0989" alt=""></figure><figure><img src="/_blob/5d43e0e1f08d9585139896a56a0c69bd" alt=""></figure><figure><img src="/_blob/0d929e27870ce77d5e262777ac1242d4" alt=""></figure></div></div></section><div style="height:40px"></div></div>
+<script>
+(function(){
+var clamp=function(v,a,b){return Math.min(b==null?1:b,Math.max(a||0,v))},ease=function(t){return t*t*(3-2*t)};
+var sc=document.querySelector('[data-scroller]');
+var reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function view(){if(sc){var r=sc.getBoundingClientRect();return{top:r.top,h:r.height}}return{top:0,h:window.innerHeight}}
+function run(){
+ var v=view();
+ var eye=document.querySelector('[data-eyehero]');
+ if(eye&&!reduced){
+  var r=eye.getBoundingClientRect(),p=clamp((v.top-r.top)/(r.height-v.h));
+  var pin=eye.querySelector('.odh-eyehero__pin'),b=pin.getBoundingClientRect(),o=eye.querySelector('.odh-eye').getBoundingClientRect();
+  var cx=o.left-b.left+o.width/2,cy=o.top-b.top+o.height/2,W=b.width,H=b.height,R=Math.hypot(Math.max(cx,W-cx),Math.max(cy,H-cy));
+  var layer=eye.querySelector('.odh-eyehero__reveal'),img=layer.querySelector('img');
+  var iw=img.naturalWidth||1920,ih=img.naturalHeight||1088,c=Math.max(W/iw,H/ih),px=W/2,py=H/2+(0.415-0.5)*ih*c;
+  var q=ease(clamp(p/0.72)),s0=o.width/(0.62*iw*c),rad=o.width/2+(R-o.width/2)*q;
+  var tx=(cx-px)*(1-q),ty=(cy-py)*(1-q),ptx=px+tx,pty=py+ty;
+  // Smallest scale that keeps the picture under the whole visible circle.
+  var s=Math.max(s0+(1-s0)*q,(ptx-Math.max(0,cx-rad))/px,(Math.min(W,cx+rad)-ptx)/(W-px),(pty-Math.max(0,cy-rad))/py,(Math.min(H,cy+rad)-pty)/(H-py))+0.14*clamp((p-0.72)/0.28);
+  layer.style.clipPath='circle('+rad.toFixed(1)+'px at '+cx.toFixed(1)+'px '+cy.toFixed(1)+'px)';
+  img.style.transformOrigin=px+'px '+py+'px';
+  img.style.transform='translate('+tx.toFixed(1)+'px,'+ty.toFixed(1)+'px) scale('+s.toFixed(4)+')';
+  var f=clamp((p-0.7)/0.2);layer.querySelector('.odh-eyehero__scrim').style.opacity=f;
+  var say=layer.querySelector('.odh-eyehero__say');say.style.opacity=f;say.style.transform='translateY('+((1-f)*24)+'px)';
+ }
+ document.querySelectorAll('[data-fill]').forEach(function(el){
+  var parts=el.querySelectorAll('span');if(reduced)return;var r=el.getBoundingClientRect(),p=clamp((v.top+v.h*0.86-r.top)/(r.height+v.h*0.5));
+  parts.forEach(function(s,i){s.style.opacity=(0.16+0.84*clamp(p*parts.length-i)).toFixed(3)});
+ });
+ document.querySelectorAll('[data-acts]').forEach(function(el){
+  if(reduced)return;var r=el.getBoundingClientRect(),p=clamp((v.top-r.top)/(r.height-v.h)),n=3,x=p*(n-1);
+  el.querySelector('.odh-acts__track').style.transform='translateY('+(-x*100/n)+'%)';
+  el.querySelectorAll('.odh-acts__copy').forEach(function(c,k){var d=Math.abs(x-k);c.style.opacity=clamp(1-d*2.4).toFixed(3);c.style.transform='translateY('+((k-x)*36).toFixed(1)+'px)';c.style.pointerEvents=d<.3?'auto':'none'});
+  el.querySelectorAll('.odh-acts__img figure').forEach(function(f,k){var t=k?clamp(x-(k-1)):1;if(k)f.style.clipPath='inset('+((1-ease(t))*100).toFixed(2)+'% 0 0 0)';f.querySelector('img').style.transform='scale('+(1.14-0.14*t).toFixed(4)+')'});
+  el.querySelectorAll('.odh-acts__ticks b').forEach(function(b,k){b.style.transform='scaleX('+clamp(x+1-k).toFixed(3)+')'});
+ });
+ var hint=document.querySelector('.odh-hint');if(hint&&sc)hint.classList.toggle('is-gone',sc.scrollTop>40);
+}
+var tick=false;function on(){if(!tick){tick=true;requestAnimationFrame(function(){tick=false;run()})}}
+(sc||window).addEventListener('scroll',on,{passive:true});window.addEventListener('resize',on);window.addEventListener('load',on);
+document.querySelectorAll('.odh-eyehero__reveal img').forEach(function(i){if(!i.complete)i.addEventListener('load',on)});
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(on);
+run();
+window.__odhRun=run;
+
+document.querySelectorAll('[data-index]').forEach(function(root){
+ var fl=root.querySelector('.odh-index__float'),im=fl.querySelector('img'),tx=0,ty=0,x=0,y=0,live=false;
+ function loop(){x+=(tx-x)*.16;y+=(ty-y)*.16;fl.style.transform='translate('+x.toFixed(1)+'px,'+y.toFixed(1)+'px)';if(live)requestAnimationFrame(loop)}
+ root.addEventListener('pointermove',function(e){if(e.pointerType==='touch')return;var r=root.getBoundingClientRect();tx=e.clientX-r.left+24;ty=e.clientY-r.top-160});
+ root.querySelectorAll('.odh-index__row').forEach(function(a){a.addEventListener('pointerenter',function(e){if(e.pointerType==='touch')return;im.src=a.dataset.img;fl.style.opacity=1;if(!live){live=true;loop()}})});
+ root.addEventListener('pointerleave',function(){fl.style.opacity=0;live=false});
+});
+document.querySelectorAll('[data-tabs]').forEach(function(root){
+ root.querySelectorAll('[role=tab]').forEach(function(t){t.addEventListener('click',function(){root.querySelectorAll('[role=tab]').forEach(function(o){o.setAttribute('aria-selected',o===t)});root.querySelectorAll('[data-panel]').forEach(function(p){p.hidden=p.dataset.panel!==t.dataset.p})})});
+});
+document.querySelectorAll('[data-touch]').forEach(function(root){
+ var d=root.querySelector('.odh-touch__dot'),s=root.querySelector('.odh-touch__score'),n=0;
+ d.addEventListener('click',function(){n++;s.textContent=n;d.style.left=(18+Math.random()*64)+'%';d.style.top=(28+Math.random()*50)+'%'});
+});
+document.querySelectorAll('[data-report]').forEach(function(r){
+ var tip=null;r.querySelectorAll('.odh-report__bar i').forEach(function(s){s.addEventListener('mouseenter',function(){tip=document.createElement('div');tip.className='odh-report__tip';tip.textContent=s.dataset.t;var a=r.getBoundingClientRect(),b=s.getBoundingClientRect();tip.style.left=(b.left-a.left+b.width/2)+'px';tip.style.top=(b.top-a.top-6)+'px';r.appendChild(tip)});s.addEventListener('mouseleave',function(){if(tip)tip.remove();tip=null})});
+});
+})();
+</script>
+</body>
+</html>

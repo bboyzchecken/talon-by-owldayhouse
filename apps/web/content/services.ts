@@ -1,41 +1,145 @@
-// Services for the /services page. Illustrations are the brand's own assets
-// (apps/web/public/illustrations) carried over from the existing site.
+// The six services under three pillars. Shared facts first, then copy per locale.
 
-export interface Service {
+import type { Locale } from "@/lib/i18n";
+
+export type Pillar = "Build" | "Activate" | "Grow";
+export type Capability = "ai" | "partner";
+
+interface ServiceBase {
   slug: string;
-  title: string;
-  blurb: string;
-  points: readonly string[];
-  illustration: string;
+  pillar: Pillar;
+  image: string;
+  capability: Capability;
 }
 
-export const services: readonly Service[] = [
-  {
-    slug: "website",
-    title: "เว็บไซต์",
-    blurb: "เว็บบริษัท แลนดิ้งเพจ และร้านค้า ที่โหลดไว ดูโปรบนมือถือ และพร้อมให้ Google เจอ",
-    points: ["เว็บบริษัท / องค์กร", "แลนดิ้งเพจแคมเปญ", "วาง SEO ตั้งแต่วันแรก"],
-    illustration: "/illustrations/003-layout.svg",
-  },
-  {
-    slug: "app",
-    title: "เว็บแอป & โมบายแอป",
-    blurb: "ระบบที่ลูกค้าหรือทีมใช้งานจริง ตั้งแต่ระบบจองคิวไปจนถึงแดชบอร์ดจัดการข้อมูล",
-    points: ["ระบบสมาชิก / จองคิว", "แดชบอร์ดหลังบ้าน", "รองรับทุกขนาดหน้าจอ"],
-    illustration: "/illustrations/004-responsive-design.svg",
-  },
-  {
-    slug: "enterprise",
-    title: "ระบบองค์กร",
-    blurb: "ระบบขนาดใหญ่ที่ต้องการความเสถียรและปลอดภัย เช่น ระบบลงทะเบียนหรือระบบภายในองค์กร",
-    points: ["ออกแบบเฉพาะองค์กร", "รองรับผู้ใช้จำนวนมาก", "ดูแลและพัฒนาต่อเนื่อง"],
-    illustration: "/illustrations/office-building.svg",
-  },
-  {
-    slug: "graphic",
-    title: "งานกราฟิก",
-    blurb: "โลโก้ แบรนด์ดิ้ง และงานออกแบบ ให้ภาพลักษณ์ธุรกิจดูน่าเชื่อถือและเป็นหนึ่งเดียว",
-    points: ["โลโก้ & แบรนด์ดิ้ง", "กราฟิกโซเชียล", "สื่อสิ่งพิมพ์"],
-    illustration: "/illustrations/graphic-design.svg",
-  },
+interface ServiceText {
+  title: string;
+  metaTitle: string;
+  blurb: string;
+  problem: string;
+  deliverables: readonly string[];
+}
+
+export type Service = ServiceBase & ServiceText;
+
+const base: readonly ServiceBase[] = [
+  { slug: "website-software", pillar: "Build", image: "/imagery/build.webp", capability: "ai" },
+  { slug: "event-interactive", pillar: "Activate", image: "/imagery/kiosk.webp", capability: "ai" },
+  { slug: "kol-influencer", pillar: "Activate", image: "/imagery/event-hall.webp", capability: "ai" },
+  { slug: "event-content", pillar: "Activate", image: "/imagery/camera.webp", capability: "ai" },
+  { slug: "digital-marketing", pillar: "Grow", image: "/imagery/grow.webp", capability: "ai" },
+  { slug: "social-listening", pillar: "Grow", image: "/imagery/listening.webp", capability: "partner" },
 ];
+
+const text: Record<Locale, Record<string, ServiceText>> = {
+  th: {
+    "website-software": {
+      title: "เว็บไซต์และซอฟต์แวร์",
+      metaTitle: "รับทำเว็บไซต์ เว็บแอป และระบบองค์กร เชียงใหม่",
+      blurb: "เว็บไซต์ เว็บแอป โมบายแอป และระบบองค์กรทุกรูปแบบ",
+      problem:
+        "ธุรกิจต้องการมากกว่าหน้าเว็บที่สวย เราออกแบบระบบให้ใช้งานจริง รองรับผู้ใช้จำนวนมาก และพัฒนาต่อได้เมื่อธุรกิจโตขึ้น",
+      deliverables: ["เว็บบริษัทและแลนดิ้งเพจแคมเปญ", "เว็บแอปและโมบายแอป", "ระบบหลังบ้านและแดชบอร์ด", "ระบบองค์กรที่รองรับผู้ใช้จำนวนมาก"],
+    },
+    "event-interactive": {
+      title: "Event Interactive",
+      metaTitle: "ทำเกมบน Kiosk จอทัชสกรีนสำหรับงานอีเวนต์",
+      blurb: "เกมและกิจกรรมบน Kiosk จอทัชสกรีนสำหรับงานอีเวนต์",
+      problem:
+        "บูธที่มีแค่ป้ายทำให้คนเดินผ่าน เราสร้างเกมและกิจกรรมบนจอทัชสกรีนที่ดึงคนให้หยุด เล่น และเก็บข้อมูลให้แบรนด์นำไปใช้ต่อ",
+      deliverables: ["ออกแบบกิจกรรมให้ตรงกับแคมเปญ", "เกมบน Kiosk จอทัชสกรีน", "ระบบแจกรางวัลและเก็บข้อมูลผู้ร่วมงาน", "ทีมดูแลระบบหน้างาน"],
+    },
+    "kol-influencer": {
+      title: "KOL และ Influencer",
+      metaTitle: "หา KOL และ Influencer วางแผนและทำ Creative ให้แคมเปญ",
+      blurb: "คัดคนให้ตรงแคมเปญ วางแผน และทำ creative ให้ครบ",
+      problem:
+        "คนดังที่สุดไม่ได้เหมาะกับทุกแบรนด์ เราคัด KOL และ Influencer ให้ตรงกับเป้าหมาย วางแผนการสื่อสาร และทำ creative ให้ครบทั้งแคมเปญ",
+      deliverables: ["คัดเลือก KOL และ Influencer", "วางแผนแคมเปญและตารางเผยแพร่", "คิดและผลิต creative", "สรุปผลหลังจบแคมเปญ"],
+    },
+    "event-content": {
+      title: "Event Content และรีวิว",
+      metaTitle: "ถ่ายทำ ตัดต่อ และรีวิวงานอีเวนต์โดยทีมงาน",
+      blurb: "ไปถ่ายทำและตัดต่อที่งาน หรือรีวิวโดยทีมงานของเรา",
+      problem:
+        "งานที่จัดเพียงไม่กี่วันควรมีคอนเทนต์ใช้ต่อได้อีกนาน ทีมเราลงพื้นที่ถ่ายทำ ตัดต่อ และรีวิวให้แบรนด์นำไปใช้ต่อได้ทันที",
+      deliverables: ["ทีมถ่ายภาพและวิดีโอหน้างาน", "ตัดต่อคลิปสำหรับโซเชียล", "รีวิวโดยทีมงาน", "คลิปสรุปงานอีเวนต์"],
+    },
+    "digital-marketing": {
+      title: "Digital Marketing",
+      metaTitle: "วางแผน Digital Marketing ดูแลเพจ และยิงแอด",
+      blurb: "วางแผน ดูแล Social และเพจ ยิงแอด และหาลูกค้าใหม่",
+      problem:
+        "โฆษณาที่ไม่มีแผนคืองบที่หายไป เราวางแผนการตลาดดิจิทัล ดูแลโซเชียลและเพจ ยิงแอด และหากลุ่มเป้าหมายใหม่ให้แบรนด์",
+      deliverables: ["แผนการตลาดดิจิทัล", "ดูแล Social และเพจ", "ยิงแอดและปรับแคมเปญ", "หากลุ่มเป้าหมายและลูกค้าใหม่"],
+    },
+    "social-listening": {
+      title: "Social Listening",
+      metaTitle: "Social Listening และรายงานสำหรับแบรนด์",
+      blurb: "ติดตามเสียงพูดถึงแบรนด์และออกรายงานร่วมกับพาร์ตเนอร์",
+      problem:
+        "แบรนด์ควรรู้ว่าคนพูดถึงตัวเองอย่างไรก่อนตัดสินใจ เราทำงานร่วมกับพาร์ตเนอร์ด้าน Social Listening เพื่อติดตามเสียงลูกค้าและออกรายงานให้ทีมใช้งานได้จริง",
+      deliverables: ["ติดตามเสียงพูดถึงแบรนด์", "วิเคราะห์คู่แข่งและกระแส", "รายงานพร้อมข้อเสนอแนะ"],
+    },
+  },
+  en: {
+    "website-software": {
+      title: "Websites & Software",
+      metaTitle: "Website, Web App and Enterprise System Development in Thailand",
+      blurb: "Websites, web and mobile apps, and enterprise systems of every kind.",
+      problem:
+        "A business needs more than a good-looking page. We design systems that work under real use, handle large audiences and keep growing with you.",
+      deliverables: ["Corporate sites and campaign landing pages", "Web and mobile apps", "Back offices and dashboards", "Enterprise systems built for scale"],
+    },
+    "event-interactive": {
+      title: "Event Interactive",
+      metaTitle: "Touchscreen Kiosk Games for Events",
+      blurb: "Games and activities on touchscreen kiosks for live events.",
+      problem:
+        "People walk past a booth that only has signage. We build touchscreen games and activities that make them stop, play and leave data your brand can use.",
+      deliverables: ["Activity design tied to your campaign", "Touchscreen kiosk games", "Prize and attendee data systems", "On-site technical support"],
+    },
+    "kol-influencer": {
+      title: "KOL & Influencers",
+      metaTitle: "KOL and Influencer Campaign Planning and Creative",
+      blurb: "The right creators for the campaign, with planning and creative included.",
+      problem:
+        "The biggest name is not always the right one. We match KOLs and influencers to your goal, plan the communication and produce the creative for the whole campaign.",
+      deliverables: ["KOL and influencer selection", "Campaign and publishing plans", "Creative concept and production", "Post-campaign summary"],
+    },
+    "event-content": {
+      title: "Event Content & Reviews",
+      metaTitle: "Event Filming, Editing and Reviews",
+      blurb: "On-site filming and editing, or reviews by our own team.",
+      problem:
+        "An event that lasts a few days should leave content that lasts much longer. Our team films on site, edits, and reviews so your brand can publish right away.",
+      deliverables: ["On-site photo and video crew", "Edits for social platforms", "Reviews by our team", "Event recap films"],
+    },
+    "digital-marketing": {
+      title: "Digital Marketing",
+      metaTitle: "Digital Marketing Planning, Social Management and Paid Ads",
+      blurb: "Planning, social and page management, paid ads and new customers.",
+      problem:
+        "Ads without a plan are budget that disappears. We plan your digital marketing, manage social channels, run ads and find new audiences for your brand.",
+      deliverables: ["Digital marketing plan", "Social and page management", "Paid ads and optimization", "New audiences and customers"],
+    },
+    "social-listening": {
+      title: "Social Listening",
+      metaTitle: "Social Listening and Brand Reports",
+      blurb: "Brand conversation tracking and reports, delivered with our partner.",
+      problem:
+        "Brands should know how people talk about them before making a decision. With our social listening partner, we track the conversation and deliver reports your team can act on.",
+      deliverables: ["Brand conversation tracking", "Competitor and trend analysis", "Reports with recommendations"],
+    },
+  },
+};
+
+export const serviceSlugs = base.map((service) => service.slug);
+
+export function getServices(locale: Locale): Service[] {
+  return base.map((service) => ({ ...service, ...(text[locale][service.slug] as ServiceText) }));
+}
+
+export function getService(locale: Locale, slug: string): Service | undefined {
+  return getServices(locale).find((service) => service.slug === slug);
+}

@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "@odh/brand/theme.css";
+@import "./odh.css";
 
 /* Tailwind v4 skips node_modules — explicitly scan the shared UI package. */
 @source "../../../packages/ui/src";

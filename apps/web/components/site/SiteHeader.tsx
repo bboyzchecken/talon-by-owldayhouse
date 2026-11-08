@@ -1,0 +1,98 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Menu, X } from "lucide-react";
+import { Button, OwlLogo } from "@odh/ui";
+import { getCopy } from "@/content/copy";
+import { getServices } from "@/content/services";
+import { localeHref, switchLocalePath, type Locale } from "@/lib/i18n";
+
+const PILLARS = ["Build", "Activate", "Grow"] as const;
+
+export function SiteHeader({ locale }: { locale: Locale }) {
+  const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+  const t = getCopy(locale).nav;
+  const services = getServices(locale);
+  const href = (path: string) => localeHref(locale, path);
+  const other: Locale = locale === "th" ? "en" : "th";
+
+  const links = [
+    { href: href("/work/"), label: t.work },
+    { href: href("/tools/"), label: t.tools },
+    // Articles are published in Thai only.
+    ...(locale === "th" ? [{ href: "/news/", label: t.news }] : []),
+    { href: href("/about/"), label: t.about },
+  ];
+  const close = () => setOpen(false);
+
+  return (
+    <header className="odh-header">
+      <div className="odh-wrap odh-header__bar">
+        <Link href={href("/")} aria-label={t.home} onClick={close}>
+          <OwlLogo height={26} className="text-ink" />
+        </Link>
+
+        <nav aria-label={t.services}>
+          <div className="odh-nav__svc">
+            <Link href={href("/services/")}>{t.services}</Link>
+            <div className="odh-mega">
+              <div className="odh-wrap odh-mega__grid">
+                {PILLARS.map((pillar) => (
+                  <div key={pillar}>
+                    <p className="odh-mono">{pillar}</p>
+                    <ul>
+                      {services
+                        .filter((service) => service.pillar === pillar)
+                        .map((service) => (
+                          <li key={service.slug}>
+                            <Link href={href(`/services/${service.slug}/`)}>{service.title}</Link>
+                          </li>
+                        ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          {links.map((link) => (
+            <Link key={link.href} href={link.href}>
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+
+        <div className="odh-header__end">
+          <Link className="odh-lang" href={switchLocalePath(pathname, other)} hrefLang={other} aria-label={t.switchLabel} onClick={close}>
+            {other.toUpperCase()}
+          </Link>
+          <Button variant="key" size="sm" asChild>
+            <Link href={href("/contact/")} onClick={close}>
+              {t.cta}
+            </Link>
+          </Button>
+          <button type="button" className="odh-burger" onClick={() => setOpen((value) => !value)} aria-label={t.menu} aria-expanded={open}>
+            {open ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
+      </div>
+
+      {open ? (
+        <div className="odh-mobile">
+          <div className="odh-wrap">
+            <Link href={href("/services/")} onClick={close}>
+              {t.services}
+            </Link>
+            {links.map((link) => (
+              <Link key={link.href} href={link.href} onClick={close}>
+                {link.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+      ) : null}
+    </header>
+  );
+}

@@ -1,0 +1,221 @@
+@import url("https://fonts.googleapis.com/css2?family=Anuphan:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&family=DM+Mono:wght@400;500&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap");
+
+/* Owl Day House v3 specimens: white first, navy and gold only at key points. */
+*,*::before,*::after{box-sizing:border-box}
+html{--g:var(--gutter)}
+body{margin:0;background:var(--surface);color:var(--text);font-family:var(--font-body);font-size:16px;line-height:1.75}
+h1,h2,h3,p,ul,figure{margin:0}
+ul{padding:0;list-style:none}
+a{color:inherit}
+img{display:block;max-width:100%}
+[hidden]{display:none!important}
+:focus-visible{outline:2px solid var(--focus-ring);outline-offset:3px}
+
+.odh-demo{padding:var(--space-5);display:flex;flex-direction:column;gap:var(--space-4)}
+.odh-row{display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-3)}
+.odh-wrap{max-width:var(--container);margin-inline:auto;padding-inline:var(--g)}
+.odh-sec{padding-block:var(--space-8)}
+.odh-mono{font-family:var(--font-mono);font-size:13px;line-height:1.5;color:var(--text-2)}
+.odh-i{width:1.1em;height:1.1em;flex:none;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+
+/* Preview-only scroll frame. On the site the window is the scroller. */
+.odh-scroller{position:relative;overflow-y:auto;overflow-x:hidden;height:var(--vh);background:var(--surface);scrollbar-width:thin}
+.odh-hint{position:sticky;top:calc(var(--vh) - 44px);height:0;z-index:30;text-align:center;pointer-events:none;transition:opacity .3s}
+.odh-hint span{display:inline-block;padding:4px 14px;border-radius:var(--radius-full);background:var(--ink);color:var(--white);font-family:var(--font-mono);font-size:12px}
+.odh-hint.is-gone{opacity:0}
+
+/* Logo */
+.odh-logo,.odh-mark{display:inline-block;background:currentColor;height:var(--h,28px);-webkit-mask:var(--art) left center/contain no-repeat;mask:var(--art) left center/contain no-repeat}
+.odh-logo{aspect-ratio:291/59;--art:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%225%205%20291%2059%22%20fill%3D%22%23000%22%3E%3Cpath%20d%3D%22M44.3453%2028.9961L40.7451%2029.7864C42.691%2035.6924%2042.3156%2042.1285%2039.6968%2047.7627C35.3147%2057.1503%2024.9695%2057.9492%2017.116%2056.1603C9.26261%2054.3714%205.40463%2044.1414%205.40463%2044.1414C5.79129%2055.6566%209.06498%2060.3548%209.06498%2060.3548L13.0604%2058.4356C17.9065%2061.145%2031.2591%2063.594%2040.7451%2053.225C50.2311%2042.8561%2044.3453%2028.9961%2044.3453%2028.9961Z%22%2F%3E%3Cpath%20d%3D%22M9.3829%2032.4016C8.24137%2035.1904%207.94332%2038.2587%208.52642%2041.2187C9.10951%2044.1787%2010.5476%2046.8976%2012.6589%2049.0319C14.7703%2051.1662%2017.4602%2052.6202%2020.3888%2053.2101C23.3174%2053.7999%2026.3533%2053.4992%2029.1129%2052.346C31.8725%2051.1928%2034.2319%2049.2388%2035.8932%2046.7308C37.5545%2044.2229%2038.443%2041.2735%2038.4464%2038.2554C38.4499%2035.2373%2037.5682%2032.2859%2035.9127%2029.774C34.2573%2027.2622%2031.9023%2025.3026%2029.1454%2024.1429L28.6126%2023.9518L43.4087%2020.1481L38.9664%207.99023L8.70411%2024.4902L5.40463%2029.8744L11.952%2028.1897C10.8765%2029.4444%2010.0089%2030.8667%209.3829%2032.4016ZM18.044%2038.2113C18.044%2037.3525%2018.296%2036.513%2018.7681%2035.7989C19.2401%2035.0849%2019.9111%2034.5283%2020.6961%2034.1997C21.4811%2033.8711%2022.345%2033.7851%2023.1784%2033.9526C24.0117%2034.1202%2024.7772%2034.5337%2025.3781%2035.141C25.9789%2035.7482%2026.3881%2036.5219%2026.5538%2037.3642C26.7196%2038.2065%2026.6345%2039.0795%2026.3094%2039.8729C25.9842%2040.6664%2025.4335%2041.3445%2024.727%2041.8216C24.0205%2042.2987%2023.1899%2042.5534%2022.3402%2042.5534C21.2008%2042.5534%2020.108%2042.0959%2019.3023%2041.2816C18.4966%2040.4673%2018.044%2039.3629%2018.044%2038.2113ZM33.8712%2038.2113C33.8757%2039.5424%2033.6201%2040.8613%2033.1189%2042.0923C32.6178%2043.3233%2031.881%2044.4421%2030.9509%2045.3846C30.0209%2046.327%2028.9157%2047.0745%2027.6991%2047.5842C26.4824%2048.0938%2025.1781%2048.3556%2023.8611%2048.3544C23.2059%2048.3547%2022.5524%2048.2877%2021.9106%2048.1547C24.1814%2047.7019%2026.2262%2046.4664%2027.6959%2044.6592C29.1656%2042.8521%2029.969%2040.5853%2029.969%2038.246C29.969%2035.9067%2029.1656%2033.64%2027.6959%2031.8328C26.2262%2030.0257%2024.1814%2028.7902%2021.9106%2028.3373C22.5533%2028.2115%2023.2064%2028.1475%2023.8611%2028.1463C26.5062%2028.1463%2029.0436%2029.2053%2030.9181%2031.0916C32.7925%2032.9779%2033.8512%2035.5379%2033.8626%2038.2113H33.8712Z%22%2F%3E%3Cpath%20d%3D%22M23.7063%208.88436L18.2931%2011.8283L21.1887%207.46015L17.2104%205.21094L8.70398%2020.8686L27.1088%2010.8036L23.7063%208.88436Z%22%2F%3E%3Cg%20transform%3D%22translate(-14.115%204.025)%20scale(1.35)%22%3E%3Cpath%20d%3D%22M58.4282%2028.6574C57.3595%2028.0846%2056.4676%2027.2253%2055.8505%2026.1737C55.2012%2025.0625%2054.871%2023.7905%2054.8968%2022.5003C54.8652%2021.1957%2055.1956%2019.9081%2055.8505%2018.7834C56.4619%2017.7229%2057.3548%2016.8565%2058.4282%2016.2824C59.5694%2015.6874%2060.8392%2015.3889%2062.123%2015.414C63.3989%2015.3855%2064.6612%2015.6843%2065.7919%2016.2824C66.8626%2016.8602%2067.7547%2017.7257%2068.3696%2018.7834C69.0116%2019.9005%2069.3385%2021.174%2069.3148%2022.4656C69.3374%2023.7543%2069.0105%2025.0246%2068.3696%2026.139C67.7491%2027.1878%2066.8581%2028.0463%2065.7919%2028.6227C64.6612%2029.2208%2063.3989%2029.5196%2062.123%2029.4911C60.8421%2029.5269%2059.5725%2029.2404%2058.4282%2028.6574ZM63.7555%2025.3574C64.2354%2025.0953%2064.6317%2024.7007%2064.8983%2024.2198C65.1862%2023.6879%2065.3314%2023.0891%2065.3193%2022.4829C65.3453%2022.0466%2065.2825%2021.6096%2065.1347%2021.1988C64.9869%2020.788%2064.7573%2020.4123%2064.4601%2020.0948C64.1598%2019.8049%2063.8052%2019.5787%2063.4171%2019.4296C63.029%2019.2804%2062.6153%2019.2113%2062.2003%2019.2263C61.7708%2019.2074%2061.3421%2019.2797%2060.9419%2019.4386C60.5417%2019.5975%2060.1789%2019.8394%2059.8769%2020.1487C59.5749%2020.458%2059.3404%2020.8278%2059.1886%2021.2344C59.0367%2021.6409%2058.9709%2022.0751%2058.9953%2022.509C58.9876%2023.1146%2059.1325%2023.7124%2059.4164%2024.2458C59.686%2024.7274%2060.0853%2025.1219%2060.5677%2025.3834C61.0696%2025.6545%2061.6314%2025.792%2062.2003%2025.7829C62.7459%2025.7757%2063.2808%2025.6294%2063.7555%2025.3574Z%22%2F%3E%3Cpath%20d%3D%22M71.0933%2015.6836H75.2004L77.0564%2022.7699L78.8436%2015.6836H81.7134L83.346%2022.796L85.1848%2015.6836H89.3091L85.7433%2029.231H82.0228L80.2012%2022.0404L78.3796%2029.231H74.6591L71.0933%2015.6836Z%22%2F%3E%3Cpath%20d%3D%22M91.4142%2015.6836H95.3753V25.8528H100.788V29.231H91.4142V15.6836Z%22%2F%3E%3Cpath%20d%3D%22M109.613%2015.6841H114.579C115.918%2015.6521%20117.246%2015.9283%20118.463%2016.4918C119.533%2016.9948%20120.43%2017.808%20121.041%2018.8278C121.666%2019.9058%20121.982%2021.139%20121.952%2022.3884C122.018%2023.3336%20121.876%2024.282%20121.536%2025.1651C121.196%2026.0482%20120.665%2026.8438%20119.984%2027.4947C118.445%2028.7252%20116.513%2029.3431%20114.554%2029.2315H109.622L109.613%2015.6841ZM114.829%2025.8534C115.253%2025.8809%20115.678%2025.8116%20116.072%2025.6508C116.466%2025.49%20116.819%2025.2416%20117.105%2024.9241C117.671%2024.2068%20117.955%2023.3041%20117.905%2022.3884C117.932%2021.5195%20117.645%2020.6703%20117.097%2020.0002C116.823%2019.6846%20116.482%2019.4355%20116.1%2019.2716C115.718%2019.1077%20115.304%2019.0332%20114.889%2019.0536H113.583V25.8534H114.829Z%22%2F%3E%3Cpath%20d%3D%22M129.04%2015.6836H132.855L138.208%2029.231H134.144L133.147%2026.6257H128.757L127.734%2029.231H123.67L129.04%2015.6836ZM132.228%2023.6036L130.939%2019.8086L129.659%2023.6036H132.228Z%22%2F%3E%3Cpath%20d%3D%22M143.286%2024.0725L138.397%2015.6836H142.633L145.28%2020.347L148.098%2015.6836H152.317L147.256%2024.0725V29.231H143.286V24.0725Z%22%2F%3E%3Cpath%20d%3D%22M161.537%2015.6836H165.506V20.6596H169.966V15.6836H173.935V29.231H169.957V24.0204H165.498V29.231H161.537V15.6836Z%22%2F%3E%3Cpath%20d%3D%22M179.581%2028.6577C178.513%2028.0842%20177.621%2027.225%20177.003%2026.174C176.362%2025.0597%20176.035%2023.7893%20176.058%2022.5006C176.034%2021.209%20176.361%2019.9355%20177.003%2018.8185C177.616%2017.7588%20178.508%2016.8927%20179.581%2016.3175C180.722%2015.7224%20181.992%2015.424%20183.275%2015.449C184.551%2015.4213%20185.813%2015.72%20186.944%2016.3175C188.018%2016.892%20188.91%2017.7582%20189.522%2018.8185C190.171%2019.9331%20190.501%2021.2077%20190.476%2022.5006C190.502%2023.7908%20190.171%2025.0629%20189.522%2026.174C188.905%2027.2253%20188.013%2028.0846%20186.944%2028.6577C185.813%2029.2551%20184.551%2029.5539%20183.275%2029.5261C181.992%2029.5512%20180.722%2029.2527%20179.581%2028.6577ZM184.874%2025.3925C185.354%2025.1303%20185.75%2024.7358%20186.016%2024.2548C186.3%2023.7214%20186.445%2023.1237%20186.437%2022.518C186.473%2022.0744%20186.416%2021.6282%20186.271%2021.208C186.126%2020.7878%20185.896%2020.4028%20185.595%2020.0777C185.295%2019.7887%20184.94%2019.563%20184.552%2019.4139C184.164%2019.2648%20183.75%2019.1953%20183.336%2019.2093C182.915%2019.194%20182.496%2019.2628%20182.103%2019.4119C181.709%2019.5609%20181.348%2019.7872%20181.041%2020.0777C180.734%2020.3899%20180.494%2020.7636%20180.337%2021.1748C180.18%2021.586%20180.11%2022.0257%20180.131%2022.4659C180.119%2023.072%20180.264%2023.6708%20180.552%2024.2027C180.819%2024.6861%20181.219%2025.0812%20181.703%2025.3403C182.204%2025.6125%20182.767%2025.7501%20183.336%2025.7398C183.877%2025.7459%20184.412%2025.6146%20184.891%2025.3577L184.874%2025.3925Z%22%2F%3E%3Cpath%20d%3D%22M195.27%2028.7273C194.371%2028.2271%20193.645%2027.4602%20193.191%2026.5302C192.722%2025.5326%20192.49%2024.4385%20192.512%2023.3344V15.6836H196.482V23.2996C196.435%2023.9771%20196.644%2024.6474%20197.066%2025.1754C197.545%2025.5906%20198.154%2025.8188%20198.785%2025.8188C199.415%2025.8188%20200.025%2025.5906%20200.503%2025.1754C200.926%2024.6474%20201.134%2023.9771%20201.087%2023.2996V15.6836H205.057V23.3344C205.076%2024.4391%20204.841%2025.5332%20204.37%2026.5302C203.92%2027.4639%20203.193%2028.2321%20202.29%2028.7273C201.192%2029.248%20199.994%2029.5179%20198.78%2029.5179C197.567%2029.5179%20196.369%2029.248%20195.27%2028.7273Z%22%2F%3E%3Cpath%20d%3D%22M209.173%2029.2585C208.446%2029.1277%20207.741%2028.8969%20207.076%2028.5725V25.0206C207.776%2025.4033%20208.521%2025.695%20209.293%2025.8891C210.004%2026.0722%20210.734%2026.1684%20211.467%2026.1756C212.455%2026.1756%20212.945%2025.9151%20212.945%2025.3854C212.948%2025.172%20212.868%2024.9659%20212.721%2024.8122C212.531%2024.6162%20212.307%2024.4573%20212.06%2024.3433C211.768%2024.1956%20211.304%2023.9785%20210.659%2023.6919C209.632%2023.3146%20208.701%2022.7093%20207.935%2021.9204C207.357%2021.2581%20207.049%2020.3979%20207.076%2019.5148C207.063%2018.7493%20207.295%2017.9999%20207.738%2017.3785C208.229%2016.7183%20208.892%2016.21%20209.654%2015.9109C210.523%2015.5497%20211.456%2015.3724%20212.395%2015.3898C213.148%2015.3813%20213.899%2015.4511%20214.637%2015.5983C215.295%2015.7309%20215.933%2015.9468%20216.536%2016.2409V19.6712C215.489%2019.0679%20214.305%2018.7479%20213.099%2018.7419C212.678%2018.7254%20212.259%2018.8025%20211.871%2018.9677C211.738%2019.0159%20211.623%2019.1042%20211.541%2019.2208C211.46%2019.3373%20211.416%2019.4764%20211.415%2019.6191C211.415%2019.7606%20211.454%2019.8995%20211.527%2020.0204C211.599%2020.1414%20211.703%2020.2399%20211.828%2020.3051C212.325%2020.5887%20212.846%2020.8298%20213.383%2021.0259L213.804%2021.2083C214.549%2021.4888%20215.256%2021.8622%20215.909%2022.3198C216.366%2022.6466%20216.733%2023.086%20216.975%2023.5964C217.209%2024.1774%20217.32%2024.8017%20217.301%2025.4288C217.326%2026.0051%20217.213%2026.5789%20216.972%2027.1019C216.732%2027.6248%20216.37%2028.0816%20215.918%2028.4335C214.689%2029.2455%20213.232%2029.6297%20211.768%2029.5277C210.896%2029.5234%20210.027%2029.4332%20209.173%2029.2585Z%22%2F%3E%3Cpath%20d%3D%22M219.415%2015.6836H229.142V19.0531H223.402V20.9115H227.543V23.9944H223.402V25.8528H229.159V29.231H219.415V15.6836Z%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E")}
+.odh-mark{aspect-ratio:56/66;--art:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2056%2066%22%20fill%3D%22%23000%22%3E%3Cpath%20d%3D%22M44.3453%2028.9961L40.7451%2029.7864C42.691%2035.6924%2042.3156%2042.1285%2039.6968%2047.7627C35.3147%2057.1503%2024.9695%2057.9492%2017.116%2056.1603C9.26261%2054.3714%205.40463%2044.1414%205.40463%2044.1414C5.79129%2055.6566%209.06498%2060.3548%209.06498%2060.3548L13.0604%2058.4356C17.9065%2061.145%2031.2591%2063.594%2040.7451%2053.225C50.2311%2042.8561%2044.3453%2028.9961%2044.3453%2028.9961Z%22%2F%3E%3Cpath%20d%3D%22M9.3829%2032.4016C8.24137%2035.1904%207.94332%2038.2587%208.52642%2041.2187C9.10951%2044.1787%2010.5476%2046.8976%2012.6589%2049.0319C14.7703%2051.1662%2017.4602%2052.6202%2020.3888%2053.2101C23.3174%2053.7999%2026.3533%2053.4992%2029.1129%2052.346C31.8725%2051.1928%2034.2319%2049.2388%2035.8932%2046.7308C37.5545%2044.2229%2038.443%2041.2735%2038.4464%2038.2554C38.4499%2035.2373%2037.5682%2032.2859%2035.9127%2029.774C34.2573%2027.2622%2031.9023%2025.3026%2029.1454%2024.1429L28.6126%2023.9518L43.4087%2020.1481L38.9664%207.99023L8.70411%2024.4902L5.40463%2029.8744L11.952%2028.1897C10.8765%2029.4444%2010.0089%2030.8667%209.3829%2032.4016ZM18.044%2038.2113C18.044%2037.3525%2018.296%2036.513%2018.7681%2035.7989C19.2401%2035.0849%2019.9111%2034.5283%2020.6961%2034.1997C21.4811%2033.8711%2022.345%2033.7851%2023.1784%2033.9526C24.0117%2034.1202%2024.7772%2034.5337%2025.3781%2035.141C25.9789%2035.7482%2026.3881%2036.5219%2026.5538%2037.3642C26.7196%2038.2065%2026.6345%2039.0795%2026.3094%2039.8729C25.9842%2040.6664%2025.4335%2041.3445%2024.727%2041.8216C24.0205%2042.2987%2023.1899%2042.5534%2022.3402%2042.5534C21.2008%2042.5534%2020.108%2042.0959%2019.3023%2041.2816C18.4966%2040.4673%2018.044%2039.3629%2018.044%2038.2113ZM33.8712%2038.2113C33.8757%2039.5424%2033.6201%2040.8613%2033.1189%2042.0923C32.6178%2043.3233%2031.881%2044.4421%2030.9509%2045.3846C30.0209%2046.327%2028.9157%2047.0745%2027.6991%2047.5842C26.4824%2048.0938%2025.1781%2048.3556%2023.8611%2048.3544C23.2059%2048.3547%2022.5524%2048.2877%2021.9106%2048.1547C24.1814%2047.7019%2026.2262%2046.4664%2027.6959%2044.6592C29.1656%2042.8521%2029.969%2040.5853%2029.969%2038.246C29.969%2035.9067%2029.1656%2033.64%2027.6959%2031.8328C26.2262%2030.0257%2024.1814%2028.7902%2021.9106%2028.3373C22.5533%2028.2115%2023.2064%2028.1475%2023.8611%2028.1463C26.5062%2028.1463%2029.0436%2029.2053%2030.9181%2031.0916C32.7925%2032.9779%2033.8512%2035.5379%2033.8626%2038.2113H33.8712Z%22%2F%3E%3Cpath%20d%3D%22M23.7063%208.88436L18.2931%2011.8283L21.1887%207.46015L17.2104%205.21094L8.70398%2020.8686L27.1088%2010.8036L23.7063%208.88436Z%22%2F%3E%3C%2Fsvg%3E")}
+
+/* Button */
+.odh-btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--space-2);height:48px;padding-inline:24px;border:1px solid transparent;border-radius:var(--radius-full);font-family:var(--font-display);font-size:16px;font-weight:600;line-height:1;white-space:nowrap;text-decoration:none;cursor:pointer;transition:background-color .2s,color .2s,border-color .2s}
+.odh-btn--sm{height:40px;padding-inline:18px;font-size:14px}
+.odh-btn--key{background:var(--key);color:var(--on-key)}
+.odh-btn--key:hover{background:var(--spark);color:var(--on-spark)}
+.odh-btn--line{background:transparent;color:var(--text);border-color:var(--line-control)}
+.odh-btn--line:hover{border-color:var(--text)}
+.odh-btn[disabled]{opacity:.45;pointer-events:none}
+.odh-link{position:relative;display:inline-flex;align-items:center;gap:var(--space-1);font-family:var(--font-display);font-weight:600;text-decoration:none;color:var(--text)}
+.odh-link::after{content:"";position:absolute;left:0;right:0;bottom:-3px;height:1.5px;background:currentColor;transform:scaleX(0);transform-origin:left;transition:transform .25s}
+.odh-link:hover::after{transform:scaleX(1)}
+
+/* CapabilityTag */
+.odh-tag{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:12px;line-height:1.5;color:var(--text-2);white-space:nowrap}
+.odh-tag::before{content:"";width:7px;height:7px;border-radius:var(--radius-full);background:var(--line-control)}
+.odh-tag--ai::before{background:var(--spark)}
+.odh-tag--partner::before{background:transparent;box-shadow:inset 0 0 0 1.5px var(--text-2)}
+.odh-tag--live::before{background:var(--signal-positive)}
+
+/* SectionHeading */
+.odh-head{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,9fr);gap:var(--space-4);align-items:baseline}
+.odh-head h2{font-family:var(--font-display);font-size:clamp(32px,3.6vw,44px);line-height:1.25;font-weight:600;text-wrap:balance}
+.odh-head h2 em{font-style:normal;color:var(--text-key)}
+
+/* SiteHeader */
+.odh-header{position:sticky;top:0;z-index:20;background:var(--surface);color:var(--text)}
+.odh-header__bar{display:flex;align-items:center;gap:var(--space-5);height:var(--header-height)}
+.odh-header nav{display:flex;gap:var(--space-5);margin-left:auto;font-family:var(--font-display);font-size:15px;font-weight:500}
+.odh-header nav a{text-decoration:none}
+.odh-header nav a:hover{color:var(--text-key)}
+.odh-mega{border-block:1px solid var(--line);padding-block:var(--space-5)}
+.odh-mega__grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) minmax(0,1.3fr);gap:var(--space-5)}
+.odh-mega li a{display:block;padding-block:5px;font-family:var(--font-display);font-size:20px;font-weight:500;text-decoration:none}
+.odh-mega li a:hover{color:var(--text-key)}
+.odh-mega .odh-mono{margin-bottom:var(--space-3)}
+.odh-mega img{width:100%;height:100%;max-height:220px;object-fit:cover}
+
+/* EyeHero */
+.odh-eyehero{position:relative;height:calc(var(--vh,100vh) * 3.2)}
+.odh-eyehero__pin{position:sticky;top:var(--header-height);height:calc(var(--vh,100vh) - var(--header-height));overflow:hidden;background:var(--surface);padding:var(--space-4) var(--g)}
+.odh-eyehero__title{font-family:var(--font-display);font-size:min(13.2vw,calc((var(--vh,100vh) - 130px) / 2.9));line-height:.92;font-weight:700;letter-spacing:-.03em;font-variation-settings:"wdth" 90}
+.odh-eyehero__title span.l{display:block;white-space:nowrap}
+.odh-chip{display:inline-block;width:1.5em;height:.7em;margin-inline:.14em;border-radius:var(--radius-full);overflow:hidden;vertical-align:-.04em}
+.odh-chip img{width:100%;height:100%;object-fit:cover}
+.odh-eye{display:inline-block;width:.68em;height:.68em;margin-inline:.03em;border-radius:50%;background:var(--spark);box-shadow:0 0 0 .025em var(--spark);vertical-align:-.01em}
+.odh-eyehero__meta{position:absolute;right:var(--g);bottom:var(--space-5);width:min(400px,38%);display:flex;flex-direction:column;gap:var(--space-3)}
+.odh-eyehero__th{font-family:var(--font-display);font-size:24px;line-height:1.4;font-weight:600}
+.odh-eyehero__meta p:not(.odh-eyehero__th){color:var(--text-2)}
+.odh-eyehero__reveal{position:absolute;inset:0;z-index:2;clip-path:circle(0 at 0 0);pointer-events:none}
+.odh-eyehero__reveal img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;will-change:transform}
+.odh-eyehero__scrim{position:absolute;inset:0;background:linear-gradient(to top,color-mix(in srgb,var(--navy-deep) 82%,transparent),transparent 58%);opacity:0}
+.odh-eyehero__say{position:absolute;left:var(--g);right:var(--g);bottom:var(--space-6);opacity:0;color:var(--white);font-family:var(--font-display);font-size:clamp(32px,4.4vw,64px);line-height:1.25;font-weight:600}
+
+/* StatementFill */
+.odh-statement{max-width:1100px;margin-inline:auto;font-family:var(--font-display);font-size:clamp(28px,3.7vw,48px);line-height:1.4;font-weight:500}
+.odh-statement span{display:inline-block;margin-right:.28em;opacity:.16;transition:opacity .15s linear}
+.odh-statement b{font-weight:600;color:var(--text-key);box-shadow:inset 0 -.08em 0 var(--spark)}
+
+/* ThreeActs */
+.odh-acts{position:relative;height:calc(var(--vh,100vh) * 3.6)}
+.odh-acts__pin{position:sticky;top:var(--header-height);height:calc(var(--vh,100vh) - var(--header-height));overflow:hidden;background:var(--surface);display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:var(--space-5);padding:var(--space-5) var(--g)}
+.odh-acts__left{display:flex;flex-direction:column;min-width:0}
+.odh-acts__ticks{display:flex;gap:var(--space-2);max-width:320px}
+.odh-acts__ticks i{position:relative;flex:1;height:2px;background:var(--line);overflow:hidden}
+.odh-acts__ticks i b{position:absolute;inset:0;background:var(--text-key);transform:scaleX(0);transform-origin:left}
+.odh-acts__word{height:1em;margin-top:auto;overflow:hidden;font-family:var(--font-display);font-size:clamp(64px,10vw,140px);line-height:1;font-weight:700;letter-spacing:-.025em;font-variation-settings:"wdth" 90}
+.odh-acts__track{will-change:transform}
+.odh-acts__track div{height:1em}
+.odh-acts__body{position:relative;height:210px;margin-top:var(--space-4)}
+.odh-acts__copy{position:absolute;inset:0;opacity:0}
+.odh-acts__copy p{max-width:32rem;font-size:18px;color:var(--text-2)}
+.odh-acts__copy ul{display:flex;flex-wrap:wrap;gap:var(--space-1) var(--space-4);margin-top:var(--space-3);font-family:var(--font-display);font-size:20px;font-weight:500}
+.odh-acts__img{position:relative;min-height:0;overflow:hidden;background:var(--surface-soft)}
+.odh-acts__img figure{position:absolute;inset:0;overflow:hidden}
+.odh-acts__img figure+figure{clip-path:inset(100% 0 0 0)}
+.odh-acts__img img{width:100%;height:100%;object-fit:cover;object-position:center 40%;will-change:transform}
+
+/* ServiceIndex */
+.odh-index{position:relative}
+.odh-index__row{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,7fr) minmax(0,2fr);align-items:center;gap:var(--space-4);padding-block:var(--space-4);border-top:1px solid var(--line);text-decoration:none;color:var(--text);transition:padding .25s}
+.odh-index__row:last-of-type{border-bottom:1px solid var(--line)}
+.odh-index__row h3{font-family:var(--font-display);font-size:clamp(26px,3.6vw,44px);line-height:1.25;font-weight:600;transition:color .2s}
+.odh-index__row>:last-child{justify-self:end}
+.odh-index__thumb{display:none}
+@media (hover:hover){.odh-index__row:hover{padding-left:var(--space-4)}.odh-index__row:hover h3{color:var(--text-key)}}
+.odh-index__float{position:absolute;top:0;left:0;z-index:5;width:260px;aspect-ratio:4/5;overflow:hidden;box-shadow:var(--shadow-float);pointer-events:none;opacity:0;transition:opacity .2s;will-change:transform}
+.odh-index__float img{width:100%;height:100%;object-fit:cover}
+
+/* WorkEditorial */
+.odh-work{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:var(--space-7) var(--space-4)}
+.odh-work figure:nth-child(1){grid-column:1/8}
+.odh-work figure:nth-child(2){grid-column:9/13;margin-top:var(--space-8)}
+.odh-work figure:nth-child(3){grid-column:3/7}
+.odh-work figure:nth-child(4){grid-column:7/13;margin-top:calc(var(--space-7) * -1)}
+.odh-work__img{overflow:hidden;background:var(--surface-soft)}
+.odh-work__img img{width:100%;aspect-ratio:4/3;object-fit:cover;object-position:top;transition:transform .7s cubic-bezier(.2,.7,.2,1)}
+.odh-work a:hover img{transform:scale(1.03)}
+.odh-work a{text-decoration:none;color:inherit}
+.odh-work figcaption{display:flex;flex-direction:column;gap:2px;margin-top:var(--space-3)}
+.odh-work h3{font-family:var(--font-display);font-size:24px;line-height:1.4;font-weight:600}
+.odh-work__top{display:flex;justify-content:space-between;gap:var(--space-3)}
+
+/* NewsList */
+.odh-tabs{display:flex;gap:var(--space-4);margin-bottom:var(--space-4)}
+.odh-tabs button{position:relative;padding:0 0 6px;border:0;background:none;font-family:var(--font-display);font-size:16px;font-weight:500;color:var(--text-2);cursor:pointer}
+.odh-tabs button[aria-selected="true"]{color:var(--text)}
+.odh-tabs button[aria-selected="true"]::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--spark)}
+.odh-news a{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,8fr) auto;align-items:center;gap:var(--space-4);padding-block:var(--space-3);border-top:1px solid var(--line);text-decoration:none;color:var(--text)}
+.odh-news a:hover h3{color:var(--text-key)}
+.odh-news h3{font-family:var(--font-display);font-size:24px;line-height:1.4;font-weight:500;transition:color .2s}
+
+/* ToolRow */
+.odh-tool{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,5fr) 260px;align-items:center;gap:var(--space-4);padding-block:var(--space-3);border-top:1px solid var(--line);text-decoration:none;color:var(--text)}
+.odh-tool h3{font-family:var(--font-display);font-size:24px;line-height:1.4;font-weight:600}
+.odh-tool p{color:var(--text-2)}
+.odh-tool__tags{display:flex;justify-content:flex-end;gap:var(--space-3)}
+
+/* StatRow */
+.odh-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--space-4)}
+.odh-stat{display:flex;flex-direction:column;gap:var(--space-2)}
+.odh-stat b{font-family:var(--font-display);font-size:clamp(56px,7vw,96px);line-height:1;font-weight:600;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.odh-stat--pending b{color:var(--line-control)}
+.odh-stat p{color:var(--text-2)}
+
+/* LogoMarquee */
+.odh-marquee{overflow:hidden;padding-block:var(--space-4);border-block:1px solid var(--line)}
+.odh-marquee__t{display:flex;width:max-content;gap:var(--space-7);animation:odh-m 36s linear infinite}
+.odh-marquee:hover .odh-marquee__t{animation-play-state:paused}
+.odh-marquee span{font-family:var(--font-display);font-size:28px;font-weight:500;color:var(--text-2);white-space:nowrap}
+@keyframes odh-m{to{transform:translateX(-50%)}}
+
+/* TouchDemo */
+.odh-touch{display:flex;flex-direction:column;align-items:center;width:260px}
+.odh-touch__screen{position:relative;width:100%;aspect-ratio:9/16;overflow:hidden;border:10px solid var(--ink);background:var(--white);color:var(--ink);text-align:center;touch-action:manipulation}
+.odh-touch__stand{width:36px;height:40px;background:var(--gray-100)}
+.odh-touch__foot{width:120px;height:8px;background:var(--ink)}
+.odh-touch__score{position:absolute;top:var(--space-4);left:0;right:0;font-family:var(--font-display);font-size:64px;line-height:1;font-weight:700;letter-spacing:-.04em}
+.odh-touch__hint{position:absolute;bottom:var(--space-4);left:0;right:0;font-size:14px;color:var(--gray-600)}
+.odh-touch__dot{position:absolute;width:72px;height:72px;margin:-36px;border:0;border-radius:50%;background:var(--gold);cursor:pointer;transition:left .25s cubic-bezier(.2,.8,.2,1),top .25s cubic-bezier(.2,.8,.2,1)}
+
+/* ReportCard */
+.odh-report{position:relative;display:flex;flex-direction:column;gap:var(--space-3);max-width:520px}
+.odh-report h3{font-family:var(--font-display);font-size:24px;line-height:1.4;font-weight:600}
+.odh-report__big{font-family:var(--font-display);font-size:72px;line-height:1;font-weight:600;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.odh-report__bar{display:flex;gap:2px;height:14px}
+.odh-report__bar i{min-width:4px;transition:opacity .12s}
+.odh-report__bar i:first-child{border-radius:4px 0 0 4px}
+.odh-report__bar i:last-child{border-radius:0 4px 4px 0}
+.odh-report__bar:hover i:not(:hover){opacity:.45}
+.odh-s-pos{background:var(--signal-positive)}.odh-s-neu{background:var(--signal-neutral)}.odh-s-neg{background:var(--signal-negative)}
+.odh-report table{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+.odh-report td{padding-block:8px;border-top:1px solid var(--line)}
+.odh-report td:last-child{text-align:right}
+.odh-report__dot{display:inline-block;width:10px;height:10px;margin-right:var(--space-2);border-radius:3px}
+.odh-report__tip{position:absolute;padding:4px 10px;border-radius:var(--radius-sm);background:var(--text);color:var(--surface);font-size:13px;pointer-events:none;transform:translate(-50%,-100%)}
+
+/* ContactClose */
+.odh-close{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:var(--space-6)}
+.odh-close h2{font-family:var(--font-display);font-size:clamp(64px,10vw,144px);line-height:1.2;font-weight:700}
+.odh-close__ways{display:flex;flex-wrap:wrap;gap:var(--space-5);margin-top:var(--space-4)}
+.odh-disc{display:grid;place-items:center;width:clamp(180px,22vw,300px);aspect-ratio:1;border-radius:50%;background:var(--spark);color:var(--on-spark);font-family:var(--font-display);font-size:22px;font-weight:600;text-decoration:none;text-align:center;transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.odh-disc:hover{transform:scale(1.06)}
+
+/* SiteFooter */
+.odh-foot__grid{display:grid;grid-template-columns:minmax(0,2fr) repeat(3,minmax(0,1fr));gap:var(--space-5);padding-block:var(--space-6)}
+.odh-foot li a{display:block;padding-block:3px;text-decoration:none}
+.odh-foot li a:hover{color:var(--text-key)}
+.odh-foot p{color:var(--text-2)}
+.odh-foot .odh-mono{margin-bottom:var(--space-2)}
+.odh-foot__big{display:block;width:100%;height:auto;--h:auto;color:var(--text)}
+
+@media (max-width:900px){
+ html{--g:20px}
+ .odh-sec{padding-block:var(--space-7)}
+ .odh-header nav{display:none}.odh-header__bar>.odh-btn{margin-left:auto}
+ .odh-mega__grid,.odh-head,.odh-close,.odh-acts__pin{grid-template-columns:minmax(0,1fr)}
+ .odh-chip{display:none}
+ .odh-eyehero__meta{position:static;width:auto;margin-top:var(--space-4)}
+ .odh-acts__img{order:-1}.odh-acts__body{height:200px}
+ .odh-index__row{grid-template-columns:minmax(0,1fr) 72px}.odh-index__row>.odh-mono{grid-column:1/-1}.odh-index__row>.odh-tag{display:none}
+ .odh-index__thumb{display:block;width:72px;aspect-ratio:1;object-fit:cover}
+ .odh-work{display:flex;flex-direction:column;gap:var(--space-6)}.odh-work figure{margin-top:0!important}
+ .odh-news a,.odh-tool{grid-template-columns:minmax(0,1fr)}.odh-tool__tags{justify-content:flex-start}
+ .odh-stats,.odh-foot__grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (prefers-reduced-motion:reduce){
+ *,*::before,*::after{transition:none!important;animation:none!important}
+ .odh-eyehero,.odh-acts{height:auto}.odh-eyehero__pin,.odh-acts__pin{position:relative;top:0}
+ .odh-statement span{opacity:1}
+}

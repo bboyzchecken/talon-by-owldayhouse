@@ -133,7 +133,7 @@ export function RevealHero() {
         style={{ animationDelay: "0.7s" }}
       >
         <p className="text-sm leading-relaxed text-paper/90" style={{ textShadow: "0 1px 14px rgba(9,7,22,0.75)" }}>
-          ทุกเว็บที่เราส่งมอบ ออกแบบให้เติบโตต่อได้ — จากเว็บแรก ฿3,900 สู่ระบบระดับองค์กร
+          ทุกเว็บที่เราส่งมอบ ออกแบบให้เติบโตต่อได้ — ทั้งหน้าบ้านและระบบหลังบ้าน
           ดูแลต่อโดยทีมงานคนไทยที่เชียงใหม่
         </p>
       </div>
@@ -147,10 +147,10 @@ export function RevealHero() {
           ลองเลื่อนเคอร์เซอร์ไปบนภาพ แล้วส่องดูโครงสร้างระบบที่อยู่เบื้องหลังงานออกแบบของเรา
         </p>
         <Link
-          href="/talon"
+          href="/contact/"
           className="inline-flex items-center gap-2 whitespace-nowrap rounded-full bg-gold px-7 py-3 font-display text-sm font-semibold text-navy shadow-glow transition-all hover:scale-[1.03] hover:bg-gold/90 active:scale-95"
         >
-          เริ่มเลย ฿3,900
+          คุยโปรเจกต์
           <ArrowRight size={16} strokeWidth={2.5} />
         </Link>
       </div>
