@@ -1,13 +1,12 @@
 import Link from "next/link";
 
 // Body for /news/rab-tham-website-krungthep — Bangkok customer acquisition.
-// ODH is a Bangkok-based team.
 export default function Article() {
   return (
     <>
       <p>
         ถ้าคุณกำลังหาคน <strong>รับทำเว็บไซต์ในกรุงเทพ</strong> ที่คุณภาพดี
-        และที่สำคัญคือดูแลต่อจริง Owl Day House เป็นทีมในกรุงเทพ
+        และที่สำคัญคือดูแลต่อจริง ทีมของเรามีประสบการณ์และพร้อมดูแลลูกค้าในกรุงเทพ
         ทำงานออนไลน์ได้เต็มรูปแบบ และนัดพบได้
       </p>
 

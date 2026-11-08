@@ -32,6 +32,7 @@
 .odh-header nav a:hover{color:var(--text-key)}
 .odh-mega{position:absolute;left:0;right:0;top:100%;visibility:hidden;opacity:0;transition:opacity .2s;background:var(--surface);border-block:1px solid var(--line);padding-block:var(--space-5)}
 .odh-nav__svc:hover .odh-mega,.odh-nav__svc:focus-within .odh-mega{visibility:visible;opacity:1}
+.odh-nav__svc[data-dismissed] .odh-mega{visibility:hidden;opacity:0}
 .odh-mega__grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) minmax(0,1.3fr);gap:var(--space-5)}
 .odh-mega li a{display:block;padding-block:5px;font-family:var(--font-display);font-size:20px;font-weight:500;text-decoration:none}
 .odh-mega li a:hover{color:var(--text-key)}

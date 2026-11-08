@@ -19,7 +19,7 @@ export const copy = {
     home: {
       metaTitle: "Owl Day House | ประสบการณ์แบรนด์ ที่สร้างได้จริง",
       metaDescription:
-        "ทีมเดียวจากกรุงเทพที่ทำได้ตั้งแต่เว็บไซต์และซอฟต์แวร์ เกม Kiosk งานอีเวนต์ KOL ไปจนถึงโฆษณา Digital Marketing และรายงาน Social Listening",
+        "ทีมมากประสบการณ์ที่ทำได้ตั้งแต่เว็บไซต์และซอฟต์แวร์ เกม Kiosk งานอีเวนต์ KOL ไปจนถึงโฆษณา Digital Marketing และรายงาน Social Listening",
       subtitle: "สร้างระบบ สร้างกระแส สร้างลูกค้า",
       lead: "ทีมเดียวที่ทำได้ตั้งแต่ระบบ เกมหน้างาน KOL ไปจนถึงโฆษณาและรายงาน",
       primary: "คุยโปรเจกต์",
@@ -119,7 +119,7 @@ export const copy = {
     },
     about: {
       label: "About",
-      title: "ทีมจากกรุงเทพ ที่ลงมือครบทุกขั้น",
+      title: "ทีมมากประสบการณ์ ที่ลงมือครบทุกขั้น",
       paragraphs: [
         "Owl Day House เริ่มจากงานซอฟต์แวร์ และเติบโตมาทำงานที่ใหญ่กว่าหน้าจอ วันนี้เราดูแลตั้งแต่ระบบ กิจกรรมหน้างาน KOL คอนเทนต์ ไปจนถึงการตลาดดิจิทัล",
         "เราเชื่อว่าแบรนด์ทำงานได้ดีที่สุดเมื่อทีมที่วางแผนกับทีมที่ลงมือคือทีมเดียวกัน ทุกงานจึงมีเครื่องมือที่เราสร้างให้แบรนด์ใช้ต่อได้จริง",
@@ -131,7 +131,7 @@ export const copy = {
         { title: "พิสูจน์แล้วในระบบขนาดใหญ่", text: "ระบบของเรารองรับผู้ใช้หลายหมื่นคนพร้อมกัน เช่น reg.tu.ac.th" },
       ],
       metaTitle: "เกี่ยวกับ Owl Day House",
-      metaDescription: "Owl Day House ทีมจากกรุงเทพ บริษัทจดทะเบียน รับงานซอฟต์แวร์ อีเวนต์ KOL และการตลาดดิจิทัล",
+      metaDescription: "Owl Day House ทีมมากประสบการณ์ บริษัทจดทะเบียน รับงานซอฟต์แวร์ อีเวนต์ KOL และการตลาดดิจิทัล",
     },
     contactPage: {
       label: "Contact",
@@ -172,7 +172,7 @@ export const copy = {
     home: {
       metaTitle: "Owl Day House | Brand Experience, Engineered",
       metaDescription:
-        "One Bangkok-based team for websites and software, kiosk games, events, KOL campaigns, digital marketing and social listening reports.",
+        "One experienced team for websites and software, kiosk games, events, KOL campaigns, digital marketing and social listening reports.",
       subtitle: "Systems that work. Moments people join. Customers who stay.",
       lead: "One team, from software and on-site games to KOLs, ads and reporting.",
       primary: "Start a project",
@@ -284,7 +284,7 @@ export const copy = {
         { title: "Proven at scale", text: "Our systems serve tens of thousands of concurrent users, including reg.tu.ac.th." },
       ],
       metaTitle: "About Owl Day House",
-      metaDescription: "Owl Day House is a Bangkok-based, registered company working across software, events, KOL campaigns and digital marketing.",
+      metaDescription: "Owl Day House is an experienced, registered team working across software, events, KOL campaigns and digital marketing.",
     },
     contactPage: {
       label: "Contact",

@@ -13,6 +13,7 @@ const PILLARS = ["Build", "Activate", "Grow"] as const;
 
 export function SiteHeader({ locale }: { locale: Locale }) {
   const [open, setOpen] = useState(false);
+  const [megaDismissed, setMegaDismissed] = useState(false);
   const pathname = usePathname();
   const t = getCopy(locale).nav;
   const services = getServices(locale);
@@ -28,6 +29,14 @@ export function SiteHeader({ locale }: { locale: Locale }) {
   ];
   const close = () => setOpen(false);
 
+  // The mega menu opens on hover and focus, and both survive a client-side
+  // navigation. A click hides it until the pointer leaves or focus returns.
+  const dismissMega = () => {
+    setMegaDismissed(true);
+    if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+  };
+  const restoreMega = () => setMegaDismissed(false);
+
   return (
     <header className="odh-header">
       <div className="odh-wrap odh-header__bar">
@@ -36,8 +45,10 @@ export function SiteHeader({ locale }: { locale: Locale }) {
         </Link>
 
         <nav aria-label={t.services}>
-          <div className="odh-nav__svc">
-            <Link href={href("/services/")}>{t.services}</Link>
+          <div className="odh-nav__svc" data-dismissed={megaDismissed || undefined} onMouseLeave={restoreMega} onFocus={restoreMega}>
+            <Link href={href("/services/")} onClick={dismissMega}>
+              {t.services}
+            </Link>
             <div className="odh-mega">
               <div className="odh-wrap odh-mega__grid">
                 {PILLARS.map((pillar) => (
@@ -48,7 +59,9 @@ export function SiteHeader({ locale }: { locale: Locale }) {
                         .filter((service) => service.pillar === pillar)
                         .map((service) => (
                           <li key={service.slug}>
-                            <Link href={href(`/services/${service.slug}/`)}>{service.title}</Link>
+                            <Link href={href(`/services/${service.slug}/`)} onClick={dismissMega}>
+                              {service.title}
+                            </Link>
                           </li>
                         ))}
                     </ul>

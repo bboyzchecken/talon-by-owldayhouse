@@ -18,8 +18,8 @@ const areaServed: Record<Locale, string[]> = {
 };
 
 const businessDescription: Record<Locale, string> = {
-  th: "ทีมจากกรุงเทพที่ทำได้ตั้งแต่เว็บไซต์และซอฟต์แวร์ กิจกรรมหน้างานอีเวนต์ KOL ไปจนถึงการตลาดดิจิทัล",
-  en: "A Bangkok-based team for software, event experiences, KOL campaigns and digital marketing.",
+  th: "ทีมมากประสบการณ์ที่ทำได้ตั้งแต่เว็บไซต์และซอฟต์แวร์ กิจกรรมหน้างานอีเวนต์ KOL ไปจนถึงการตลาดดิจิทัล",
+  en: "An experienced team for software, event experiences, KOL campaigns and digital marketing.",
 };
 
 /** Reference to the single business entity, so Google merges it across pages. */
