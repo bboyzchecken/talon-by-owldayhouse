@@ -19,6 +19,17 @@ one command. Credentials are read from the environment — never committed.
 
 ## Deploy
 
+On Windows, or anywhere without lftp, use the Python script. It shows its plan with
+`--dry-run`, removes files only inside folders this site owns, and backs up the remote
+`.htaccess`. The site's `.htaccess` lives in `apps/web/public/` and ships with the build.
+
+```bash
+python infra/ftp-deploy/deploy.py --dry-run
+python infra/ftp-deploy/deploy.py
+```
+
+With lftp:
+
 ```bash
 pnpm deploy:web
 # = pnpm build:web  (turbo build --filter web → apps/web/out)
