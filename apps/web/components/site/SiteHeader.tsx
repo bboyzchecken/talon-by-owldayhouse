@@ -11,7 +11,13 @@ import { localeHref, switchLocalePath, type Locale } from "@/lib/i18n";
 
 const PILLARS = ["Build", "Activate", "Grow"] as const;
 
-export function SiteHeader({ locale }: { locale: Locale }) {
+interface SiteHeaderProps {
+  locale: Locale;
+  /** Overrides the language link on pages with no twin, such as the 404 page. */
+  languageHref?: string;
+}
+
+export function SiteHeader({ locale, languageHref }: SiteHeaderProps) {
   const [open, setOpen] = useState(false);
   const [megaDismissed, setMegaDismissed] = useState(false);
   const pathname = usePathname();
@@ -77,7 +83,7 @@ export function SiteHeader({ locale }: { locale: Locale }) {
         </nav>
 
         <div className="odh-header__end">
-          <Link className="odh-lang" href={switchLocalePath(pathname, other)} hrefLang={other} aria-label={t.switchLabel} onClick={close}>
+          <Link className="odh-lang" href={languageHref ?? switchLocalePath(pathname, other)} hrefLang={other} aria-label={t.switchLabel} onClick={close}>
             {other.toUpperCase()}
           </Link>
           <Button variant="key" size="sm" asChild className="odh-header__cta">
