@@ -30,6 +30,15 @@ export const copy = {
       servicesTitle: "เลือกเริ่มจากจุดที่แบรนด์",
       servicesKey: "ต้องการ",
       workTitle: "ผลงานที่ยังทำงานอยู่ทุกวัน",
+      loop: {
+        title: "ทุกงานต่อกัน",
+        titleKey: "เป็นวงเดียว",
+        stages: [
+          { word: "Build", title: "สร้างเครื่องมือของแบรนด์", text: "เว็บไซต์และระบบเป็นฐานที่แบรนด์เป็นเจ้าของ และต่อ AI ของแบรนด์เองได้" },
+          { word: "Activate", title: "พาคนมาเจอแบรนด์", text: "เกมหน้างาน KOL และคอนเทนต์ สร้างประสบการณ์ที่คนอยากเข้าร่วม" },
+          { word: "Grow", title: "เปลี่ยนความสนใจเป็นลูกค้า", text: "โฆษณาและ Social Listening บอกว่าอะไรได้ผล แล้วส่งกลับไปพัฒนางานรอบถัดไป" },
+        ],
+      },
       newsTabs: { work: "ผลงานล่าสุด", news: "บทความ" },
     },
     acts: [
@@ -174,6 +183,15 @@ export const copy = {
       servicesTitle: "Start where your brand",
       servicesKey: "needs it most",
       workTitle: "Work that is still running today",
+      loop: {
+        title: "Every job feeds",
+        titleKey: "the next",
+        stages: [
+          { word: "Build", title: "Tools your brand owns", text: "Websites and systems become a base your brand owns, ready to connect to your own AI." },
+          { word: "Activate", title: "Bring people to the brand", text: "On-site games, KOLs and content create experiences people want to join." },
+          { word: "Grow", title: "Turn attention into customers", text: "Ads and social listening show what works, and that feeds the next round." },
+        ],
+      },
       newsTabs: { work: "Latest work", news: "Insights" },
     },
     acts: [

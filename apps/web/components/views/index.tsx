@@ -6,6 +6,7 @@ import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 import { Button } from "@odh/ui";
 import { JsonLd } from "@/components/JsonLd";
 import { EmailLink, MessengerCta } from "@/components/MessengerCta";
+import { BrandLoop } from "@/components/site/BrandLoop";
 import { CapabilityTag } from "@/components/site/CapabilityTag";
 import { EyeHero } from "@/components/site/EyeHero";
 import { ListTabs, type ListTab } from "@/components/site/ListTabs";
@@ -48,6 +49,7 @@ export function HomeView({ locale }: { locale: Locale }) {
       <EyeHero home={t} workHref={href("/work/")} contactHref={href("/contact/")} />
       <StatementFill segments={t.statement} emphasis={t.statementKey} />
       <ThreeActs acts={copy.acts} />
+      <BrandLoop loop={t.loop} />
       <section className="odh-sec odh-wrap">
         <SectionHead label="Services">
           {t.servicesTitle} <em>{t.servicesKey}</em>
