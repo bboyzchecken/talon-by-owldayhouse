@@ -14,15 +14,18 @@ import { ServiceIndex } from "@/components/site/ServiceIndex";
 import { StatementFill } from "@/components/site/StatementFill";
 import { ThreeActs } from "@/components/site/ThreeActs";
 import { TouchDemo } from "@/components/site/TouchDemo";
+import { ArticleBody } from "@/components/site/ArticleBody";
+import { Prose } from "@/components/Prose";
 import { ContactClose, LogoMarquee, PageIntro, SectionHead, WorkEditorial } from "@/components/site/sections";
 import { getCopy } from "@/content/copy";
-import { posts } from "@/content/news";
+import { getGuide, getPost, getPosts } from "@/content/news";
+import { bodies } from "@/content/news/bodies";
 import { earlierWork, liveWork } from "@/content/portfolio";
 import { getService, getServices } from "@/content/services";
 import { company, contact } from "@/content/site";
 import { localeHref, type Locale } from "@/lib/i18n";
 import { pageMeta } from "@/lib/seo";
-import { breadcrumbSchema, servicesSchema } from "@/lib/structured-data";
+import { articleSchema, blogSchema, breadcrumbSchema, faqSchema, serviceSchema, servicesSchema } from "@/lib/structured-data";
 
 const marqueeLabel: Record<Locale, string> = { th: "ลูกค้าที่เคยร่วมงาน", en: "Clients we have worked with" };
 
@@ -37,11 +40,12 @@ export function HomeView({ locale }: { locale: Locale }) {
   const copy = getCopy(locale);
   const href = (path: string) => localeHref(locale, path);
   const t = copy.home;
-  // Articles are published in Thai only.
   const newsTab: ListTab = {
     id: "news",
     label: t.newsTabs.news,
-    items: posts.slice(0, 3).map((post) => ({ category: `${post.readingMinutes} ${copy.news.minutes}`, title: post.title, href: `/news/${post.slug}/` })),
+    items: getPosts(locale)
+      .slice(0, 3)
+      .map((post) => ({ category: post.category, title: post.title, href: href(`/news/${post.slug}/`) })),
   };
 
   return (
@@ -61,11 +65,9 @@ export function HomeView({ locale }: { locale: Locale }) {
         <WorkEditorial items={liveWork} locale={locale} />
       </section>
       <LogoMarquee label={marqueeLabel[locale]} />
-      {locale === "th" ? (
-        <section className="odh-sec odh-wrap">
-          <ListTabs tabs={[newsTab]} />
-        </section>
-      ) : null}
+      <section className="odh-sec odh-wrap">
+        <ListTabs tabs={[newsTab]} />
+      </section>
       <ContactClose locale={locale} location="home-close" />
     </main>
   );
@@ -102,7 +104,7 @@ export function ServicesView({ locale }: { locale: Locale }) {
 export function serviceDetailMeta(locale: Locale, slug: string): Metadata {
   const service = getService(locale, slug);
   if (!service) return {};
-  return pageMeta({ locale, title: service.metaTitle, description: `${service.blurb} ${service.problem}`, path: `/services/${slug}/` });
+  return pageMeta({ locale, title: service.metaTitle, description: service.metaDescription, path: `/services/${slug}/`, image: `/og/service-${slug}.jpg` });
 }
 
 export function ServiceDetailView({ locale, slug }: { locale: Locale; slug: string }) {
@@ -113,10 +115,11 @@ export function ServiceDetailView({ locale, slug }: { locale: Locale; slug: stri
   const href = (path: string) => localeHref(locale, path);
   const isSoftware = service.pillar === "Build";
   const isPartner = service.capability === "partner";
+  const guide = getGuide(locale, slug);
 
   return (
     <main>
-      <JsonLd data={breadcrumbSchema(locale, service.title, `/services/${slug}/`, { name: copy.nav.services, path: "/services/" })} />
+      <JsonLd data={[breadcrumbSchema(locale, service.title, `/services/${slug}/`, { name: copy.nav.services, path: "/services/" }), ...serviceSchema(locale, slug)]} />
       <header className="odh-intro odh-wrap">
         <Link className="odh-link" href={href("/services/")}>
           <ArrowLeft size={16} /> {t.back}
@@ -126,7 +129,7 @@ export function ServiceDetailView({ locale, slug }: { locale: Locale; slug: stri
         <p className="odh-lead">{service.blurb}</p>
       </header>
       <div className="odh-wrap">
-        <Image className="odh-pageimg" src={service.image} alt="" width={1920} height={1360} sizes="100vw" priority />
+        <Image className="odh-pageimg" src={service.image} alt={`${service.title}, Owl Day House`} width={1920} height={1360} sizes="100vw" priority />
       </div>
 
       <section className="odh-sec odh-wrap odh-two">
@@ -136,11 +139,18 @@ export function ServiceDetailView({ locale, slug }: { locale: Locale; slug: stri
 
       <section className="odh-wrap odh-two pb-24">
         <h2>{t.deliverables}</h2>
-        <ul className="odh-lines">
-          {service.deliverables.map((item) => (
-            <li key={item}>{item}</li>
-          ))}
-        </ul>
+        <div>
+          <ul className="odh-lines">
+            {service.deliverables.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+          {guide ? (
+            <Link className="odh-link mt-6" href={href(`/news/${guide.slug}/`)}>
+              {t.readGuide} <ArrowRight size={16} />
+            </Link>
+          ) : null}
+        </div>
       </section>
 
       <section className="odh-sec odh-wrap">
@@ -273,7 +283,7 @@ export function AboutView({ locale }: { locale: Locale }) {
       <JsonLd data={breadcrumbSchema(locale, copy.nav.about, "/about/")} />
       <PageIntro label={t.label} title={t.title} />
       <div className="odh-wrap">
-        <Image className="odh-pageimg" src="/imagery/event-hall.webp" alt="" width={1920} height={1088} sizes="100vw" priority />
+        <Image className="odh-pageimg" src="/imagery/event-hall.webp" alt="Owl Day House" width={1920} height={1088} sizes="100vw" priority />
       </div>
       <section className="odh-sec odh-wrap odh-two">
         <p className="odh-mono">Owl Day House</p>
@@ -375,6 +385,129 @@ export function ContactView({ locale }: { locale: Locale }) {
           </div>
         </div>
       </section>
+    </main>
+  );
+}
+
+/* News */
+
+export function newsMeta(locale: Locale): Metadata {
+  const t = getCopy(locale).news;
+  return pageMeta({ locale, title: t.metaTitle, description: t.metaDescription, path: "/news/" });
+}
+
+function formatDate(locale: Locale, iso: string): string {
+  return new Date(iso).toLocaleDateString(locale === "th" ? "th-TH" : "en-US", { year: "numeric", month: "long", day: "numeric" });
+}
+
+export function NewsView({ locale }: { locale: Locale }) {
+  const t = getCopy(locale).news;
+  const href = (path: string) => localeHref(locale, path);
+  return (
+    <main>
+      <JsonLd data={[breadcrumbSchema(locale, t.title, "/news/"), blogSchema(locale)]} />
+      <PageIntro label={t.label} title={t.title} lead={t.lead} />
+      <section className="odh-wrap pb-24">
+        <div className="odh-news">
+          {getPosts(locale).map((post) => (
+            <Link key={post.slug} href={href(`/news/${post.slug}/`)}>
+              <span className="odh-mono">
+                {formatDate(locale, post.datePublished)} · {t.read} {post.readingMinutes} {t.minutes}
+              </span>
+              <h3>{post.title}</h3>
+              <ArrowRight size={18} />
+            </Link>
+          ))}
+        </div>
+      </section>
+      <ContactClose locale={locale} location="news-close" />
+    </main>
+  );
+}
+
+export function articleMeta(locale: Locale, slug: string): Metadata {
+  const post = getPost(locale, slug);
+  if (!post) return {};
+  const base = pageMeta({
+    locale,
+    title: post.title,
+    description: post.description,
+    path: `/news/${slug}/`,
+    absoluteTitle: true,
+    singleLanguage: !post.paired,
+    image: `/og/${slug}.jpg`,
+  });
+  return {
+    ...base,
+    keywords: [...post.keywords],
+    openGraph: {
+      ...base.openGraph,
+      type: "article",
+      publishedTime: post.datePublished,
+      modifiedTime: post.dateModified ?? post.datePublished,
+    },
+  };
+}
+
+export function ArticleView({ locale, slug }: { locale: Locale; slug: string }) {
+  const post = getPost(locale, slug);
+  const Body = bodies[slug];
+  if (!post || (!post.markdown && !Body)) notFound();
+  const t = getCopy(locale).news;
+  const href = (path: string) => localeHref(locale, path);
+  const others = getPosts(locale).filter((item) => item.slug !== slug);
+  const related = [...others.filter((item) => item.service === post.service), ...others.filter((item) => item.service !== post.service)].slice(0, 3);
+
+  return (
+    <main>
+      <JsonLd
+        data={[
+          breadcrumbSchema(locale, post.title, `/news/${slug}/`, { name: t.title, path: "/news/" }),
+          articleSchema({
+            locale,
+            slug,
+            title: post.title,
+            description: post.description,
+            datePublished: post.datePublished,
+            dateModified: post.dateModified,
+            keywords: post.keywords,
+          }),
+          ...(post.faq?.length ? [faqSchema(locale, post.faq)] : []),
+        ]}
+      />
+      <article className="odh-article">
+        <Link className="odh-link" href={href("/news/")}>
+          <ArrowLeft size={16} /> {t.all}
+        </Link>
+        <p className="odh-mono mt-10">
+          <time dateTime={post.datePublished}>{formatDate(locale, post.datePublished)}</time> · {t.read} {post.readingMinutes} {t.minutes}
+        </p>
+        <h1>{post.title}</h1>
+        <Image className="mt-8 aspect-video w-full object-cover" src={post.image} alt={post.imageAlt} width={1600} height={896} sizes="(max-width: 800px) 100vw, 736px" priority />
+        <Prose className="mt-8">
+          {post.markdown ? <ArticleBody source={post.markdown} /> : Body ? <Body /> : null}
+          {post.faq?.length ? (
+            <>
+              <h2>{t.faq}</h2>
+              {post.faq.map(({ q, a }) => (
+                <div key={q}>
+                  <h3>{q}</h3>
+                  <p>{a}</p>
+                </div>
+              ))}
+            </>
+          ) : null}
+          <h2>{t.related}</h2>
+          <ul>
+            {related.map((item) => (
+              <li key={item.slug}>
+                <Link href={href(`/news/${item.slug}/`)}>{item.title}</Link>
+              </li>
+            ))}
+          </ul>
+        </Prose>
+      </article>
+      <ContactClose locale={locale} location={`article-${slug}`} />
     </main>
   );
 }

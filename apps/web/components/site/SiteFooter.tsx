@@ -34,11 +34,9 @@ export function SiteFooter({ locale }: { locale: Locale }) {
             <li>
               <Link href={href("/work/")}>{copy.nav.work}</Link>
             </li>
-            {locale === "th" ? (
-              <li>
-                <Link href="/news/">{copy.nav.news}</Link>
-              </li>
-            ) : null}
+            <li>
+              <Link href={href("/news/")}>{copy.nav.news}</Link>
+            </li>
             <li>
               <Link href={href("/about/")}>{copy.nav.about}</Link>
             </li>

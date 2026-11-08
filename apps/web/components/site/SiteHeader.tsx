@@ -23,8 +23,7 @@ export function SiteHeader({ locale }: { locale: Locale }) {
   const links = [
     { href: href("/work/"), label: t.work },
     { href: href("/tools/"), label: t.tools },
-    // Articles are published in Thai only.
-    ...(locale === "th" ? [{ href: "/news/", label: t.news }] : []),
+    { href: href("/news/"), label: t.news },
     { href: href("/about/"), label: t.about },
   ];
   const close = () => setOpen(false);

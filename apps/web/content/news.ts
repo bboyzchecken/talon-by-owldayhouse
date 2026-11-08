@@ -1,7 +1,10 @@
 // /news — static Thai blog for long-term local SEO (Chiang Mai + Bangkok keywords).
-// Pure data: post metadata + ordering, used by the index page, [slug] metadata,
+// Pure data: Thai post metadata + ordering, used by the index page, [slug] metadata,
 // sitemap and JSON-LD. Article bodies live in content/news/<slug>.tsx and are
 // mapped in content/news/bodies.tsx (kept separate so this file has no JSX deps).
+
+import { articles, type Faq } from "./articles";
+import type { Locale } from "@/lib/i18n";
 
 export interface NewsPost {
   slug: string;
@@ -78,6 +81,59 @@ export const posts: readonly NewsPost[] = [
   },
 ];
 
-export function getPost(slug: string): NewsPost | undefined {
-  return posts.find((p) => p.slug === slug);
+export interface LocalPost extends NewsPost {
+  image: string;
+  imageAlt: string;
+  category: string;
+  /** Present on guides written in content/articles.ts. */
+  markdown?: string;
+  faq?: readonly Faq[];
+  service?: string;
+  /** The article exists in both languages. */
+  paired: boolean;
+}
+
+const legacyVisual: Record<string, { image: string; imageAlt: string; category: string }> = {
+  "thurakit-prap-tua-yuk-ai": { image: "/imagery/listening.webp", imageAlt: "แผ่นกระดาษสีขาวเรียงเป็นคลื่น", category: "AI" },
+  "rab-tham-website-krungthep": { image: "/imagery/event-hall.webp", imageAlt: "งานเปิดตัวแบรนด์ในห้องโถงสีขาว", category: "เว็บไซต์" },
+  "rab-tham-website-chiang-mai-rakha": { image: "/imagery/build.webp", imageAlt: "แผ่นกระจกซ้อนกันเป็นชั้นเหมือนโครงสร้างซอฟต์แวร์", category: "เว็บไซต์" },
+  "thurakit-chiang-mai-tong-mi-website": { image: "/imagery/grow.webp", imageAlt: "แท่งสีขาวไล่ระดับสูงขึ้น มีแท่งสูงสุดสีทอง", category: "เว็บไซต์" },
+};
+
+function minutesToRead(locale: Locale, text: string): number {
+  return Math.max(3, Math.round(text.length / (locale === "th" ? 700 : 1100)));
+}
+
+/** All articles available in a language, newest first. */
+export function getPosts(locale: Locale): LocalPost[] {
+  const guides = articles.map((article): LocalPost => {
+    const copy = article[locale];
+    return {
+      slug: article.slug,
+      title: copy.title,
+      description: copy.description,
+      datePublished: article.datePublished,
+      keywords: copy.keywords,
+      readingMinutes: minutesToRead(locale, copy.body),
+      image: article.image,
+      imageAlt: copy.imageAlt,
+      category: copy.category,
+      markdown: copy.body,
+      faq: copy.faq,
+      service: article.service,
+      paired: true,
+    };
+  });
+  if (locale === "en") return guides;
+  const legacy = posts.map((post): LocalPost => ({ ...post, ...(legacyVisual[post.slug] as (typeof legacyVisual)[string]), paired: false }));
+  return [...guides, ...legacy];
+}
+
+export function getPost(locale: Locale, slug: string): LocalPost | undefined {
+  return getPosts(locale).find((post) => post.slug === slug);
+}
+
+/** The guide that supports a service page. */
+export function getGuide(locale: Locale, service: string): LocalPost | undefined {
+  return getPosts(locale).find((post) => post.service === service);
 }
