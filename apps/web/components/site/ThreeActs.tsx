@@ -13,6 +13,9 @@ export function ThreeActs({ acts }: { acts: Copy["acts"] }) {
   const frame = useCallback(() => {
     const el = root.current;
     if (!el || !track.current) return;
+    const pin = el.querySelector<HTMLElement>(".odh-acts__pin");
+    if (!pin) return;
+    if (getComputedStyle(pin).position !== "sticky") return; // short screens show the static layout
     const rect = el.getBoundingClientRect();
     const count = acts.length;
     const position = clamp(-rect.top / (rect.height - window.innerHeight)) * (count - 1);

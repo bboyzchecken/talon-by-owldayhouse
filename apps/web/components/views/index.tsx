@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Button } from "@odh/ui";
 import { JsonLd } from "@/components/JsonLd";
 import { EmailLink, MessengerCta } from "@/components/MessengerCta";
@@ -300,9 +300,6 @@ export function AboutView({ locale }: { locale: Locale }) {
 
 /* Contact */
 
-const mapsQuery = `${company.address.line} ${company.address.district} ${company.address.city} ${company.address.postcode}`;
-const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapsQuery)}`;
-
 export function contactMeta(locale: Locale): Metadata {
   const t = getCopy(locale).contactPage;
   return pageMeta({ locale, title: t.metaTitle, description: t.metaDescription, path: "/contact/" });
@@ -359,7 +356,11 @@ export function ContactView({ locale }: { locale: Locale }) {
         </div>
       </section>
       <section className="odh-wrap pb-24">
-        <div className="odh-reasons">
+        <div className="odh-reasons odh-reasons--3">
+          <div>
+            <h2>{t.base}</h2>
+            <p>{locale === "th" ? company.base : company.baseEn}</p>
+          </div>
           <div>
             <h2>{t.address}</h2>
             <address className="not-italic text-muted">
@@ -367,9 +368,6 @@ export function ContactView({ locale }: { locale: Locale }) {
               <br />
               {locale === "th" ? `${company.address.line} ${company.address.district} ${company.address.city} ${company.address.postcode}` : company.addressEn}
             </address>
-            <a className="odh-link mt-3" href={mapsUrl} target="_blank" rel="noopener noreferrer">
-              {t.map} <ArrowUpRight size={16} />
-            </a>
           </div>
           <div>
             <h2>{t.hours}</h2>

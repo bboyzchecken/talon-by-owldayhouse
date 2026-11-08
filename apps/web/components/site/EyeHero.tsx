@@ -29,6 +29,7 @@ export function EyeHero({ home, workHref, contactHref }: EyeHeroProps) {
   const frame = useCallback(() => {
     if (!root.current || !pin.current || !eye.current || !layer.current || !image.current) return;
     if (!scrim.current || !say.current) return;
+    if (getComputedStyle(pin.current).position !== "sticky") return; // short screens show the static layout
 
     const section = root.current.getBoundingClientRect();
     const progress = clamp(-section.top / (section.height - window.innerHeight));
@@ -95,6 +96,11 @@ export function EyeHero({ home, workHref, contactHref }: EyeHeroProps) {
             w.
           </span>
         </h1>
+
+        <div className="odh-eyehero__strip" aria-hidden="true">
+          <Image src="/imagery/build.webp" alt="" width={1088} height={1360} sizes="50vw" />
+          <Image src="/imagery/kiosk.webp" alt="" width={1088} height={1360} sizes="50vw" />
+        </div>
 
         <div className="odh-eyehero__meta">
           <p className="odh-eyehero__th">{home.subtitle}</p>

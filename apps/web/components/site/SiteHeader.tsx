@@ -31,7 +31,7 @@ export function SiteHeader({ locale }: { locale: Locale }) {
   return (
     <header className="odh-header">
       <div className="odh-wrap odh-header__bar">
-        <Link href={href("/")} aria-label={t.home} onClick={close}>
+        <Link className="odh-header__logo" href={href("/")} aria-label={t.home} onClick={close}>
           <OwlLogo height={26} className="text-ink" />
         </Link>
 
@@ -68,7 +68,7 @@ export function SiteHeader({ locale }: { locale: Locale }) {
           <Link className="odh-lang" href={switchLocalePath(pathname, other)} hrefLang={other} aria-label={t.switchLabel} onClick={close}>
             {other.toUpperCase()}
           </Link>
-          <Button variant="key" size="sm" asChild>
+          <Button variant="key" size="sm" asChild className="odh-header__cta">
             <Link href={href("/contact/")} onClick={close}>
               {t.cta}
             </Link>
@@ -90,6 +90,11 @@ export function SiteHeader({ locale }: { locale: Locale }) {
                 {link.label}
               </Link>
             ))}
+            <Button variant="key" asChild className="mt-4">
+              <Link href={href("/contact/")} onClick={close}>
+                {t.cta}
+              </Link>
+            </Button>
           </div>
         </div>
       ) : null}

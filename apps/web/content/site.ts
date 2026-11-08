@@ -12,6 +12,8 @@ export const company = {
     city: "เชียงใหม่",
     postcode: "50140",
   },
+  base: "กรุงเทพมหานคร ประเทศไทย",
+  baseEn: "Bangkok, Thailand",
   addressEn: "Room B1, 1st Floor, TNC Building, 172 Chai Sathan, Saraphi, Chiang Mai 50140",
 } as const;
 

@@ -1,20 +1,20 @@
 import Link from "next/link";
 
 // Body for /news/rab-tham-website-krungthep — Bangkok customer acquisition.
-// ODH is a Chiang Mai team now serving Bangkok clients (remote-first).
+// ODH is a Bangkok-based team.
 export default function Article() {
   return (
     <>
       <p>
         ถ้าคุณกำลังหาคน <strong>รับทำเว็บไซต์ในกรุงเทพ</strong> ที่คุณภาพดี
-        และที่สำคัญคือดูแลต่อจริง Owl Day House ทีมจากเชียงใหม่ดูแลลูกค้าโซนกรุงเทพด้วย
-        ทำงานออนไลน์เต็มรูปแบบ และนัดพบได้
+        และที่สำคัญคือดูแลต่อจริง Owl Day House เป็นทีมในกรุงเทพ
+        ทำงานออนไลน์ได้เต็มรูปแบบ และนัดพบได้
       </p>
 
-      <h2>อยู่กรุงเทพ ทำงานกับทีมเชียงใหม่ได้ไหม?</h2>
+      <h2>ทำงานร่วมกันอย่างไร</h2>
       <p>
         ได้ เราคุยงานผ่าน Messenger, LINE, โทรศัพท์ และวิดีโอคอล ส่งงานออนไลน์ทั้งหมด
-        และนัดเจอในกรุงเทพได้เมื่อจำเป็น
+        และนัดเจอกันได้เมื่อจำเป็น
       </p>
 
       <h2>ทำไมเลือก Owl Day House สำหรับงานในกรุงเทพ</h2>

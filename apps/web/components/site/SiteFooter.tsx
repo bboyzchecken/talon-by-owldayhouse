@@ -9,17 +9,13 @@ export function SiteFooter({ locale }: { locale: Locale }) {
   const t = copy.footer;
   const href = (path: string) => localeHref(locale, path);
   const legalName = locale === "th" ? company.legalName : company.legalNameEn;
-  const address =
-    locale === "th"
-      ? `${company.address.line} ${company.address.district} ${company.address.city} ${company.address.postcode}`
-      : company.addressEn;
 
   return (
     <footer className="odh-foot odh-wrap">
       <div className="odh-foot__grid border-t border-line">
         <div>
           <p className="odh-mono">{legalName}</p>
-          <p className="max-w-sm">{address}</p>
+          <p>{locale === "th" ? company.base : company.baseEn}</p>
         </div>
         <div>
           <p className="odh-mono">{t.services}</p>

@@ -13,13 +13,13 @@ const sameAs = [social.facebook, social.instagram, social.linkedin];
 const inLanguage: Record<Locale, string> = { th: "th-TH", en: "en-US" };
 
 const areaServed: Record<Locale, string[]> = {
-  th: ["เชียงใหม่", "กรุงเทพมหานคร", "ประเทศไทย"],
-  en: ["Thailand", "Worldwide"],
+  th: ["กรุงเทพมหานคร", "ประเทศไทย", "ทั่วโลก"],
+  en: ["Bangkok", "Thailand", "Worldwide"],
 };
 
 const businessDescription: Record<Locale, string> = {
-  th: "ทีมจากเชียงใหม่ที่ทำได้ตั้งแต่เว็บไซต์และซอฟต์แวร์ กิจกรรมหน้างานอีเวนต์ KOL ไปจนถึงการตลาดดิจิทัล",
-  en: "A Chiang Mai team for software, event experiences, KOL campaigns and digital marketing.",
+  th: "ทีมจากกรุงเทพที่ทำได้ตั้งแต่เว็บไซต์และซอฟต์แวร์ กิจกรรมหน้างานอีเวนต์ KOL ไปจนถึงการตลาดดิจิทัล",
+  en: "A Bangkok-based team for software, event experiences, KOL campaigns and digital marketing.",
 };
 
 /** Reference to the single business entity, so Google merges it across pages. */
@@ -44,6 +44,7 @@ export function businessSchema(locale: Locale) {
     image: OG_IMAGE_URL,
     telephone: "+66924552450",
     email: "owldayhouse@gmail.com",
+    // Registered office. Replace with the Bangkok office once its address is confirmed.
     address: {
       "@type": "PostalAddress",
       streetAddress: locale === "th" ? `${company.address.line} ต.ไชยสถาน` : "Room B1, 1st Floor, TNC Building, 172 Chai Sathan",
@@ -52,8 +53,6 @@ export function businessSchema(locale: Locale) {
       postalCode: company.address.postcode,
       addressCountry: "TH",
     },
-    // TODO: confirm exact coordinates of the office (approx. Saraphi, Chiang Mai).
-    geo: { "@type": "GeoCoordinates", latitude: 18.71, longitude: 99.04 },
     areaServed: areaServed[locale],
     contactPoint: {
       "@type": "ContactPoint",

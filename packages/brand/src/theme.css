@@ -32,7 +32,10 @@
 }
 
 :root {
-  --vh: 100svh;
+  --vh-section: 100vh;
+  --vh-pin: 100vh;
+  /* Full-bleed sections align to the same edge as the centered container. */
+  --edge: max(var(--gutter), calc((100vw - var(--container)) / 2 + var(--gutter)));
   --surface: #ffffff;
   --surface-soft: #f4f4f6;
   --text: #15151c;
@@ -72,9 +75,25 @@
   --header-height: 72px;
 }
 
+/* Sections are sized once; the pinned stage follows the mobile browser bar. */
+@supports (height: 100svh) {
+  :root {
+    --vh-section: 100svh;
+    --vh-pin: 100dvh;
+  }
+}
+
 @media (max-width: 900px) {
   :root {
     --gutter: 20px;
     --space-8: 96px;
+  }
+}
+
+@media (max-width: 600px) {
+  :root {
+    --space-6: 48px;
+    --space-7: 64px;
+    --space-8: 72px;
   }
 }

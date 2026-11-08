@@ -3,7 +3,7 @@
 Context for Claude Code. **Read this first every session.**
 
 ## What we're building
-Rebuild of **owldayhouse.com** as a **static-first monorepo**, bilingual: Thai at the root, English under `/en/`. ODH (Chiang Mai) is one team for **Build** (websites, software), **Activate** (kiosk games, KOL, event filming and reviews) and **Grow** (digital marketing, social listening with a partner). Every service comes with brand-owned tools that connect to the brand's own AI through MCP (say this on the Tools page and sparingly elsewhere). The site shows **no prices** and does not sell Talon or AI-built websites. The current design system and site plan live in `docs/design-system/`.
+Rebuild of **owldayhouse.com** as a **static-first monorepo**, bilingual: Thai at the root, English under `/en/`. ODH (based in Bangkok, registered in Chiang Mai) is one team for **Build** (websites, software), **Activate** (kiosk games, KOL, event filming and reviews) and **Grow** (digital marketing, social listening with a partner). Every service comes with brand-owned tools that connect to the brand's own AI through MCP (say this on the Tools page and sparingly elsewhere). The site shows **no prices** and does not sell Talon or AI-built websites. The current design system and site plan live in `docs/design-system/`.
 
 ## 🔑 Golden rule
 Follow the phases in `docs/design-system/project/plan-2-sitemap.md`. `BUILD_PLAN.md` describes the original build and is history for positioning and pricing. After each step, `pnpm lint && pnpm build` must pass, then commit before moving on.
@@ -43,8 +43,8 @@ infra/cloudflare        Cloudflare Pages option
 ## Conventions
 - TypeScript strict. Shared deps via `workspace:*` (`@odh/brand`, `@odh/ui`).
 - One `<h1>` per page · semantic HTML · `alt` on every image · `lang` set per locale by the root layouts in `app/(th)` and `app/(en)/en`. Page copy lives in `apps/web/content/`.
-- **SEO is first-class** (Step 5): metadata API, `sitemap.ts`, `robots.ts`, JSON-LD (Organization / LocalBusiness Chiang Mai / Service), OG images.
-- Contact/company facts: บริษัท อาวล์ เดย์ เฮ้าส์ จำกัด · ห้อง B1 ชั้น 1 อาคาร TNC เลขที่ 172 ต.ไชยสถาน อ.สารภี เชียงใหม่ 50140 · 092-455-2450 · owldayhouse@gmail.com · FB/IG/LinkedIn = owldayhouse.
+- **SEO is first-class** (Step 5): metadata API, `sitemap.ts`, `robots.ts`, JSON-LD (Organization / LocalBusiness / Service), OG images.
+- Present the company as Bangkok-based and global-ready; show the Chiang Mai address only as the registered office. Contact/company facts: บริษัท อาวล์ เดย์ เฮ้าส์ จำกัด · ห้อง B1 ชั้น 1 อาคาร TNC เลขที่ 172 ต.ไชยสถาน อ.สารภี เชียงใหม่ 50140 · 092-455-2450 · owldayhouse@gmail.com · FB/IG/LinkedIn = owldayhouse.
 - **Go API (if built): follow `PROJECT_TEMPLATE.md` exactly, BUT email/Gmail is removed** (no email anywhere). Internal auth = seed admin in DB, or LINE OTP — **never email OTP**.
 
 ## Commands
