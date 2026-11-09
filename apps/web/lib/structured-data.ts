@@ -1,6 +1,6 @@
 import { getCopy } from "@/content/copy";
 import { company, social } from "@/content/site";
-import { posts } from "@/content/news";
+import { publishedPosts } from "@/content/news";
 import { getServices } from "@/content/services";
 import { localeHref, type Locale } from "./i18n";
 import { OG_IMAGE_PATH, SITE_NAME, SITE_URL } from "./seo";
@@ -108,7 +108,7 @@ export const blogSchema = {
   url: `${SITE_URL}/news/`,
   inLanguage: inLanguage.th,
   publisher: businessRef,
-  blogPost: posts.map((post) => ({
+  blogPost: publishedPosts.map((post) => ({
     "@type": "BlogPosting",
     headline: post.title,
     url: `${SITE_URL}/news/${post.slug}/`,

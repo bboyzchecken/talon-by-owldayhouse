@@ -3,6 +3,7 @@
 
 import type { Locale } from "@/lib/i18n";
 import { keepThaiWordsDeep } from "@/lib/thai-wrap";
+import type { Pillar } from "./services";
 
 type Text = Record<Locale, string>;
 
@@ -95,11 +96,52 @@ export const portfolio: readonly PortfolioItem[] = keepThaiWordsDeep([
 export const liveWork = portfolio.filter((item) => item.status === "live");
 export const earlierWork = portfolio.filter((item) => item.status === "closed");
 
-export const clientNames: readonly string[] = [
-  "Thammasat University",
-  "RodArea",
-  "You want GPU?",
-  "PEZY",
-  "SPEEK",
-  "INTERSANT PLUS",
-];
+/**
+ * Campaign and event work under NDA (mostly delivered for agencies). Never name
+ * the brand: describe it by its category. Fill `metric` only with a number the
+ * team has confirmed.
+ */
+export interface CaseStudy {
+  slug: string;
+  pillar: Pillar;
+  /** Related service slugs, so service pages can show the right cases. */
+  services: readonly string[];
+  category: Text;
+  client: Text;
+  work: Text;
+  metric?: Text;
+}
+
+export const cases: readonly CaseStudy[] = keepThaiWordsDeep([
+  {
+    slug: "printer-kol",
+    pillar: "Activate",
+    services: ["kol-influencer"],
+    category: { th: "KOL และ Influencer", en: "KOL & Influencers" },
+    client: { th: "แบรนด์เครื่องพิมพ์ระดับโลก", en: "A global printer brand" },
+    work: { th: "คัดเลือกและประสานงาน KOL ให้แคมเปญของแบรนด์", en: "KOL selection and coordination for a brand campaign" },
+    metric: { th: "KOL 80+ คน", en: "80+ KOLs" },
+  },
+  {
+    slug: "restaurant-group",
+    pillar: "Activate",
+    services: ["kol-influencer", "event-content"],
+    category: { th: "แคมเปญ", en: "Campaign" },
+    client: { th: "กลุ่มธุรกิจร้านอาหารรายใหญ่", en: "A major restaurant group" },
+    work: { th: "งานแคมเปญให้กลุ่มธุรกิจร้านอาหาร รายละเอียดขอดูได้ตอนนัดคุย", en: "Campaign work for a restaurant group. Details on request when we meet." },
+  },
+  {
+    slug: "tourism-events",
+    pillar: "Activate",
+    services: ["event-interactive", "event-content"],
+    category: { th: "งานอีเวนต์ / ราชการ", en: "Events / Government" },
+    client: { th: "หน่วยงานรัฐด้านการท่องเที่ยว", en: "A national tourism agency" },
+    work: { th: "ออกบูธและงานอีเวนต์ของหน่วยงาน", en: "Booths and events for the agency" },
+  },
+]);
+
+/** Industries we have worked in, shown instead of client names (most work is under NDA). */
+export const industryNames: Record<Locale, readonly string[]> = keepThaiWordsDeep({
+  th: ["การศึกษา", "หน่วยงานรัฐ", "การท่องเที่ยว", "เทคโนโลยี", "ร้านอาหาร", "อีคอมเมิร์ซ", "วัสดุก่อสร้าง", "คอมมูนิตี้รถยนต์"],
+  en: ["Education", "Government", "Tourism", "Technology", "Restaurants", "E-commerce", "Building materials", "Car community"],
+});

@@ -3,7 +3,7 @@ import { ArrowRight } from "lucide-react";
 import { JsonLd } from "@/components/JsonLd";
 import { ContactClose, PageIntro } from "@/components/site/sections";
 import { getCopy } from "@/content/copy";
-import { posts } from "@/content/news";
+import { publishedPosts } from "@/content/news";
 import { pageMeta } from "@/lib/seo";
 import { blogSchema, breadcrumbSchema } from "@/lib/structured-data";
 
@@ -28,7 +28,7 @@ export default function NewsPage() {
       <PageIntro label={t.label} title={t.title} lead={t.lead} />
       <section className="odh-wrap pb-24">
         <div className="odh-news">
-          {posts.map((post) => (
+          {publishedPosts.map((post) => (
             <Link key={post.slug} href={`/news/${post.slug}/`}>
               <span className="odh-mono">
                 {formatDate(post.datePublished)} · {t.read} {post.readingMinutes} {t.minutes}

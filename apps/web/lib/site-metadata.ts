@@ -7,18 +7,22 @@ import { baseOpenGraph, baseTwitter, languageAlternates, SITE_NAME, SITE_URL } f
 
 const keywords: Record<Locale, string[]> = {
   th: [
-    "รับทำเว็บไซต์ กรุงเทพ",
-    "รับทำเว็บแอป",
-    "รับทำระบบองค์กร",
     "เกม Kiosk งานอีเวนต์",
+    "ระบบลงทะเบียนงานอีเวนต์",
     "จ้าง KOL Influencer",
     "ถ่ายทำงานอีเวนต์",
+    "งาน Open House มหาวิทยาลัย",
+    "งานเปิดตัวโครงการ",
     "Digital Marketing กรุงเทพ",
     "Social Listening",
+    "รับทำระบบองค์กร",
   ],
   en: [
+    "event kiosk games Thailand",
+    "event registration and lead capture",
+    "university open house events",
+    "property launch events Bangkok",
     "software development Thailand",
-    "event kiosk games",
     "KOL marketing Thailand",
     "event video production Bangkok",
     "digital marketing Thailand",

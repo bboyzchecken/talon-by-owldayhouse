@@ -1,13 +1,14 @@
 import type { MetadataRoute } from "next";
 import { SITE_UPDATED, SITE_URL } from "@/lib/seo";
 import { localeHref } from "@/lib/i18n";
-import { posts } from "@/content/news";
+import { industrySlugs } from "@/content/industries";
+import { publishedPosts } from "@/content/news";
 import { serviceSlugs } from "@/content/services";
 
 export const dynamic = "force-static";
 
 // Pages that exist in both languages.
-const pairedRoutes = ["/", "/services/", ...serviceSlugs.map((slug) => `/services/${slug}/`), "/tools/", "/work/", "/about/", "/contact/"];
+const pairedRoutes = ["/", "/services/", ...serviceSlugs.map((slug) => `/services/${slug}/`), ...industrySlugs.map((slug) => `/industries/${slug}/`), "/tools/", "/work/", "/about/", "/contact/"];
 
 const url = (path: string) => `${SITE_URL}${path}`;
 
@@ -23,7 +24,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
   });
 
   const news: MetadataRoute.Sitemap = [{ url: url("/news/"), lastModified: SITE_UPDATED }];
-  const articles: MetadataRoute.Sitemap = posts.map((post) => ({
+  // Archived posts stay reachable but are noindex, so they stay out of the sitemap.
+  const articles: MetadataRoute.Sitemap = publishedPosts.map((post) => ({
     url: url(`/news/${post.slug}/`),
     lastModified: post.dateModified ?? post.datePublished,
   }));

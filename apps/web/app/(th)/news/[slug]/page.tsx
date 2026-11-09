@@ -35,6 +35,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   });
   return {
     ...base,
+    ...(post.archived ? { robots: { index: false, follow: true } } : {}),
     keywords: [...post.keywords],
     openGraph: {
       ...base.openGraph,

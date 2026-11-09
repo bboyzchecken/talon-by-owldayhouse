@@ -43,7 +43,7 @@ const text: Record<Locale, Record<string, ServiceText>> = keepThaiWordsDeep({
       problem:
         "เราทำตั้งแต่เว็บบริษัทหน้าเดียวไปจนถึงระบบที่มีคนใช้พร้อมกันหลายหมื่นคน อย่างระบบลงทะเบียนเรียนของธรรมศาสตร์ ทุกงานออกแบบให้เพิ่มฟีเจอร์ต่อได้เมื่อธุรกิจโตขึ้น",
       deliverables: ["เว็บบริษัทและแลนดิ้งเพจแคมเปญ", "เว็บแอปและโมบายแอป", "ระบบหลังบ้านและแดชบอร์ด", "ระบบองค์กรที่รองรับผู้ใช้จำนวนมาก"],
-      tool: "ระบบที่เราสร้างทำให้เชื่อมต่อผ่าน MCP ได้ ทีมของคุณใช้ AI ที่มีอยู่ดูข้อมูลและถามคำถามได้",
+      tool: "ทีมของคุณถาม AI ที่ใช้อยู่ได้เลยว่าข้อมูลในระบบเป็นอย่างไร เพราะระบบที่เราสร้างเชื่อมกับ AI ได้ (ผ่าน MCP)",
     },
     "event-interactive": {
       title: "Event Interactive",
@@ -70,7 +70,7 @@ const text: Record<Locale, Record<string, ServiceText>> = keepThaiWordsDeep({
       problem:
         "ทีมโปรดักชันของเราวางแผนการถ่ายกับทีมของคุณก่อนวันงาน ลงพื้นที่ถ่ายภาพและวิดีโอ แล้วตัดต่อเป็นคลิปที่โพสต์ได้ทันทีหลังงานจบ",
       deliverables: ["Storyboard และ shot list ก่อนวันถ่าย", "ทีมถ่ายภาพและวิดีโอหน้างาน", "ตัดต่อคลิปสำหรับโซเชียล", "วิดีโอสรุปงานอีเวนต์"],
-      tool: "ทีมเราเชื่อมคลังฟุตเทจบน Google Drive เข้ากับ MCP ทุกไฟล์บอกได้ว่าถ่ายอะไร วันไหน แค่ถาม AI ก็รู้ว่าต้องใช้ไฟล์ไหน แล้วเรียงลงไทม์ไลน์ใน CapCut ตาม storyboard ได้ทันที งานตัดต่อจึงส่งได้ไว และถ้าทีมของคุณอยากได้ระบบแบบนี้ เราก็สร้างให้ได้",
+      tool: "ถาม AI ว่าต้องใช้ฟุตเทจไหน แล้วได้ไฟล์ทันที ทีมเราเชื่อมคลังฟุตเทจบน Google Drive เข้ากับ AI (ผ่าน MCP) ทุกไฟล์บอกได้ว่าถ่ายอะไร วันไหน แล้วเรียงลงไทม์ไลน์ใน CapCut ตาม storyboard ได้ทันที งานตัดต่อจึงส่งได้ไว และถ้าทีมของคุณอยากได้ระบบแบบนี้ เราก็สร้างให้ได้",
     },
     "digital-marketing": {
       title: "Digital Marketing",
@@ -79,7 +79,7 @@ const text: Record<Locale, Record<string, ServiceText>> = keepThaiWordsDeep({
       problem:
         "เราวางแผนก่อนว่างบจะลงช่องทางไหน แล้วดูแลเพจ ยิงแอด และปรับแคมเปญตามตัวเลขที่เข้ามา พร้อมหากลุ่มลูกค้าใหม่ให้แบรนด์",
       deliverables: ["แผนการตลาดดิจิทัล", "ดูแล Social และเพจ", "ยิงแอดและปรับแคมเปญ", "หากลุ่มเป้าหมายและลูกค้าใหม่"],
-      tool: "เราใช้ระบบดึงข้อมูลชุดเดียวกับงาน Social Listening ปรับให้ติดตามความเคลื่อนไหวของคู่แข่งเป็นรอบ ๆ และเชื่อมผ่าน MCP ทีมของคุณถาม AI เรื่องคู่แข่งได้ตลอดเวลา",
+      tool: "ทีมของคุณถาม AI ได้ตลอดว่าคู่แข่งเคลื่อนไหวอะไร เราใช้ระบบดึงข้อมูลชุดเดียวกับงาน Social Listening ติดตามคู่แข่งเป็นรอบ ๆ แล้วเชื่อมเข้ากับ AI ของทีมคุณ (ผ่าน MCP)",
     },
     "social-listening": {
       title: "Social Listening",
@@ -88,7 +88,7 @@ const text: Record<Locale, Record<string, ServiceText>> = keepThaiWordsDeep({
       problem:
         "เราทำงานร่วมกับพาร์ตเนอร์ด้าน Social Listening เก็บว่าคนพูดถึงแบรนด์และคู่แข่งว่าอย่างไร แล้วสรุปเป็นรายงานที่ทีมของคุณนำไปตัดสินใจได้",
       deliverables: ["ติดตามเสียงพูดถึงแบรนด์", "วิเคราะห์คู่แข่งและกระแส", "รายงานพร้อมข้อเสนอแนะ"],
-      tool: "เราเชื่อมข้อมูลเข้ากับ MCP ทีมของคุณใช้ AI ที่มีอยู่เช็กข้อมูลแต่ละรอบได้ตลอดเวลา และสั่งแปลงข้อมูลที่เคยต้องทำมือได้เอง",
+      tool: "ถาม AI ที่ทีมคุณใช้อยู่ได้เลยว่ารอบนี้คนพูดถึงแบรนด์อย่างไร และสั่งแปลงข้อมูลที่เคยต้องทำมือได้เอง เพราะเราเชื่อมข้อมูลเข้ากับ AI (ผ่าน MCP)",
     },
   },
   en: {
@@ -99,7 +99,7 @@ const text: Record<Locale, Record<string, ServiceText>> = keepThaiWordsDeep({
       problem:
         "We build everything from a one-page company site to systems used by tens of thousands of people at once, like Thammasat University's course registration. Every build is designed so features can be added as the business grows.",
       deliverables: ["Corporate sites and campaign landing pages", "Web and mobile apps", "Back offices and dashboards", "Enterprise systems built for scale"],
-      tool: "The systems we build can connect through MCP, so your team can bring the AI it already uses to explore the data and ask questions.",
+      tool: "Your team can ask the AI it already uses about the data in your system, because what we build connects to AI (through MCP).",
     },
     "event-interactive": {
       title: "Event Interactive",
@@ -126,7 +126,7 @@ const text: Record<Locale, Record<string, ServiceText>> = keepThaiWordsDeep({
       problem:
         "Our production team plans the shoot with your team before the event, films photo and video on site, and edits clips you can post as soon as the event ends.",
       deliverables: ["Storyboard and shot list before the shoot", "On-site photo and video crew", "Edits for social platforms", "Event recap films"],
-      tool: "Our team connects the footage library on Google Drive to MCP, so every file says what was shot and when. We ask AI which files to use and lay them onto a CapCut timeline in storyboard order right away, so edits ship fast. If your team wants a system like this, we can build one for you.",
+      tool: "Ask AI which footage you need and get the files right away. Our team connects the footage library on Google Drive to AI (through MCP), so every file says what was shot and when, then lays them onto a CapCut timeline in storyboard order. Edits ship fast, and if your team wants a system like this, we can build one for you.",
     },
     "digital-marketing": {
       title: "Digital Marketing",
@@ -135,7 +135,7 @@ const text: Record<Locale, Record<string, ServiceText>> = keepThaiWordsDeep({
       problem:
         "We first plan which channels the budget goes to, then manage your pages, run ads and adjust campaigns as the numbers come in, while finding new customers for your brand.",
       deliverables: ["Digital marketing plan", "Social and page management", "Paid ads and optimization", "New audiences and customers"],
-      tool: "We run the same data pipeline as our social listening work, set up to track competitors batch by batch and connected through MCP, so your team can use its own AI to check on competitors at any time.",
+      tool: "Your team can ask its AI what competitors are doing at any time. We run the same data pipeline as our social listening work, tracking competitors batch by batch and connecting it to your AI (through MCP).",
     },
     "social-listening": {
       title: "Social Listening",
@@ -144,7 +144,7 @@ const text: Record<Locale, Record<string, ServiceText>> = keepThaiWordsDeep({
       problem:
         "With our social listening partner, we track what people say about your brand and your competitors, then summarize it in reports your team can make decisions with.",
       deliverables: ["Brand conversation tracking", "Competitor and trend analysis", "Reports with recommendations"],
-      tool: "We connect the data to MCP, so your team can use its own AI to check each batch at any time and run conversions that used to be done by hand.",
+      tool: "Ask the AI your team already uses how people talked about the brand this round, and run conversions that used to be done by hand. We connect the data to AI (through MCP).",
     },
   },
 });
