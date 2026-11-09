@@ -26,6 +26,7 @@ import { getService, getServices } from "@/content/services";
 import { company, contact } from "@/content/site";
 import { localeHref, type Locale } from "@/lib/i18n";
 import { pageMeta } from "@/lib/seo";
+import { articleCard, localeCard, shareCard } from "@/lib/share-cards";
 import { articleSchema, blogSchema, breadcrumbSchema, faqSchema, serviceSchema, servicesSchema } from "@/lib/structured-data";
 
 /** Services that agencies and event organizers also hire us for. */
@@ -89,7 +90,7 @@ export function HomeView({ locale }: { locale: Locale }) {
 
 export function servicesMeta(locale: Locale): Metadata {
   const t = getCopy(locale).servicesPage;
-  return pageMeta({ locale, title: t.metaTitle, description: t.metaDescription, path: "/services/" });
+  return pageMeta({ locale, title: t.metaTitle, description: t.metaDescription, path: "/services/", image: localeCard(locale, "services") });
 }
 
 export function ServicesView({ locale }: { locale: Locale }) {
@@ -121,7 +122,7 @@ export function ServicesView({ locale }: { locale: Locale }) {
 export function serviceDetailMeta(locale: Locale, slug: string): Metadata {
   const service = getService(locale, slug);
   if (!service) return {};
-  return pageMeta({ locale, title: service.metaTitle, description: service.metaDescription, path: `/services/${slug}/`, image: `/og/service-${slug}.jpg` });
+  return pageMeta({ locale, title: service.metaTitle, description: service.metaDescription, path: `/services/${slug}/`, image: localeCard(locale, `services/${slug}`) });
 }
 
 export function ServiceDetailView({ locale, slug }: { locale: Locale; slug: string }) {
@@ -240,7 +241,7 @@ export function ServiceDetailView({ locale, slug }: { locale: Locale; slug: stri
 
 export function toolsMeta(locale: Locale): Metadata {
   const t = getCopy(locale).tools;
-  return pageMeta({ locale, title: t.metaTitle, description: t.metaDescription, path: "/tools/" });
+  return pageMeta({ locale, title: t.metaTitle, description: t.metaDescription, path: "/tools/", image: localeCard(locale, "tools") });
 }
 
 export function ToolsView({ locale }: { locale: Locale }) {
@@ -275,7 +276,7 @@ export function ToolsView({ locale }: { locale: Locale }) {
 
 export function workMeta(locale: Locale): Metadata {
   const t = getCopy(locale).work;
-  return pageMeta({ locale, title: t.metaTitle, description: t.metaDescription, path: "/work/" });
+  return pageMeta({ locale, title: t.metaTitle, description: t.metaDescription, path: "/work/", image: localeCard(locale, "work") });
 }
 
 export function WorkView({ locale }: { locale: Locale }) {
@@ -315,7 +316,7 @@ export function WorkView({ locale }: { locale: Locale }) {
 
 export function aboutMeta(locale: Locale): Metadata {
   const t = getCopy(locale).about;
-  return pageMeta({ locale, title: t.metaTitle, description: t.metaDescription, path: "/about/" });
+  return pageMeta({ locale, title: t.metaTitle, description: t.metaDescription, path: "/about/", image: localeCard(locale, "about") });
 }
 
 export function AboutView({ locale }: { locale: Locale }) {
@@ -372,7 +373,7 @@ export function AboutView({ locale }: { locale: Locale }) {
 
 export function contactMeta(locale: Locale): Metadata {
   const t = getCopy(locale).contactPage;
-  return pageMeta({ locale, title: t.metaTitle, description: t.metaDescription, path: "/contact/" });
+  return pageMeta({ locale, title: t.metaTitle, description: t.metaDescription, path: "/contact/", image: localeCard(locale, "contact") });
 }
 
 export function ContactView({ locale }: { locale: Locale }) {
@@ -460,7 +461,7 @@ export function ContactView({ locale }: { locale: Locale }) {
 
 export function newsMeta(locale: Locale): Metadata {
   const t = getCopy(locale).news;
-  return pageMeta({ locale, title: t.metaTitle, description: t.metaDescription, path: "/news/" });
+  return pageMeta({ locale, title: t.metaTitle, description: t.metaDescription, path: "/news/", image: shareCard("news") });
 }
 
 function formatDate(locale: Locale, iso: string): string {
@@ -502,7 +503,7 @@ export function articleMeta(locale: Locale, slug: string): Metadata {
     path: `/news/${slug}/`,
     absoluteTitle: true,
     singleLanguage: !post.paired,
-    image: `/og/${slug}.jpg`,
+    image: articleCard(slug),
   });
   return {
     ...base,
@@ -585,7 +586,7 @@ export function ArticleView({ locale, slug }: { locale: Locale; slug: string }) 
 export function industryMeta(locale: Locale, slug: string): Metadata {
   const industry = getIndustry(locale, slug);
   if (!industry) return {};
-  return pageMeta({ locale, title: industry.metaTitle, description: industry.metaDescription, path: `/industries/${slug}/` });
+  return pageMeta({ locale, title: industry.metaTitle, description: industry.metaDescription, path: `/industries/${slug}/`, image: localeCard(locale, `industries/${slug}`) });
 }
 
 const PILLARS = ["Build", "Activate", "Grow"] as const;

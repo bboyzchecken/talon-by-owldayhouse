@@ -116,6 +116,20 @@ export interface CaseStudy {
 
 const allCases: readonly CaseStudy[] = keepThaiWordsDeep([
   {
+    // Delivered as a subcontractor; the client knows the work as the main contractor's.
+    // Keep it generic: no game title, tagline, mascot, scene or agency name, and no screenshots.
+    slug: "safety-kiosk-game",
+    pillar: "Activate",
+    services: ["event-interactive"],
+    category: { th: "เกม Kiosk / หน่วยงานรัฐ", en: "Kiosk game / Government" },
+    client: { th: "หน่วยงานรัฐ", en: "A government agency" },
+    work: {
+      th: "เกมบนตู้ Kiosk สอนเด็กและเยาวชนเรื่องความปลอดภัยทางน้ำ เล่นได้ทั้งเสียง ท่าทางหน้ากล้อง และการแตะจอ ทำงานออฟไลน์ และไม่เก็บข้อมูลผู้เล่น",
+      en: "A kiosk game teaching children and young people about water safety, played by voice, by moving in front of the camera and by touch. It runs offline and stores no player data.",
+    },
+    metric: { th: "3 วิธีเล่นในเกมเดียว", en: "3 ways to play" },
+  },
+  {
     slug: "printer-kol",
     pillar: "Activate",
     services: ["kol-influencer"],

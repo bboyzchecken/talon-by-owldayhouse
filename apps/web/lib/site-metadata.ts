@@ -54,7 +54,7 @@ export function rootMetadata(locale: Locale): Metadata {
       },
     },
     openGraph: { ...baseOpenGraph(locale), url: SITE_URL },
-    twitter: baseTwitter,
+    twitter: baseTwitter(),
   };
 }
 

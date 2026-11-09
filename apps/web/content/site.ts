@@ -26,8 +26,8 @@ export const contact = {
   messenger: "https://m.me/owldayhouse",
   email: "owldayhouse@gmail.com",
   emailHref: "mailto:owldayhouse@gmail.com",
-  // TODO: ยืนยัน LINE official account id ที่ถูกต้องกับลูกค้า
-  line: "https://line.me/R/ti/p/@owldayhouse",
+  // LINE ของบริษัทรับงานที่ด่านหน้าแรก แล้วส่งต่อให้ทีมเซลคุยรายละเอียด
+  line: "https://line.me/ti/p/FcE785qmT2",
   /** Company profile PDF in public/, e.g. "/owl-day-house-profile.pdf". The download button shows only once this is set. */
   profilePdf: "" as string,
 } as const;

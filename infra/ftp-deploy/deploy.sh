@@ -50,6 +50,30 @@ fi
 [ -d "$LOCAL_DIR" ] || fail "build output not found at $LOCAL_DIR — run 'pnpm build:web' first."
 [ -f "$LOCAL_DIR/index.html" ] || fail "$LOCAL_DIR has no index.html — the build looks incomplete."
 
+# --- .htaccess: upload it only when it differs from the server's ---
+# LiteSpeed caches .htaccess until the host restarts it, so re-sending an identical
+# file every deploy just hides which deploy actually changed the rules.
+lftp_opts="set cmd:fail-exit yes;
+set net:max-retries 2;
+set ftp:ssl-allow $([ "$FTP_PROTO" = "ftps" ] && echo yes || echo no);
+set ssl:verify-certificate no;
+open -p $FTP_PORT -u \"$FTP_USER\",\"$FTP_PASS\" \"$FTP_PROTO://$FTP_HOST\";"
+
+htaccess_exclude=""
+htaccess_changed="no"
+if [ -f "$LOCAL_DIR/.htaccess" ]; then
+  remote_htaccess="$(mktemp)"
+  lftp -c "$lftp_opts get \"${FTP_REMOTE_DIR%/}/.htaccess\" -o \"$remote_htaccess\"; bye" >/dev/null 2>&1 || true
+  if cmp -s "$remote_htaccess" "$LOCAL_DIR/.htaccess"; then
+    htaccess_exclude="--exclude-glob .htaccess"
+    echo "→ .htaccess unchanged on the server — skipping it"
+  else
+    htaccess_changed="yes"
+    echo "→ .htaccess differs from the server's — uploading it"
+  fi
+  rm -f "$remote_htaccess"
+fi
+
 file_count="$(find "$LOCAL_DIR" -type f | wc -l | tr -d ' ')"
 echo "→ uploading $file_count files"
 echo "  from: $LOCAL_DIR"
@@ -65,9 +89,13 @@ open -p $FTP_PORT -u \"$FTP_USER\",\"$FTP_PASS\" \"$FTP_PROTO://$FTP_HOST\";
 mirror --reverse --delete --parallel=4 --verbose \
   --exclude-glob .DS_Store \
   --exclude-glob *.map \
+  $htaccess_exclude \
   \"$LOCAL_DIR/\" \"$FTP_REMOTE_DIR\";
 bye
 "
 
 echo "✓ deploy complete — $file_count files synced to $FTP_HOST$FTP_REMOTE_DIR"
+if [ "$htaccess_changed" = "yes" ]; then
+  echo "! .htaccess changed. Ask the host to restart LiteSpeed, or it keeps serving the old rules."
+fi
 echo "  next: open https://owldayhouse.com/ and verify, then (re)submit the sitemap in Google Search Console."

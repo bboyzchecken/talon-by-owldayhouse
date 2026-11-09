@@ -14,7 +14,12 @@
     "build:web": "turbo run build --filter web",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
-    "deploy:web": "pnpm build:web && bash infra/ftp-deploy/deploy.sh"
+    "deploy:web": "pnpm build:web && bash infra/ftp-deploy/deploy.sh",
+    "test": "turbo run test",
+    "build:internal": "turbo run build --filter internal",
+    "dev:internal": "turbo run dev --filter internal",
+    "build:api": "turbo run build --filter api",
+    "test:api": "turbo run test --filter api"
   },
   "devDependencies": {
     "turbo": "^2.3.3"

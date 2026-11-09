@@ -1,0 +1,20 @@
+@import "tailwindcss";
+@import "@odh/brand/theme.css";
+
+/* Tailwind v4 skips node_modules — explicitly scan the shared UI package. */
+@source "../../../packages/ui/src";
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Sales people work on a phone: keep the safe area clear of the bottom tabs. */
+.pb-safe {
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 0.5rem);
+}

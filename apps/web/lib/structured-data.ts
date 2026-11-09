@@ -4,6 +4,7 @@ import { getPosts } from "@/content/news";
 import { getServices } from "@/content/services";
 import { localeHref, type Locale } from "./i18n";
 import { OG_IMAGE_PATH, SITE_NAME, SITE_URL } from "./seo";
+import { articleCard, localeCard } from "./share-cards";
 
 const LOGO_URL = `${SITE_URL}/brand/owl-logo.svg`;
 const OG_IMAGE_URL = `${SITE_URL}${OG_IMAGE_PATH}`;
@@ -121,7 +122,7 @@ export function serviceSchema(locale: Locale, slug: string) {
       serviceType: service.title,
       description: `${service.blurb} ${service.problem}`,
       url: `${SITE_URL}${localeHref(locale, `/services/${slug}/`)}`,
-      image: `${SITE_URL}/og/service-${slug}.jpg`,
+      image: `${SITE_URL}${localeCard(locale, `services/${slug}`) ?? OG_IMAGE_PATH}`,
       provider: businessRef,
       areaServed: areaServed[locale],
       inLanguage: inLanguage[locale],
@@ -143,7 +144,7 @@ export function blogSchema(locale: Locale) {
       "@type": "BlogPosting",
       headline: post.title,
       url: `${SITE_URL}${index}${post.slug}/`,
-      image: `${SITE_URL}/og/${post.slug}.jpg`,
+      image: `${SITE_URL}${articleCard(post.slug)}`,
       datePublished: post.datePublished,
     })),
   };
@@ -209,7 +210,7 @@ export function articleSchema({ locale, slug, title, description, datePublished,
     url: `${SITE_URL}${path}`,
     datePublished,
     dateModified: dateModified ?? datePublished,
-    image: `${SITE_URL}/og/${slug}.jpg`,
+    image: `${SITE_URL}${articleCard(slug)}`,
     keywords: keywords?.join(", "),
     isPartOf: { "@id": WEBSITE_ID },
     author: businessRef,

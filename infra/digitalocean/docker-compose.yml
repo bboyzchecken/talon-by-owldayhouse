@@ -1,0 +1,100 @@
+# ODH internal tools — DigitalOcean Droplet (12 USD: 1 vCPU, 2 GB RAM).
+#
+# Three services: PostgreSQL 16, the Go API (reachable only inside this
+# network) and Caddy, which terminates HTTPS, serves the exported static UI
+# and reverse-proxies /api, /auth and /healthz to the API.
+#
+# Lives at /opt/odh-internal/docker-compose.yml on the Droplet, next to .env.
+
+name: odh-internal
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USERNAME}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DATABASE}
+      TZ: Asia/Bangkok
+      PGTZ: Asia/Bangkok
+    # Tuned for 2 GB of RAM shared with the API and Caddy. max_connections is
+    # deliberately low and matches POSTGRES_MAX_OPEN_CONNS in .env.
+    command:
+      - postgres
+      - -c
+      - shared_buffers=512MB
+      - -c
+      - effective_cache_size=1GB
+      - -c
+      - maintenance_work_mem=128MB
+      - -c
+      - work_mem=8MB
+      - -c
+      - max_connections=25
+      - -c
+      - wal_buffers=16MB
+      - -c
+      - checkpoint_completion_target=0.9
+      - -c
+      - random_page_cost=1.1
+      - -c
+      - effective_io_concurrency=200
+      - -c
+      - log_min_duration_statement=500
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    # Never published to the host: the database is reachable only from this
+    # compose network. UFW blocks 5432 as a second line of defence.
+    expose:
+      - "5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USERNAME} -d ${POSTGRES_DATABASE}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    mem_limit: 900m
+
+  api:
+    build:
+      context: ./api
+      args:
+        COMMIT: ${COMMIT:-unknown}
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: "5432"
+      TZ: Asia/Bangkok
+    depends_on:
+      postgres:
+        condition: service_healthy
+    # Internal only — Caddy is the single way in.
+    expose:
+      - "5000"
+    mem_limit: 400m
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    environment:
+      ODH_DOMAIN: ${ODH_DOMAIN}
+      TZ: Asia/Bangkok
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./web:/srv:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      - api
+    mem_limit: 200m
+
+volumes:
+  postgres-data:
+  caddy-data:
+  caddy-config:
