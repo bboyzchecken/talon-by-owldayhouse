@@ -46,15 +46,32 @@ From your own machine, if the Droplet was not created with your key already:
 ssh-copy-id root@<droplet-ip>
 ```
 
-Then on the Droplet:
+Then on the Droplet. Use a drop-in file rather than editing `sshd_config`:
+on Ubuntu, cloud-init's `sshd_config.d/50-cloud-init.conf` can set
+`PasswordAuthentication yes`, and sshd keeps the first value it reads, so an
+edit to the main file may silently do nothing. `00-` sorts first.
 
 ```bash
-sed -i 's/^#\?PasswordAuthentication .*/PasswordAuthentication no/' /etc/ssh/sshd_config
-sed -i 's/^#\?PermitRootLogin .*/PermitRootLogin prohibit-password/' /etc/ssh/sshd_config
-systemctl reload ssh
+cat > /etc/ssh/sshd_config.d/00-odh-hardening.conf <<'EOF'
+PasswordAuthentication no
+KbdInteractiveAuthentication no
+PermitRootLogin prohibit-password
+EOF
+sshd -t && systemctl reload ssh
+sshd -T | grep -E '^(passwordauthentication|permitrootlogin)'
 ```
 
+Expect `passwordauthentication no` and `permitrootlogin without-password`.
 Keep the existing session open until a second one logs in with the key.
+
+### 1.1b Time zone
+
+The Droplet starts on UTC. Set it to Bangkok so the 02:05 backup runs at
+night here and not at 09:05:
+
+```bash
+timedatectl set-timezone Asia/Bangkok
+```
 
 ### 1.2 Firewall: 22, 80, 443 and nothing else
 
@@ -329,6 +346,8 @@ docker compose ps                       # what is running
 docker compose logs -f --tail=100 api   # API logs (JSON in production)
 docker compose logs -f --tail=100 caddy # certificate and HTTP logs
 docker compose restart api              # restart just the API
+# NEVER `docker compose down -v` or `docker volume prune`: -v deletes the
+# PostgreSQL volume, i.e. every lead. `docker compose down` (no -v) is safe.
 docker compose exec postgres psql -U "$POSTGRES_USERNAME" -d "$POSTGRES_DATABASE"
 
 free -h                                 # memory and swap
