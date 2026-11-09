@@ -78,6 +78,7 @@ const text: Record<Locale, Record<string, ServiceText>> = keepThaiWordsDeep({
       problem:
         "โฆษณาที่ไม่มีแผนคืองบที่หายไป เราวางแผนการตลาดดิจิทัล ดูแลโซเชียลและเพจ ยิงแอด และหากลุ่มเป้าหมายใหม่ให้แบรนด์",
       deliverables: ["แผนการตลาดดิจิทัล", "ดูแล Social และเพจ", "ยิงแอดและปรับแคมเปญ", "หากลุ่มเป้าหมายและลูกค้าใหม่"],
+      tool: "เราใช้ระบบดึงข้อมูลชุดเดียวกับงาน Social Listening ปรับให้ติดตามความเคลื่อนไหวของคู่แข่งเป็นรอบ ๆ และเชื่อมผ่าน MCP ทีมของคุณจึงใช้ AI เช็กข้อมูลคู่แข่งได้ตลอดเวลา",
     },
     "social-listening": {
       title: "Social Listening",
@@ -132,6 +133,7 @@ const text: Record<Locale, Record<string, ServiceText>> = keepThaiWordsDeep({
       problem:
         "Ads without a plan are budget that disappears. We plan your digital marketing, manage social channels, run ads and find new audiences for your brand.",
       deliverables: ["Digital marketing plan", "Social and page management", "Paid ads and optimization", "New audiences and customers"],
+      tool: "We run the same data pipeline as our social listening work, set up to track competitors batch by batch and connected through MCP, so your team can use its own AI to check on competitors at any time.",
     },
     "social-listening": {
       title: "Social Listening",
