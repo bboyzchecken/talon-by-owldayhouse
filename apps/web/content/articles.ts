@@ -352,9 +352,9 @@ See our [KOL & Influencers](/en/services/kol-influencer/) service.`,
       title: "ถ่ายทำงานอีเวนต์ให้ได้คอนเทนต์ใช้ต่อ: เช็กลิสต์ก่อน ระหว่าง และหลังงาน",
       description:
         "เช็กลิสต์ถ่ายภาพและวิดีโองานอีเวนต์สำหรับแบรนด์ ตั้งแต่ Shot List การขออนุญาต จนถึงการตัดต่อคลิปหลายรูปแบบสำหรับ Social Media",
-      keywords: ["ถ่ายทำงานอีเวนต์", "ถ่ายวิดีโองานอีเวนต์", "ตัดต่อคลิปอีเวนต์", "Event Content", "รีวิวงานอีเวนต์", "ทีมถ่ายงานอีเวนต์"],
+      keywords: ["ถ่ายทำงานอีเวนต์", "ถ่ายวิดีโองานอีเวนต์", "ตัดต่อคลิปอีเวนต์", "Event Production", "ทีมถ่ายงานอีเวนต์"],
       imageAlt: "ทีมถ่ายวิดีโอกำลังทำงานในงานเปิดตัวสินค้า",
-      category: "Event Content",
+      category: "Event Production",
       body: `งานอีเวนต์จัดเพียงไม่กี่วัน แต่คอนเทนต์ที่ดีใช้ต่อได้อีกนาน หากวางแผน**การถ่ายทำงานอีเวนต์**ตั้งแต่ต้น แบรนด์จะได้มากกว่าคลิปสรุปหนึ่งชิ้น
 
 ## ก่อนวันงาน
@@ -387,11 +387,7 @@ See our [KOL & Influencers](/en/services/kol-influencer/) service.`,
 3. แยกคลิปย่อยตามหัวข้อสำหรับโพสต์ต่อเนื่อง
 4. จัดเก็บไฟล์ให้ทีมค้นหาและนำกลับมาใช้ได้
 
-## รีวิวโดยทีมงาน
-
-นอกจาก KOL การให้ทีมที่เข้าใจสินค้าไปรีวิวในงานก็ช่วยเล่ารายละเอียดได้ครบ และควบคุมคุณภาพได้ง่าย
-
-ดูรายละเอียดที่หน้า [Event Content และรีวิว](/services/event-content/)`,
+ดูรายละเอียดที่หน้า [Event Production](/services/event-content/)`,
       faq: [
         { q: "ควรจองทีมถ่ายงานอีเวนต์ล่วงหน้าเท่าไร", a: "ควรคุยตั้งแต่มีวันงานและกำหนดการ เพื่อให้มีเวลาวาง Shot List และสำรวจสถานที่" },
         { q: "งานเดียวทำคอนเทนต์ได้กี่ชิ้น", a: "ขึ้นอยู่กับขนาดงานและแผนการถ่าย หากวางแผนล่วงหน้า งานเดียวสามารถแยกเป็นคลิปสรุป คลิปสั้น และภาพนิ่งได้หลายชุด" },
@@ -403,7 +399,7 @@ See our [KOL & Influencers](/en/services/kol-influencer/) service.`,
         "A before, during and after checklist for event photo and video, covering shot lists, permissions, vertical framing and repurposing footage for social media.",
       keywords: ["event video production", "event content checklist", "event videography", "event recap video", "event content strategy"],
       imageAlt: "A video crew working at a bright product launch event",
-      category: "Event Content",
+      category: "Event Production",
       body: `An event lasts a few days, but good content can work much longer. When **event production** is planned from the start, the brand gets far more than a single recap film.
 
 ## Before the event
@@ -436,11 +432,7 @@ Try "What did you like most today?" A real answer from a guest is more convincin
 3. Cut topic-based clips for ongoing posts
 4. Organize files so the team can find and reuse them
 
-## Reviews by the team
-
-Alongside KOLs, a team that knows the product can review it on site, cover the details and keep quality consistent.
-
-See our [Event Content & Reviews](/en/services/event-content/) service.`,
+See our [Event Production](/en/services/event-content/) service.`,
       faq: [
         { q: "How far ahead should we book an event crew?", a: "Talk as soon as the date and schedule are known, so there is time to plan the shot list and visit the venue." },
         { q: "How much content can one event produce?", a: "It depends on the event and the plan. With preparation, one event can yield a recap, short clips and several photo sets." },

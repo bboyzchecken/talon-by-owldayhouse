@@ -2,6 +2,8 @@
 // items were sizeable systems whose businesses have since shut down.
 
 import type { Locale } from "@/lib/i18n";
+import { keepThaiWordsDeep } from "@/lib/thai-wrap";
+import type { Pillar } from "./services";
 
 type Text = Record<Locale, string>;
 
@@ -16,7 +18,7 @@ export interface PortfolioItem {
   status: "live" | "closed";
 }
 
-export const portfolio: readonly PortfolioItem[] = [
+export const portfolio: readonly PortfolioItem[] = keepThaiWordsDeep([
   {
     slug: "reg-tu",
     title: { th: "ระบบลงทะเบียนเรียนออนไลน์", en: "Online course registration" },
@@ -89,16 +91,64 @@ export const portfolio: readonly PortfolioItem[] = [
     },
     status: "closed",
   },
-];
+]);
 
 export const liveWork = portfolio.filter((item) => item.status === "live");
 export const earlierWork = portfolio.filter((item) => item.status === "closed");
 
-export const clientNames: readonly string[] = [
-  "Thammasat University",
-  "RodArea",
-  "You want GPU?",
-  "PEZY",
-  "SPEEK",
-  "INTERSANT PLUS",
-];
+/**
+ * Campaign and event work under NDA (mostly delivered for agencies). Never name
+ * the brand: describe it by its category. Fill `metric` only with a number the
+ * team has confirmed.
+ */
+export interface CaseStudy {
+  slug: string;
+  pillar: Pillar;
+  /** Related service slugs, so service pages can show the right cases. */
+  services: readonly string[];
+  category: Text;
+  client: Text;
+  work: Text;
+  metric?: Text;
+  /** Keep the case in the data but off the site. */
+  hidden?: boolean;
+}
+
+const allCases: readonly CaseStudy[] = keepThaiWordsDeep([
+  {
+    slug: "printer-kol",
+    pillar: "Activate",
+    services: ["kol-influencer"],
+    category: { th: "KOL และ Influencer", en: "KOL & Influencers" },
+    client: { th: "แบรนด์เครื่องพิมพ์ระดับโลก", en: "A global printer brand" },
+    work: { th: "คัดเลือกและประสานงาน KOL ให้แคมเปญของแบรนด์", en: "KOL selection and coordination for a brand campaign" },
+    metric: { th: "KOL 55 คน", en: "55 KOLs" },
+  },
+  {
+    slug: "restaurant-group",
+    // Hidden until the end of this year. Remove `hidden` to show it again.
+    hidden: true,
+    pillar: "Activate",
+    services: ["kol-influencer"],
+    category: { th: "KOL และ Influencer", en: "KOL & Influencers" },
+    client: { th: "ร้านปิ้งย่างเกาหลีในเครือกลุ่มร้านอาหารรายใหญ่", en: "A Korean BBQ chain from a major restaurant group" },
+    work: { th: "คัดเลือกและประสานงาน KOL ให้แคมเปญของร้าน", en: "KOL selection and coordination for the chain's campaign" },
+    metric: { th: "KOL 23 คน", en: "23 KOLs" },
+  },
+  {
+    slug: "tourism-events",
+    pillar: "Activate",
+    services: ["event-interactive", "event-content"],
+    category: { th: "งานอีเวนต์ / ราชการ", en: "Events / Government" },
+    client: { th: "หน่วยงานรัฐด้านการท่องเที่ยว", en: "A national tourism agency" },
+    work: { th: "ออกบูธและงานอีเวนต์ของหน่วยงาน", en: "Booths and events for the agency" },
+  },
+]);
+
+export const cases: readonly CaseStudy[] = allCases.filter((item) => !item.hidden);
+
+/** Industries we have worked in, shown instead of client names (most work is under NDA). */
+export const industryNames: Record<Locale, readonly string[]> = keepThaiWordsDeep({
+  th: ["การศึกษา", "หน่วยงานรัฐ", "การท่องเที่ยว", "เทคโนโลยี", "ร้านอาหาร", "อีคอมเมิร์ซ", "วัสดุก่อสร้าง", "คอมมูนิตี้รถยนต์"],
+  en: ["Education", "Government", "Tourism", "Technology", "Restaurants", "E-commerce", "Building materials", "Car community"],
+});

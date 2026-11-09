@@ -2,8 +2,9 @@ import { getCopy } from "@/content/copy";
 import { getPosts } from "@/content/news";
 import { localeHref, type Locale } from "./i18n";
 import { SITE_NAME, SITE_URL } from "./seo";
+import { plainText } from "./thai-wrap";
 
-const escapeXml = (text: string) => text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const escapeXml = (text: string) => plainText(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
 /** RSS 2.0 feed of every article in a language. */
 export function articleFeed(locale: Locale): string {

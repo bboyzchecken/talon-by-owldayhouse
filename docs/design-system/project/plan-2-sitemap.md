@@ -9,16 +9,16 @@
 | `/services/website-software/` | เว็บไซต์และซอฟต์แวร์ | ใหม่ |
 | `/services/event-interactive/` | Event Interactive | ใหม่ |
 | `/services/kol-influencer/` | KOL และ Influencer | ใหม่ |
-| `/services/event-content/` | Event Content และรีวิว | ใหม่ |
+| `/services/event-content/` | Event Production | ใหม่ (URL เดิม) |
 | `/services/digital-marketing/` | Digital Marketing | ใหม่ |
 | `/services/social-listening/` | Social Listening และรายงาน | ใหม่ |
-| `/tools/` | เครื่องมือของแบรนด์ | ใหม่ |
+| `/tools/` | เครื่องมือที่เราสร้างให้งาน | ลิงก์จาก footer และหน้าบริการ ไม่อยู่ในเมนูหลัก |
 | `/work/` | ผลงาน | ปรับ |
 | `/news/` | บทความและรายงาน | ปรับเนื้อหา |
 | `/about/` | เกี่ยวกับเรา | เขียนใหม่ |
 | `/contact/` | ติดต่อ | อีเมล Messenger, LINE, โทรศัพท์ |
 
-เมนูหลัก: บริการ, ผลงาน, เครื่องมือ, บทความ, เกี่ยวกับเรา และปุ่ม "คุยโปรเจกต์"
+เมนูหลัก: บริการ, ผลงาน, บทความ, เกี่ยวกับเรา และปุ่ม "คุยโปรเจกต์" (เครื่องมือยังไม่มีของที่โชว์ได้ จึงอยู่แค่ใน footer)
 
 ## ลำดับหน้าแรก
 
@@ -41,7 +41,7 @@
 1. หัวเรื่อง `h1` พร้อมภาพใหญ่
 2. ปัญหาที่บริการนี้แก้ และสิ่งที่ส่งมอบ
 3. `StatementFill` หรือตัวอย่างเล่นได้ เช่น `TouchDemo` หนึ่งช่วง
-4. เครื่องมือที่ใช้ และ `CapabilityTag`
+4. เครื่องมือที่ใช้ (`tool` ใน `content/services.ts` แสดงเฉพาะบริการที่มีเครื่องมือจริง Event Production เขียนถึงคลังฟุตเทจบน Google Drive ที่ทีมเราใช้ภายในและค้นผ่าน MCP เล่าว่าทำให้ส่งงานไว และสร้างให้ลูกค้าได้ และการเรียงไฟล์ลงไทม์ไลน์ CapCut ไม่เขียนว่า AI ร่าง storyboard) และ `CapabilityTag`
 5. ผลงานที่เกี่ยวข้อง
 6. `ContactClose`
 

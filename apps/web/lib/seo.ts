@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { localeHref, type Locale } from "./i18n";
+import { plainText } from "./thai-wrap";
 
 export const SITE_URL = "https://owldayhouse.com";
 export const SITE_NAME = "Owl Day House";
@@ -60,6 +61,8 @@ export function pageMeta({
   singleLanguage,
   image,
 }: PageMetaInput): Metadata {
+  title = plainText(title);
+  description = plainText(description);
   const fullTitle = absoluteTitle ? title : `${title} | ${SITE_NAME}`;
   const localized = localeHref(locale, path);
   const url = localized === "/" ? SITE_URL : `${SITE_URL}${localized}`;

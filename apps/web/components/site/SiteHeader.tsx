@@ -28,7 +28,6 @@ export function SiteHeader({ locale, languageHref }: SiteHeaderProps) {
 
   const links = [
     { href: href("/work/"), label: t.work },
-    { href: href("/tools/"), label: t.tools },
     { href: href("/news/"), label: t.news },
     { href: href("/about/"), label: t.about },
   ];

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { OwlLogo } from "@odh/ui";
 import { getCopy } from "@/content/copy";
+import { getIndustries } from "@/content/industries";
 import { company, contact, social } from "@/content/site";
 import { localeHref, type Locale } from "@/lib/i18n";
 
@@ -26,6 +27,11 @@ export function SiteFooter({ locale }: { locale: Locale }) {
             <li>
               <Link href={href("/tools/")}>{t.tools}</Link>
             </li>
+            {getIndustries(locale).map((industry) => (
+              <li key={industry.slug}>
+                <Link href={href(`/industries/${industry.slug}/`)}>{industry.name}</Link>
+              </li>
+            ))}
           </ul>
         </div>
         <div>
@@ -50,6 +56,11 @@ export function SiteFooter({ locale }: { locale: Locale }) {
             </li>
             <li>
               <a href={contact.phoneTel}>{locale === "th" ? contact.phoneDisplay : contact.phoneDisplayEn}</a>
+            </li>
+            <li>
+              <a href={contact.line} target="_blank" rel="noopener noreferrer">
+                LINE
+              </a>
             </li>
             <li>
               <a href={contact.messenger} target="_blank" rel="noopener noreferrer">

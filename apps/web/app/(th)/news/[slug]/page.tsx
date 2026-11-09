@@ -1,10 +1,10 @@
 import { ArticleView, articleMeta } from "@/components/views";
-import { getPosts } from "@/content/news";
+import { getAllPosts } from "@/content/news";
 
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-  return getPosts("th").map((post) => ({ slug: post.slug }));
+  return getAllPosts("th").map((post) => ({ slug: post.slug }));
 }
 
 type Props = { params: Promise<{ slug: string }> };

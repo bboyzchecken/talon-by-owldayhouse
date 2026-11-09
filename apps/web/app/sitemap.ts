@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { SITE_UPDATED, SITE_URL } from "@/lib/seo";
 import { localeHref } from "@/lib/i18n";
+import { industrySlugs } from "@/content/industries";
 import { getPosts } from "@/content/news";
 import { getServices, serviceSlugs } from "@/content/services";
 
@@ -10,7 +11,7 @@ const url = (path: string) => `${SITE_URL}${path}`;
 const serviceImage = (slug: string) => getServices("th").find((service) => service.slug === slug)?.image;
 
 // Pages that exist in both languages.
-const pairedRoutes = ["/", "/services/", ...serviceSlugs.map((slug) => `/services/${slug}/`), "/tools/", "/work/", "/about/", "/contact/", "/news/"];
+const pairedRoutes = ["/", "/services/", ...serviceSlugs.map((slug) => `/services/${slug}/`), ...industrySlugs.map((slug) => `/industries/${slug}/`), "/tools/", "/work/", "/about/", "/contact/", "/news/"];
 
 // lastModified is a real content date, never the build time: Google ignores
 // <lastmod> on sites where it changes every build.
