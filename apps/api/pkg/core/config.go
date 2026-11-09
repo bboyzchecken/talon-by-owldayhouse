@@ -5,7 +5,10 @@
 // send mail (see CLAUDE.md). Contact e-mail addresses are stored as data only.
 package core
 
-import "time"
+import (
+	"strings"
+	"time"
+)
 
 // Config is the single configuration struct injected through Uber FX.
 type Config struct {
@@ -38,19 +41,52 @@ type PostgresConfig struct {
 	ConnMaxLifetime time.Duration
 }
 
-// DSN builds the lib/pq style connection string used by gorm.io/driver/postgres.
+// DSN builds the keyword/value connection string used by
+// gorm.io/driver/postgres.
+//
+// Two details matter here:
+//
+//   - An empty value is omitted, never written bare. `password= dbname=odh`
+//     parses as a password of "dbname=odh" and no database at all, because the
+//     parser skips the whitespace after `=` — so the connection silently lands
+//     on the driver's default database. An empty password is the normal
+//     local-development case, so this is not hypothetical.
+//   - A value is quoted only when it contains whitespace, a quote or a
+//     backslash. Quoting everything would break the runtime parameters:
+//     the driver unquotes the standard keywords but hands TimeZone to the
+//     server verbatim, which then rejects "'Asia/Bangkok'".
 func (c PostgresConfig) DSN() string {
-	return "host=" + c.Host +
-		" port=" + c.Port +
-		" user=" + c.Username +
-		" password=" + c.Password +
-		" dbname=" + c.Database +
-		" sslmode=" + c.SSLMode +
-		" TimeZone=" + c.TimeZone
+	pairs := [][2]string{
+		{"host", c.Host},
+		{"port", c.Port},
+		{"user", c.Username},
+		{"password", c.Password},
+		{"dbname", c.Database},
+		{"sslmode", c.SSLMode},
+		{"TimeZone", c.TimeZone},
+	}
+
+	parts := make([]string, 0, len(pairs))
+	for _, pair := range pairs {
+		if pair[1] == "" {
+			continue
+		}
+		parts = append(parts, pair[0]+"="+encodeDSNValue(pair[1]))
+	}
+	return strings.Join(parts, " ")
 }
 
-// R2Config is the Cloudflare R2 (S3-compatible) bucket pair for this system.
-// Every uploaded file lives in R2 — nothing is ever written to the Droplet disk.
+// encodeDSNValue quotes a connection-string value if it needs quoting, and
+// escapes backslashes and single quotes inside it.
+func encodeDSNValue(value string) string {
+	if !strings.ContainsAny(value, " \t\r\n'\\") {
+		return value
+	}
+	escaped := strings.ReplaceAll(value, `\`, `\\`)
+	escaped = strings.ReplaceAll(escaped, `'`, `\'`)
+	return "'" + escaped + "'"
+}
+
 type R2Config struct {
 	Endpoint       string
 	Region         string

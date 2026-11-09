@@ -14,6 +14,64 @@ importers:
 
   apps/api: {}
 
+  apps/internal:
+    dependencies:
+      '@odh/brand':
+        specifier: workspace:*
+        version: link:../../packages/brand
+      '@odh/query':
+        specifier: workspace:*
+        version: link:../../packages/query
+      '@odh/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
+      '@tanstack/react-query':
+        specifier: ^5.62.7
+        version: 5.101.0(react@19.2.7)
+      lucide-react:
+        specifier: ^0.468.0
+        version: 0.468.0(react@19.2.7)
+      next:
+        specifier: ^15.1.3
+        version: 15.5.19(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      react:
+        specifier: ^19.0.0
+        version: 19.2.7
+      react-dom:
+        specifier: ^19.0.0
+        version: 19.2.7(react@19.2.7)
+    devDependencies:
+      '@next/eslint-plugin-next':
+        specifier: ^15.1.3
+        version: 15.5.19
+      '@odh/eslint-config':
+        specifier: workspace:*
+        version: link:../../packages/eslint-config
+      '@odh/tsconfig':
+        specifier: workspace:*
+        version: link:../../packages/tsconfig
+      '@tailwindcss/postcss':
+        specifier: ^4.0.0
+        version: 4.3.1
+      '@types/node':
+        specifier: ^22.10.2
+        version: 22.20.0
+      '@types/react':
+        specifier: ^19.0.2
+        version: 19.2.17
+      '@types/react-dom':
+        specifier: ^19.0.2
+        version: 19.2.3(@types/react@19.2.17)
+      eslint:
+        specifier: ^9.17.0
+        version: 9.39.4(jiti@2.7.0)
+      tailwindcss:
+        specifier: ^4.0.0
+        version: 4.3.1
+      typescript:
+        specifier: ^5.7.2
+        version: 5.9.3
+
   apps/web:
     dependencies:
       '@odh/brand':

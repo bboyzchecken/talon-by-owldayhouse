@@ -16,6 +16,7 @@ import (
 	"github.com/owldayhouse/odh-internal-api/pkg/core"
 	"github.com/owldayhouse/odh-internal-api/pkg/database"
 	"github.com/owldayhouse/odh-internal-api/pkg/handlers/api/request"
+	"github.com/owldayhouse/odh-internal-api/pkg/leadrules"
 	"github.com/owldayhouse/odh-internal-api/pkg/logger"
 	"github.com/owldayhouse/odh-internal-api/pkg/models"
 	"github.com/owldayhouse/odh-internal-api/pkg/services/storage"
@@ -970,4 +971,96 @@ func urlEncode(value string) string {
 		b.WriteByte(hex[c&0x0f])
 	}
 	return b.String()
+}
+
+// --- targets ----------------------------------------------------------------
+
+func TestKPIFallsBackToTheCompanyDefaultTargets(t *testing.T) {
+	env := newTestEnv(t)
+
+	t.Run("a sales account with no saved target still has one to measure against", func(t *testing.T) {
+		r := env.do(env.sales1, http.MethodGet, "/api/leads/kpi", nil)
+		if r.Status != http.StatusOK {
+			t.Fatalf("got %d: %s", r.Status, r.Raw)
+		}
+
+		var users []struct {
+			Target *struct {
+				RevenueTarget   float64 `json:"revenue_target"`
+				ProposalsTarget int     `json:"proposals_target"`
+				MeetingsTarget  int     `json:"meetings_target"`
+			} `json:"target"`
+		}
+		r.as(t, "users", &users)
+		if len(users) != 1 || users[0].Target == nil {
+			t.Fatalf("expected a default target: %s", r.Raw)
+		}
+		// The company's KPI calculator: 577,000 THB, 11 proposals and 27
+		// meetings per sales person per quarter.
+		if users[0].Target.RevenueTarget != models.DefaultRevenueTarget {
+			t.Errorf("revenue_target = %.0f, want %.0f", users[0].Target.RevenueTarget, models.DefaultRevenueTarget)
+		}
+		if users[0].Target.ProposalsTarget != models.DefaultProposalsTarget {
+			t.Errorf("proposals_target = %d, want %d", users[0].Target.ProposalsTarget, models.DefaultProposalsTarget)
+		}
+		if users[0].Target.MeetingsTarget != models.DefaultMeetingsTarget {
+			t.Errorf("meetings_target = %d, want %d", users[0].Target.MeetingsTarget, models.DefaultMeetingsTarget)
+		}
+	})
+
+	t.Run("a month gets a third of the quarterly target", func(t *testing.T) {
+		month := int(time.Now().In(leadrules.Bangkok).Month())
+		r := env.do(env.sales1, http.MethodGet, fmt.Sprintf("/api/leads/kpi?month=%d", month), nil)
+		var users []struct {
+			Target *struct {
+				RevenueTarget  float64 `json:"revenue_target"`
+				MeetingsTarget int     `json:"meetings_target"`
+			} `json:"target"`
+		}
+		r.as(t, "users", &users)
+		if len(users) != 1 || users[0].Target == nil {
+			t.Fatalf("expected a target: %s", r.Raw)
+		}
+		if users[0].Target.MeetingsTarget != 9 {
+			t.Errorf("monthly meetings_target = %d, want 9", users[0].Target.MeetingsTarget)
+		}
+		wantRevenue := models.DefaultRevenueTarget / 3
+		if diff := users[0].Target.RevenueTarget - wantRevenue; diff > 1 || diff < -1 {
+			t.Errorf("monthly revenue_target = %.2f, want about %.2f", users[0].Target.RevenueTarget, wantRevenue)
+		}
+	})
+
+	t.Run("an admin's saved target overrides the default", func(t *testing.T) {
+		now := time.Now().In(leadrules.Bangkok)
+		quarter := leadrules.QuarterOf(int(now.Month()))
+		save := env.do(env.admin, http.MethodPut, "/api/leads/targets", map[string]interface{}{
+			"user_id": env.sales1.ID, "year": now.Year(), "quarter": quarter,
+			"revenue_target": 800000, "proposals_target": 20, "meetings_target": 40,
+		})
+		if save.Status != http.StatusOK {
+			t.Fatalf("got %d: %s", save.Status, save.Raw)
+		}
+
+		r := env.do(env.sales1, http.MethodGet, "/api/leads/kpi", nil)
+		var users []struct {
+			Target *struct {
+				RevenueTarget float64 `json:"revenue_target"`
+			} `json:"target"`
+		}
+		r.as(t, "users", &users)
+		if len(users) != 1 || users[0].Target == nil || users[0].Target.RevenueTarget != 800000 {
+			t.Fatalf("the saved target should win: %s", r.Raw)
+		}
+	})
+
+	t.Run("a sales account cannot set targets", func(t *testing.T) {
+		now := time.Now().In(leadrules.Bangkok)
+		r := env.do(env.sales1, http.MethodPut, "/api/leads/targets", map[string]interface{}{
+			"user_id": env.sales1.ID, "year": now.Year(), "quarter": 1,
+			"revenue_target": 1, "proposals_target": 1, "meetings_target": 1,
+		})
+		if r.Status != http.StatusForbidden {
+			t.Fatalf("got %d, want 403: %s", r.Status, r.Raw)
+		}
+	})
 }

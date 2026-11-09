@@ -95,6 +95,7 @@ func (s *Server) GetKPI(c echo.Context) error {
 	if err != nil {
 		return s.serverError(c, err)
 	}
+	targets = withDefaultTargets(targets, users, period)
 
 	result, err := s.KPIStore.Compute(query, period, users, targets)
 	if err != nil {
@@ -131,6 +132,11 @@ func (s *Server) ListTargets(c echo.Context) error {
 		}
 		if row, ok := existing[u.ID]; ok {
 			out = append(out, row)
+			continue
+		}
+		// Defaults are for the sales team; an admin only has a target if one
+		// was saved for them deliberately.
+		if u.Role != models.RoleSales {
 			continue
 		}
 		// id 0 marks a default the admin has not saved yet.
@@ -200,4 +206,43 @@ func (s *Server) UpsertTarget(c echo.Context) error {
 		return s.serverError(c, err)
 	}
 	return c.JSON(http.StatusOK, saved)
+}
+
+// withDefaultTargets fills in the company's standard quarterly target for every
+// sales account that has no saved row, so the KPI always has something to
+// measure against. An admin overrides any of them on the Admin screen.
+//
+// Admin accounts are left alone: they only get a target if one was saved for
+// them deliberately.
+func withDefaultTargets(
+	targets []*models.Target,
+	users []*models.User,
+	period models.KPIPeriod,
+) []*models.Target {
+	saved := make(map[uint]bool, len(targets))
+	for _, t := range targets {
+		saved[t.UserID] = true
+	}
+
+	quarter := period.Quarter
+	if quarter < 1 || quarter > 4 {
+		// A whole-year view has no single quarter; measure against one quarter's
+		// worth of target rather than inventing a yearly number.
+		quarter = 1
+	}
+
+	for _, user := range users {
+		if saved[user.ID] || user.Role != models.RoleSales {
+			continue
+		}
+		targets = append(targets, &models.Target{
+			UserID:          user.ID,
+			Year:            period.Year,
+			Quarter:         quarter,
+			RevenueTarget:   models.DefaultRevenueTarget,
+			ProposalsTarget: models.DefaultProposalsTarget,
+			MeetingsTarget:  models.DefaultMeetingsTarget,
+		})
+	}
+	return targets
 }
