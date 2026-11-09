@@ -170,10 +170,15 @@ export function ServiceDetailView({ locale, slug }: { locale: Locale; slug: stri
         </section>
       ) : null}
 
-      <section className="odh-wrap odh-two pb-24">
-        <h2>{isPartner ? copy.capability.partner : t.toolsTitle}</h2>
-        <p className="odh-statementline">{isPartner ? t.partnerBody : t.toolsBody}</p>
-      </section>
+      {service.tool || isPartner ? (
+        <section className="odh-wrap odh-two pb-24">
+          <h2>{service.tool ? t.toolsTitle : copy.capability.partner}</h2>
+          <div>
+            {service.tool ? <p className="odh-statementline">{service.tool}</p> : null}
+            {isPartner ? <p className="odh-note mt-4">{t.partnerBody}</p> : null}
+          </div>
+        </section>
+      ) : null}
 
       {isSoftware ? (
         <section className="odh-sec odh-wrap">

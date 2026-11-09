@@ -19,6 +19,8 @@ interface ServiceText {
   blurb: string;
   problem: string;
   deliverables: readonly string[];
+  /** A tool we actually built for this kind of work. Leave out when there is none. */
+  tool?: string;
 }
 
 export type Service = ServiceBase & ServiceText;
@@ -41,6 +43,7 @@ const text: Record<Locale, Record<string, ServiceText>> = keepThaiWordsDeep({
       problem:
         "ธุรกิจต้องการมากกว่าหน้าเว็บที่สวย เราออกแบบระบบให้ใช้งานจริง รองรับผู้ใช้จำนวนมาก และพัฒนาต่อได้เมื่อธุรกิจโตขึ้น",
       deliverables: ["เว็บบริษัทและแลนดิ้งเพจแคมเปญ", "เว็บแอปและโมบายแอป", "ระบบหลังบ้านและแดชบอร์ด", "ระบบองค์กรที่รองรับผู้ใช้จำนวนมาก"],
+      tool: "ระบบที่เราสร้างทำให้เชื่อมต่อผ่าน MCP ได้ ทีมของคุณจึงนำ AI ที่ใช้อยู่เข้ามาดูข้อมูลและถามคำถามได้",
     },
     "event-interactive": {
       title: "Event Interactive",
@@ -49,6 +52,7 @@ const text: Record<Locale, Record<string, ServiceText>> = keepThaiWordsDeep({
       problem:
         "บูธที่มีแค่ป้ายทำให้คนเดินผ่าน เราสร้างเกมและกิจกรรมบนจอทัชสกรีนที่ดึงคนให้หยุด เล่น และเก็บข้อมูลให้แบรนด์นำไปใช้ต่อ",
       deliverables: ["ออกแบบกิจกรรมให้ตรงกับแคมเปญ", "เกมบน Kiosk จอทัชสกรีน", "ระบบแจกรางวัลและเก็บข้อมูลผู้ร่วมงาน", "ทีมดูแลระบบหน้างาน"],
+      tool: "นอกจากเกม เรามีระบบลงทะเบียน เช็กชื่อผู้เข้างาน และสุ่มรางวัล ที่ทีมของคุณใช้หน้างานได้เอง",
     },
     "kol-influencer": {
       title: "KOL และ Influencer",
@@ -57,6 +61,7 @@ const text: Record<Locale, Record<string, ServiceText>> = keepThaiWordsDeep({
       problem:
         "คนดังที่สุดไม่ได้เหมาะกับทุกแบรนด์ เราคัด KOL และ Influencer ให้ตรงกับเป้าหมาย วางแผนการสื่อสาร และทำ creative ให้ครบทั้งแคมเปญ",
       deliverables: ["คัดเลือก KOL และ Influencer", "วางแผนแคมเปญและตารางเผยแพร่", "คิดและผลิต creative และคลิปรีวิว", "สรุปผลหลังจบแคมเปญ"],
+      tool: "เครื่องมือของเราสร้างภาพประกอบและวิดีโอให้ KOL เลือกไปใช้ พร้อมใส่ซับไตเติล งานจึงผลิตได้ไวขึ้น",
     },
     "event-content": {
       title: "Event Production",
@@ -81,6 +86,7 @@ const text: Record<Locale, Record<string, ServiceText>> = keepThaiWordsDeep({
       problem:
         "แบรนด์ควรรู้ว่าคนพูดถึงตัวเองอย่างไรก่อนตัดสินใจ เราทำงานร่วมกับพาร์ตเนอร์ด้าน Social Listening เพื่อติดตามเสียงลูกค้าและออกรายงานให้ทีมใช้งานได้จริง",
       deliverables: ["ติดตามเสียงพูดถึงแบรนด์", "วิเคราะห์คู่แข่งและกระแส", "รายงานพร้อมข้อเสนอแนะ"],
+      tool: "เราเชื่อมข้อมูลเข้ากับ MCP ทีมของคุณจึงใช้ AI ที่มีอยู่เช็กข้อมูลแต่ละรอบได้ตลอดเวลา และสั่งแปลงข้อมูลที่เคยต้องทำมือได้เอง",
     },
   },
   en: {
@@ -91,6 +97,7 @@ const text: Record<Locale, Record<string, ServiceText>> = keepThaiWordsDeep({
       problem:
         "A business needs more than a good-looking page. We design systems that work under real use, handle large audiences and keep growing with you.",
       deliverables: ["Corporate sites and campaign landing pages", "Web and mobile apps", "Back offices and dashboards", "Enterprise systems built for scale"],
+      tool: "The systems we build can connect through MCP, so your team can bring the AI it already uses to explore the data and ask questions.",
     },
     "event-interactive": {
       title: "Event Interactive",
@@ -99,6 +106,7 @@ const text: Record<Locale, Record<string, ServiceText>> = keepThaiWordsDeep({
       problem:
         "People walk past a booth that only has signage. We build touchscreen games and activities that make them stop, play and leave data your brand can use.",
       deliverables: ["Activity design tied to your campaign", "Touchscreen kiosk games", "Prize and attendee data systems", "On-site technical support"],
+      tool: "Beyond the games, we run registration, attendee check-in and prize draws that your team can operate on the floor.",
     },
     "kol-influencer": {
       title: "KOL & Influencers",
@@ -107,6 +115,7 @@ const text: Record<Locale, Record<string, ServiceText>> = keepThaiWordsDeep({
       problem:
         "The biggest name is not always the right one. We match KOLs and influencers to your goal, plan the communication and produce the creative for the whole campaign.",
       deliverables: ["KOL and influencer selection", "Campaign and publishing plans", "Creative and review content", "Post-campaign summary"],
+      tool: "Our tools generate illustrations and video for KOLs to choose from, with subtitles added, so production moves faster.",
     },
     "event-content": {
       title: "Event Production",
@@ -131,6 +140,7 @@ const text: Record<Locale, Record<string, ServiceText>> = keepThaiWordsDeep({
       problem:
         "Brands should know how people talk about them before making a decision. With our social listening partner, we track the conversation and deliver reports your team can act on.",
       deliverables: ["Brand conversation tracking", "Competitor and trend analysis", "Reports with recommendations"],
+      tool: "We connect the data to MCP, so your team can use its own AI to check each batch at any time and run conversions that used to be done by hand.",
     },
   },
 });
