@@ -204,6 +204,13 @@ export const copy = {
       metaTitle: "ติดต่อ Owl Day House โทร 092-455-2450",
       metaDescription: "ติดต่อ Owl Day House ทางอีเมล owldayhouse@gmail.com LINE โทร 092-455-2450 หรือ Facebook Messenger",
     },
+    notFound: {
+      title: "เรามองทั่วแล้ว แต่ไม่เจอหน้านี้",
+      lead: "ลิงก์อาจเปลี่ยนไป หรือหน้านี้ถูกย้ายแล้ว เลือกไปต่อจากเส้นทางด้านล่างได้เลย",
+      home: "กลับหน้าแรก",
+      contact: "คุยกับทีมของเรา",
+      linksLabel: "ลองไปที่",
+    },
     breadcrumbHome: "หน้าแรก",
   },
   en: {
@@ -393,6 +400,13 @@ export const copy = {
       hoursValue: "Monday to Friday, 09:00 to 18:00 (GMT+7)",
       metaTitle: "Contact Owl Day House",
       metaDescription: "Contact Owl Day House by email at owldayhouse@gmail.com, phone, LINE or Messenger.",
+    },
+    notFound: {
+      title: "We looked everywhere. This page isn't here.",
+      lead: "The link may have changed, or the page has moved. Pick up from one of these.",
+      home: "Back to home",
+      contact: "Talk to our team",
+      linksLabel: "Try one of these",
     },
     breadcrumbHome: "Home",
   },

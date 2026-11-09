@@ -46,7 +46,7 @@
 .odh-eyehero__title span.l{display:block;white-space:nowrap}
 .odh-chip{display:inline-block;width:1.5em;height:.7em;margin-inline:.14em;border-radius:var(--radius-full);overflow:hidden;vertical-align:-.04em}
 .odh-chip img{width:100%;height:100%;object-fit:cover}
-.odh-eye{display:inline-block;width:.68em;height:.68em;margin-inline:.03em;border-radius:50%;background:var(--spark) url("/imagery/eye.webp") 50% 41%/260%;box-shadow:0 0 0 .025em var(--spark);vertical-align:-.01em}
+.odh-eye{display:inline-block;width:.68em;height:.68em;margin-inline:.03em;border-radius:50%;background:var(--spark) url("/imagery/owl-eye.webp") 50% 31%/216%;box-shadow:0 0 0 .025em var(--spark);vertical-align:-.01em}
 .odh-eyehero__meta{position:absolute;right:var(--edge);bottom:var(--space-5);width:min(400px,38%);display:flex;flex-direction:column;gap:var(--space-3)}
 .odh-eyehero__th{font-family:var(--font-display);font-size:24px;line-height:1.4;font-weight:600}
 .odh-eyehero__meta p:not(.odh-eyehero__th){color:var(--text-2)}
@@ -170,6 +170,7 @@
 .odh-disc:hover{transform:scale(1.06)}
 
 /* SiteFooter */
+.odh-foot{width:100%}
 .odh-foot__grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,.8fr) minmax(0,.8fr) minmax(0,1.2fr);gap:var(--space-5);padding-block:var(--space-6)}
 .odh-foot li a{display:block;padding-block:3px;text-decoration:none;overflow-wrap:anywhere}
 .odh-foot li a:hover{color:var(--text-key)}
@@ -226,7 +227,16 @@
 .odh-paras{display:flex;flex-direction:column;gap:var(--space-3);font-size:clamp(17px,1.6vw,20px);line-height:1.7;color:var(--text-2)}
 .odh-article{max-width:46rem;margin-inline:auto;padding:var(--space-7) var(--gutter) var(--space-6)}
 .odh-article h1{margin-top:var(--space-3);font-family:var(--font-display);font-size:clamp(32px,4vw,52px);line-height:1.3;font-weight:700;text-wrap:balance}
-.odh-404{min-height:100svh;display:flex;flex-direction:column;justify-content:center;gap:var(--space-4);padding:var(--space-5) var(--gutter)}
+.odh-404{flex:1;display:grid;width:100%;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:var(--space-7);align-items:center;padding-block:var(--space-7)}
+.odh-404__code{font-family:var(--font-display);font-size:clamp(104px,17vw,240px);line-height:.92;font-weight:700;letter-spacing:-.03em;font-variation-settings:"wdth" 90}
+.odh-404__code .odh-eye{animation:odh-blink 5.5s infinite}
+.odh-404 .odh-h1{max-width:none;margin-top:var(--space-4);font-size:clamp(32px,3.8vw,52px)}
+.odh-404__links .odh-mono{margin-bottom:var(--space-3)}
+.odh-404__links a{display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);min-height:68px;border-top:1px solid var(--line);font-family:var(--font-display);font-size:clamp(20px,2vw,24px);font-weight:500;text-decoration:none;transition:color .2s,padding .25s}
+.odh-404__links li:last-child a{border-bottom:1px solid var(--line)}
+@media (hover:hover){.odh-404__links a:hover{padding-left:var(--space-2);color:var(--text-key)}}
+@keyframes odh-blink{0%,93%,100%{transform:scaleY(1)}96.5%{transform:scaleY(.08)}}
+@media (max-width:900px){.odh-404{grid-template-columns:minmax(0,1fr);gap:var(--space-6);align-items:start;padding-block:var(--space-6)}}
 
 /* Responsive */
 @media (hover:hover){.odh-index__row:hover{padding-left:var(--space-4)}.odh-index__row:hover h3{color:var(--text-key)}}

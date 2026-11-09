@@ -1,0 +1,14 @@
+# Ships with every deploy. Keep it minimal: the host runs LiteSpeed.
+DirectoryIndex index.html
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTP_HOST} ^www\.owldayhouse\.com$ [NC]
+  RewriteRule ^(.*)$ https://owldayhouse.com/$1 [R=301,L]
+</IfModule>
+
+# Retired pages
+RedirectMatch 301 ^/talon/?$ /services/website-software/
+RedirectMatch 301 ^/packages/?$ /services/
+
+ErrorDocument 404 /404.html
