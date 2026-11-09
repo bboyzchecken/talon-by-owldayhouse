@@ -64,8 +64,6 @@ export const articles: readonly Article[] = [
 
 นำข้อมูลและคอนเทนต์ไปใช้ใน[การตลาดดิจิทัล](/services/digital-marketing/) และฟังเสียงตอบรับผ่าน[Social Listening](/services/social-listening/) เพื่อปรับรอบถัดไป
 
-> แคมเปญที่ดีไม่ได้จบวันงาน แต่ทุกขั้นต้องส่งข้อมูลให้ขั้นถัดไปใช้งานต่อได้
-
 ## เริ่มวางแผนจากคำถาม 4 ข้อ
 
 1. เป้าหมายหลักคือการรับรู้ รายชื่อลูกค้า หรือยอดขาย
@@ -111,8 +109,6 @@ Use [kiosk games](/en/services/event-interactive/), [well-matched KOLs](/en/serv
 
 Feed the data and content into [digital marketing](/en/services/digital-marketing/), then use [social listening](/en/services/social-listening/) to improve the next round.
 
-> A good campaign does not end on event day. Every stage should hand usable data to the next.
-
 ## Start planning with four questions
 
 1. Is the main goal awareness, leads or sales?
@@ -139,7 +135,7 @@ Once these are answered, choosing channels gets much easier because every activi
       keywords: ["เกม Kiosk", "เกมจอทัชสกรีน งานอีเวนต์", "เกมออกบูธ", "Interactive Booth", "กิจกรรมบูธงานอีเวนต์", "Brand Activation"],
       imageAlt: "ผู้ร่วมงานยืนล้อมตู้ Kiosk จอทัชสกรีนในงานเปิดตัวแบรนด์",
       category: "Event Interactive",
-      body: `บูธที่มีแค่ป้ายและโบรชัวร์ทำให้คนเดินผ่านได้ง่าย **เกมบน Kiosk จอทัชสกรีน** ช่วยให้คนหยุด ลองเล่น และใช้เวลากับแบรนด์นานขึ้น แต่เกมจะได้ผลก็ต่อเมื่อวางแผนจากเป้าหมายของแคมเปญ ไม่ใช่จากความสนุกอย่างเดียว
+      body: `บูธที่มีแค่ป้ายและโบรชัวร์ทำให้คนเดินผ่านได้ง่าย **เกมบน Kiosk จอทัชสกรีน** ช่วยให้คนหยุด ลองเล่น และใช้เวลากับแบรนด์นานขึ้น เกมจะได้ผลเมื่อวางแผนจากเป้าหมายของแคมเปญตั้งแต่แรก
 
 ## เริ่มจากสิ่งที่แบรนด์อยากได้
 
@@ -176,8 +172,6 @@ Once these are answered, choosing channels gets much easier because every activi
 3. เตรียมเครื่องสำรองและทีมดูแลระบบในวันงาน
 4. ซ้อมกับจอและสถานที่จริงก่อนงาน
 
-> เกมที่ดีต้องสนุกพอให้คนหยุด และเรียบง่ายพอให้ทีมหน้างานดูแลได้
-
 ## วัดผลหลังจบงาน
 
 ดูจำนวนรอบที่เล่น สัดส่วนคนที่เล่นจบ และจำนวนรายชื่อที่ได้รับความยินยอม ตัวเลขเหล่านี้ช่วยให้รู้ว่าควรปรับอะไรในงานถัดไป
@@ -196,7 +190,7 @@ Once these are answered, choosing channels gets much easier because every activi
       keywords: ["touchscreen kiosk games", "event kiosk game", "trade show booth games", "interactive booth", "brand activation games"],
       imageAlt: "Guests gathered around touchscreen kiosks at a bright brand launch event",
       category: "Event Interactive",
-      body: `A booth with only signage is easy to walk past. A **touchscreen kiosk game** gets people to stop, play and spend longer with your brand. It only works, though, when it is planned around the campaign goal rather than around fun alone.
+      body: `A booth with only signage is easy to walk past. A **touchscreen kiosk game** gets people to stop, play and spend longer with your brand. It works when it is planned around the campaign goal from the start.
 
 ## Start with what the brand needs
 
@@ -233,8 +227,6 @@ If you collect names, phone numbers or emails, explain why and ask for clear con
 3. Have a spare unit and technical support on the day
 4. Rehearse on the real screen in the real venue
 
-> A good game is fun enough to make people stop and simple enough for the floor team to run.
-
 ## Measure after the event
 
 Track rounds played, the share of players who finish, and the number of consented leads. These numbers show what to change next time.
@@ -255,7 +247,7 @@ See more on our [Event Interactive](/en/services/event-interactive/) page.`,
     th: {
       title: "วิธีเลือก KOL และ Influencer ให้ตรงแคมเปญ: คู่มือสำหรับแบรนด์",
       description:
-        "วิธีเลือก KOL และ Influencer จากความเหมาะสมกับแบรนด์ ไม่ใช่แค่ยอดผู้ติดตาม พร้อมขั้นตอนบรีฟ วางแผนคอนเทนต์ และวัดผลแคมเปญ",
+        "วิธีเลือก KOL และ Influencer ให้เหมาะกับแบรนด์ ดูจากกลุ่มผู้ชม ความน่าเชื่อถือ และผลงานเดิม พร้อมขั้นตอนบรีฟ วางแผนคอนเทนต์ และวัดผลแคมเปญ",
       keywords: ["เลือก KOL", "จ้าง Influencer", "KOL Marketing", "Influencer Marketing", "แคมเปญ KOL", "หา KOL ให้แบรนด์"],
       imageAlt: "ครีเอเตอร์กำลังถ่ายวิดีโอด้วยสมาร์ตโฟนในบูธงานอีเวนต์",
       category: "KOL และ Influencer",
@@ -279,9 +271,7 @@ See more on our [Event Interactive](/en/services/event-interactive/) page.`,
 
 ## บรีฟให้ KOL ยังเป็นตัวเอง
 
-บรีฟที่ดีบอกสิ่งที่ต้องสื่อและสิ่งที่ห้ามพูดอย่างชัดเจน แต่เปิดให้ครีเอเตอร์เล่าด้วยสไตล์ของตัวเอง เพราะผู้ติดตามเชื่อเสียงของเขา ไม่ใช่สคริปต์ของแบรนด์
-
-> KOL ที่ดีที่สุดคือคนที่ผู้ชมเชื่อ เมื่อพูดถึงสินค้าของคุณ
+บรีฟที่ดีบอกสิ่งที่ต้องสื่อและสิ่งที่ห้ามพูดอย่างชัดเจน แต่เปิดให้ครีเอเตอร์เล่าด้วยสไตล์ของตัวเอง เพราะผู้ติดตามเชื่อเสียงของครีเอเตอร์เอง
 
 ## วางแผนให้คอนเทนต์ทำงานต่อ
 
@@ -300,7 +290,7 @@ See more on our [Event Interactive](/en/services/event-interactive/) page.`,
     en: {
       title: "How to Choose the Right KOLs and Influencers for a Campaign",
       description:
-        "How brands should choose KOLs and influencers by fit rather than follower count, with practical guidance on briefing, content planning and measurement.",
+        "How brands can choose KOLs and influencers by audience, credibility and past work, with practical steps for briefing, content planning and measurement.",
       keywords: ["how to choose KOLs", "influencer marketing guide", "KOL marketing", "influencer campaign planning", "KOL agency Thailand"],
       imageAlt: "A content creator filming with a smartphone at an event booth",
       category: "KOL & Influencers",
@@ -324,9 +314,7 @@ Strong campaigns often combine levels, because each does a different job.
 
 ## Brief creators so they can stay themselves
 
-A good brief says clearly what must be communicated and what must be avoided, then leaves room for the creator's own style. Audiences trust that voice, not a brand script.
-
-> The best KOL is the person your audience believes when they mention your product.
+A good brief says clearly what must be communicated and what must be avoided, then leaves room for the creator's own style. Audiences trust the creator's own voice.
 
 ## Plan for content that keeps working
 
@@ -378,8 +366,6 @@ See our [KOL & Influencers](/en/services/kol-influencer/) service.`,
 
 ถามคำถามเดียว เช่น ชอบอะไรที่สุดในงาน คำตอบจริงจากผู้ร่วมงานน่าเชื่อถือกว่าข้อความโฆษณา
 
-> วางแผนจากปลายทาง แล้วทุกภาพที่ถ่ายจะมีที่ไปชัดเจน
-
 ## หลังงาน
 
 1. ปล่อยภาพและคลิปสั้นภายในวันงานหรือวันถัดไป ขณะที่คนยังพูดถึง
@@ -422,8 +408,6 @@ Choosing a camera setup that works for vertical video beats cropping it afterwar
 ### Ask one short question
 
 Try "What did you like most today?" A real answer from a guest is more convincing than ad copy.
-
-> Plan from the destination, and every shot has somewhere to go.
 
 ## After the event
 
@@ -476,8 +460,6 @@ See our [Event Production](/en/services/event-content/) service.`,
 
 เริ่มจากหลายชิ้นงานหรือกลุ่มเป้าหมายเล็ก ๆ ดูผล แล้วเพิ่มงบให้สิ่งที่ได้ผล วิธีนี้ลดความเสี่ยงกว่าการลงงบก้อนเดียว
 
-> ทุกช่องทางควรมีหน้าที่ชัดเจน และทุกหน้าที่ควรมีตัวเลขกำกับ
-
 ## 6. ติดตั้งการวัดผลตั้งแต่ต้น
 
 ตั้งค่าการติดตามบนเว็บไซต์และลิงก์แคมเปญก่อนเริ่มยิงแอด เพื่อให้รู้ว่าลูกค้ามาจากไหน
@@ -523,8 +505,6 @@ Someone who just discovered the brand needs something different from someone rea
 ## 5. Test ads, then scale
 
 Start with several creatives or small audiences, read the results, then move budget to what works. It is safer than one large bet.
-
-> Every channel needs a clear job, and every job needs a number.
 
 ## 6. Set up measurement first
 
@@ -577,8 +557,6 @@ See our [Digital Marketing](/en/services/digital-marketing/) service.`,
 5. วิเคราะห์หัวข้อและความรู้สึก
 6. สรุปเป็นสิ่งที่ทีมต้องทำต่อ
 
-> รายงานที่ดีไม่ได้จบที่ตัวเลข แต่บอกว่าทีมควรทำอะไรต่อ
-
 ## ข้อควรระวังกับภาษาไทย
 
 ระบบวิเคราะห์ความรู้สึกอัตโนมัติอาจตีความคำประชด คำแสลง หรือบริบทไทยคลาดเคลื่อน จึงควรให้คนตรวจตัวอย่างข้อมูลก่อนสรุปผล
@@ -623,8 +601,6 @@ Owl Day House จัดทำงานนี้ร่วมกับพาร์
 4. Remove irrelevant data
 5. Analyze topics and sentiment
 6. Turn findings into actions
-
-> A good report does not stop at numbers. It tells the team what to do next.
 
 ## Watch out for language and context
 
@@ -677,8 +653,6 @@ MCP เป็นช่องทางเชื่อมต่อ ไม่ได
 3. ใครมีสิทธิ์ใช้งาน
 4. การใช้งานถูกบันทึกไว้ตรวจสอบหรือไม่
 
-> ระบบที่ดีควรเปิดให้ทีมใช้ AI ได้ โดยที่แบรนด์ยังควบคุมข้อมูลของตัวเอง
-
 ## เริ่มต้นอย่างไร
 
 เลือกคำถามที่ทีมถามบ่อยหนึ่งเรื่อง เปิดการเข้าถึงแบบอ่านอย่างเดียวในข้อมูลชุดเล็ก ทดสอบความถูกต้อง แล้วค่อยขยาย
@@ -719,8 +693,6 @@ MCP is a connection. It does not automatically make a system secure or make AI u
 2. What is read-only and what can be changed
 3. Who is allowed to use it
 4. Whether usage is logged for review
-
-> Good systems let teams use AI while the brand stays in control of its data.
 
 ## How to start
 
@@ -764,8 +736,6 @@ The software we build for each service connects through MCP. Learn more on our [
 ## ทดสอบด้วยสถานการณ์จริง
 
 ทำ Load Testing ตามพฤติกรรมจริงของผู้ใช้ เช่น ทุกคนกดปุ่มเดียวกันในนาทีแรก แล้วดูว่าส่วนใดช้าก่อน
-
-> ความเสถียรต้องออกแบบตั้งแต่แรก ไม่ใช่สิ่งที่เติมได้ในสัปดาห์สุดท้าย
 
 ## ความปลอดภัยและข้อมูลส่วนบุคคล
 
@@ -814,8 +784,6 @@ Ask how many people will be active at the worst moment, when it happens and what
 ## Test with realistic scenarios
 
 Run load tests based on real behavior, such as everyone pressing the same button in the first minute, and see what slows down first.
-
-> Reliability has to be designed in. It cannot be added in the final week.
 
 ## Security and personal data
 
