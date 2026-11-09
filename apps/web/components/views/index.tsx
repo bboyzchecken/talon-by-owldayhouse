@@ -5,7 +5,7 @@ import type { Metadata } from "next";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Button } from "@odh/ui";
 import { JsonLd } from "@/components/JsonLd";
-import { EmailLink, MessengerCta } from "@/components/MessengerCta";
+import { EmailLink, LineLink, MessengerCta } from "@/components/MessengerCta";
 import { BrandLoop } from "@/components/site/BrandLoop";
 import { CapabilityTag } from "@/components/site/CapabilityTag";
 import { EyeHero } from "@/components/site/EyeHero";
@@ -14,17 +14,19 @@ import { ServiceIndex } from "@/components/site/ServiceIndex";
 import { StatementFill } from "@/components/site/StatementFill";
 import { ThreeActs } from "@/components/site/ThreeActs";
 import { TouchDemo } from "@/components/site/TouchDemo";
-import { ContactClose, LogoMarquee, PageIntro, SectionHead, WorkEditorial } from "@/components/site/sections";
+import { CaseGrid, ContactClose, IndustryLinks, IndustryMarquee, LeadKit, PageIntro, SectionHead, WorkEditorial } from "@/components/site/sections";
 import { getCopy } from "@/content/copy";
-import { posts } from "@/content/news";
-import { earlierWork, liveWork } from "@/content/portfolio";
+import { getIndustry } from "@/content/industries";
+import { publishedPosts } from "@/content/news";
+import { cases, earlierWork, liveWork, portfolio } from "@/content/portfolio";
 import { getService, getServices } from "@/content/services";
 import { company, contact } from "@/content/site";
 import { localeHref, type Locale } from "@/lib/i18n";
 import { pageMeta } from "@/lib/seo";
 import { breadcrumbSchema, servicesSchema } from "@/lib/structured-data";
 
-const marqueeLabel: Record<Locale, string> = { th: "ลูกค้าที่เคยร่วมงาน", en: "Clients we have worked with" };
+/** Services that agencies and event organizers also hire us for. */
+const agencyServices = new Set(["event-interactive", "event-content", "kol-influencer"]);
 
 /* Home */
 
@@ -41,7 +43,7 @@ export function HomeView({ locale }: { locale: Locale }) {
   const newsTab: ListTab = {
     id: "news",
     label: t.newsTabs.news,
-    items: posts.slice(0, 3).map((post) => ({ category: `${post.readingMinutes} ${copy.news.minutes}`, title: post.title, href: `/news/${post.slug}/` })),
+    items: publishedPosts.slice(0, 3).map((post) => ({ category: `${post.readingMinutes} ${copy.news.minutes}`, title: post.title, href: `/news/${post.slug}/` })),
   };
 
   return (
@@ -57,10 +59,20 @@ export function HomeView({ locale }: { locale: Locale }) {
         <ServiceIndex services={getServices(locale)} labels={copy.capability} basePath={href("/services/")} />
       </section>
       <section className="odh-sec odh-wrap">
+        <SectionHead label={copy.industries.label}>
+          {t.industriesTitle} <em>{t.industriesKey}</em>
+        </SectionHead>
+        <IndustryLinks locale={locale} />
+      </section>
+      <section className="odh-sec odh-wrap">
         <SectionHead label="Selected work">{t.workTitle}</SectionHead>
         <WorkEditorial items={liveWork} locale={locale} />
       </section>
-      <LogoMarquee label={marqueeLabel[locale]} />
+      <section className="odh-sec odh-wrap">
+        <SectionHead label={copy.cases.label}>{copy.cases.title}</SectionHead>
+        <CaseGrid items={cases} locale={locale} />
+      </section>
+      <IndustryMarquee label={t.industriesMarquee} locale={locale} />
       {locale === "th" ? (
         <section className="odh-sec odh-wrap">
           <ListTabs tabs={[newsTab]} />
@@ -94,6 +106,11 @@ export function ServicesView({ locale }: { locale: Locale }) {
           </Link>
         </div>
       </section>
+      <section className="odh-sec odh-wrap">
+        <SectionHead label={copy.industries.label}>{t.industriesTitle}</SectionHead>
+        <IndustryLinks locale={locale} />
+      </section>
+      <LeadKit locale={locale} location="services" />
       <ContactClose locale={locale} location="services-close" />
     </main>
   );
@@ -113,6 +130,7 @@ export function ServiceDetailView({ locale, slug }: { locale: Locale; slug: stri
   const href = (path: string) => localeHref(locale, path);
   const isSoftware = service.pillar === "Build";
   const isPartner = service.capability === "partner";
+  const relatedCases = cases.filter((item) => item.services.includes(slug));
 
   return (
     <main>
@@ -180,10 +198,26 @@ export function ServiceDetailView({ locale, slug }: { locale: Locale; slug: stri
         </section>
       ) : null}
 
+      {slug === "event-interactive" ? <LeadKit locale={locale} location={`service-${slug}`} /> : null}
+
       {isSoftware ? (
         <section className="odh-sec odh-wrap">
           <SectionHead label="Selected work">{t.relatedWork}</SectionHead>
           <WorkEditorial items={liveWork} locale={locale} />
+        </section>
+      ) : null}
+
+      {relatedCases.length > 0 ? (
+        <section className="odh-sec odh-wrap">
+          <SectionHead label={copy.cases.label}>{t.relatedWork}</SectionHead>
+          <CaseGrid items={relatedCases} locale={locale} />
+        </section>
+      ) : null}
+
+      {agencyServices.has(slug) ? (
+        <section className="odh-wrap odh-two pb-24">
+          <h2>{t.agencyTitle}</h2>
+          <p className="odh-statementline">{t.agencyBody}</p>
         </section>
       ) : null}
 
@@ -244,6 +278,10 @@ export function WorkView({ locale }: { locale: Locale }) {
       <section className="odh-wrap pb-24">
         <WorkEditorial items={liveWork} locale={locale} showResult />
       </section>
+      <section className="odh-sec odh-wrap">
+        <SectionHead label={copy.cases.label}>{copy.cases.title}</SectionHead>
+        <CaseGrid items={cases} locale={locale} />
+      </section>
       <section className="odh-wrap pb-24 odh-two">
         <h2>{t.earlier}</h2>
         <ul className="odh-lines">
@@ -298,6 +336,23 @@ export function AboutView({ locale }: { locale: Locale }) {
           ))}
         </div>
       </section>
+      {t.teamStats.length > 0 ? (
+        <section className="odh-sec odh-wrap">
+          <SectionHead label={t.teamLabel}>{t.teamTitle}</SectionHead>
+          <div className="odh-stats">
+            {t.teamStats.map((team) => (
+              <article key={team.title}>
+                <strong>
+                  {team.value} <span>{t.teamPeople}</span>
+                </strong>
+                <h3>{team.title}</h3>
+                <p>{team.text}</p>
+                {team.partner ? <CapabilityTag kind="partner" labels={copy.capability} /> : null}
+              </article>
+            ))}
+          </div>
+        </section>
+      ) : null}
       <ContactClose locale={locale} location="about-close" />
     </main>
   );
@@ -324,18 +379,20 @@ export function ContactView({ locale }: { locale: Locale }) {
             <h2>{t.email}</h2>
             <p>{contact.email}</p>
             <div className="odh-cta">
-              <Button variant={locale === "en" ? "key" : "line"} asChild>
-                <EmailLink location="contact-page">{t.emailCta}</EmailLink>
+              <Button variant="key" asChild>
+                <EmailLink location="contact-page">
+                  {t.emailCta} <ArrowRight size={18} />
+                </EmailLink>
               </Button>
             </div>
           </div>
           <div>
-            <h2>{t.messenger}</h2>
-            <p>{t.messengerNote}</p>
+            <h2>{t.line}</h2>
+            <p>{t.lineNote}</p>
             <div className="odh-cta">
-              <MessengerCta location="contact-page" variant={locale === "en" ? "line" : "key"}>
-                {t.messengerCta} <ArrowRight size={18} />
-              </MessengerCta>
+              <Button variant="line" asChild>
+                <LineLink location="contact-page">{t.lineCta}</LineLink>
+              </Button>
             </div>
           </div>
           <div>
@@ -348,17 +405,22 @@ export function ContactView({ locale }: { locale: Locale }) {
             </div>
           </div>
           <div>
-            <h2>{t.line}</h2>
-            <p>{t.lineNote}</p>
+            <h2>{t.messenger}</h2>
+            <p>{t.messengerNote}</p>
             <div className="odh-cta">
-              <Button variant="line" asChild>
-                <a href={contact.line} target="_blank" rel="noopener noreferrer">
-                  {t.lineCta}
-                </a>
-              </Button>
+              <MessengerCta location="contact-page" variant="line">
+                {t.messengerCta}
+              </MessengerCta>
             </div>
           </div>
         </div>
+        {contact.profilePdf ? (
+          <div className="mt-10">
+            <a className="odh-link" href={contact.profilePdf} download>
+              {t.profile} <ArrowRight size={16} />
+            </a>
+          </div>
+        ) : null}
       </section>
       <section className="odh-wrap pb-24">
         <div className="odh-reasons odh-reasons--3">
@@ -380,6 +442,94 @@ export function ContactView({ locale }: { locale: Locale }) {
           </div>
         </div>
       </section>
+    </main>
+  );
+}
+
+/* Industries */
+
+export function industryMeta(locale: Locale, slug: string): Metadata {
+  const industry = getIndustry(locale, slug);
+  if (!industry) return {};
+  return pageMeta({ locale, title: industry.metaTitle, description: industry.metaDescription, path: `/industries/${slug}/` });
+}
+
+const PILLARS = ["Build", "Activate", "Grow"] as const;
+
+export function IndustryView({ locale, slug }: { locale: Locale; slug: string }) {
+  const industry = getIndustry(locale, slug);
+  if (!industry) notFound();
+  const copy = getCopy(locale);
+  const t = copy.industries;
+  const href = (path: string) => localeHref(locale, path);
+  const proofWork = portfolio.filter((item) => industry.proofWork.includes(item.slug));
+  const proofCases = cases.filter((item) => industry.proofCases.includes(item.slug));
+
+  return (
+    <main>
+      <JsonLd data={breadcrumbSchema(locale, industry.name, `/industries/${slug}/`, { name: copy.nav.services, path: "/services/" })} />
+      <header className="odh-intro odh-wrap">
+        <Link className="odh-link" href={href("/services/")}>
+          <ArrowLeft size={16} /> {t.back}
+        </Link>
+        <p className="odh-mono mt-10">
+          {t.label} · {industry.name}
+        </p>
+        <h1 className="odh-h1">{industry.title}</h1>
+        <p className="odh-lead">{industry.lead}</p>
+      </header>
+      <div className="odh-wrap">
+        <Image className="odh-pageimg" src={industry.image} alt="" width={1920} height={1360} sizes="100vw" priority />
+      </div>
+
+      <section className="odh-sec odh-wrap odh-two">
+        <h2>{t.pains}</h2>
+        <ul className="odh-lines">
+          {industry.pains.map((pain) => (
+            <li key={pain}>{pain}</li>
+          ))}
+        </ul>
+      </section>
+
+      <section className="odh-wrap odh-two pb-24">
+        <h2>{t.moments}</h2>
+        <ul className="odh-lines">
+          {industry.moments.map((moment) => (
+            <li key={moment}>{moment}</li>
+          ))}
+        </ul>
+      </section>
+
+      <section className="odh-sec odh-wrap">
+        <div className="odh-two mb-16">
+          <h2>{t.plan}</h2>
+        </div>
+        <ol className="odh-steps odh-steps--3">
+          {PILLARS.map((pillar) => (
+            <li key={pillar}>
+              <span className="odh-mono">{pillar}</span>
+              <p className="mt-2 text-xl text-ink">{industry.plan[pillar]}</p>
+            </li>
+          ))}
+        </ol>
+        {industry.note ? <p className="odh-note mt-10">{industry.note}</p> : null}
+      </section>
+
+      <LeadKit locale={locale} location={`industry-${slug}`} />
+
+      {proofWork.length > 0 || proofCases.length > 0 ? (
+        <section className="odh-sec odh-wrap">
+          <SectionHead label="Selected work">{t.proof}</SectionHead>
+          {proofWork.length > 0 ? <WorkEditorial items={proofWork} locale={locale} showResult /> : null}
+          {proofCases.length > 0 ? (
+            <div className={proofWork.length > 0 ? "mt-16" : undefined}>
+              <CaseGrid items={proofCases} locale={locale} />
+            </div>
+          ) : null}
+        </section>
+      ) : null}
+
+      <ContactClose locale={locale} location={`industry-${slug}`} />
     </main>
   );
 }

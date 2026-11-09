@@ -57,6 +57,23 @@ export function EmailLink({ children, location, className }: MessengerLinkProps)
   );
 }
 
+/** LINE chat link with the same lead tracking. */
+export function LineLink({ children, location, className }: MessengerLinkProps) {
+  const handleClick = useCallback(() => {
+    trackEvent("generate_lead", {
+      method: "line",
+      cta_location: location,
+      ...utmEventParams(readUtm()),
+    });
+  }, [location]);
+
+  return (
+    <a href={contact.line} target="_blank" rel="noopener noreferrer" onClick={handleClick} onAuxClick={handleClick} className={className}>
+      {children}
+    </a>
+  );
+}
+
 interface MessengerCtaProps extends MessengerLinkProps {
   variant?: ButtonProps["variant"];
   size?: ButtonProps["size"];

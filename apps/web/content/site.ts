@@ -28,6 +28,8 @@ export const contact = {
   emailHref: "mailto:owldayhouse@gmail.com",
   // TODO: ยืนยัน LINE official account id ที่ถูกต้องกับลูกค้า
   line: "https://line.me/R/ti/p/@owldayhouse",
+  /** Company profile PDF in public/, e.g. "/owl-day-house-profile.pdf". The download button shows only once this is set. */
+  profilePdf: "" as string,
 } as const;
 
 export const social = {

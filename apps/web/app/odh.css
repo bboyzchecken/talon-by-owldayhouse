@@ -200,6 +200,7 @@
 .odh-lines li{padding-block:var(--space-3);border-top:1px solid var(--line);font-family:var(--font-display);font-size:clamp(18px,2vw,24px);line-height:1.4;font-weight:500}
 .odh-steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--space-4)}
 .odh-steps li{padding-top:var(--space-3);border-top:1px solid var(--line)}
+.odh-steps--3{grid-template-columns:repeat(3,minmax(0,1fr))}
 .odh-steps h3{margin-top:var(--space-2);font-family:var(--font-display);font-size:24px;line-height:1.4;font-weight:600}
 .odh-steps p,.odh-note{color:var(--text-2)}
 .odh-demoarea{display:flex;justify-content:center}
@@ -210,6 +211,17 @@
 .odh-ways .odh-cta{margin-top:var(--space-3)}
 .odh-reasons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-5) var(--space-4)}
 .odh-reasons--3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.odh-cases{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--space-5) var(--space-4)}
+.odh-cases>article{display:flex;flex-direction:column;gap:var(--space-2);padding-top:var(--space-3);border-top:1px solid var(--line)}
+.odh-cases h3{font-family:var(--font-display);font-size:24px;line-height:1.4;font-weight:600}
+.odh-cases p{color:var(--text-2)}
+.odh-cases .odh-cases__metric{font-family:var(--font-display);font-size:clamp(40px,4.4vw,56px);line-height:1.1;font-weight:700;color:var(--text-key)}
+.odh-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--space-5) var(--space-4)}
+.odh-stats>article{display:flex;flex-direction:column;align-items:flex-start;gap:var(--space-2);padding-top:var(--space-3);border-top:1px solid var(--line)}
+.odh-stats strong{font-family:var(--font-display);font-size:clamp(40px,4.4vw,56px);line-height:1.1;font-weight:700;color:var(--text-key)}
+.odh-stats strong span{font-size:20px;font-weight:500;color:var(--text-2)}
+.odh-stats h3{font-family:var(--font-display);font-size:24px;line-height:1.4;font-weight:600}
+.odh-stats p{color:var(--text-2)}
 .odh-paras{display:flex;flex-direction:column;gap:var(--space-3);font-size:clamp(17px,1.6vw,20px);line-height:1.7;color:var(--text-2)}
 .odh-article{max-width:46rem;margin-inline:auto;padding:var(--space-7) var(--gutter) var(--space-6)}
 .odh-article h1{margin-top:var(--space-3);font-family:var(--font-display);font-size:clamp(32px,4vw,52px);line-height:1.3;font-weight:700;text-wrap:balance}
@@ -258,8 +270,10 @@
  .odh-foot__grid{grid-template-columns:repeat(2,minmax(0,1fr))}
  .odh-foot__grid>:first-child,.odh-foot__grid>:last-child{grid-column:1/-1}
  .odh-foot li a{padding-block:10px}
- .odh-two,.odh-reasons,.odh-reasons--3{grid-template-columns:minmax(0,1fr)}
+ .odh-two,.odh-reasons,.odh-reasons--3,.odh-cases{grid-template-columns:minmax(0,1fr)}
+ .odh-stats{grid-template-columns:minmax(0,1fr)}
  .odh-steps{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .odh-steps.odh-steps--3{grid-template-columns:minmax(0,1fr)}
  .odh-intro{padding-block:var(--space-6) var(--space-5)}
  /* The loop stands upright so it can use the height of a phone. */
  .odh-loop{--u:.64px;--x:var(--mx);max-width:440px;margin-inline:auto;aspect-ratio:5/7}
