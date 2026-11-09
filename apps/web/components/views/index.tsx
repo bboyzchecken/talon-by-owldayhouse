@@ -339,7 +339,7 @@ export function AboutView({ locale }: { locale: Locale }) {
       {t.teamStats.length > 0 ? (
         <section className="odh-sec odh-wrap">
           <SectionHead label={t.teamLabel}>{t.teamTitle}</SectionHead>
-          <div className="odh-stats">
+          <div className={`odh-stats odh-stats--${t.teamStats.length}`}>
             {t.teamStats.map((team) => (
               <article key={team.title}>
                 <strong>
