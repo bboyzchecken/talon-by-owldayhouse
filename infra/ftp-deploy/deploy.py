@@ -8,8 +8,9 @@ environment or infra/ftp-deploy/.env (git-ignored).
     python infra/ftp-deploy/deploy.py              # upload
 
 Files are removed only inside folders this site owns, plus RETIRED. Anything else in
-the web root (.well-known, cgi-bin, host files) is left alone. The remote .htaccess is
-backed up before it is replaced.
+the web root (.well-known, cgi-bin, host files) is left alone. .htaccess is uploaded
+only when its content differs from the server's, and the old one is backed up first:
+LiteSpeed re-reads .htaccess only after a restart, so a changed file needs one.
 """
 import argparse
 import ftplib
@@ -46,6 +47,16 @@ def make_plan(local: dict[str, int], remote: dict[str, int]) -> tuple[list[str],
     tops = {f.split("/")[0] for f in local if "/" in f}
     deletes = [f for f in sorted(remote) if f not in local and "/" in f and f.split("/")[0] in tops | RETIRED]
     return uploads, deletes
+
+
+def fetch_remote(ftp: ftplib.FTP, path: str) -> bytes | None:
+    """Return a remote file's bytes, or None when it is not there."""
+    chunks: list[bytes] = []
+    try:
+        ftp.retrbinary(f"RETR {path}", chunks.append)
+    except ftplib.error_perm:
+        return None
+    return b"".join(chunks)
 
 
 def list_remote(ftp: ftplib.FTP, base: str, top: str, found: dict[str, int]) -> None:
@@ -114,19 +125,28 @@ def main() -> int:
         if top in root_names:
             list_remote(ftp, base, top, remote)
     uploads, deletes = make_plan(local, remote)
+
+    # .htaccess goes up only when it really changed: LiteSpeed caches it until the
+    # host restarts the server, so a pointless re-upload hides which deploy changed it.
+    local_htaccess = (LOCAL / ".htaccess").read_bytes() if (LOCAL / ".htaccess").is_file() else None
+    remote_htaccess = fetch_remote(ftp, f"{base}/.htaccess") if ".htaccess" in root_names else None
+    htaccess_changed = local_htaccess is not None and local_htaccess != remote_htaccess
+    if ".htaccess" in uploads and not htaccess_changed:
+        uploads.remove(".htaccess")
+
     print(f"target: {os.environ['FTP_HOST']}:{base or '/'}")
     print(f"upload {len(uploads)} of {len(local)} files, delete {len(deletes)} stale files")
     for name in deletes:
         print(f"  delete {name}")
+    print(f"  .htaccess: {'changed, uploading' if htaccess_changed else 'unchanged, left as is'}")
     if args.dry_run:
         ftp.quit()
         print("dry run: nothing changed")
         return 0
 
-    if ".htaccess" in root_names:
+    if htaccess_changed and remote_htaccess is not None:
         backup = Path(tempfile.mkdtemp(prefix="odh-htaccess-")) / ".htaccess"
-        with backup.open("wb") as handle:
-            ftp.retrbinary(f"RETR {base}/.htaccess", handle.write)
+        backup.write_bytes(remote_htaccess)
         print(f"remote .htaccess saved to {backup}")
 
     made: set[str] = set()
@@ -147,6 +167,8 @@ def main() -> int:
             pass
     ftp.quit()
     print("deploy complete")
+    if htaccess_changed:
+        print("! .htaccess changed. Ask the host to restart LiteSpeed, or it keeps serving the old rules.")
     return 0
 
 

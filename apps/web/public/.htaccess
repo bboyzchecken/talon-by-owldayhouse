@@ -1,14 +1,28 @@
-# Ships with every deploy. Keep it minimal: the host runs LiteSpeed.
+# Ships with every deploy. The host runs LiteSpeed, which honours only RewriteRule
+# from this file — ErrorDocument and RedirectMatch are ignored — so every redirect
+# below is written as a RewriteRule. LiteSpeed also re-reads this file only after a
+# restart: ask the host to restart it whenever this file changes.
 DirectoryIndex index.html
 
 <IfModule mod_rewrite.c>
   RewriteEngine On
+
+  # Canonical host: www -> apex.
   RewriteCond %{HTTP_HOST} ^www\.owldayhouse\.com$ [NC]
   RewriteRule ^(.*)$ https://owldayhouse.com/$1 [R=301,L]
+
+  # Retired pages. Keep these above the 404 fallback or it swallows them.
+  RewriteRule ^talon/?$ /services/website-software/ [R=301,L]
+  RewriteRule ^packages/?$ /services/ [R=301,L]
+
+  # Unknown URL -> our 404 page. This is an internal rewrite, so the response is
+  # HTTP 200 (a soft 404) and Google indexes those URLs as duplicates. Delete these
+  # three lines once the host points the vhost's custom 404 at /404.html, which
+  # serves the same page with a real 404 status.
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^ /404.html [L]
 </IfModule>
 
-# Retired pages
-RedirectMatch 301 ^/talon/?$ /services/website-software/
-RedirectMatch 301 ^/packages/?$ /services/
-
+# Honoured by Apache and LiteSpeed Enterprise; ignored by OpenLiteSpeed.
 ErrorDocument 404 /404.html
