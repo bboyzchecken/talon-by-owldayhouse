@@ -38,6 +38,8 @@
   --edge: max(var(--gutter), calc((100vw - var(--container)) / 2 + var(--gutter)));
   --surface: #ffffff;
   --surface-soft: #f4f4f6;
+  --surface-raised: #ffffff;
+  --device: #15151c;
   --text: #15151c;
   --text-2: #5a5a66;
   --text-key: #28254c;
@@ -73,6 +75,41 @@
   --container: 1440px;
   --gutter: 40px;
   --header-height: 72px;
+}
+
+/* Dark theme trial, switched on by data-theme on <html>. Light stays the default.
+   Navy cannot carry key words on a dark page, so they move to a navy tint and
+   the primary button inverts. Gold stays as it is. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --color-ink: #f2f2f6;
+  --color-muted: #b4b3c4;
+  --color-line: #33314f;
+  --color-line-control: #7d7b95;
+  --surface: #13122a;
+  --surface-soft: #1e1c3a;
+  --surface-raised: #26244a;
+  --device: #4a4868;
+  --text: #f2f2f6;
+  --text-2: #b4b3c4;
+  --text-key: #c9c6f2;
+  --text-spark: #e9a41b;
+  --line: #33314f;
+  --line-control: #7d7b95;
+  --key: #f2f2f6;
+  --on-key: #28254c;
+  --focus-ring: #f2f2f6;
+  --signal-positive: #62b6ec;
+  --shadow-window: 0 24px 48px -28px rgb(0 0 0 / 0.7);
+}
+
+/* Internal document tools are built for paper and stay light. */
+.odh-keep-light {
+  color-scheme: light;
+  --color-ink: #15151c;
+  --color-muted: #5a5a66;
+  --color-line: #e8e8ec;
+  --color-line-control: #8a8a96;
 }
 
 /* Sections are sized once; the pinned stage follows the mobile browser bar. */

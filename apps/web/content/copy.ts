@@ -23,6 +23,7 @@ export const copy = {
       menu: "เปิดหรือปิดเมนู",
       home: "Owl Day House หน้าแรก",
       switchLabel: "Switch to English",
+      themeLabel: "สลับโหมดมืดและสว่าง",
     },
     capability: { partner: "ร่วมกับพาร์ตเนอร์", closed: "ปิดให้บริการแล้ว", live: "ใช้งานจริง", sample: "ตัวอย่าง" },
     home: {
@@ -227,6 +228,7 @@ export const copy = {
       menu: "Toggle menu",
       home: "Owl Day House home",
       switchLabel: "เปลี่ยนเป็นภาษาไทย",
+      themeLabel: "Switch between dark and light",
     },
     capability: { partner: "With partner", closed: "No longer operating", live: "Live", sample: "Sample" },
     home: {
