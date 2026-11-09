@@ -134,7 +134,7 @@ export function RevealHero() {
         style={{ animationDelay: "0.7s" }}
       >
         <p className="text-sm leading-relaxed text-paper/90" style={{ textShadow: "0 1px 14px rgba(9,7,22,0.75)" }}>
-          ทุกเว็บที่เราส่งมอบ ออกแบบให้เติบโตต่อได้ — ทั้งหน้าบ้านและระบบหลังบ้าน
+          ทุกเว็บที่เราส่งมอบ ออกแบบให้เพิ่มฟีเจอร์ต่อได้ ทั้งหน้าบ้านและระบบหลังบ้าน
           ดูแลต่อโดยทีมเดียวกัน
         </p>
       </div>

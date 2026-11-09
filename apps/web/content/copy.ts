@@ -25,18 +25,18 @@ export const copy = {
       lead: "ทีมเดียวที่ทำได้ตั้งแต่ระบบ เกมหน้างาน KOL ไปจนถึงโฆษณาและรายงาน",
       primary: "คุยโปรเจกต์",
       secondary: "ดูผลงาน",
-      reveal: ["เรามองภาพรวมก่อน", "แล้วลงมือให้ครบ"],
-      statement: ["แคมเปญที่คนจำได้", "ไม่ได้เกิดจากเว็บสวยอย่างเดียว", "ต้องมีระบบที่ใช้งานได้จริง", "ประสบการณ์หน้างานที่อยากเข้าร่วม", "คนที่พูดแทนแบรนด์", "และข้อมูลว่าอะไรได้ผล", "เราทำทั้งหมดนี้"],
+      reveal: ["คนวางแผนกับคนลงมือ", "คือทีมเดียวกัน"],
+      statement: ["แคมเปญหนึ่งงาน", "ปกติต้องคุยกับหลายเจ้า", "คนทำเว็บ คนทำเกมหน้างาน", "ทีมถ่าย คนหา KOL", "และคนยิงแอด", "ที่นี่คุยจบได้"],
       statementKey: "ในทีมเดียว",
       servicesTitle: "เลือกเริ่มจากจุดที่แบรนด์",
       servicesKey: "ต้องการ",
-      workTitle: "ผลงานที่ยังทำงานอยู่ทุกวัน",
+      workTitle: "ผลงานที่ยังเปิดใช้งานอยู่",
       loop: {
-        title: "ทุกงานต่อกัน",
-        titleKey: "เป็นวงเดียว",
+        title: "ผลจากงานหนึ่ง",
+        titleKey: "ใช้วางแผนงานถัดไป",
         stages: [
           { word: "Build", title: "สร้างเครื่องมือของแบรนด์", text: "เว็บไซต์และระบบเป็นฐานที่แบรนด์เป็นเจ้าของ และต่อ AI ของแบรนด์เองได้" },
-          { word: "Activate", title: "พาคนมาเจอแบรนด์", text: "เกมหน้างาน KOL และงานโปรดักชัน สร้างประสบการณ์ที่คนอยากเข้าร่วม" },
+          { word: "Activate", title: "พาคนมาเจอแบรนด์", text: "เกมหน้างาน KOL และงานโปรดักชัน ทำให้คนมาร่วมงานและพูดถึงแบรนด์" },
           { word: "Grow", title: "เปลี่ยนความสนใจเป็นลูกค้า", text: "โฆษณาและ Social Listening บอกว่าอะไรได้ผล แล้วส่งกลับไปพัฒนางานรอบถัดไป" },
         ],
       },
@@ -44,7 +44,7 @@ export const copy = {
     },
     acts: [
       { word: "Build", image: "/imagery/build.webp", description: "เว็บไซต์ แอป และระบบองค์กรที่ออกแบบให้ใช้งานจริงและพัฒนาต่อได้", services: ["เว็บไซต์", "เว็บแอปและโมบายแอป", "ระบบองค์กร"] },
-      { word: "Activate", image: "/imagery/kiosk.webp", description: "เปลี่ยนอีเวนต์และแคมเปญให้คนอยากเข้าร่วม ด้วยเกมหน้างาน KOL และทีมโปรดักชันของเราเอง", services: ["เกมบน Kiosk", "KOL และ Influencer", "Event Production"] },
+      { word: "Activate", image: "/imagery/kiosk.webp", description: "เกมหน้างาน KOL และทีมโปรดักชันของเราเอง สำหรับอีเวนต์และแคมเปญของแบรนด์", services: ["เกมบน Kiosk", "KOL และ Influencer", "Event Production"] },
       { word: "Grow", image: "/imagery/grow.webp", description: "วางแผนการตลาดดิจิทัล ดูแลเพจ ยิงแอด และฟังเสียงลูกค้าเพื่อหาลูกค้าใหม่ให้แบรนด์", services: ["Digital Marketing", "ดูแล Social และเพจ", "Social Listening"] },
     ],
     close: {
@@ -66,10 +66,10 @@ export const copy = {
       deliverables: "สิ่งที่คุณจะได้",
       process: "วิธีทำงาน",
       steps: [
-        { title: "ฟังโจทย์", text: "เข้าใจเป้าหมาย กลุ่มเป้าหมาย และข้อจำกัดของแบรนด์" },
-        { title: "วางแผน", text: "เลือกทีม เครื่องมือ และแนวทางที่เหมาะกับโจทย์" },
-        { title: "ลงมือ", text: "ผลิตงานและดูแลการทำงานโดยทีมเดียวกัน" },
-        { title: "วัดผล", text: "สรุปสิ่งที่ได้ผลและเสนอก้าวต่อไป" },
+        { title: "ฟังโจทย์", text: "คุยเป้าหมาย กลุ่มลูกค้า งบ และวันที่ต้องใช้งาน" },
+        { title: "วางแผน", text: "ส่งแผนงาน รายชื่อทีม และใบเสนอราคา" },
+        { title: "ลงมือ", text: "ทีมที่วางแผนกับคุณเป็นคนทำงานเอง" },
+        { title: "วัดผล", text: "ส่งสรุปผลพร้อมตัวเลข และบอกว่างานต่อไปควรทำอะไร" },
       ],
       toolsTitle: "เครื่องมือที่เราใช้",
       partnerBody: "บริการนี้จัดทำร่วมกับพาร์ตเนอร์ด้าน Social Listening",
@@ -82,13 +82,13 @@ export const copy = {
     tools: {
       label: "Tools",
       title: "เครื่องมือที่เราสร้างให้งาน",
-      lead: "เบื้องหลังงานของเราคือซอฟต์แวร์ที่ทีมสร้างเอง ทำเฉพาะให้แต่ละงาน และส่งมอบให้ทีมของแบรนด์ใช้ต่อได้",
+      lead: "ระหว่างทำงาน ทีมเราเขียนซอฟต์แวร์ขึ้นมาใช้เองหลายตัว บางตัวส่งมอบให้ลูกค้าใช้ต่อ",
       metaTitle: "เครื่องมือที่เราสร้างให้งานอีเวนต์ KOL และ Social Listening",
       metaDescription: "ซอฟต์แวร์ที่ Owl Day House สร้างให้งาน เช่น ระบบเช็กชื่อและสุ่มรางวัลหน้างาน เครื่องมือผลิตภาพและวิดีโอให้ KOL คลังฟุตเทจที่ทีมเราค้นผ่าน AI และข้อมูล Social Listening และคู่แข่งที่เชื่อมต่อผ่าน MCP",
       open: {
         label: "MCP",
         title: "เปิดให้เชื่อมต่อ ไม่ปิดกั้น",
-        body: "ระบบที่ต้องเปิดข้อมูลให้ทีมแบรนด์ เราเชื่อมต่อผ่าน MCP ได้ ทีมของคุณจึงใช้ AI ที่มีอยู่เช็กข้อมูลและสั่งงานบางส่วนได้เอง เช่น แปลงข้อมูลที่เคยต้องทำมือ",
+        body: "ระบบที่ต้องเปิดข้อมูลให้ทีมแบรนด์ เราเชื่อมต่อผ่าน MCP ได้ ทีมของคุณใช้ AI ที่มีอยู่เช็กข้อมูลและสั่งงานบางส่วนได้เอง เช่น แปลงข้อมูลที่เคยต้องทำมือ",
       },
       items: [
         { name: "ระบบงานอีเวนต์", description: "ลงทะเบียน เช็กชื่อผู้เข้างาน และสุ่มรางวัล ใช้ได้ทันทีที่หน้างาน", partner: false },
@@ -123,8 +123,8 @@ export const copy = {
       label: "About",
       title: "ทีมมากประสบการณ์ ที่ลงมือครบทุกขั้น",
       paragraphs: [
-        "Owl Day House เริ่มจากงานซอฟต์แวร์ และเติบโตมาทำงานที่ใหญ่กว่าหน้าจอ วันนี้เราดูแลตั้งแต่ระบบ กิจกรรมหน้างาน KOL งานโปรดักชัน ไปจนถึงการตลาดดิจิทัล",
-        "เราเชื่อว่าแบรนด์ทำงานได้ดีที่สุดเมื่อทีมที่วางแผนกับทีมที่ลงมือคือทีมเดียวกัน ทุกงานจึงมีเครื่องมือที่เราสร้างให้แบรนด์ใช้ต่อได้จริง",
+        "Owl Day House เริ่มจากรับทำซอฟต์แวร์ แล้วขยายมาทำงานอีเวนต์และการตลาด ตอนนี้เรารับตั้งแต่ระบบ เกมหน้างาน KOL งานโปรดักชัน ไปจนถึงการตลาดดิจิทัล",
+        "คนที่คุยแผนกับคุณคือคนที่ลงมือทำงานเอง ไม่ต้องส่งต่อหลายทอด งานไหนต้องมีระบบช่วย เราก็เขียนขึ้นมาเองได้",
       ],
       reasons: [
         { title: "บริษัทจดทะเบียน", text: "จดทะเบียนในประเทศไทย มีตัวตนจริง ตรวจสอบได้" },
@@ -179,18 +179,18 @@ export const copy = {
       lead: "One team, from software and on-site games to KOLs, ads and reporting.",
       primary: "Start a project",
       secondary: "See our work",
-      reveal: ["We see the whole picture,", "then deliver all of it."],
-      statement: ["A campaign people remember", "takes more than a good website.", "It takes systems that work,", "experiences worth joining,", "voices that speak for the brand,", "and data on what actually worked.", "We do all of this"],
-      statementKey: "as one team.",
+      reveal: ["The people who plan it", "are the people who make it."],
+      statement: ["One campaign", "usually means several vendors:", "a web team, a kiosk game studio,", "a film crew, a KOL agency", "and someone to run the ads.", "Here it all happens"],
+      statementKey: "with one team.",
       servicesTitle: "Start where your brand",
       servicesKey: "needs it most",
-      workTitle: "Work that is still running today",
+      workTitle: "Work that is still in use",
       loop: {
-        title: "Every job feeds",
-        titleKey: "the next",
+        title: "What we learn from one job",
+        titleKey: "shapes the next",
         stages: [
           { word: "Build", title: "Tools your brand owns", text: "Websites and systems become a base your brand owns, ready to connect to your own AI." },
-          { word: "Activate", title: "Bring people to the brand", text: "On-site games, KOLs and production create experiences people want to join." },
+          { word: "Activate", title: "Bring people to the brand", text: "On-site games, KOLs and production bring people to the event and get them talking about the brand." },
           { word: "Grow", title: "Turn attention into customers", text: "Ads and social listening show what works, and that feeds the next round." },
         ],
       },
@@ -198,7 +198,7 @@ export const copy = {
     },
     acts: [
       { word: "Build", image: "/imagery/build.webp", description: "Websites, apps and enterprise systems designed for real use and ready to grow.", services: ["Websites", "Web and mobile apps", "Enterprise systems"] },
-      { word: "Activate", image: "/imagery/kiosk.webp", description: "Turn events and campaigns into something people want to join, with on-site games, KOLs and our own production team.", services: ["Kiosk games", "KOLs and influencers", "Event production"] },
+      { word: "Activate", image: "/imagery/kiosk.webp", description: "On-site games, KOLs and our own production team for your events and campaigns.", services: ["Kiosk games", "KOLs and influencers", "Event production"] },
       { word: "Grow", image: "/imagery/grow.webp", description: "Plan digital marketing, manage your pages, run ads and listen to customers to find new ones.", services: ["Digital marketing", "Social management", "Social listening"] },
     ],
     close: {
@@ -220,10 +220,10 @@ export const copy = {
       deliverables: "What you get",
       process: "How we work",
       steps: [
-        { title: "Listen", text: "Understand your goal, audience and constraints." },
-        { title: "Plan", text: "Choose the team, tools and approach that fit the brief." },
-        { title: "Deliver", text: "Produce and run the work with one team." },
-        { title: "Measure", text: "Summarize what worked and propose the next step." },
+        { title: "Listen", text: "Talk through your goal, customers, budget and deadline." },
+        { title: "Plan", text: "Send the plan, the team and a quotation." },
+        { title: "Deliver", text: "The team that planned it with you does the work." },
+        { title: "Measure", text: "Report the results with numbers and what to do next." },
       ],
       toolsTitle: "Our tools",
       partnerBody: "This service is delivered with our social listening partner.",
@@ -236,7 +236,7 @@ export const copy = {
     tools: {
       label: "Tools",
       title: "Tools we build for the work",
-      lead: "Behind our work is software our team builds for each project and hands over for your team to keep using.",
+      lead: "While working, our team writes software for its own use, and some of it is handed over for clients to keep using.",
       metaTitle: "Tools We Build for Events, KOLs and Social Listening",
       metaDescription: "Software Owl Day House builds for its work: attendee check-in and prize draws, image and video tools for KOLs, a footage library our team searches through AI, and social listening and competitor data connected through MCP.",
       open: {
@@ -277,8 +277,8 @@ export const copy = {
       label: "About",
       title: "One team that sees every step through",
       paragraphs: [
-        "Owl Day House started in software and grew into work that goes beyond the screen. Today we handle systems, on-site activities, KOLs, production and digital marketing.",
-        "We believe brands do their best work when the people who plan it are the people who make it. That is why every project comes with tools your brand can keep using.",
+        "Owl Day House started in software and grew into events and marketing. Today we take on systems, on-site games, KOLs, production and digital marketing.",
+        "The people who plan the work with you are the people who do it, so nothing gets lost in handoffs. When a job needs software, we write it ourselves.",
       ],
       reasons: [
         { title: "Registered company", text: "Registered in Thailand, verifiable and accountable." },
