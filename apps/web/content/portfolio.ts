@@ -110,9 +110,11 @@ export interface CaseStudy {
   client: Text;
   work: Text;
   metric?: Text;
+  /** Keep the case in the data but off the site. */
+  hidden?: boolean;
 }
 
-export const cases: readonly CaseStudy[] = keepThaiWordsDeep([
+const allCases: readonly CaseStudy[] = keepThaiWordsDeep([
   {
     slug: "printer-kol",
     pillar: "Activate",
@@ -124,6 +126,8 @@ export const cases: readonly CaseStudy[] = keepThaiWordsDeep([
   },
   {
     slug: "restaurant-group",
+    // Hidden until the end of this year. Remove `hidden` to show it again.
+    hidden: true,
     pillar: "Activate",
     services: ["kol-influencer"],
     category: { th: "KOL และ Influencer", en: "KOL & Influencers" },
@@ -140,6 +144,8 @@ export const cases: readonly CaseStudy[] = keepThaiWordsDeep([
     work: { th: "ออกบูธและงานอีเวนต์ของหน่วยงาน", en: "Booths and events for the agency" },
   },
 ]);
+
+export const cases: readonly CaseStudy[] = allCases.filter((item) => !item.hidden);
 
 /** Industries we have worked in, shown instead of client names (most work is under NDA). */
 export const industryNames: Record<Locale, readonly string[]> = keepThaiWordsDeep({
