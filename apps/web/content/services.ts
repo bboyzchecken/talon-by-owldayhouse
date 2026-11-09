@@ -69,7 +69,8 @@ const text: Record<Locale, Record<string, ServiceText>> = keepThaiWordsDeep({
       blurb: "ทีมโปรดักชันถ่ายทำและตัดต่อภาพและวิดีโองานอีเวนต์",
       problem:
         "งานที่จัดเพียงไม่กี่วันควรมีภาพและวิดีโอใช้ต่อได้อีกนาน ทีมโปรดักชันของเราวางแผนการถ่าย ลงพื้นที่ถ่ายทำ และตัดต่อ ให้แบรนด์ได้ไฟล์ที่นำไปใช้ต่อได้ทันที",
-      deliverables: ["วางแผนและเตรียมงานถ่ายทำ", "ทีมถ่ายภาพและวิดีโอหน้างาน", "ตัดต่อคลิปสำหรับโซเชียล", "วิดีโอสรุปงานอีเวนต์"],
+      deliverables: ["Storyboard และ shot list ก่อนวันถ่าย", "ทีมถ่ายภาพและวิดีโอหน้างาน", "ตัดต่อคลิปสำหรับโซเชียล", "วิดีโอสรุปงานอีเวนต์"],
+      tool: "ก่อนวันถ่าย เราใช้ AI ช่วยร่าง storyboard และแตกเป็นช็อตที่ต้องถ่าย ให้ทีมของคุณรีวิวและปรับได้ก่อนลงพื้นที่จริง",
     },
     "digital-marketing": {
       title: "Digital Marketing",
@@ -124,7 +125,8 @@ const text: Record<Locale, Record<string, ServiceText>> = keepThaiWordsDeep({
       blurb: "A production team that films and edits your event.",
       problem:
         "An event that lasts a few days should leave photos and video that last much longer. Our production team plans the shoot, films on site and edits, so your brand gets files it can publish right away.",
-      deliverables: ["Shoot planning and preparation", "On-site photo and video crew", "Edits for social platforms", "Event recap films"],
+      deliverables: ["Storyboard and shot list before the shoot", "On-site photo and video crew", "Edits for social platforms", "Event recap films"],
+      tool: "Before the shoot, we use AI to draft the storyboard and break it into a shot list, so your team can review and adjust it before we go on site.",
     },
     "digital-marketing": {
       title: "Digital Marketing",
