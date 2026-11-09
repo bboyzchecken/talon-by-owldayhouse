@@ -1,44 +1,45 @@
-# Post 9 Nov 2026: getting launch-event leads to sales on the day
+# Post 9 Nov 2026 (English): getting launch-event leads to sales on the day
 
 From today's article: /news/ngan-poet-tua-khrongkan-song-lead-sales/
 Images: `slide-1.jpg` to `slide-5.jpg` (1080×1350, 4:5). The same set works on Facebook (album/carousel) and on Instagram (carousel).
 The photo on slide 1 is the AI-made atmosphere photo from the article's share card. It shows no client and no real job, so do not caption it as our own work.
 
-Check that the article is already live on owldayhouse.com before posting the link.
+The Thai article has no English version, so the English post links to the Property & Automotive page, which covers the same topic: https://owldayhouse.com/en/industries/property-auto/
+Check that the page is live before posting.
 
 ---
 
 ## Facebook
 
-งานเปิดตัวโครงการหรือบูธในงาน Motor Show มีคนแวะเยอะ แต่รายชื่อที่ได้กว่าจะถึงมือเซลส์บางทีก็ผ่านไปเป็นสัปดาห์ ถึงตอนนั้นลูกค้าบางคนไปดูโครงการอื่นหรือจองรถกับดีลเลอร์อื่นไปแล้ว
+A project launch or a Motor Show booth can draw a big crowd. The leads often take a week to reach the sales team, and by then some of those people have visited another project or booked a car with another dealer.
 
-เวลาวางงานแบบนี้ ทีมเราดู 4 เรื่อง
+When we plan an event like this, we look at four things.
 
-1. ตกลงกับทีมขายก่อนว่างานนี้วัดผลด้วยอะไร เช่น จำนวนนัดชมโครงการ นัดทดลองขับ หรือใบจอง
-2. ใช้เกมบน Kiosk หรือการสุ่มรางวัลให้คนหยุดที่บูธ แล้วให้ลงทะเบียนเป็นส่วนหนึ่งของการเล่น
-3. ส่งรายชื่อเข้าระบบฝ่ายขายระหว่างงาน คนที่อยากนัดควรได้คุยกับเซลส์ในวันนั้น
-4. เก็บรายชื่อไว้ในระบบเดียวกับข้อมูลการขาย จะได้รู้ว่างานนี้ได้นัดเท่าไร ปิดการขายได้เท่าไร
+1. Agree with sales on what counts as a result: site visits booked, test drives booked or reservations signed.
+2. Use a kiosk game or a prize draw to get people to stop, and make sign-up part of playing.
+3. Send leads to the sales team during the event. Anyone who wants an appointment should hear from sales that day.
+4. Keep event leads in the same system as your sales data, so you can see how many appointments the event brought in and how many closed.
 
-อ่านฉบับเต็มได้ที่ https://owldayhouse.com/news/ngan-poet-tua-khrongkan-song-lead-sales/
+How we run launches and booths for property and automotive brands: https://owldayhouse.com/en/industries/property-auto/
 
-ถ้ากำลังวางงานเปิดตัวหรือบูธรอบหน้า ทักมาทาง Messenger หรือโทร 092-455-2450
+Planning your next launch or booth? Message us on Messenger or call +66 92 455 2450.
 
-#งานเปิดตัวโครงการ #บูธอีเวนต์ #MotorShow #OwlDayHouse
+#EventMarketing #ProjectLaunch #MotorShow #OwlDayHouse
 
 ---
 
 ## Instagram
 
-งานเปิดตัวโครงการหรือบูธ Motor Show คนแวะเยอะ แต่รายชื่อกว่าจะถึงมือเซลส์บางทีก็เป็นสัปดาห์ ถึงตอนนั้นลูกค้าบางคนตัดสินใจไปแล้ว
+A project launch or a Motor Show booth can draw a big crowd, but the leads often take a week to reach sales. By then some people have already decided.
 
-ปัดดู 4 เรื่องที่ทีมเราวางไว้ตั้งแต่ก่อนวันงาน ให้รายชื่อถึงเซลส์ภายในวันนั้น และวัดผลเป็นยอดขายได้
+Swipe for the four things we set up before the event, so leads reach sales the same day and the event can be measured in sales.
 
-อ่านบทความเต็มได้จากลิงก์ที่ bio
-ทัก DM หรือโทร 092-455-2450
+More on how we run launches and booths: link in bio.
+Send us a DM or call +66 92 455 2450.
 
-#งานเปิดตัวโครงการ #บูธอีเวนต์ #MotorShow #อีเวนต์มาร์เก็ตติ้ง #OwlDayHouse
+#EventMarketing #ProjectLaunch #MotorShow #ExperientialMarketing #OwlDayHouse
 
-Alt text for slide 1: ผู้คนในชุดทำงานยืนดูโมเดลอาคารในห้องจัดงานสีขาว พร้อมหัวข้อ รายชื่อลูกค้าจากงาน ควรถึงมือเซลส์ภายในวันงาน
+Alt text for slide 1: People in business clothes looking at an architectural model in a bright white event hall, with the headline "Get event leads to your sales team on the day".
 
 ---
 
@@ -79,6 +80,6 @@ Bangkok, Thailand
 ```
 
 **Link:** https://owldayhouse.com/en/
-On today's post day, swap the link to the article for 24 to 48 hours, then switch it back.
+For today's post, point the link to https://owldayhouse.com/en/industries/property-auto/ for 24 to 48 hours, then switch it back.
 
 **Category:** Marketing Agency
