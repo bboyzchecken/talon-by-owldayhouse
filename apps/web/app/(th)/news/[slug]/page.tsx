@@ -9,6 +9,7 @@ import { getCopy } from "@/content/copy";
 import { getPost, posts } from "@/content/news";
 import { bodies } from "@/content/news/bodies";
 import { pageMeta } from "@/lib/seo";
+import { shareCard } from "@/lib/share-cards";
 import { articleSchema, breadcrumbSchema } from "@/lib/structured-data";
 
 const t = getCopy("th").news;
@@ -32,6 +33,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     path: `/news/${slug}/`,
     absoluteTitle: true,
     singleLanguage: true,
+    image: shareCard(`news/${slug}`),
   });
   return {
     ...base,

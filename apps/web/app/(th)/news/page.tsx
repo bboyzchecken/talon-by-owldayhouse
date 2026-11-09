@@ -5,6 +5,7 @@ import { ContactClose, PageIntro } from "@/components/site/sections";
 import { getCopy } from "@/content/copy";
 import { publishedPosts } from "@/content/news";
 import { pageMeta } from "@/lib/seo";
+import { shareCard } from "@/lib/share-cards";
 import { blogSchema, breadcrumbSchema } from "@/lib/structured-data";
 
 const t = getCopy("th").news;
@@ -15,6 +16,7 @@ export const metadata = pageMeta({
   description: t.metaDescription,
   path: "/news/",
   singleLanguage: true,
+  image: shareCard("news"),
 });
 
 function formatDate(iso: string): string {
