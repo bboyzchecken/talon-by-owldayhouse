@@ -1,0 +1,2 @@
+# gofmt rejects CRLF, so Go files stay LF on every platform.
+*.go text eol=lf
