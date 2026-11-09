@@ -110,9 +110,11 @@ export interface CaseStudy {
   client: Text;
   work: Text;
   metric?: Text;
+  /** Keep the case in the data but off the site. */
+  hidden?: boolean;
 }
 
-export const cases: readonly CaseStudy[] = keepThaiWordsDeep([
+const allCases: readonly CaseStudy[] = keepThaiWordsDeep([
   {
     slug: "printer-kol",
     pillar: "Activate",
@@ -120,15 +122,18 @@ export const cases: readonly CaseStudy[] = keepThaiWordsDeep([
     category: { th: "KOL และ Influencer", en: "KOL & Influencers" },
     client: { th: "แบรนด์เครื่องพิมพ์ระดับโลก", en: "A global printer brand" },
     work: { th: "คัดเลือกและประสานงาน KOL ให้แคมเปญของแบรนด์", en: "KOL selection and coordination for a brand campaign" },
-    metric: { th: "KOL 80+ คน", en: "80+ KOLs" },
+    metric: { th: "KOL 55 คน", en: "55 KOLs" },
   },
   {
     slug: "restaurant-group",
+    // Hidden until the end of this year. Remove `hidden` to show it again.
+    hidden: true,
     pillar: "Activate",
-    services: ["kol-influencer", "event-content"],
-    category: { th: "แคมเปญ", en: "Campaign" },
-    client: { th: "กลุ่มธุรกิจร้านอาหารรายใหญ่", en: "A major restaurant group" },
-    work: { th: "งานแคมเปญให้กลุ่มธุรกิจร้านอาหาร รายละเอียดขอดูได้ตอนนัดคุย", en: "Campaign work for a restaurant group. Details on request when we meet." },
+    services: ["kol-influencer"],
+    category: { th: "KOL และ Influencer", en: "KOL & Influencers" },
+    client: { th: "ร้านปิ้งย่างเกาหลีในเครือกลุ่มร้านอาหารรายใหญ่", en: "A Korean BBQ chain from a major restaurant group" },
+    work: { th: "คัดเลือกและประสานงาน KOL ให้แคมเปญของร้าน", en: "KOL selection and coordination for the chain's campaign" },
+    metric: { th: "KOL 23 คน", en: "23 KOLs" },
   },
   {
     slug: "tourism-events",
@@ -139,6 +144,8 @@ export const cases: readonly CaseStudy[] = keepThaiWordsDeep([
     work: { th: "ออกบูธและงานอีเวนต์ของหน่วยงาน", en: "Booths and events for the agency" },
   },
 ]);
+
+export const cases: readonly CaseStudy[] = allCases.filter((item) => !item.hidden);
 
 /** Industries we have worked in, shown instead of client names (most work is under NDA). */
 export const industryNames: Record<Locale, readonly string[]> = keepThaiWordsDeep({
