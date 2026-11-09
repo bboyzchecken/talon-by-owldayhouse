@@ -30,7 +30,7 @@ interface IndustryText {
 export type Industry = IndustryBase & IndustryText;
 
 const base: readonly IndustryBase[] = [
-  { slug: "education", image: "/imagery/event-hall.webp", proofWork: ["reg-tu"], proofCases: ["tourism-events"] },
+  { slug: "education", image: "/imagery/event-hall.webp", proofWork: ["reg-tu"], proofCases: ["safety-kiosk-game", "tourism-events"] },
   { slug: "property-auto", image: "/imagery/kiosk.webp", proofWork: ["rodarea"], proofCases: ["printer-kol", "tourism-events"] },
   { slug: "healthcare", image: "/imagery/camera.webp", proofWork: [], proofCases: ["printer-kol", "restaurant-group"] },
 ];
