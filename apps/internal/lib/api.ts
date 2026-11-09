@@ -273,13 +273,22 @@ export const files = {
       size: file.size,
     });
 
-    const put = await fetch(presigned.upload_url, {
-      method: presigned.method ?? "PUT",
-      headers: presigned.headers,
-      body: file,
-    });
+    // A bucket without a CORS policy makes the browser block this request
+    // outright: fetch() rejects with a network error instead of returning a
+    // status, so both paths need the same clear message.
+    const r2Failed = "อัปโหลดไฟล์ไป R2 ไม่สำเร็จ — แจ้งแอดมินให้ตรวจการตั้งค่า CORS ของ bucket";
+    let put: Response;
+    try {
+      put = await fetch(presigned.upload_url, {
+        method: presigned.method ?? "PUT",
+        headers: presigned.headers,
+        body: file,
+      });
+    } catch {
+      throw new ApiError(0, { error: r2Failed });
+    }
     if (!put.ok) {
-      throw new ApiError(put.status, { error: "อัปโหลดไฟล์ไป R2 ไม่สำเร็จ" });
+      throw new ApiError(put.status, { error: r2Failed });
     }
 
     return send<FileRow>("post", `/api/files/${presigned.file.id}/confirm`);

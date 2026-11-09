@@ -1,0 +1,139 @@
+# Internal tools (crm.owldayhouse.com): check, then deploy to the Droplet.
+#
+# Runs on every push to main that touches the internal tools, and by hand
+# from the Actions tab. The marketing site (apps/web) is NOT deployed here —
+# it goes out over FTP — so a site-only change does not redeploy the CRM.
+#
+# Setup (once): infra/digitalocean/README.md, section 5.
+#   environment "production"
+#     variables: DROPLET_HOST, DROPLET_USER
+#     secrets:   DROPLET_SSH_KEY, DROPLET_KNOWN_HOSTS
+name: Deploy internal tools
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "apps/api/**"
+      - "apps/internal/**"
+      - "packages/**"
+      - "infra/digitalocean/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "turbo.json"
+      - ".github/workflows/deploy-internal.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Never run two deploys at once, and never cancel one halfway through.
+concurrency:
+  group: deploy-internal-production
+  cancel-in-progress: false
+
+jobs:
+  check:
+    name: Lint, test and build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+
+    # A real PostgreSQL 16 for the duplicate-name and ownership tests: the
+    # rules they cover are database behaviour (unique index, pg_trgm).
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: odh_internal_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # pnpm's version comes from "packageManager" in package.json.
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: apps/api/go.mod
+          cache-dependency-path: apps/api/go.sum
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm lint
+
+      - name: Go tests, including the PostgreSQL integration suite
+        working-directory: apps/api
+        env:
+          ODH_TEST_REQUIRE_DB: "1"
+          ODH_TEST_PG_HOST: 127.0.0.1
+          ODH_TEST_PG_PORT: "5432"
+          ODH_TEST_PG_USERNAME: postgres
+          ODH_TEST_PG_PASSWORD: postgres
+          ODH_TEST_PG_DATABASE: odh_internal_test
+        run: go test ./... -count=1
+
+      - run: pnpm build
+
+  deploy:
+    name: Deploy to the Droplet
+    needs: check
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    environment:
+      name: production
+      url: https://crm.owldayhouse.com
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Load the deploy key and the Droplet's host key
+        env:
+          DROPLET_SSH_KEY: ${{ secrets.DROPLET_SSH_KEY }}
+          DROPLET_KNOWN_HOSTS: ${{ secrets.DROPLET_KNOWN_HOSTS }}
+        run: |
+          if [ -z "$DROPLET_SSH_KEY" ] || [ -z "$DROPLET_KNOWN_HOSTS" ]; then
+            echo "::error::DROPLET_SSH_KEY and DROPLET_KNOWN_HOSTS must be set on the production environment"
+            exit 1
+          fi
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$DROPLET_SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          # The host key is pinned, so a swapped or spoofed server stops the
+          # deploy instead of receiving it.
+          printf '%s\n' "$DROPLET_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
+      - name: Deploy
+        env:
+          ODH_DROPLET_HOST: ${{ vars.DROPLET_HOST }}
+          ODH_DROPLET_USER: ${{ vars.DROPLET_USER }}
+        run: |
+          if [ -z "$ODH_DROPLET_HOST" ]; then
+            echo "::error::DROPLET_HOST must be set as a variable on the production environment"
+            exit 1
+          fi
+          bash infra/digitalocean/deploy.sh
+
+      - name: Remove the deploy key
+        if: always()
+        run: rm -f ~/.ssh/id_ed25519
