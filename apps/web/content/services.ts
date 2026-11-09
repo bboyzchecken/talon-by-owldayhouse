@@ -70,7 +70,7 @@ const text: Record<Locale, Record<string, ServiceText>> = keepThaiWordsDeep({
       problem:
         "งานที่จัดเพียงไม่กี่วันควรมีภาพและวิดีโอใช้ต่อได้อีกนาน ทีมโปรดักชันของเราวางแผนการถ่าย ลงพื้นที่ถ่ายทำ และตัดต่อ ให้แบรนด์ได้ไฟล์ที่นำไปใช้ต่อได้ทันที",
       deliverables: ["Storyboard และ shot list ก่อนวันถ่าย", "ทีมถ่ายภาพและวิดีโอหน้างาน", "ตัดต่อคลิปสำหรับโซเชียล", "วิดีโอสรุปงานอีเวนต์"],
-      tool: "เราเชื่อมคลังไฟล์บน Google Drive เข้ากับ MCP ทุกไฟล์บอกได้ว่าถ่ายอะไร วันไหน ทีมของคุณแค่ถาม AI ก็รู้ว่าต้องใช้ไฟล์ไหน และเราเรียงไฟล์ลงไทม์ไลน์ใน CapCut ตาม storyboard ก่อนเริ่มตัดต่อ",
+      tool: "ทีมเราเชื่อมคลังฟุตเทจบน Google Drive เข้ากับ MCP ทุกไฟล์บอกได้ว่าถ่ายอะไร วันไหน แค่ถาม AI ก็รู้ว่าต้องใช้ไฟล์ไหน แล้วเรียงลงไทม์ไลน์ใน CapCut ตาม storyboard ได้ทันที งานตัดต่อจึงส่งได้ไว และถ้าทีมของคุณอยากได้ระบบแบบนี้ เราก็สร้างให้ได้",
     },
     "digital-marketing": {
       title: "Digital Marketing",
@@ -126,7 +126,7 @@ const text: Record<Locale, Record<string, ServiceText>> = keepThaiWordsDeep({
       problem:
         "An event that lasts a few days should leave photos and video that last much longer. Our production team plans the shoot, films on site and edits, so your brand gets files it can publish right away.",
       deliverables: ["Storyboard and shot list before the shoot", "On-site photo and video crew", "Edits for social platforms", "Event recap films"],
-      tool: "We connect the footage library on Google Drive to MCP, so every file says what was shot and when. Your team just asks its AI which files to use, and we lay the files onto a CapCut timeline in storyboard order before editing starts.",
+      tool: "Our team connects the footage library on Google Drive to MCP, so every file says what was shot and when. We ask AI which files to use and lay them onto a CapCut timeline in storyboard order right away, so edits ship fast. If your team wants a system like this, we can build one for you.",
     },
     "digital-marketing": {
       title: "Digital Marketing",
