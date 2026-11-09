@@ -1,0 +1,15 @@
+{
+  "name": "api",
+  "version": "0.0.0",
+  "private": true,
+  "description": "ODH internal tools API (Go + Echo + GORM + PostgreSQL 16). Driven through pnpm/turbo so the monorepo has one lint/build/test entry point.",
+  "scripts": {
+    "dev": "go run . serve",
+    "build": "go build -o bin/odh-internal-api .",
+    "lint": "bash scripts/lint.sh",
+    "typecheck": "go vet ./...",
+    "test": "go test ./...",
+    "migrate": "go run . up",
+    "seed": "go run . seed"
+  }
+}

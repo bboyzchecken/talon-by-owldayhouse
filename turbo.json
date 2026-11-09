@@ -4,7 +4,7 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["out/**", ".next/**", "dist/**"],
+      "outputs": ["out/**", ".next/**", "dist/**", "bin/**"],
       "env": ["NEXT_PUBLIC_*"],
       "inputs": ["$TURBO_DEFAULT$", ".env", ".env.local", ".env.production", ".env.production.local"]
     },
@@ -17,6 +17,10 @@
     },
     "typecheck": {
       "dependsOn": ["^build"]
+    },
+    "test": {
+      "dependsOn": ["^build"],
+      "outputs": []
     }
   }
 }
