@@ -57,6 +57,18 @@ test -f apps/internal/out/index.html || {
 say "Making sure ${REMOTE_DIR} exists on ${HOST}"
 ssh "$SSH_TARGET" "mkdir -p '${REMOTE_DIR}/api' '${REMOTE_DIR}/web'"
 
+say "Checking the files on the Droplet belong to ${DEPLOY_USER}"
+# A deploy run as another user (root, say) leaves files this user cannot
+# overwrite, and rsync then fails halfway with a wall of permission errors.
+# Stop before copying anything and say how to fix it.
+FOREIGN="$(ssh "$SSH_TARGET" "find '${REMOTE_DIR}' ! -user '${DEPLOY_USER}' -print 2>/dev/null | head -n 5")"
+if [ -n "$FOREIGN" ]; then
+  echo "These files on the Droplet do not belong to ${DEPLOY_USER}, so the copy would fail:" >&2
+  echo "$FOREIGN" >&2
+  echo "Fix it once, as root on the Droplet:  chown -R ${DEPLOY_USER}:${DEPLOY_USER} ${REMOTE_DIR}" >&2
+  exit 1
+fi
+
 say "Copying the compose files"
 rsync -az --delete \
   infra/digitalocean/docker-compose.yml \
