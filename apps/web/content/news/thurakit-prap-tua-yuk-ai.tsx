@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { keepThaiWords } from "@/lib/thai-wrap";
 
 // Body for /news/thurakit-prap-tua-yuk-ai — why a human team still matters in
 // the AI era, and how ODH helps clients adapt (3 keys).
@@ -28,7 +29,7 @@ export default function Article() {
         </li>
         <li>
           <strong>ความรับผิดชอบและความสัมพันธ์:</strong> เมื่อเว็บมีปัญหา มีคนไทยรับสายและแก้ให้
-          ไม่ใช่แชตบอตที่วนตอบ — ความไว้ใจนี้คือสิ่งที่ AI ให้ไม่ได้
+          ไม่ใช่{keepThaiWords("แชตบอต")}ที่วนตอบ — ความไว้ใจนี้คือสิ่งที่ AI ให้ไม่ได้
         </li>
       </ul>
       <blockquote>
@@ -44,7 +45,7 @@ export default function Article() {
       <h3>1. เรียนรู้การใช้งาน AI (AI Literacy)</h3>
       <p>
         เริ่มจากเครื่องมือ AI พื้นฐานเพื่อเพิ่มความเร็วในงานประจำ เช่น สรุปข้อมูล
-        ช่วยร่างคอนเทนต์ หรือแปลภาษา ไม่ต้องเก่งโค้ด ขอแค่กล้าลองและรู้ว่าจะสั่งงาน (prompt) ยังไงให้ได้ผล
+        ช่วยร่าง{keepThaiWords("คอนเทนต์")} หรือแปลภาษา ไม่ต้องเก่งโค้ด ขอแค่กล้าลองและรู้ว่าจะสั่งงาน (prompt) ยังไงให้ได้ผล
       </p>
       <h3>2. พัฒนาทักษะเฉพาะตัว (Soft Skills)</h3>
       <p>
@@ -60,7 +61,7 @@ export default function Article() {
 
       <h2>อยากเรียนรู้เพิ่ม เริ่มที่ไหนดี</h2>
       <p>
-        ถ้าอยากต่อยอดทักษะแห่งอนาคต ลองดูแหล่งเรียนรู้เหล่านี้:
+        ถ้าอยาก{keepThaiWords("ต่อยอด")}ทักษะแห่งอนาคต ลองดูแหล่งเรียนรู้เหล่านี้:
       </p>
       <ul>
         <li>

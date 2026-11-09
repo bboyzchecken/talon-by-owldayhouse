@@ -3,6 +3,8 @@
 // sitemap and JSON-LD. Article bodies live in content/news/<slug>.tsx and are
 // mapped in content/news/bodies.tsx (kept separate so this file has no JSX deps).
 
+import { keepThaiWords } from "@/lib/thai-wrap";
+
 export interface NewsPost {
   slug: string;
   title: string;
@@ -18,7 +20,7 @@ export interface NewsPost {
 }
 
 // Newest first — drives both the listing order and sitemap.
-export const posts: readonly NewsPost[] = [
+const published: readonly NewsPost[] = [
   {
     slug: "thurakit-prap-tua-yuk-ai",
     title: "ยุค AI มาแล้ว ทำไมธุรกิจยังต้องการซอฟต์แวร์เฮาส์ — และเราช่วยคุณปรับตัวยังไง",
@@ -77,6 +79,14 @@ export const posts: readonly NewsPost[] = [
     readingMinutes: 5,
   },
 ];
+
+// Titles and excerpts are shown on pages, so keep Thai words whole when they wrap.
+// Keywords go straight into meta tags and stay as written.
+export const posts: readonly NewsPost[] = published.map((post) => ({
+  ...post,
+  title: keepThaiWords(post.title),
+  description: keepThaiWords(post.description),
+}));
 
 export function getPost(slug: string): NewsPost | undefined {
   return posts.find((p) => p.slug === slug);

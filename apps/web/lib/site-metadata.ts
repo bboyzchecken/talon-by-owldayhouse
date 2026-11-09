@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { colors } from "@odh/brand";
 import { getCopy } from "@/content/copy";
 import type { Locale } from "./i18n";
+import { plainText } from "./thai-wrap";
 import { baseOpenGraph, baseTwitter, languageAlternates, SITE_NAME, SITE_URL } from "./seo";
 
 const keywords: Record<Locale, string[]> = {
@@ -29,8 +30,8 @@ export function rootMetadata(locale: Locale): Metadata {
   const t = getCopy(locale).home;
   return {
     metadataBase: new URL(SITE_URL),
-    title: { default: t.metaTitle, template: `%s | ${SITE_NAME}` },
-    description: t.metaDescription,
+    title: { default: plainText(t.metaTitle), template: `%s | ${SITE_NAME}` },
+    description: plainText(t.metaDescription),
     keywords: keywords[locale],
     applicationName: SITE_NAME,
     authors: [{ name: SITE_NAME, url: SITE_URL }],

@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import styles from "./RevealHero.module.css";
+import { keepThaiWords } from "@/lib/thai-wrap";
 
 // On-brand reveal assets in /public/showcase.
 // surface = polished finished website (the surface); blueprint = the system beneath.
@@ -150,7 +151,7 @@ export function RevealHero() {
           href="/contact/"
           className="inline-flex items-center gap-2 whitespace-nowrap rounded-full bg-gold px-7 py-3 font-display text-sm font-semibold text-navy shadow-glow transition-all hover:scale-[1.03] hover:bg-gold/90 active:scale-95"
         >
-          คุยโปรเจกต์
+          คุย{keepThaiWords("โปรเจกต์")}
           <ArrowRight size={16} strokeWidth={2.5} />
         </Link>
       </div>

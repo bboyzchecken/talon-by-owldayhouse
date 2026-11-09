@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { keepThaiWords } from "@/lib/thai-wrap";
 
 // Body for /news/rab-tham-website-chiang-mai-rakha — how to choose a web team in Chiang Mai.
 export default function Article() {
@@ -37,7 +38,7 @@ export default function Article() {
       </p>
       <blockquote>เว็บที่ดีคือเว็บที่ยังมีคนรับผิดชอบหลังวันส่งงาน</blockquote>
 
-      <h2>เช็กลิสต์ก่อนเลือกทีมทำเว็บไซต์</h2>
+      <h2>{keepThaiWords("เช็กลิสต์")}ก่อนเลือกทีมทำเว็บไซต์</h2>
       <ul>
         <li>เป็นบริษัทจดทะเบียน ออกใบกำกับภาษีหรือใบเสร็จได้ไหม</li>
         <li>มีทีมงานดูแลต่อหลังส่งงานไหม</li>

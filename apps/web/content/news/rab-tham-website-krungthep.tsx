@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { keepThaiWords } from "@/lib/thai-wrap";
 
 // Body for /news/rab-tham-website-krungthep — Bangkok customer acquisition.
 export default function Article() {
@@ -28,7 +29,7 @@ export default function Article() {
           <strong>น่าเชื่อถือ เบิกได้:</strong> เป็นบริษัทจดทะเบียน ออกใบกำกับภาษีและใบเสร็จในนามบริษัทได้
         </li>
         <li>
-          <strong>ต่อยอดได้:</strong> ขยายไปเป็นเว็บแอป ระบบองค์กร หรือแคมเปญการตลาดกับทีมเดิม
+          <strong>{keepThaiWords("ต่อยอด")}ได้:</strong> ขยายไปเป็นเว็บแอป ระบบองค์กร หรือแคมเปญการตลาดกับทีมเดิม
         </li>
       </ul>
 

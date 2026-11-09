@@ -1,6 +1,7 @@
 // The six services under three pillars. Shared facts first, then copy per locale.
 
 import type { Locale } from "@/lib/i18n";
+import { keepThaiWordsDeep } from "@/lib/thai-wrap";
 
 export type Pillar = "Build" | "Activate" | "Grow";
 export type Capability = "open" | "partner";
@@ -31,7 +32,7 @@ const base: readonly ServiceBase[] = [
   { slug: "social-listening", pillar: "Grow", image: "/imagery/listening.webp", capability: "partner" },
 ];
 
-const text: Record<Locale, Record<string, ServiceText>> = {
+const text: Record<Locale, Record<string, ServiceText>> = keepThaiWordsDeep({
   th: {
     "website-software": {
       title: "เว็บไซต์และซอฟต์แวร์",
@@ -55,15 +56,15 @@ const text: Record<Locale, Record<string, ServiceText>> = {
       blurb: "คัดคนให้ตรงแคมเปญ วางแผน และทำ creative ให้ครบ",
       problem:
         "คนดังที่สุดไม่ได้เหมาะกับทุกแบรนด์ เราคัด KOL และ Influencer ให้ตรงกับเป้าหมาย วางแผนการสื่อสาร และทำ creative ให้ครบทั้งแคมเปญ",
-      deliverables: ["คัดเลือก KOL และ Influencer", "วางแผนแคมเปญและตารางเผยแพร่", "คิดและผลิต creative", "สรุปผลหลังจบแคมเปญ"],
+      deliverables: ["คัดเลือก KOL และ Influencer", "วางแผนแคมเปญและตารางเผยแพร่", "คิดและผลิต creative และคลิปรีวิว", "สรุปผลหลังจบแคมเปญ"],
     },
     "event-content": {
-      title: "Event Content และรีวิว",
-      metaTitle: "ถ่ายทำ ตัดต่อ และรีวิวงานอีเวนต์โดยทีมงาน",
-      blurb: "ไปถ่ายทำและตัดต่อที่งาน หรือรีวิวโดยทีมงานของเรา",
+      title: "Event Production",
+      metaTitle: "Event Production ถ่ายทำและตัดต่อวิดีโองานอีเวนต์",
+      blurb: "ทีมโปรดักชันถ่ายทำและตัดต่อภาพและวิดีโองานอีเวนต์",
       problem:
-        "งานที่จัดเพียงไม่กี่วันควรมีคอนเทนต์ใช้ต่อได้อีกนาน ทีมเราลงพื้นที่ถ่ายทำ ตัดต่อ และรีวิวให้แบรนด์นำไปใช้ต่อได้ทันที",
-      deliverables: ["ทีมถ่ายภาพและวิดีโอหน้างาน", "ตัดต่อคลิปสำหรับโซเชียล", "รีวิวโดยทีมงาน", "คลิปสรุปงานอีเวนต์"],
+        "งานที่จัดเพียงไม่กี่วันควรมีภาพและวิดีโอใช้ต่อได้อีกนาน ทีมโปรดักชันของเราวางแผนการถ่าย ลงพื้นที่ถ่ายทำ และตัดต่อ ให้แบรนด์ได้ไฟล์ที่นำไปใช้ต่อได้ทันที",
+      deliverables: ["วางแผนและเตรียมงานถ่ายทำ", "ทีมถ่ายภาพและวิดีโอหน้างาน", "ตัดต่อคลิปสำหรับโซเชียล", "วิดีโอสรุปงานอีเวนต์"],
     },
     "digital-marketing": {
       title: "Digital Marketing",
@@ -105,15 +106,15 @@ const text: Record<Locale, Record<string, ServiceText>> = {
       blurb: "The right creators for the campaign, with planning and creative included.",
       problem:
         "The biggest name is not always the right one. We match KOLs and influencers to your goal, plan the communication and produce the creative for the whole campaign.",
-      deliverables: ["KOL and influencer selection", "Campaign and publishing plans", "Creative concept and production", "Post-campaign summary"],
+      deliverables: ["KOL and influencer selection", "Campaign and publishing plans", "Creative and review content", "Post-campaign summary"],
     },
     "event-content": {
-      title: "Event Content & Reviews",
-      metaTitle: "Event Filming, Editing and Reviews",
-      blurb: "On-site filming and editing, or reviews by our own team.",
+      title: "Event Production",
+      metaTitle: "Event Video Production: Filming and Editing",
+      blurb: "A production team that films and edits your event.",
       problem:
-        "An event that lasts a few days should leave content that lasts much longer. Our team films on site, edits, and reviews so your brand can publish right away.",
-      deliverables: ["On-site photo and video crew", "Edits for social platforms", "Reviews by our team", "Event recap films"],
+        "An event that lasts a few days should leave photos and video that last much longer. Our production team plans the shoot, films on site and edits, so your brand gets files it can publish right away.",
+      deliverables: ["Shoot planning and preparation", "On-site photo and video crew", "Edits for social platforms", "Event recap films"],
     },
     "digital-marketing": {
       title: "Digital Marketing",
@@ -132,7 +133,7 @@ const text: Record<Locale, Record<string, ServiceText>> = {
       deliverables: ["Brand conversation tracking", "Competitor and trend analysis", "Reports with recommendations"],
     },
   },
-};
+});
 
 export const serviceSlugs = base.map((service) => service.slug);
 

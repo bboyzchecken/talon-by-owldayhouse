@@ -1,6 +1,7 @@
 // All interface and page copy, per locale. Services and portfolio live in their own files.
 
 import type { Locale } from "@/lib/i18n";
+import { keepThaiWordsDeep } from "@/lib/thai-wrap";
 
 export const copy = {
   th: {
@@ -35,7 +36,7 @@ export const copy = {
         titleKey: "เป็นวงเดียว",
         stages: [
           { word: "Build", title: "สร้างเครื่องมือของแบรนด์", text: "เว็บไซต์และระบบเป็นฐานที่แบรนด์เป็นเจ้าของ และต่อ AI ของแบรนด์เองได้" },
-          { word: "Activate", title: "พาคนมาเจอแบรนด์", text: "เกมหน้างาน KOL และคอนเทนต์ สร้างประสบการณ์ที่คนอยากเข้าร่วม" },
+          { word: "Activate", title: "พาคนมาเจอแบรนด์", text: "เกมหน้างาน KOL และงานโปรดักชัน สร้างประสบการณ์ที่คนอยากเข้าร่วม" },
           { word: "Grow", title: "เปลี่ยนความสนใจเป็นลูกค้า", text: "โฆษณาและ Social Listening บอกว่าอะไรได้ผล แล้วส่งกลับไปพัฒนางานรอบถัดไป" },
         ],
       },
@@ -43,7 +44,7 @@ export const copy = {
     },
     acts: [
       { word: "Build", image: "/imagery/build.webp", description: "เว็บไซต์ แอป และระบบองค์กรที่ออกแบบให้ใช้งานจริงและพัฒนาต่อได้", services: ["เว็บไซต์", "เว็บแอปและโมบายแอป", "ระบบองค์กร"] },
-      { word: "Activate", image: "/imagery/kiosk.webp", description: "เปลี่ยนอีเวนต์และแคมเปญให้คนอยากเข้าร่วม ด้วยเกมหน้างาน KOL และทีมถ่ายทำของเราเอง", services: ["เกมบน Kiosk", "KOL และ Influencer", "ถ่ายทำและรีวิว"] },
+      { word: "Activate", image: "/imagery/kiosk.webp", description: "เปลี่ยนอีเวนต์และแคมเปญให้คนอยากเข้าร่วม ด้วยเกมหน้างาน KOL และทีมโปรดักชันของเราเอง", services: ["เกมบน Kiosk", "KOL และ Influencer", "Event Production"] },
       { word: "Grow", image: "/imagery/grow.webp", description: "วางแผนการตลาดดิจิทัล ดูแลเพจ ยิงแอด และฟังเสียงลูกค้าเพื่อหาลูกค้าใหม่ให้แบรนด์", services: ["Digital Marketing", "ดูแล Social และเพจ", "Social Listening"] },
     ],
     close: {
@@ -57,7 +58,7 @@ export const copy = {
       title: "ทีมเดียว ตั้งแต่ระบบถึงหน้างาน",
       lead: "เลือกเริ่มจากบริการที่แบรนด์ต้องการตอนนี้ แล้วต่อยอดกับทีมเดิมได้ทุกขั้น",
       metaTitle: "บริการสำหรับแบรนด์",
-      metaDescription: "6 บริการในทีมเดียว: เว็บไซต์และซอฟต์แวร์ เกม Kiosk KOL ถ่ายทำงานอีเวนต์ Digital Marketing และ Social Listening",
+      metaDescription: "6 บริการในทีมเดียว: เว็บไซต์และซอฟต์แวร์ เกม Kiosk KOL โปรดักชันงานอีเวนต์ Digital Marketing และ Social Listening",
       ctaTools: "ดูเครื่องมือของเรา",
     },
     serviceDetail: {
@@ -121,7 +122,7 @@ export const copy = {
       label: "About",
       title: "ทีมมากประสบการณ์ ที่ลงมือครบทุกขั้น",
       paragraphs: [
-        "Owl Day House เริ่มจากงานซอฟต์แวร์ และเติบโตมาทำงานที่ใหญ่กว่าหน้าจอ วันนี้เราดูแลตั้งแต่ระบบ กิจกรรมหน้างาน KOL คอนเทนต์ ไปจนถึงการตลาดดิจิทัล",
+        "Owl Day House เริ่มจากงานซอฟต์แวร์ และเติบโตมาทำงานที่ใหญ่กว่าหน้าจอ วันนี้เราดูแลตั้งแต่ระบบ กิจกรรมหน้างาน KOL งานโปรดักชัน ไปจนถึงการตลาดดิจิทัล",
         "เราเชื่อว่าแบรนด์ทำงานได้ดีที่สุดเมื่อทีมที่วางแผนกับทีมที่ลงมือคือทีมเดียวกัน ทุกงานจึงมีเครื่องมือที่เราสร้างให้แบรนด์ใช้ต่อได้จริง",
       ],
       reasons: [
@@ -188,7 +189,7 @@ export const copy = {
         titleKey: "the next",
         stages: [
           { word: "Build", title: "Tools your brand owns", text: "Websites and systems become a base your brand owns, ready to connect to your own AI." },
-          { word: "Activate", title: "Bring people to the brand", text: "On-site games, KOLs and content create experiences people want to join." },
+          { word: "Activate", title: "Bring people to the brand", text: "On-site games, KOLs and production create experiences people want to join." },
           { word: "Grow", title: "Turn attention into customers", text: "Ads and social listening show what works, and that feeds the next round." },
         ],
       },
@@ -196,7 +197,7 @@ export const copy = {
     },
     acts: [
       { word: "Build", image: "/imagery/build.webp", description: "Websites, apps and enterprise systems designed for real use and ready to grow.", services: ["Websites", "Web and mobile apps", "Enterprise systems"] },
-      { word: "Activate", image: "/imagery/kiosk.webp", description: "Turn events and campaigns into something people want to join, with on-site games, KOLs and our own film crew.", services: ["Kiosk games", "KOLs and influencers", "Filming and reviews"] },
+      { word: "Activate", image: "/imagery/kiosk.webp", description: "Turn events and campaigns into something people want to join, with on-site games, KOLs and our own production team.", services: ["Kiosk games", "KOLs and influencers", "Event production"] },
       { word: "Grow", image: "/imagery/grow.webp", description: "Plan digital marketing, manage your pages, run ads and listen to customers to find new ones.", services: ["Digital marketing", "Social management", "Social listening"] },
     ],
     close: {
@@ -210,7 +211,7 @@ export const copy = {
       title: "One team, from systems to the show floor",
       lead: "Start with what your brand needs now and build on it with the same team.",
       metaTitle: "Brand Experience Services",
-      metaDescription: "Six services, one team: websites and software, kiosk games, KOL campaigns, event filming, digital marketing and social listening.",
+      metaDescription: "Six services, one team: websites and software, kiosk games, KOL campaigns, event production, digital marketing and social listening.",
       ctaTools: "See our tools",
     },
     serviceDetail: {
@@ -274,7 +275,7 @@ export const copy = {
       label: "About",
       title: "One team that sees every step through",
       paragraphs: [
-        "Owl Day House started in software and grew into work that goes beyond the screen. Today we handle systems, on-site activities, KOLs, content and digital marketing.",
+        "Owl Day House started in software and grew into work that goes beyond the screen. Today we handle systems, on-site activities, KOLs, production and digital marketing.",
         "We believe brands do their best work when the people who plan it are the people who make it. That is why every project comes with tools your brand can keep using.",
       ],
       reasons: [
@@ -313,6 +314,8 @@ export const copy = {
 
 export type Copy = (typeof copy)[Locale];
 
+const displayCopy = { th: keepThaiWordsDeep(copy.th), en: copy.en };
+
 export function getCopy(locale: Locale): Copy {
-  return copy[locale];
+  return displayCopy[locale];
 }

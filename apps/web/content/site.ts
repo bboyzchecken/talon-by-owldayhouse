@@ -1,7 +1,9 @@
 // Single source of truth for company facts and contact channels.
 // Marketing site is static: every "contact" action links out (Messenger/phone/LINE).
 
-export const company = {
+import { keepThaiWordsDeep } from "@/lib/thai-wrap";
+
+export const company = keepThaiWordsDeep({
   legalName: "บริษัท อาวล์ เดย์ เฮ้าส์ จำกัด",
   legalNameEn: "Owl Day House Co., Ltd.",
   brandName: "Owl Day House",
@@ -15,7 +17,7 @@ export const company = {
   base: "กรุงเทพมหานคร ประเทศไทย",
   baseEn: "Bangkok, Thailand",
   addressEn: "Room B1, 1st Floor, TNC Building, 172 Chai Sathan, Saraphi, Chiang Mai 50140",
-} as const;
+} as const);
 
 export const contact = {
   phoneDisplay: "092-455-2450",

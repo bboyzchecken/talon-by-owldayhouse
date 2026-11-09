@@ -2,6 +2,7 @@
 // items were sizeable systems whose businesses have since shut down.
 
 import type { Locale } from "@/lib/i18n";
+import { keepThaiWordsDeep } from "@/lib/thai-wrap";
 
 type Text = Record<Locale, string>;
 
@@ -16,7 +17,7 @@ export interface PortfolioItem {
   status: "live" | "closed";
 }
 
-export const portfolio: readonly PortfolioItem[] = [
+export const portfolio: readonly PortfolioItem[] = keepThaiWordsDeep([
   {
     slug: "reg-tu",
     title: { th: "ระบบลงทะเบียนเรียนออนไลน์", en: "Online course registration" },
@@ -89,7 +90,7 @@ export const portfolio: readonly PortfolioItem[] = [
     },
     status: "closed",
   },
-];
+]);
 
 export const liveWork = portfolio.filter((item) => item.status === "live");
 export const earlierWork = portfolio.filter((item) => item.status === "closed");
