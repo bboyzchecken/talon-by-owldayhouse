@@ -1,10 +1,13 @@
-// /news — static Thai blog for SEO around the industries we sell to (events, lead capture,
-// education, property and automotive). Archived posts from the old web-only offer stay
-// reachable at their URLs but are noindex and left out of listings and the sitemap.
+// /news — static blog for SEO around the industries we sell to (events, lead capture,
+// education, property and automotive). Bilingual guides live in content/articles.ts;
+// Thai posts live here. Archived posts from the old web-only offer stay reachable at
+// their URLs but are noindex and left out of listings, the feed and the sitemap.
 // Pure data: post metadata + ordering, used by the index page, [slug] metadata,
 // sitemap and JSON-LD. Article bodies live in content/news/<slug>.tsx and are
 // mapped in content/news/bodies.tsx (kept separate so this file has no JSX deps).
 
+import { articles, type Faq } from "./articles";
+import type { Locale } from "@/lib/i18n";
 import { keepThaiWords } from "@/lib/thai-wrap";
 
 export interface NewsPost {
@@ -118,15 +121,73 @@ const published: readonly NewsPost[] = [
 
 // Titles and excerpts are shown on pages, so keep Thai words whole when they wrap.
 // Keywords go straight into meta tags and stay as written.
-export const posts: readonly NewsPost[] = published.map((post) => ({
+const posts: readonly NewsPost[] = published.map((post) => ({
   ...post,
   title: keepThaiWords(post.title),
   description: keepThaiWords(post.description),
 }));
 
-/** Posts shown in listings, the home page, the blog schema and the sitemap. */
-export const publishedPosts: readonly NewsPost[] = posts.filter((post) => !post.archived);
+export interface LocalPost extends NewsPost {
+  image: string;
+  imageAlt: string;
+  category: string;
+  /** Present on guides written in content/articles.ts. */
+  markdown?: string;
+  faq?: readonly Faq[];
+  service?: string;
+  /** The article exists in both languages. */
+  paired: boolean;
+}
 
-export function getPost(slug: string): NewsPost | undefined {
-  return posts.find((p) => p.slug === slug);
+const legacyVisual: Record<string, { image: string; imageAlt: string; category: string }> = {
+  "ngan-poet-tua-khrongkan-song-lead-sales": { image: "/imagery/event-hall.webp", imageAlt: "งานเปิดตัวแบรนด์ในห้องโถงสีขาว", category: "งานอีเวนต์" },
+  "open-house-wat-phon-phu-samak": { image: "/imagery/kiosk.webp", imageAlt: "ผู้ร่วมงานแตะจอทัชสกรีนในโถงงานอีเวนต์", category: "งานอีเวนต์" },
+  "kep-raichue-lukkha-na-booth-pdpa": { image: "/imagery/articles/kiosk-event.webp", imageAlt: "ผู้ร่วมงานยืนล้อมตู้ Kiosk จอทัชสกรีนในงานเปิดตัวแบรนด์", category: "งานอีเวนต์" },
+  "thurakit-prap-tua-yuk-ai": { image: "/imagery/listening.webp", imageAlt: "แผ่นกระดาษสีขาวเรียงเป็นคลื่น", category: "AI" },
+  "rab-tham-website-krungthep": { image: "/imagery/event-hall.webp", imageAlt: "งานเปิดตัวแบรนด์ในห้องโถงสีขาว", category: "เว็บไซต์" },
+  "rab-tham-website-chiang-mai-rakha": { image: "/imagery/build.webp", imageAlt: "แผ่นกระจกซ้อนกันเป็นชั้นเหมือนโครงสร้างซอฟต์แวร์", category: "เว็บไซต์" },
+  "thurakit-chiang-mai-tong-mi-website": { image: "/imagery/grow.webp", imageAlt: "แท่งสีขาวไล่ระดับสูงขึ้น มีแท่งสูงสุดสีทอง", category: "เว็บไซต์" },
+};
+
+function minutesToRead(locale: Locale, text: string): number {
+  return Math.max(3, Math.round(text.length / (locale === "th" ? 700 : 1100)));
+}
+
+/** Every article in a language, archived ones included, newest first. */
+export function getAllPosts(locale: Locale): LocalPost[] {
+  const guides = articles.map((article): LocalPost => {
+    const copy = article[locale];
+    return {
+      slug: article.slug,
+      title: keepThaiWords(copy.title),
+      description: keepThaiWords(copy.description),
+      datePublished: article.datePublished,
+      keywords: copy.keywords,
+      readingMinutes: minutesToRead(locale, copy.body),
+      image: article.image,
+      imageAlt: copy.imageAlt,
+      category: copy.category,
+      markdown: copy.body,
+      faq: copy.faq,
+      service: article.service,
+      paired: true,
+    };
+  });
+  if (locale === "en") return guides;
+  const legacy = posts.map((post): LocalPost => ({ ...post, ...(legacyVisual[post.slug] as (typeof legacyVisual)[string]), paired: false }));
+  return [...legacy, ...guides].sort((a, b) => b.datePublished.localeCompare(a.datePublished));
+}
+
+/** Articles shown in listings, the home page, the blog schema, the feed and the sitemap. */
+export function getPosts(locale: Locale): LocalPost[] {
+  return getAllPosts(locale).filter((post) => !post.archived);
+}
+
+export function getPost(locale: Locale, slug: string): LocalPost | undefined {
+  return getAllPosts(locale).find((post) => post.slug === slug);
+}
+
+/** The guide that supports a service page. */
+export function getGuide(locale: Locale, service: string): LocalPost | undefined {
+  return getPosts(locale).find((post) => post.service === service);
 }

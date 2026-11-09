@@ -28,8 +28,7 @@ export function SiteHeader({ locale, languageHref }: SiteHeaderProps) {
 
   const links = [
     { href: href("/work/"), label: t.work },
-    // Articles are published in Thai only.
-    ...(locale === "th" ? [{ href: "/news/", label: t.news }] : []),
+    { href: href("/news/"), label: t.news },
     { href: href("/about/"), label: t.about },
   ];
   const close = () => setOpen(false);

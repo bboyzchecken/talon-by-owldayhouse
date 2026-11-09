@@ -47,6 +47,8 @@ interface PageMetaInput {
   absoluteTitle?: boolean;
   /** The page has no twin in the other language. */
   singleLanguage?: boolean;
+  /** Share image path, 1200x630. Defaults to the site image. */
+  image?: string;
 }
 
 /** Per-page metadata: canonical, hreflang and complete OpenGraph/Twitter tags. */
@@ -57,20 +59,24 @@ export function pageMeta({
   path,
   absoluteTitle,
   singleLanguage,
+  image,
 }: PageMetaInput): Metadata {
   title = plainText(title);
   description = plainText(description);
   const fullTitle = absoluteTitle ? title : `${title} | ${SITE_NAME}`;
   const localized = localeHref(locale, path);
   const url = localized === "/" ? SITE_URL : `${SITE_URL}${localized}`;
+  const shareImage = image ? { images: [{ url: image, width: 1200, height: 630, alt: title }] } : {};
+  const isNews = path.startsWith("/news/");
   return {
     title: absoluteTitle ? { absolute: title } : title,
     description,
     alternates: {
       canonical: localized,
       ...(singleLanguage ? {} : { languages: languageAlternates(path) }),
+      ...(isNews ? { types: { "application/rss+xml": localeHref(locale, "/feed.xml") } } : {}),
     },
-    openGraph: { ...baseOpenGraph(locale), title: fullTitle, description, url },
-    twitter: { ...baseTwitter, title: fullTitle, description },
+    openGraph: { ...baseOpenGraph(locale), title: fullTitle, description, url, ...shareImage },
+    twitter: { ...baseTwitter, title: fullTitle, description, ...(image ? { images: [image] } : {}) },
   };
 }
