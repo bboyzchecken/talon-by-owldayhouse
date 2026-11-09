@@ -55,7 +55,7 @@ export const copy = {
     },
     acts: [
       { word: "Build", image: "/imagery/build.webp", description: "เว็บไซต์ แอป และระบบองค์กรที่ออกแบบให้ใช้งานจริงและพัฒนาต่อได้", services: ["เว็บไซต์", "เว็บแอปและโมบายแอป", "ระบบองค์กร"] },
-      { word: "Activate", image: "/imagery/kiosk.webp", description: "เกมหน้างาน KOL และทีมโปรดักชันของเราเอง สำหรับอีเวนต์และแคมเปญของแบรนด์", services: ["เกมบน Kiosk", "KOL และ Influencer", "Event Production"] },
+      { word: "Activate", image: "/imagery/kiosk.webp", description: "เกมหน้างาน KOL และงานโปรดักชัน สำหรับอีเวนต์และแคมเปญของแบรนด์", services: ["เกมบน Kiosk", "KOL และ Influencer", "Event Production"] },
       { word: "Grow", image: "/imagery/grow.webp", description: "วางแผนการตลาดดิจิทัล ดูแลเพจ ยิงแอด และฟังเสียงลูกค้าเพื่อหาลูกค้าใหม่ให้แบรนด์", services: ["Digital Marketing", "ดูแล Social และเพจ", "Social Listening"] },
     ],
     close: {
@@ -248,7 +248,7 @@ export const copy = {
     },
     acts: [
       { word: "Build", image: "/imagery/build.webp", description: "Websites, apps and enterprise systems designed for real use and ready to grow.", services: ["Websites", "Web and mobile apps", "Enterprise systems"] },
-      { word: "Activate", image: "/imagery/kiosk.webp", description: "On-site games, KOLs and our own production team for your events and campaigns.", services: ["Kiosk games", "KOLs and influencers", "Event production"] },
+      { word: "Activate", image: "/imagery/kiosk.webp", description: "On-site games, KOLs and production for your events and campaigns.", services: ["Kiosk games", "KOLs and influencers", "Event production"] },
       { word: "Grow", image: "/imagery/grow.webp", description: "Plan digital marketing, manage your pages, run ads and listen to customers to find new ones.", services: ["Digital marketing", "Social management", "Social listening"] },
     ],
     close: {

@@ -68,7 +68,7 @@ const text: Record<Locale, Record<string, ServiceText>> = keepThaiWordsDeep({
       metaTitle: "Event Production ถ่ายทำและตัดต่อวิดีโองานอีเวนต์",
       blurb: "ทีมโปรดักชันถ่ายทำและตัดต่อภาพและวิดีโองานอีเวนต์",
       problem:
-        "ทีมโปรดักชันของเราวางแผนการถ่ายกับทีมของคุณก่อนวันงาน ลงพื้นที่ถ่ายภาพและวิดีโอ แล้วตัดต่อเป็นคลิปที่โพสต์ได้ทันทีหลังงานจบ",
+        "เราวางแผนการถ่ายกับทีมของคุณก่อนวันงาน งานคอนเทนต์และงานขนาดเล็ก ทีมของเราถ่ายและตัดต่อเองได้ไว งานใหญ่ที่ต้องใช้กล้องและทีมงานเต็มรูปแบบ เราทำร่วมกับทีมโปรดักชันมืออาชีพที่ทำงานด้วยกันประจำ ทั้งสองแบบได้คลิปที่โพสต์ได้ทันทีหลังงานจบ",
       deliverables: ["Storyboard และ shot list ก่อนวันถ่าย", "ทีมถ่ายภาพและวิดีโอหน้างาน", "ตัดต่อคลิปสำหรับโซเชียล", "วิดีโอสรุปงานอีเวนต์"],
       tool: "ถาม AI ว่าต้องใช้ฟุตเทจไหน แล้วได้ไฟล์ทันที ทีมเราเชื่อมคลังฟุตเทจบน Google Drive เข้ากับ AI (ผ่าน MCP) ทุกไฟล์บอกได้ว่าถ่ายอะไร วันไหน แล้วเรียงลงไทม์ไลน์ใน CapCut ตาม storyboard ได้ทันที งานตัดต่อจึงส่งได้ไว และถ้าทีมของคุณอยากได้ระบบแบบนี้ เราก็สร้างให้ได้",
     },
@@ -124,7 +124,7 @@ const text: Record<Locale, Record<string, ServiceText>> = keepThaiWordsDeep({
       metaTitle: "Event Video Production: Filming and Editing",
       blurb: "A production team that films and edits your event.",
       problem:
-        "Our production team plans the shoot with your team before the event, films photo and video on site, and edits clips you can post as soon as the event ends.",
+        "We plan the shoot with your team before the event. For content and smaller events, our own team films and edits quickly. For large productions that need full camera crews, we work with a professional production team we work with regularly. Either way, you get clips you can post as soon as the event ends.",
       deliverables: ["Storyboard and shot list before the shoot", "On-site photo and video crew", "Edits for social platforms", "Event recap films"],
       tool: "Ask AI which footage you need and get the files right away. Our team connects the footage library on Google Drive to AI (through MCP), so every file says what was shot and when, then lays them onto a CapCut timeline in storyboard order. Edits ship fast, and if your team wants a system like this, we can build one for you.",
     },
