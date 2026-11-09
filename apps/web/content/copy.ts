@@ -3,10 +3,12 @@
 import type { Locale } from "@/lib/i18n";
 import { keepThaiWordsDeep } from "@/lib/thai-wrap";
 
-/** A team figure for the About page. Leave the list empty until the numbers are confirmed. */
+/** One team on the About page. `partner` marks a team from a partner company (Social Listening must always say so). */
 export interface TeamStat {
   value: string;
-  label: string;
+  title: string;
+  text: string;
+  partner?: boolean;
 }
 
 export const copy = {
@@ -165,9 +167,18 @@ export const copy = {
         { title: "ออกใบกำกับภาษีได้", text: "เบิกจ่ายในนามบริษัทหรือหน่วยงานได้ สะดวกกับงานองค์กรและราชการ" },
       ],
       teamLabel: "ทีมของเรา",
-      teamStats: [] as readonly TeamStat[],
+      teamTitle: "4 ทีมที่ทำงานด้วยกัน และพาร์ตเนอร์ด้านข้อมูล",
+      teamPeople: "คน",
+      // KOL team members cannot be named yet (contract), and the Social Listening partner is not named until it approves.
+      teamStats: [
+        { value: "7", title: "ทีมพัฒนา", text: "นักพัฒนาเกม วิศวกรซอฟต์แวร์ที่มาจากธนาคารและองค์กรชั้นนำ และนักออกแบบ UX/UI" },
+        { value: "3", title: "ทีม Project Manager และ KOL", text: "ดูแลโปรเจกต์และแคมเปญ KOL คนในทีมเป็นครีเอเตอร์ที่มีผู้ติดตามจริง จึงเข้าใจงานฝั่ง KOL จากประสบการณ์ตรง" },
+        { value: "3", title: "ทีมอีเวนต์", text: "คิดแคมเปญ นำเสนอไอเดีย และดูแลงานหน้างาน" },
+        { value: "2", title: "ทีม Digital Marketing", text: "วางกลยุทธ์และผลิตคอนเทนต์ลงช่องทางของแบรนด์" },
+        { value: "10", title: "ทีมวิเคราะห์ข้อมูล", text: "นักวิเคราะห์ข้อมูลจากบริษัทพาร์ตเนอร์ด้าน Social Listening", partner: true },
+      ] as readonly TeamStat[],
       metaTitle: "เกี่ยวกับ Owl Day House",
-      metaDescription: "Owl Day House ทีมมากประสบการณ์ บริษัทจดทะเบียน รับงานซอฟต์แวร์ อีเวนต์ KOL และการตลาดดิจิทัล",
+      metaDescription: "Owl Day House ทีมมากประสบการณ์ 4 ทีม ทั้งนักพัฒนา ทีม KOL ทีมอีเวนต์ และ Digital Marketing พร้อมพาร์ตเนอร์ด้านวิเคราะห์ข้อมูล บริษัทจดทะเบียน",
     },
     contactPage: {
       label: "Contact",
@@ -348,9 +359,17 @@ export const copy = {
         { title: "Tax invoices issued", text: "Ready for corporate and government procurement." },
       ],
       teamLabel: "Our team",
-      teamStats: [] as readonly TeamStat[],
+      teamTitle: "Four teams that work together, plus a data partner",
+      teamPeople: "people",
+      teamStats: [
+        { value: "7", title: "Development", text: "Game developers, software engineers from banks and leading companies, and UX/UI designers." },
+        { value: "3", title: "Project management & KOLs", text: "Runs projects and KOL campaigns. The team are creators with real followings, so they know KOL work first-hand." },
+        { value: "3", title: "Events", text: "Creates campaigns, pitches ideas and runs the event floor." },
+        { value: "2", title: "Digital marketing", text: "Plans strategy and produces content for the brand's channels." },
+        { value: "10", title: "Data analysis", text: "Data analysts from our social listening partner company.", partner: true },
+      ] as readonly TeamStat[],
       metaTitle: "About Owl Day House",
-      metaDescription: "Owl Day House is an experienced, registered team working across software, events, KOL campaigns and digital marketing.",
+      metaDescription: "Owl Day House is an experienced, registered team of four groups (development, KOLs, events and digital marketing) with a data analysis partner.",
     },
     contactPage: {
       label: "Contact",

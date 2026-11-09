@@ -337,14 +337,18 @@ export function AboutView({ locale }: { locale: Locale }) {
         </div>
       </section>
       {t.teamStats.length > 0 ? (
-        <section className="odh-wrap pb-24">
-          <p className="odh-mono mb-8">{t.teamLabel}</p>
+        <section className="odh-sec odh-wrap">
+          <SectionHead label={t.teamLabel}>{t.teamTitle}</SectionHead>
           <div className="odh-stats">
-            {t.teamStats.map((stat) => (
-              <div key={stat.label}>
-                <strong>{stat.value}</strong>
-                <span>{stat.label}</span>
-              </div>
+            {t.teamStats.map((team) => (
+              <article key={team.title}>
+                <strong>
+                  {team.value} <span>{t.teamPeople}</span>
+                </strong>
+                <h3>{team.title}</h3>
+                <p>{team.text}</p>
+                {team.partner ? <CapabilityTag kind="partner" labels={copy.capability} /> : null}
+              </article>
             ))}
           </div>
         </section>
