@@ -1,3 +1,5 @@
+import { plainText } from "@/lib/thai-wrap";
+
 interface JsonLdProps {
   data: object | object[];
 }
@@ -8,7 +10,7 @@ export function JsonLd({ data }: JsonLdProps) {
     <script
       type="application/ld+json"
       // Structured data is build-time constant (no user input) — safe to inline.
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      dangerouslySetInnerHTML={{ __html: plainText(JSON.stringify(data)) }}
     />
   );
 }

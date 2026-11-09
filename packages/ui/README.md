@@ -21,17 +21,12 @@ import { OwlMark, Button, Card, Badge, SectionHeading } from "@odh/ui";
 export default function Example() {
   return (
     <Card>
-      <Badge variant="gold">NEW</Badge>
-      <SectionHeading
-        eyebrow="Talon"
-        title="เว็บไซต์ไวด้วย AI"
-        subtitle="เริ่มต้น ฿3,900 — เสร็จใน 5 วัน"
-      />
+      <SectionHeading eyebrow="Services" title="ทีมเดียว ตั้งแต่ระบบถึงหน้างาน" />
       <div className="flex gap-3">
-        <Button variant="gold">เริ่มเลย ฿3,900</Button>
+        <Button variant="key">คุยโปรเจกต์</Button>
         {/* asChild renders the link instead of a <button> */}
-        <Button variant="ghost" asChild>
-          <a href="https://m.me/owldayhouse">ทักเราเลย</a>
+        <Button variant="line" asChild>
+          <a href="https://m.me/owldayhouse">Messenger</a>
         </Button>
       </div>
       <OwlMark size={48} />
@@ -46,7 +41,7 @@ export default function Example() {
 | ---------------- | ------------------------------------------------------------------ |
 | `OwlMark`        | Registered owl symbol (SVG). Prop: `size`. Inherits `currentColor`. |
 | `OwlLogo`        | Registered horizontal lockup (owl + wordmark). Prop: `height`. `currentColor`. |
-| `Button`         | `variant`: `gold` \| `navy` \| `ghost`; `size`: `sm` \| `md` \| `lg`; `asChild`. |
+| `Button`         | `variant`: `key` \| `line` (site), `gold` \| `navy` \| `ghost` (internal tools); `size`: `sm` \| `md` \| `lg`; `asChild`. |
 | `Card`           | Surface container (border + soft shadow).                          |
 | `Badge`          | `variant`: `gold` \| `navy` \| `soft`.                             |
 | `SectionHeading` | `eyebrow` + `title` + `subtitle`, `align`, `as` (h1–h3).           |

@@ -13,6 +13,7 @@ const nextConfig: NextConfig = {
   // Import *.html as a raw string (used by the hidden /owl-docs tool to inline
   // its self-contained generator into an <iframe srcDoc>). Webpack only — this
   // project's dev + export builds both run on webpack (no --turbopack).
+  experimental: { globalNotFound: true },
   webpack: (config) => {
     config.module.rules.push({ test: /\.html$/i, type: "asset/source" });
     return config;

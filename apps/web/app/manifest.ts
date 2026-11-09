@@ -7,11 +7,11 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "Owl Day House",
     short_name: "ODH",
-    description: "ซอฟต์แวร์เฮาส์เชียงใหม่ — รับทำเว็บไซต์ เว็บแอป และระบบองค์กร",
+    description: "Brand Experience, Engineered.",
     start_url: "/",
     display: "standalone",
-    background_color: colors.paper,
-    theme_color: colors.navy,
+    background_color: colors.white,
+    theme_color: colors.white,
     icons: [{ src: "/favicon.ico", sizes: "any", type: "image/x-icon" }],
   };
 }

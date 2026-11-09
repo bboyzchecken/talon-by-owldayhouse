@@ -1,32 +1,99 @@
 /**
- * @odh/brand — Tailwind v4 theme.
+ * @odh/brand — Tailwind v4 theme and semantic CSS variables.
  * In the app's global stylesheet, import AFTER Tailwind:
  *   @import "tailwindcss";
  *   @import "@odh/brand/theme.css";
- * This maps brand tokens to CSS variables + generates utilities
- * (bg-navy, text-gold, font-display, shadow-glow, ...).
+ * White leads every page; navy and gold are reserved for key points.
  */
 @theme {
   /* Brand colors */
   --color-navy: #28254c;
   --color-navy-deep: #1b1938;
   --color-gold: #e9a41b;
+  --color-gold-ink: #8a5a00;
   --color-gold-soft: #fbefd3;
   --color-paper: #fbf8f1;
-  --color-ink: #28254c;
-  --color-muted: #6e6b86;
-  --color-line: #eae6db;
+  --color-ink: #15151c;
+  --color-muted: #5a5a66;
+  --color-line: #e8e8ec;
+  --color-line-control: #8a8a96;
 
-  /* Fonts — the underlying --font-* vars are injected by next/font (@odh/brand/fonts).
-     Space Grotesk has no Thai glyphs, so Thai must fall back to IBM Plex Sans Thai
-     (proper tone-mark placement) — never the system font. Latin/digits still use
-     Space Grotesk; Thai uses IBM Plex Sans Thai per-glyph. */
-  --font-display: var(--font-space-grotesk), var(--font-ibm-plex-thai), "IBM Plex Sans Thai",
-    ui-sans-serif, system-ui, sans-serif;
-  --font-body: var(--font-ibm-plex-thai), "IBM Plex Sans Thai", ui-sans-serif, system-ui,
+  /* The underlying --font-* vars are injected by next/font (@odh/brand/fonts).
+     Thai glyphs fall through to the Thai face per glyph. */
+  --font-display: var(--font-bricolage), var(--font-anuphan), "Anuphan", ui-sans-serif, system-ui,
     sans-serif;
+  --font-body: var(--font-ibm-plex-thai), "IBM Plex Sans Thai", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-dm-mono), var(--font-ibm-plex-thai), ui-monospace, monospace;
 
-  /* Brand shadows */
+  /* Kept for the internal document tools. */
   --shadow-card: 0 12px 40px -20px rgb(40 37 76 / 0.35);
   --shadow-glow: 0 18px 50px -16px rgb(233 164 27 / 0.55);
+  --shadow-float: 0 32px 80px -24px rgb(21 21 28 / 0.35);
+}
+
+:root {
+  --vh-section: 100vh;
+  --vh-pin: 100vh;
+  /* Full-bleed sections align to the same edge as the centered container. */
+  --edge: max(var(--gutter), calc((100vw - var(--container)) / 2 + var(--gutter)));
+  --surface: #ffffff;
+  --surface-soft: #f4f4f6;
+  --text: #15151c;
+  --text-2: #5a5a66;
+  --text-key: #28254c;
+  --text-spark: #8a5a00;
+  --line: #e8e8ec;
+  --line-control: #8a8a96;
+  --key: #28254c;
+  --on-key: #ffffff;
+  --spark: #e9a41b;
+  --on-spark: #28254c;
+  --focus-ring: #28254c;
+  --white: #ffffff;
+  --ink: #15151c;
+  --gray-100: #e8e8ec;
+  --gray-600: #5a5a66;
+  --gold: #e9a41b;
+  --navy-deep: #1b1938;
+  --signal-positive: #0b6aa6;
+  --shadow-window: 0 24px 48px -28px rgb(21 21 28 / 0.35);
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --space-5: 40px;
+  --space-6: 64px;
+  --space-7: 96px;
+  --space-8: 160px;
+  --space-9: 240px;
+
+  --radius-sm: 6px;
+  --radius-full: 9999px;
+  --container: 1440px;
+  --gutter: 40px;
+  --header-height: 72px;
+}
+
+/* Sections are sized once; the pinned stage follows the mobile browser bar. */
+@supports (height: 100svh) {
+  :root {
+    --vh-section: 100svh;
+    --vh-pin: 100dvh;
+  }
+}
+
+@media (max-width: 900px) {
+  :root {
+    --gutter: 20px;
+    --space-8: 96px;
+  }
+}
+
+@media (max-width: 600px) {
+  :root {
+    --space-6: 48px;
+    --space-7: 64px;
+    --space-8: 72px;
+  }
 }

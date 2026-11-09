@@ -1,94 +1,104 @@
 // Real client work. Items with status "live" have a working link; "closed"
 // items were sizeable systems whose businesses have since shut down.
 
+import type { Locale } from "@/lib/i18n";
+import { keepThaiWordsDeep } from "@/lib/thai-wrap";
+
+type Text = Record<Locale, string>;
+
 export interface PortfolioItem {
-  title: string;
-  client: string;
-  category: string;
-  result: string;
+  slug: string;
+  title: Text;
+  client: Text;
+  category: Text;
+  result: Text;
   image?: string;
   url?: string;
-  status?: "live" | "closed";
-  featured?: boolean;
-  /** Override the card's link label (defaults to "ดูระบบจริง"). */
-  linkLabel?: string;
+  status: "live" | "closed";
 }
 
-export const portfolio: readonly PortfolioItem[] = [
+export const portfolio: readonly PortfolioItem[] = keepThaiWordsDeep([
   {
-    title: "ระบบลงทะเบียนเรียนออนไลน์",
-    client: "มหาวิทยาลัยธรรมศาสตร์",
-    category: "ราชการ / มหาวิทยาลัย",
-    result:
-      "ระบบลงทะเบียนเรียนที่รองรับนักศึกษาหลายหมื่นคนพร้อมกันในช่วงลงทะเบียน — ยังเปิดใช้งานจริงถึงวันนี้ที่ reg.tu.ac.th",
-    image: "/portfolio/reg-tu-ac-th.webp",
+    slug: "reg-tu",
+    title: { th: "ระบบลงทะเบียนเรียนออนไลน์", en: "Online course registration" },
+    client: { th: "มหาวิทยาลัยธรรมศาสตร์", en: "Thammasat University" },
+    category: { th: "ราชการ / มหาวิทยาลัย", en: "Government / University" },
+    result: {
+      th: "ระบบลงทะเบียนเรียนที่รองรับนักศึกษาหลายหมื่นคนพร้อมกันในช่วงลงทะเบียน ยังเปิดใช้งานจริงถึงวันนี้ที่ reg.tu.ac.th",
+      en: "A registration system built for tens of thousands of students at once during enrollment. Still running today at reg.tu.ac.th.",
+    },
+    image: "/portfolio/reg-tu-home.webp",
     url: "https://reg.tu.ac.th",
     status: "live",
-    featured: true,
   },
   {
-    title: "RodArea — แผนที่และปฏิทินงานรถทั่วไทย",
-    client: "RodArea",
-    category: "แพลตฟอร์ม / เว็บแอป",
-    result:
-      "รวมงานรถและคาร์มีทที่เคยกระจายอยู่ตามกลุ่ม Facebook / Line มาไว้บนแผนที่เดียว — โพสต์งานด้วยลิงก์ Google Maps ปักหมุดให้อัตโนมัติ พร้อมปฏิทินงาน กดสนใจเข้าร่วม และรีวิวหลังงาน",
-    image: "/portfolio/rodarea.webp",
+    slug: "rodarea",
+    title: { th: "RodArea แผนที่และปฏิทินงานรถทั่วไทย", en: "RodArea: Thailand's car event map" },
+    client: { th: "RodArea", en: "RodArea" },
+    category: { th: "แพลตฟอร์ม / เว็บแอป", en: "Platform / Web app" },
+    result: {
+      th: "รวมงานรถและคาร์มีทที่เคยกระจายอยู่ตามกลุ่ม Facebook และ Line มาไว้บนแผนที่เดียว พร้อมปฏิทินงาน การกดสนใจเข้าร่วม และรีวิวหลังงาน",
+      en: "Car meets once scattered across Facebook and Line groups, now on one map with an event calendar, RSVPs and post-event reviews.",
+    },
+    image: "/portfolio/rodarea-home.webp",
     url: "https://rodarea.com/",
     status: "live",
   },
   {
-    title: "You want GPU? — ร้านการ์ดจอมือสองออนไลน์",
-    client: "You want GPU?",
-    category: "เว็บร้านค้า / E-commerce",
-    result:
-      "เว็บร้านการ์ดจอมือสองที่แสดงเฉพาะของจริงในร้าน — กรองตามรุ่น VRAM และช่วงราคา แยกเงื่อนไขรับประกันรายใบ มีเมนูตามหารุ่น และระบบหลังบ้านสำหรับเจ้าของร้าน",
-    image: "/portfolio/youwantgpu.webp",
+    slug: "pezy",
+    title: { th: "PEZY e-Marketplace สัญชาติไทย", en: "PEZY: a Thai e-marketplace" },
+    client: { th: "PEZY Online", en: "PEZY Online" },
+    category: { th: "แพลตฟอร์ม / e-Marketplace", en: "Platform / e-Marketplace" },
+    result: {
+      th: "แพลตฟอร์มซื้อขายออนไลน์ครบวงจร ทั้งเว็บและโมบายแอป พร้อมระบบร้านค้า สินค้า ตะกร้า และโปรโมชัน",
+      en: "A full online marketplace on web and mobile, with stores, products, cart and promotions.",
+    },
+    status: "closed",
+  },
+  {
+    slug: "youwantgpu",
+    title: { th: "You want GPU? ร้านการ์ดจอมือสองออนไลน์", en: "You want GPU? A used graphics card store" },
+    client: { th: "You want GPU?", en: "You want GPU?" },
+    category: { th: "เว็บร้านค้า / E-commerce", en: "E-commerce" },
+    result: {
+      th: "เว็บร้านที่แสดงเฉพาะของจริงในร้าน กรองตามรุ่นและ VRAM แยกเงื่อนไขรับประกันรายใบ และมีระบบหลังบ้านสำหรับเจ้าของร้าน",
+      en: "A store showing only real stock, with filters by model and VRAM, per-card warranty terms and a back office for the owner.",
+    },
+    image: "/portfolio/youwantgpu-home.webp",
     url: "https://youwantgpu.com/",
     status: "live",
   },
   {
-    title: "PEZY — e-Marketplace สัญชาติไทย",
-    client: "PEZY Online",
-    category: "แพลตฟอร์ม / e-Marketplace",
-    result:
-      "แพลตฟอร์มซื้อขายออนไลน์ครบวงจร ทั้งเว็บและโมบายแอป — ระบบร้านค้า สินค้า ตะกร้า และโปรโมชัน",
-    image: "/portfolio/pezy.jpg",
-    status: "closed",
-    featured: true,
-  },
-  {
-    title: "SPEEK — แพลตฟอร์มจับคู่ติวเตอร์สอนภาษา",
-    client: "SPEEK Academy",
-    category: "แพลตฟอร์ม / เว็บแอป",
-    result:
-      "จับคู่ผู้เรียนกับติวเตอร์ ทั้งเรียนเดี่ยวและกลุ่ม พร้อมระบบจอง คะแนนสะสม (SPEEK Points) และแดชบอร์ดผู้สอน/ผู้เรียน",
-    image: "/portfolio/speek.jpg",
-    status: "closed",
-    featured: true,
-  },
-  {
-    title: "INTERSANT PLUS — เว็บธุรกิจวัสดุก่อสร้าง",
-    client: "Intersant Plus Material",
-    category: "เว็บธุรกิจ",
-    result: "เว็บไซต์บริษัทวัสดุก่อสร้าง uPVC — วางโครงเนื้อหา ดีไซน์ และระบบจัดการให้ดูน่าเชื่อถือ",
-    image: "/portfolio/intersant.jpg",
+    slug: "speek",
+    title: { th: "SPEEK แพลตฟอร์มจับคู่ติวเตอร์สอนภาษา", en: "SPEEK: a language tutor marketplace" },
+    client: { th: "SPEEK Academy", en: "SPEEK Academy" },
+    category: { th: "แพลตฟอร์ม / เว็บแอป", en: "Platform / Web app" },
+    result: {
+      th: "จับคู่ผู้เรียนกับติวเตอร์ทั้งเรียนเดี่ยวและกลุ่ม พร้อมระบบจอง คะแนนสะสม และแดชบอร์ดผู้สอนและผู้เรียน",
+      en: "Matches learners with tutors for private and group classes, with booking, loyalty points and dashboards for both sides.",
+    },
     status: "closed",
   },
   {
-    title: "Interactive Showcase — เอฟเฟกต์ Spotlight Reveal",
-    client: "Owl Day House",
-    category: "โชว์เคส / Interactive",
-    result:
-      "เดโมงานหน้าเว็บเชิงโต้ตอบ — เลื่อนเคอร์เซอร์ส่องสปอตไลต์ทะลุดีไซน์ที่เสร็จสวย ลงไปเห็นโครงสร้างระบบเบื้องหลัง สื่อแนวคิด “จากเว็บแรก ฿3,900 สู่ระบบระดับองค์กร” ทำด้วยเทคนิคที่เน้นความเร็ว (CSS mask + LCP) ไม่ใช้ canvas",
-    image: "/showcase/surface.svg",
-    url: "/showcase/reveal/",
-    status: "live",
-    linkLabel: "เปิดดูโชว์เคส",
+    slug: "intersant",
+    title: { th: "INTERSANT PLUS เว็บธุรกิจวัสดุก่อสร้าง", en: "INTERSANT PLUS: a building materials website" },
+    client: { th: "Intersant Plus Material", en: "Intersant Plus Material" },
+    category: { th: "เว็บธุรกิจ", en: "Business website" },
+    result: {
+      th: "เว็บไซต์บริษัทวัสดุก่อสร้าง uPVC วางโครงเนื้อหา ดีไซน์ และระบบจัดการให้ดูน่าเชื่อถือ",
+      en: "A company website for a uPVC materials business, covering content structure, design and management.",
+    },
+    status: "closed",
   },
-];
+]);
 
-export const trustedBy: readonly string[] = [
-  "มหาวิทยาลัยธรรมศาสตร์",
+export const liveWork = portfolio.filter((item) => item.status === "live");
+export const earlierWork = portfolio.filter((item) => item.status === "closed");
+
+export const clientNames: readonly string[] = [
+  "Thammasat University",
+  "RodArea",
+  "You want GPU?",
   "PEZY",
   "SPEEK",
   "INTERSANT PLUS",

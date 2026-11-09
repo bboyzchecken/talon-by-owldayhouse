@@ -1,15 +1,26 @@
+import { getCopy } from "@/content/copy";
 import { company, social } from "@/content/site";
-import { ladder } from "@/content/ladder";
 import { posts } from "@/content/news";
-import { services } from "@/content/services";
+import { getServices } from "@/content/services";
+import { localeHref, type Locale } from "./i18n";
 import { OG_IMAGE_PATH, SITE_NAME, SITE_URL } from "./seo";
 
-const LOGO_URL = `${SITE_URL}/brand/ODH_Banding.svg`;
+const LOGO_URL = `${SITE_URL}/brand/owl-logo.svg`;
 const OG_IMAGE_URL = `${SITE_URL}${OG_IMAGE_PATH}`;
 const BUSINESS_ID = `${SITE_URL}/#organization`;
 const WEBSITE_ID = `${SITE_URL}/#website`;
 const sameAs = [social.facebook, social.instagram, social.linkedin];
-const areaServed = ["เชียงใหม่", "กรุงเทพมหานคร", "ประเทศไทย"];
+const inLanguage: Record<Locale, string> = { th: "th-TH", en: "en-US" };
+
+const areaServed: Record<Locale, string[]> = {
+  th: ["กรุงเทพมหานคร", "ประเทศไทย", "ทั่วโลก"],
+  en: ["Bangkok", "Thailand", "Worldwide"],
+};
+
+const businessDescription: Record<Locale, string> = {
+  th: "ทีมมากประสบการณ์ที่ทำได้ตั้งแต่เว็บไซต์และซอฟต์แวร์ กิจกรรมหน้างานอีเวนต์ KOL ไปจนถึงการตลาดดิจิทัล",
+  en: "An experienced team for software, event experiences, KOL campaigns and digital marketing.",
+};
 
 /** Reference to the single business entity, so Google merges it across pages. */
 const businessRef = {
@@ -19,116 +30,75 @@ const businessRef = {
   url: SITE_URL,
 };
 
-// One entity on purpose: ProfessionalService is both an Organization and a
-// LocalBusiness, and two separate entities gave Google two names for the company.
-export const businessSchema = {
-  "@context": "https://schema.org",
-  "@type": "ProfessionalService",
-  "@id": BUSINESS_ID,
-  name: SITE_NAME,
-  legalName: company.legalName,
-  alternateName: [company.legalName, company.brandNameEn, "ODH"],
-  description: "ซอฟต์แวร์เฮาส์เชียงใหม่ รับทำเว็บไซต์ เว็บแอป และระบบองค์กร",
-  url: SITE_URL,
-  logo: LOGO_URL,
-  image: OG_IMAGE_URL,
-  telephone: "+66924552450",
-  priceRange: "฿฿",
-  address: {
-    "@type": "PostalAddress",
-    streetAddress: `${company.address.line} ต.ไชยสถาน`,
-    addressLocality: "สารภี",
-    addressRegion: company.address.city,
-    postalCode: company.address.postcode,
-    addressCountry: "TH",
-  },
-  // TODO: confirm exact coordinates of the office (approx. Saraphi, Chiang Mai).
-  geo: { "@type": "GeoCoordinates", latitude: 18.71, longitude: 99.04 },
-  // Registered office is Chiang Mai, but the team serves Bangkok + nationwide.
-  areaServed,
-  contactPoint: {
-    "@type": "ContactPoint",
+export function businessSchema(locale: Locale) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ProfessionalService",
+    "@id": BUSINESS_ID,
+    name: SITE_NAME,
+    legalName: locale === "th" ? company.legalName : company.legalNameEn,
+    alternateName: [company.legalName, company.legalNameEn, company.brandNameEn, "ODH"],
+    description: businessDescription[locale],
+    url: SITE_URL,
+    logo: LOGO_URL,
+    image: OG_IMAGE_URL,
     telephone: "+66924552450",
-    contactType: "customer service",
-    availableLanguage: ["th"],
-    areaServed: "TH",
-  },
-  knowsAbout: ["รับทำเว็บไซต์", "พัฒนาเว็บแอป", "โมบายแอป", "ระบบองค์กร", "SEO", "งานกราฟิก"],
-  sameAs,
-  openingHoursSpecification: [
-    {
-      "@type": "OpeningHoursSpecification",
-      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-      opens: "09:00",
-      closes: "18:00",
+    email: "owldayhouse@gmail.com",
+    // Registered office. Replace with the Bangkok office once its address is confirmed.
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: locale === "th" ? `${company.address.line} ต.ไชยสถาน` : "Room B1, 1st Floor, TNC Building, 172 Chai Sathan",
+      addressLocality: locale === "th" ? "สารภี" : "Saraphi",
+      addressRegion: locale === "th" ? company.address.city : "Chiang Mai",
+      postalCode: company.address.postcode,
+      addressCountry: "TH",
     },
-  ],
-};
-
-export const websiteSchema = {
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  "@id": WEBSITE_ID,
-  name: SITE_NAME,
-  url: SITE_URL,
-  inLanguage: "th-TH",
-  publisher: { "@id": BUSINESS_ID },
-};
-
-export const talonServiceSchema = {
-  "@context": "https://schema.org",
-  "@type": "Service",
-  name: "Talon — เว็บไซต์โปร เสร็จไวใน 5 วัน",
-  serviceType: "รับทำเว็บไซต์",
-  url: `${SITE_URL}/talon/`,
-  provider: businessRef,
-  areaServed: "TH",
-  description: "บริการทำเว็บไซต์เสร็จไวใน 5 วัน เริ่มต้น 3,900 บาท พร้อมทีมงานคนไทยดูแลต่อ",
-  offers: {
-    "@type": "Offer",
-    price: "3900",
-    priceCurrency: "THB",
-    availability: "https://schema.org/InStock",
-    url: `${SITE_URL}/talon/`,
-  },
-};
-
-/** One Service per card on /services. */
-export const servicesSchema = services.map((service) => ({
-  "@context": "https://schema.org",
-  "@type": "Service",
-  name: service.title,
-  description: service.blurb,
-  url: `${SITE_URL}/services/`,
-  provider: businessRef,
-  areaServed,
-}));
-
-/** Published price tiers for /packages. Tiers without a fixed starting price are left out. */
-export const packagesSchema = {
-  "@context": "https://schema.org",
-  "@type": "OfferCatalog",
-  name: "แพ็กเกจรับทำเว็บไซต์และระบบ",
-  url: `${SITE_URL}/packages/`,
-  itemListElement: ladder
-    .filter((tier) => /\d/.test(tier.priceFrom))
-    .map((tier) => ({
-      "@type": "Offer",
-      priceCurrency: "THB",
-      price: tier.priceFrom.replace(/\D/g, ""),
-      priceSpecification: {
-        "@type": "PriceSpecification",
-        minPrice: tier.priceFrom.replace(/\D/g, ""),
-        priceCurrency: "THB",
+    areaServed: areaServed[locale],
+    contactPoint: {
+      "@type": "ContactPoint",
+      telephone: "+66924552450",
+      email: "owldayhouse@gmail.com",
+      contactType: "customer service",
+      availableLanguage: ["th", "en"],
+      areaServed: "TH",
+    },
+    knowsAbout: getServices(locale).map((service) => service.title),
+    sameAs,
+    openingHoursSpecification: [
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+        opens: "09:00",
+        closes: "18:00",
       },
-      itemOffered: {
-        "@type": "Service",
-        name: tier.name,
-        description: tier.tagline,
-        provider: businessRef,
-      },
-    })),
-};
+    ],
+  };
+}
+
+export function websiteSchema(locale: Locale) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": WEBSITE_ID,
+    name: SITE_NAME,
+    url: SITE_URL,
+    inLanguage: inLanguage[locale],
+    publisher: { "@id": BUSINESS_ID },
+  };
+}
+
+/** One Service per offering. */
+export function servicesSchema(locale: Locale) {
+  return getServices(locale).map((service) => ({
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: service.title,
+    description: service.blurb,
+    url: `${SITE_URL}${localeHref(locale, `/services/${service.slug}/`)}`,
+    provider: businessRef,
+    areaServed: areaServed[locale],
+  }));
+}
 
 /** Article index for /news. */
 export const blogSchema = {
@@ -136,7 +106,7 @@ export const blogSchema = {
   "@type": "Blog",
   name: `บทความ ${SITE_NAME}`,
   url: `${SITE_URL}/news/`,
-  inLanguage: "th-TH",
+  inLanguage: inLanguage.th,
   publisher: businessRef,
   blogPost: posts.map((post) => ({
     "@type": "BlogPosting",
@@ -151,34 +121,21 @@ interface BreadcrumbParent {
   path: string;
 }
 
-/** Home > [parent] > Page breadcrumb. */
-export function breadcrumbSchema(name: string, path: string, parent?: BreadcrumbParent) {
+/** Home > [parent] > Page breadcrumb. Paths exclude the locale prefix. */
+export function breadcrumbSchema(locale: Locale, name: string, path: string, parent?: BreadcrumbParent) {
   const trail = [...(parent ? [parent] : []), { name, path }];
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "หน้าแรก", item: `${SITE_URL}/` },
-      ...trail.map((crumb, i) => ({
+      { "@type": "ListItem", position: 1, name: getCopy(locale).breadcrumbHome, item: `${SITE_URL}${localeHref(locale, "/")}` },
+      ...trail.map((crumb, index) => ({
         "@type": "ListItem",
-        position: i + 2,
+        position: index + 2,
         name: crumb.name,
-        item: `${SITE_URL}${crumb.path}`,
+        item: `${SITE_URL}${localeHref(locale, crumb.path)}`,
       })),
     ],
-  };
-}
-
-/** FAQPage schema. Google limits the FAQ rich result to gov/health sites, but the markup still describes the page. */
-export function faqSchema(faqs: readonly { q: string; a: string }[]) {
-  return {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: faqs.map(({ q, a }) => ({
-      "@type": "Question",
-      name: q,
-      acceptedAnswer: { "@type": "Answer", text: a },
-    })),
   };
 }
 
@@ -192,20 +149,13 @@ interface ArticleSchemaInput {
 }
 
 /** BlogPosting schema for /news articles. */
-export function articleSchema({
-  title,
-  description,
-  path,
-  datePublished,
-  dateModified,
-  keywords,
-}: ArticleSchemaInput) {
+export function articleSchema({ title, description, path, datePublished, dateModified, keywords }: ArticleSchemaInput) {
   return {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     headline: title,
     description,
-    inLanguage: "th-TH",
+    inLanguage: inLanguage.th,
     mainEntityOfPage: `${SITE_URL}${path}`,
     url: `${SITE_URL}${path}`,
     datePublished,

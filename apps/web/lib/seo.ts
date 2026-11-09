@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { localeHref, type Locale } from "./i18n";
+import { plainText } from "./thai-wrap";
 
 export const SITE_URL = "https://owldayhouse.com";
 export const SITE_NAME = "Owl Day House";
@@ -8,39 +10,67 @@ export const OG_IMAGE_PATH = "/og.png";
 export const SITE_UPDATED = "2026-11-09";
 
 const ogImage = { url: OG_IMAGE_PATH, width: 1200, height: 630, alt: SITE_NAME };
+const ogLocale: Record<Locale, string> = { th: "th_TH", en: "en_US" };
 
 // Next.js replaces (does not merge) a parent's openGraph/twitter objects, so every
 // page must carry these or it loses its share image and large card.
-export const baseOpenGraph = {
-  type: "website" as const,
-  siteName: SITE_NAME,
-  locale: "th_TH",
-  images: [ogImage],
-};
+export function baseOpenGraph(locale: Locale) {
+  return {
+    type: "website" as const,
+    siteName: SITE_NAME,
+    locale: ogLocale[locale],
+    images: [ogImage],
+  };
+}
 
 export const baseTwitter = {
   card: "summary_large_image" as const,
   images: [OG_IMAGE_PATH],
 };
 
+/** hreflang map for a page that exists in both languages. */
+export function languageAlternates(path: string) {
+  return {
+    th: path,
+    en: localeHref("en", path),
+    "x-default": path,
+  };
+}
+
 interface PageMetaInput {
+  locale: Locale;
   title: string;
   description: string;
-  /** Route path with trailing slash, e.g. "/talon/". Use "/" for home. */
+  /** Route path without the locale prefix, with trailing slash. Use "/" for home. */
   path: string;
   /** Skip the "| Owl Day House" suffix — for titles already long enough to truncate. */
   absoluteTitle?: boolean;
+  /** The page has no twin in the other language. */
+  singleLanguage?: boolean;
 }
 
-/** Per-page metadata: canonical + complete OpenGraph/Twitter tags. */
-export function pageMeta({ title, description, path, absoluteTitle }: PageMetaInput): Metadata {
+/** Per-page metadata: canonical, hreflang and complete OpenGraph/Twitter tags. */
+export function pageMeta({
+  locale,
+  title,
+  description,
+  path,
+  absoluteTitle,
+  singleLanguage,
+}: PageMetaInput): Metadata {
+  title = plainText(title);
+  description = plainText(description);
   const fullTitle = absoluteTitle ? title : `${title} | ${SITE_NAME}`;
-  const url = path === "/" ? SITE_URL : `${SITE_URL}${path}`;
+  const localized = localeHref(locale, path);
+  const url = localized === "/" ? SITE_URL : `${SITE_URL}${localized}`;
   return {
     title: absoluteTitle ? { absolute: title } : title,
     description,
-    alternates: { canonical: path },
-    openGraph: { ...baseOpenGraph, title: fullTitle, description, url },
+    alternates: {
+      canonical: localized,
+      ...(singleLanguage ? {} : { languages: languageAlternates(path) }),
+    },
+    openGraph: { ...baseOpenGraph(locale), title: fullTitle, description, url },
     twitter: { ...baseTwitter, title: fullTitle, description },
   };
 }

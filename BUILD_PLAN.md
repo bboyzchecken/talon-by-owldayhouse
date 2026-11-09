@@ -1,5 +1,7 @@
 # ODH Web — Build Plan (Monorepo, Static-first)
 
+> **หมายเหตุ 2026-11-09:** เอกสารนี้เป็นแผนเดิม ตำแหน่งแบรนด์ Talon ราคา ฟอนต์ และสีพื้นในนี้เลิกใช้แล้ว แผนปัจจุบันอยู่ที่ `docs/design-system/`
+
 แผนสร้างเว็บใหม่ของ **Owl Day House (ODH)** ทีละ step พร้อม **checklist** และ **prompt สำหรับ Claude Code** ในแต่ละขั้น
 ออกแบบให้ vibe-code แล้วตรวจเองได้ ทุก step จบในตัว commit แล้วไป step ต่อไป
 
