@@ -129,7 +129,31 @@ objects **14 days** after creation. That, not the backup script, is what
 keeps two weeks of history.
 
 Neither bucket gets public access or a custom domain. The API hands out
-presigned URLs that expire after 15 minutes.
+presigned URLs that expire after 15 minutes. Presigned URLs only work on the
+`<account-id>.r2.cloudflarestorage.com` endpoint, so do not put a custom
+domain in `R2_ENDPOINT`.
+
+**`odh-internal-files` needs a CORS policy.** The browser uploads straight to
+R2 with a presigned `PUT`, and without CORS the browser blocks it — every
+upload fails with a network error even though the URL is valid. On the
+bucket's **Settings → CORS Policy → Add CORS policy**, paste:
+
+```json
+[
+  {
+    "AllowedOrigins": ["https://crm.owldayhouse.com"],
+    "AllowedMethods": ["PUT", "GET", "HEAD"],
+    "AllowedHeaders": ["Content-Type"],
+    "ExposeHeaders": ["ETag"],
+    "MaxAgeSeconds": 3600
+  }
+]
+```
+
+The origin is exactly `https://crm.owldayhouse.com` — no trailing slash, no
+path. The dashboard takes this flat array; `wrangler r2 bucket cors set`
+wants a different shape. `odh-internal-backups` needs no CORS: only the
+server talks to it.
 
 ### 1.7 DNS
 

@@ -73,12 +73,13 @@ say "Rebuilding and restarting on the Droplet"
 ssh "$SSH_TARGET" "cd '${REMOTE_DIR}' && COMMIT='${COMMIT}' docker compose up -d --build && docker image prune -f >/dev/null"
 
 say "Waiting for the API to answer"
-# Asked through Caddy on the Droplet itself, with the Host header set, so this
-# checks the real path a browser takes without waiting on DNS or the cert.
-REMOTE_CHECK="curl -s -o /dev/null -w %{http_code} -H 'Host: ${DOMAIN}' http://127.0.0.1/healthz"
-for _ in $(seq 1 30); do
-  status="$(ssh "$SSH_TARGET" "$REMOTE_CHECK" || true)"
-  if [ "$status" = "200" ] || [ "$status" = "308" ]; then
+# Ask Docker for the API container's own healthcheck (it curls /healthz inside
+# the container). Checking through Caddy over plain HTTP would only ever see
+# Caddy's redirect to HTTPS, which says nothing about the API.
+REMOTE_CHECK="cd ${REMOTE_DIR} && docker inspect --format {{.State.Health.Status}} \$(docker compose ps -q api)"
+for _ in $(seq 1 45); do
+  status="$(ssh "$SSH_TARGET" "$REMOTE_CHECK" 2>/dev/null || true)"
+  if [ "$status" = "healthy" ]; then
     say "Deployed. https://${DOMAIN} is serving commit ${COMMIT}."
     exit 0
   fi
