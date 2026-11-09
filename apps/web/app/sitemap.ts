@@ -2,33 +2,42 @@ import type { MetadataRoute } from "next";
 import { SITE_UPDATED, SITE_URL } from "@/lib/seo";
 import { localeHref } from "@/lib/i18n";
 import { industrySlugs } from "@/content/industries";
-import { publishedPosts } from "@/content/news";
-import { serviceSlugs } from "@/content/services";
+import { getPosts } from "@/content/news";
+import { getServices, serviceSlugs } from "@/content/services";
 
 export const dynamic = "force-static";
 
-// Pages that exist in both languages.
-const pairedRoutes = ["/", "/services/", ...serviceSlugs.map((slug) => `/services/${slug}/`), ...industrySlugs.map((slug) => `/industries/${slug}/`), "/tools/", "/work/", "/about/", "/contact/"];
-
 const url = (path: string) => `${SITE_URL}${path}`;
+const serviceImage = (slug: string) => getServices("th").find((service) => service.slug === slug)?.image;
+
+// Pages that exist in both languages.
+const pairedRoutes = ["/", "/services/", ...serviceSlugs.map((slug) => `/services/${slug}/`), ...industrySlugs.map((slug) => `/industries/${slug}/`), "/tools/", "/work/", "/about/", "/contact/", "/news/"];
 
 // lastModified is a real content date, never the build time: Google ignores
 // <lastmod> on sites where it changes every build.
 export default function sitemap(): MetadataRoute.Sitemap {
   const pages = pairedRoutes.flatMap((route) => {
     const languages = { th: url(route), en: url(localeHref("en", route)) };
+    const slug = route.match(/^\/services\/(.+)\/$/)?.[1];
+    const image = slug ? serviceImage(slug) : undefined;
+    const images = image ? { images: [url(image)] } : {};
     return [
-      { url: languages.th, lastModified: SITE_UPDATED, alternates: { languages } },
-      { url: languages.en, lastModified: SITE_UPDATED, alternates: { languages } },
+      { url: languages.th, lastModified: SITE_UPDATED, alternates: { languages }, ...images },
+      { url: languages.en, lastModified: SITE_UPDATED, alternates: { languages }, ...images },
     ];
   });
 
-  const news: MetadataRoute.Sitemap = [{ url: url("/news/"), lastModified: SITE_UPDATED }];
-  // Archived posts stay reachable but are noindex, so they stay out of the sitemap.
-  const articles: MetadataRoute.Sitemap = publishedPosts.map((post) => ({
-    url: url(`/news/${post.slug}/`),
-    lastModified: post.dateModified ?? post.datePublished,
-  }));
+  const articles: MetadataRoute.Sitemap = (["th", "en"] as const).flatMap((locale) =>
+    getPosts(locale).map((post) => {
+      const path = `/news/${post.slug}/`;
+      return {
+        url: url(localeHref(locale, path)),
+        lastModified: post.dateModified ?? post.datePublished,
+        images: [url(post.image)],
+        ...(post.paired ? { alternates: { languages: { th: url(path), en: url(localeHref("en", path)) } } } : {}),
+      };
+    }),
+  );
 
-  return [...pages, ...news, ...articles];
+  return [...pages, ...articles];
 }

@@ -78,12 +78,14 @@ export function pageMeta({
   const fullTitle = absoluteTitle ? title : `${title} | ${SITE_NAME}`;
   const localized = localeHref(locale, path);
   const url = localized === "/" ? SITE_URL : `${SITE_URL}${localized}`;
+  const isNews = path.startsWith("/news/");
   return {
     title: absoluteTitle ? { absolute: title } : title,
     description,
     alternates: {
       canonical: localized,
       ...(singleLanguage ? {} : { languages: languageAlternates(path) }),
+      ...(isNews ? { types: { "application/rss+xml": localeHref(locale, "/feed.xml") } } : {}),
     },
     openGraph: { ...baseOpenGraph(locale, image, fullTitle), title: fullTitle, description, url },
     twitter: { ...baseTwitter(image, fullTitle), title: fullTitle, description },

@@ -1,9 +1,10 @@
 import { getCopy } from "@/content/copy";
 import { company, social } from "@/content/site";
-import { publishedPosts } from "@/content/news";
+import { getPosts } from "@/content/news";
 import { getServices } from "@/content/services";
 import { localeHref, type Locale } from "./i18n";
 import { OG_IMAGE_PATH, SITE_NAME, SITE_URL } from "./seo";
+import { articleCard, localeCard } from "./share-cards";
 
 const LOGO_URL = `${SITE_URL}/brand/owl-logo.svg`;
 const OG_IMAGE_URL = `${SITE_URL}${OG_IMAGE_PATH}`;
@@ -39,6 +40,7 @@ export function businessSchema(locale: Locale) {
     legalName: locale === "th" ? company.legalName : company.legalNameEn,
     alternateName: [company.legalName, company.legalNameEn, company.brandNameEn, "ODH"],
     description: businessDescription[locale],
+    slogan: locale === "th" ? "ประสบการณ์แบรนด์ ที่สร้างได้จริง" : "Brand Experience, Engineered",
     url: SITE_URL,
     logo: LOGO_URL,
     image: OG_IMAGE_URL,
@@ -63,6 +65,14 @@ export function businessSchema(locale: Locale) {
       areaServed: "TH",
     },
     knowsAbout: getServices(locale).map((service) => service.title),
+    hasOfferCatalog: {
+      "@type": "OfferCatalog",
+      name: locale === "th" ? "บริการของ Owl Day House" : "Owl Day House services",
+      itemListElement: getServices(locale).map((service) => ({
+        "@type": "Offer",
+        itemOffered: { "@type": "Service", name: service.title, description: service.blurb, url: `${SITE_URL}${localeHref(locale, `/services/${service.slug}/`)}` },
+      })),
+    },
     sameAs,
     openingHoursSpecification: [
       {
@@ -100,21 +110,59 @@ export function servicesSchema(locale: Locale) {
   }));
 }
 
+/** One service, for its detail page. */
+export function serviceSchema(locale: Locale, slug: string) {
+  const service = getServices(locale).find((item) => item.slug === slug);
+  if (!service) return [];
+  return [
+    {
+      "@context": "https://schema.org",
+      "@type": "Service",
+      name: service.title,
+      serviceType: service.title,
+      description: `${service.blurb} ${service.problem}`,
+      url: `${SITE_URL}${localeHref(locale, `/services/${slug}/`)}`,
+      image: `${SITE_URL}${localeCard(locale, `services/${slug}`) ?? OG_IMAGE_PATH}`,
+      provider: businessRef,
+      areaServed: areaServed[locale],
+      inLanguage: inLanguage[locale],
+    },
+  ];
+}
+
 /** Article index for /news. */
-export const blogSchema = {
-  "@context": "https://schema.org",
-  "@type": "Blog",
-  name: `บทความ ${SITE_NAME}`,
-  url: `${SITE_URL}/news/`,
-  inLanguage: inLanguage.th,
-  publisher: businessRef,
-  blogPost: publishedPosts.map((post) => ({
-    "@type": "BlogPosting",
-    headline: post.title,
-    url: `${SITE_URL}/news/${post.slug}/`,
-    datePublished: post.datePublished,
-  })),
-};
+export function blogSchema(locale: Locale) {
+  const index = localeHref(locale, "/news/");
+  return {
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    name: locale === "th" ? `บทความ ${SITE_NAME}` : `${SITE_NAME} Insights`,
+    url: `${SITE_URL}${index}`,
+    inLanguage: inLanguage[locale],
+    publisher: businessRef,
+    blogPost: getPosts(locale).map((post) => ({
+      "@type": "BlogPosting",
+      headline: post.title,
+      url: `${SITE_URL}${index}${post.slug}/`,
+      image: `${SITE_URL}${articleCard(post.slug)}`,
+      datePublished: post.datePublished,
+    })),
+  };
+}
+
+/** Questions answered visibly on the page. Google no longer shows FAQ rich results; other search and AI engines still read this. */
+export function faqSchema(locale: Locale, faqs: readonly { q: string; a: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    inLanguage: inLanguage[locale],
+    mainEntity: faqs.map(({ q, a }) => ({
+      "@type": "Question",
+      name: q,
+      acceptedAnswer: { "@type": "Answer", text: a },
+    })),
+  };
+}
 
 interface BreadcrumbParent {
   name: string;
@@ -140,27 +188,29 @@ export function breadcrumbSchema(locale: Locale, name: string, path: string, par
 }
 
 interface ArticleSchemaInput {
+  locale: Locale;
+  slug: string;
   title: string;
   description: string;
-  path: string; // e.g. "/news/slug/"
   datePublished: string; // ISO date
   dateModified?: string;
   keywords?: readonly string[];
 }
 
 /** BlogPosting schema for /news articles. */
-export function articleSchema({ title, description, path, datePublished, dateModified, keywords }: ArticleSchemaInput) {
+export function articleSchema({ locale, slug, title, description, datePublished, dateModified, keywords }: ArticleSchemaInput) {
+  const path = localeHref(locale, `/news/${slug}/`);
   return {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     headline: title,
     description,
-    inLanguage: inLanguage.th,
+    inLanguage: inLanguage[locale],
     mainEntityOfPage: `${SITE_URL}${path}`,
     url: `${SITE_URL}${path}`,
     datePublished,
     dateModified: dateModified ?? datePublished,
-    image: OG_IMAGE_URL,
+    image: `${SITE_URL}${articleCard(slug)}`,
     keywords: keywords?.join(", "),
     isPartOf: { "@id": WEBSITE_ID },
     author: businessRef,

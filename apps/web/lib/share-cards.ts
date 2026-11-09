@@ -12,6 +12,15 @@ export function shareCard(name: string): string | undefined {
   return cards.has(name) ? `/og/${name}.jpg` : undefined;
 }
 
+/**
+ * An article's card: the designed one when cards.json covers the slug, otherwise the
+ * photo card committed for that article. Articles are written in both languages off
+ * one card, so there is no "-en" twin.
+ */
+export function articleCard(slug: string): string {
+  return shareCard(`news/${slug}`) ?? `/og/${slug}.jpg`;
+}
+
 /** Same card layout per language — the English twin is "<name>-en". */
 export function localeCard(locale: Locale, name: string): string | undefined {
   return shareCard(locale === "en" ? `${name}-en` : name);

@@ -42,7 +42,7 @@ infra/cloudflare        Cloudflare Pages option
 
 ## Conventions
 - TypeScript strict. Shared deps via `workspace:*` (`@odh/brand`, `@odh/ui`).
-- One `<h1>` per page · semantic HTML · `alt` on every image · `lang` set per locale by the root layouts in `app/(th)` and `app/(en)/en`. Page copy lives in `apps/web/content/`.
+- One `<h1>` per page · semantic HTML · `alt` on every image · `lang` set per locale by the root layouts in `app/(th)` and `app/(en)/en`. Page copy lives in `apps/web/content/`; bilingual guides live in `apps/web/content/articles.ts`, each with a cover image and a `/og/<slug>.jpg` share image.
 - **SEO is first-class** (Step 5): metadata API, `sitemap.ts`, `robots.ts`, JSON-LD (Organization / LocalBusiness / Service), OG images.
 - Present the company as an experienced, global-ready team ("ทีมของเรา", "ทีมมากประสบการณ์"), not by city. Bangkok appears only as the location fact; show the Chiang Mai address only as the registered office. Contact/company facts: บริษัท อาวล์ เดย์ เฮ้าส์ จำกัด · ห้อง B1 ชั้น 1 อาคาร TNC เลขที่ 172 ต.ไชยสถาน อ.สารภี เชียงใหม่ 50140 · 092-455-2450 · owldayhouse@gmail.com · FB/IG/LinkedIn = owldayhouse.
 - **Go API (if built): follow `PROJECT_TEMPLATE.md` exactly, BUT email/Gmail is removed** (no email anywhere). Internal auth = seed admin in DB, or LINE OTP — **never email OTP**.

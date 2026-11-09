@@ -16,6 +16,7 @@ interface ServiceBase {
 interface ServiceText {
   title: string;
   metaTitle: string;
+  metaDescription: string;
   blurb: string;
   problem: string;
   deliverables: readonly string[];
@@ -39,6 +40,7 @@ const text: Record<Locale, Record<string, ServiceText>> = keepThaiWordsDeep({
     "website-software": {
       title: "เว็บไซต์และซอฟต์แวร์",
       metaTitle: "รับทำเว็บไซต์ เว็บแอป และระบบองค์กร",
+      metaDescription: "รับทำเว็บไซต์ เว็บแอป โมบายแอป และระบบองค์กรที่ใช้งานจริง รองรับผู้ใช้จำนวนมาก และพัฒนาต่อได้เมื่อธุรกิจโตขึ้น",
       blurb: "เว็บไซต์ เว็บแอป โมบายแอป และระบบองค์กรทุกรูปแบบ",
       problem:
         "เราทำตั้งแต่เว็บบริษัทหน้าเดียวไปจนถึงระบบที่มีคนใช้พร้อมกันหลายหมื่นคน อย่างระบบลงทะเบียนเรียนของธรรมศาสตร์ ทุกงานออกแบบให้เพิ่มฟีเจอร์ต่อได้เมื่อธุรกิจโตขึ้น",
@@ -48,6 +50,7 @@ const text: Record<Locale, Record<string, ServiceText>> = keepThaiWordsDeep({
     "event-interactive": {
       title: "Event Interactive",
       metaTitle: "ทำเกมบน Kiosk จอทัชสกรีนสำหรับงานอีเวนต์",
+      metaDescription: "เกมและกิจกรรมบน Kiosk จอทัชสกรีนสำหรับงานอีเวนต์และบูธ ที่ดึงคนให้หยุดเล่นและเก็บข้อมูลให้แบรนด์นำไปใช้ต่อได้",
       blurb: "เกมและกิจกรรมบน Kiosk จอทัชสกรีนสำหรับงานอีเวนต์",
       problem:
         "เราทำเกมและกิจกรรมบนจอทัชสกรีนให้คนในงานหยุดเล่นที่บูธ ระหว่างเล่นระบบเก็บข้อมูลผู้ร่วมงานไว้ให้แบรนด์ใช้ทำการตลาดต่อ",
@@ -57,6 +60,7 @@ const text: Record<Locale, Record<string, ServiceText>> = keepThaiWordsDeep({
     "kol-influencer": {
       title: "KOL และ Influencer",
       metaTitle: "หา KOL และ Influencer วางแผนและทำ Creative ให้แคมเปญ",
+      metaDescription: "คัด KOL และ Influencer ให้ตรงกับเป้าหมายแบรนด์ วางแผนการสื่อสาร ผลิต creative และสรุปผลแคมเปญครบในทีมเดียว",
       blurb: "คัดคนให้ตรงแคมเปญ วางแผน และทำ creative ให้ครบ",
       problem:
         "ก่อนเลือก KOL หรือ Influencer เราดูว่าคนที่ติดตามเขาตรงกับลูกค้าของแบรนด์แค่ไหน จากนั้นวางแผนการโพสต์และทำ creative ให้ครบทั้งแคมเปญ",
@@ -66,6 +70,7 @@ const text: Record<Locale, Record<string, ServiceText>> = keepThaiWordsDeep({
     "event-content": {
       title: "Event Production",
       metaTitle: "Event Production ถ่ายทำและตัดต่อวิดีโองานอีเวนต์",
+      metaDescription: "ทีมโปรดักชันวางแผน ถ่ายทำ และตัดต่อภาพและวิดีโองานอีเวนต์ ได้คลิปที่แบรนด์นำไปโพสต์ต่อได้ทันทีหลังจบงาน",
       blurb: "ทีมโปรดักชันถ่ายทำและตัดต่อภาพและวิดีโองานอีเวนต์",
       problem:
         "เราวางแผนการถ่ายกับทีมของคุณก่อนวันงาน งานคอนเทนต์และงานขนาดเล็ก ทีมของเราถ่ายและตัดต่อเองได้ไว งานใหญ่ที่ต้องใช้กล้องและทีมงานเต็มรูปแบบ เราทำร่วมกับทีมโปรดักชันมืออาชีพที่ทำงานด้วยกันประจำ ทั้งสองแบบได้คลิปที่โพสต์ได้ทันทีหลังงานจบ",
@@ -75,6 +80,7 @@ const text: Record<Locale, Record<string, ServiceText>> = keepThaiWordsDeep({
     "digital-marketing": {
       title: "Digital Marketing",
       metaTitle: "วางแผน Digital Marketing ดูแลเพจ และยิงแอด",
+      metaDescription: "วางแผน Digital Marketing ดูแล Social และเพจ ยิงแอด และหากลุ่มเป้าหมายใหม่เพื่อเพิ่มลูกค้าให้แบรนด์",
       blurb: "วางแผน ดูแล Social และเพจ ยิงแอด และหาลูกค้าใหม่",
       problem:
         "เราวางแผนก่อนว่างบจะลงช่องทางไหน แล้วดูแลเพจ ยิงแอด และปรับแคมเปญตามตัวเลขที่เข้ามา พร้อมหากลุ่มลูกค้าใหม่ให้แบรนด์",
@@ -84,6 +90,7 @@ const text: Record<Locale, Record<string, ServiceText>> = keepThaiWordsDeep({
     "social-listening": {
       title: "Social Listening",
       metaTitle: "Social Listening และรายงานสำหรับแบรนด์",
+      metaDescription: "ติดตามเสียงพูดถึงแบรนด์ วิเคราะห์คู่แข่งและกระแส พร้อมรายงานและข้อเสนอแนะ ดำเนินงานร่วมกับพาร์ตเนอร์",
       blurb: "ติดตามเสียงพูดถึงแบรนด์และออกรายงานร่วมกับพาร์ตเนอร์",
       problem:
         "เราทำงานร่วมกับพาร์ตเนอร์ด้าน Social Listening เก็บว่าคนพูดถึงแบรนด์และคู่แข่งว่าอย่างไร แล้วสรุปเป็นรายงานที่ทีมของคุณนำไปตัดสินใจได้",
@@ -95,6 +102,7 @@ const text: Record<Locale, Record<string, ServiceText>> = keepThaiWordsDeep({
     "website-software": {
       title: "Websites & Software",
       metaTitle: "Website, Web App and Enterprise System Development in Thailand",
+      metaDescription: "Websites, web and mobile apps, and enterprise systems built for real use, large audiences and long-term growth.",
       blurb: "Websites, web and mobile apps, and enterprise systems of every kind.",
       problem:
         "We build everything from a one-page company site to systems used by tens of thousands of people at once, like Thammasat University's course registration. Every build is designed so features can be added as the business grows.",
@@ -104,6 +112,7 @@ const text: Record<Locale, Record<string, ServiceText>> = keepThaiWordsDeep({
     "event-interactive": {
       title: "Event Interactive",
       metaTitle: "Touchscreen Kiosk Games for Events",
+      metaDescription: "Touchscreen kiosk games and activities for events and booths that make people stop, play and share useful data.",
       blurb: "Games and activities on touchscreen kiosks for live events.",
       problem:
         "We build touchscreen games and activities that get people to stop and play at your booth. While they play, the system collects attendee data your brand can use for marketing afterwards.",
@@ -113,6 +122,7 @@ const text: Record<Locale, Record<string, ServiceText>> = keepThaiWordsDeep({
     "kol-influencer": {
       title: "KOL & Influencers",
       metaTitle: "KOL and Influencer Campaign Planning and Creative",
+      metaDescription: "KOL and influencer selection, campaign planning, creative production and post-campaign reporting from one team.",
       blurb: "The right creators for the campaign, with planning and creative included.",
       problem:
         "Before choosing a KOL or influencer, we check how closely their followers match your customers. Then we plan the posting schedule and produce the creative for the whole campaign.",
@@ -122,6 +132,7 @@ const text: Record<Locale, Record<string, ServiceText>> = keepThaiWordsDeep({
     "event-content": {
       title: "Event Production",
       metaTitle: "Event Video Production: Filming and Editing",
+      metaDescription: "A production team that plans, films and edits your event, so your brand has clips to post as soon as it ends.",
       blurb: "A production team that films and edits your event.",
       problem:
         "We plan the shoot with your team before the event. For content and smaller events, our own team films and edits quickly. For large productions that need full camera crews, we work with a professional production team we work with regularly. Either way, you get clips you can post as soon as the event ends.",
@@ -131,6 +142,7 @@ const text: Record<Locale, Record<string, ServiceText>> = keepThaiWordsDeep({
     "digital-marketing": {
       title: "Digital Marketing",
       metaTitle: "Digital Marketing Planning, Social Management and Paid Ads",
+      metaDescription: "Digital marketing planning, social and page management, paid ads and new audiences that bring your brand customers.",
       blurb: "Planning, social and page management, paid ads and new customers.",
       problem:
         "We first plan which channels the budget goes to, then manage your pages, run ads and adjust campaigns as the numbers come in, while finding new customers for your brand.",
@@ -140,6 +152,7 @@ const text: Record<Locale, Record<string, ServiceText>> = keepThaiWordsDeep({
     "social-listening": {
       title: "Social Listening",
       metaTitle: "Social Listening and Brand Reports",
+      metaDescription: "Track brand conversation, analyze competitors and trends, and get reports with recommendations, with our partner.",
       blurb: "Brand conversation tracking and reports, delivered with our partner.",
       problem:
         "With our social listening partner, we track what people say about your brand and your competitors, then summarize it in reports your team can make decisions with.",
