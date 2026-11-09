@@ -27,7 +27,8 @@ export function NotFoundPage() {
     { href: href("/services/"), label: copy.nav.services },
     { href: href("/work/"), label: copy.nav.work },
     { href: href("/tools/"), label: copy.nav.tools },
-    { href: href("/news/"), label: copy.nav.news },
+    // Articles are published in Thai only.
+    ...(locale === "th" ? [{ href: "/news/", label: copy.nav.news }] : []),
   ];
 
   return (
