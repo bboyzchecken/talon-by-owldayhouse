@@ -70,7 +70,7 @@ const text: Record<Locale, Record<string, ServiceText>> = keepThaiWordsDeep({
       problem:
         "งานที่จัดเพียงไม่กี่วันควรมีภาพและวิดีโอใช้ต่อได้อีกนาน ทีมโปรดักชันของเราวางแผนการถ่าย ลงพื้นที่ถ่ายทำ และตัดต่อ ให้แบรนด์ได้ไฟล์ที่นำไปใช้ต่อได้ทันที",
       deliverables: ["Storyboard และ shot list ก่อนวันถ่าย", "ทีมถ่ายภาพและวิดีโอหน้างาน", "ตัดต่อคลิปสำหรับโซเชียล", "วิดีโอสรุปงานอีเวนต์"],
-      tool: "ก่อนวันถ่าย เราใช้ AI ช่วยร่าง storyboard และแตกเป็นช็อตที่ต้องถ่าย ให้ทีมของคุณรีวิวและปรับได้ก่อนลงพื้นที่จริง",
+      tool: "เราเชื่อมคลังไฟล์บน Google Drive เข้ากับ MCP ทุกไฟล์บอกได้ว่าถ่ายอะไร วันไหน ทีมของคุณแค่ถาม AI ก็รู้ว่าต้องใช้ไฟล์ไหน และเราเรียงไฟล์ลงไทม์ไลน์ใน CapCut ตาม storyboard ก่อนเริ่มตัดต่อ",
     },
     "digital-marketing": {
       title: "Digital Marketing",
@@ -126,7 +126,7 @@ const text: Record<Locale, Record<string, ServiceText>> = keepThaiWordsDeep({
       problem:
         "An event that lasts a few days should leave photos and video that last much longer. Our production team plans the shoot, films on site and edits, so your brand gets files it can publish right away.",
       deliverables: ["Storyboard and shot list before the shoot", "On-site photo and video crew", "Edits for social platforms", "Event recap films"],
-      tool: "Before the shoot, we use AI to draft the storyboard and break it into a shot list, so your team can review and adjust it before we go on site.",
+      tool: "We connect the footage library on Google Drive to MCP, so every file says what was shot and when. Your team just asks its AI which files to use, and we lay the files onto a CapCut timeline in storyboard order before editing starts.",
     },
     "digital-marketing": {
       title: "Digital Marketing",

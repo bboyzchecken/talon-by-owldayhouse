@@ -84,7 +84,7 @@ export const copy = {
       title: "เครื่องมือที่เราสร้างให้งาน",
       lead: "เบื้องหลังงานของเราคือซอฟต์แวร์ที่ทีมสร้างเอง ทำเฉพาะให้แต่ละงาน และส่งมอบให้ทีมของแบรนด์ใช้ต่อได้",
       metaTitle: "เครื่องมือที่เราสร้างให้งานอีเวนต์ KOL และ Social Listening",
-      metaDescription: "ซอฟต์แวร์ที่ Owl Day House สร้างให้งาน เช่น ระบบเช็กชื่อและสุ่มรางวัลหน้างาน เครื่องมือผลิตภาพและวิดีโอให้ KOL และข้อมูล Social Listening และคู่แข่งที่เชื่อมต่อผ่าน MCP",
+      metaDescription: "ซอฟต์แวร์ที่ Owl Day House สร้างให้งาน เช่น ระบบเช็กชื่อและสุ่มรางวัลหน้างาน เครื่องมือผลิตภาพและวิดีโอให้ KOL คลังฟุตเทจที่ค้นผ่าน AI และข้อมูล Social Listening และคู่แข่งที่เชื่อมต่อผ่าน MCP",
       open: {
         label: "MCP",
         title: "เปิดให้เชื่อมต่อ ไม่ปิดกั้น",
@@ -93,6 +93,7 @@ export const copy = {
       items: [
         { name: "ระบบงานอีเวนต์", description: "ลงทะเบียน เช็กชื่อผู้เข้างาน และสุ่มรางวัล ใช้ได้ทันทีที่หน้างาน", partner: false },
         { name: "เกมบน Kiosk", description: "เกมและกิจกรรมสำหรับจอทัชสกรีนหน้างาน", partner: false },
+        { name: "คลังฟุตเทจผ่าน MCP", description: "จัดไฟล์บน Google Drive ตามวันและสิ่งที่ถ่าย ถาม AI ได้ว่าต้องใช้ไฟล์ไหน แล้วเรียงลงไทม์ไลน์ CapCut ตาม storyboard", partner: false },
         { name: "เครื่องมือผลิตสื่อให้ KOL", description: "สร้างภาพประกอบและวิดีโอให้ KOL เลือกไปใช้ พร้อมใส่ซับไตเติล", partner: false },
         { name: "Social Listening ผ่าน MCP", description: "ใช้ AI ของทีมคุณเช็กข้อมูลแต่ละรอบได้ตลอดเวลา และสั่งแปลงข้อมูลที่เคยต้องทำมือได้เอง", partner: true },
         { name: "ติดตามคู่แข่ง", description: "ระบบเดียวกันปรับให้ดึงความเคลื่อนไหวของคู่แข่งเป็นรอบ ๆ และเช็กผ่าน AI ของทีมคุณได้ตลอดเวลา", partner: false },
@@ -237,7 +238,7 @@ export const copy = {
       title: "Tools we build for the work",
       lead: "Behind our work is software our team builds for each project and hands over for your team to keep using.",
       metaTitle: "Tools We Build for Events, KOLs and Social Listening",
-      metaDescription: "Software Owl Day House builds for its work: attendee check-in and prize draws, image and video tools for KOLs, and social listening and competitor data connected through MCP.",
+      metaDescription: "Software Owl Day House builds for its work: attendee check-in and prize draws, image and video tools for KOLs, a footage library you search through AI, and social listening and competitor data connected through MCP.",
       open: {
         label: "MCP",
         title: "Open, never locked",
@@ -246,6 +247,7 @@ export const copy = {
       items: [
         { name: "Event operations", description: "Registration, attendee check-in and prize draws, ready on the event floor.", partner: false },
         { name: "Kiosk games", description: "Games and activities for touchscreens on the event floor.", partner: false },
+        { name: "Footage library through MCP", description: "Google Drive files sorted by shoot day and subject, found by asking your AI, then laid onto a CapCut timeline in storyboard order.", partner: false },
         { name: "Media tools for KOLs", description: "Illustrations and video generated for KOLs to choose from, with subtitles added.", partner: false },
         { name: "Social listening through MCP", description: "Your team's AI can check each batch of data at any time and run conversions that used to be done by hand.", partner: true },
         { name: "Competitor tracking", description: "The same system, set up to pull competitor activity batch by batch for your team's AI to check at any time.", partner: false },
