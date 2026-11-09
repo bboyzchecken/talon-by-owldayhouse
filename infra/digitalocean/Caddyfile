@@ -1,0 +1,58 @@
+# ODH internal tools — HTTPS, static UI and API proxy on one host.
+#
+# Caddy gets and renews the certificate itself over HTTP-01, which needs
+# port 80 open and the A record pointing straight at the Droplet. If the
+# domain is ever moved behind Cloudflare's proxy, see the DNS section of
+# README.md — the orange cloud breaks HTTP-01 and the image has to be
+# swapped for one with the Cloudflare DNS plugin.
+
+{$ODH_DOMAIN} {
+	encode zstd gzip
+
+	log {
+		output file /data/access.log {
+			roll_size 10MiB
+			roll_keep 5
+		}
+	}
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "no-referrer"
+		# Internal tools are never indexed, whatever a crawler finds.
+		X-Robots-Tag "noindex, nofollow, noarchive"
+		-Server
+	}
+
+	# The Go API. Everything else is static.
+	handle /api/* {
+		reverse_proxy api:5000
+	}
+	handle /auth/* {
+		reverse_proxy api:5000
+	}
+	handle /healthz {
+		reverse_proxy api:5000
+	}
+
+	# The exported Next.js app. trailingSlash: true means every route is a
+	# directory with its own index.html.
+	handle {
+		root * /srv
+		# No /404.html fallback here: try_files would serve it with a 200.
+		# Letting the lookup fail hands it to handle_errors, which answers 404.
+		try_files {path} {path}/index.html {path}.html
+		file_server
+
+		# Hashed build assets never change under the same name.
+		@immutable path /_next/static/*
+		header @immutable Cache-Control "public, max-age=31536000, immutable"
+	}
+
+	handle_errors {
+		rewrite * /404.html
+		file_server
+	}
+}
