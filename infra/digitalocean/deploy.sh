@@ -8,6 +8,8 @@
 #
 #   ODH_DROPLET_HOST=203.0.113.10 bash infra/digitalocean/deploy.sh
 #
+# GitHub Actions runs this same script (.github/workflows/deploy-internal.yml).
+#
 # What it does:
 #   1. builds apps/internal to a static export
 #   2. copies that export, the apps/api source and the compose files over
@@ -18,10 +20,13 @@
 set -euo pipefail
 
 HOST="${ODH_DROPLET_HOST:?set ODH_DROPLET_HOST to the Droplet IP or hostname}"
-USER="${ODH_DROPLET_USER:-root}"
+# A dedicated, non-root account that owns /opt/odh-internal and is in the
+# docker group. GitHub Actions and people deploy as the same user, so file
+# ownership on the server never depends on who deployed last.
+DEPLOY_USER="${ODH_DROPLET_USER:-deploy}"
 REMOTE_DIR="${ODH_REMOTE_DIR:-/opt/odh-internal}"
 DOMAIN="${ODH_DOMAIN:-crm.owldayhouse.com}"
-SSH_TARGET="${USER}@${HOST}"
+SSH_TARGET="${DEPLOY_USER}@${HOST}"
 
 REPO_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 cd "$REPO_ROOT"

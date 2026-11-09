@@ -34,6 +34,58 @@ bare Debian image, `apt install rsync`).
 
 ---
 
+## 0. Creating the Droplet
+
+Control-panel labels change; the values in the table are what matter.
+
+### 0.1 Your SSH key (on your Mac)
+
+```bash
+ssh-keygen -t ed25519 -C "<your-name>@odh"          # set a passphrase
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519      # remember it in Keychain
+pbcopy < ~/.ssh/id_ed25519.pub                      # copy the PUBLIC key
+```
+
+Only ever paste the `.pub` file anywhere. The file without `.pub` is the
+private key and never leaves the Mac.
+
+### 0.2 The Droplet (DigitalOcean control panel)
+
+**Create → Droplets**, then:
+
+| Setting | Value |
+|---|---|
+| Region | Singapore (SGP1) — the closest to Thailand |
+| Image | Ubuntu 24.04 (LTS) x64 |
+| Size | Basic · Regular (SSD) · **2 GB RAM / 1 vCPU** (the 12 USD plan) |
+| Authentication | **SSH Key** — "New SSH Key", paste the public key from 0.1 |
+| Monitoring | on (free metrics and alerts) |
+| Backups | optional — weekly whole-server snapshots, extra cost; the nightly `pg_dump` to R2 is the backup that matters |
+| Hostname | `odh-crm` |
+
+Do not pick password authentication. Once created, note the **ipv4**
+address; it is `<droplet-ip>` everywhere below.
+
+Optional: assign a **Reserved IP** (free while attached) and point DNS at
+that instead. Rebuilding the Droplet then never needs a DNS change.
+
+### 0.3 A shortcut on the Mac
+
+```bash
+cat >> ~/.ssh/config <<'EOF'
+
+Host odh-crm
+  HostName <droplet-ip>
+  User root
+  UseKeychain yes
+  AddKeysToAgent yes
+  IdentityFile ~/.ssh/id_ed25519
+EOF
+ssh odh-crm 'hostname && uptime'
+```
+
+---
+
 ## 1. First-time setup
 
 Everything below runs on the Droplet as root unless it says otherwise.
@@ -116,13 +168,28 @@ curl -fsSL https://get.docker.com | sh
 docker compose version
 ```
 
-### 1.5 The application directory and its secrets
+### 1.5 The deploy user, the application directory and its secrets
+
+Deploys — from a Mac or from GitHub Actions — run as one non-root user,
+`deploy`, which owns `/opt/odh-internal` and may use Docker. Being in the
+`docker` group is root-equivalent on this box, so treat the `deploy` key
+with the same care as root's.
 
 ```bash
-mkdir -p /opt/odh-internal
-install -m 600 /dev/null /opt/odh-internal/.env
+adduser --disabled-password --gecos "" deploy
+usermod -aG docker deploy                     # after Docker is installed (1.4)
+install -d -m 700 -o deploy -g deploy /home/deploy/.ssh
+cp /root/.ssh/authorized_keys /home/deploy/.ssh/authorized_keys   # your Mac key
+chown deploy:deploy /home/deploy/.ssh/authorized_keys
+chmod 600 /home/deploy/.ssh/authorized_keys
+
+install -d -o deploy -g deploy /opt/odh-internal
+install -m 600 -o deploy -g deploy /dev/null /opt/odh-internal/.env
 nano /opt/odh-internal/.env     # start from infra/digitalocean/.env.example
 ```
+
+`.env` has to belong to `deploy`: docker compose runs as that user and reads
+it. Check from the Mac that `ssh deploy@<droplet-ip> 'docker ps'` works.
 
 Fill in at least `ODH_DOMAIN`, `JWT_SECRET_KEY` (`openssl rand -base64 48`),
 `POSTGRES_PASSWORD` and the four `R2_*` values. **`.env` is never committed
@@ -219,11 +286,14 @@ dig +short crm.owldayhouse.com
 
 ### 1.8 First deploy
 
-From your own machine, in the repository:
+From your own machine, in the repository. It connects as `deploy` (set
+`ODH_DROPLET_USER` to override):
 
 ```bash
 ODH_DROPLET_HOST=<droplet-ip> bash infra/digitalocean/deploy.sh
 ```
+
+After this, deploys normally happen from GitHub Actions — section 5.
 
 ### 1.9 The first admin, then the sales accounts
 
@@ -231,6 +301,7 @@ There is no e-mail anywhere in this system, so the first admin is created on
 the server and that admin creates everyone else.
 
 ```bash
+ssh deploy@<droplet-ip>
 cd /opt/odh-internal
 docker compose exec api ./odh-internal-api seed \
   -username admin -name "ชื่อ นามสกุล"
@@ -265,6 +336,9 @@ R2.
 ---
 
 ## 2. Deploying a change
+
+Normally: merge to `main`. GitHub Actions tests and deploys (section 5).
+By hand, from a Mac, when Actions is unavailable:
 
 ```bash
 ODH_DROPLET_HOST=<droplet-ip> bash infra/digitalocean/deploy.sh
@@ -379,3 +453,80 @@ That leaves roughly 500 MB for the host, plus 2 GB of swap for builds.
 - [ ] Sign-in is rate-limited in the API (per IP, with a short burst)
 - [ ] The whole host is `noindex` — Caddy sends `X-Robots-Tag` and the app
       ships its own `robots.txt`
+
+---
+
+## 5. CI/CD with GitHub Actions
+
+`.github/workflows/deploy-internal.yml` runs on every push to `main` that
+touches the internal tools (`apps/api`, `apps/internal`, `packages`,
+`infra/digitalocean`, the lockfile), and by hand from the Actions tab. A
+change to `apps/web` alone does not redeploy the CRM.
+
+1. **check** — `pnpm lint`, the Go tests against a real PostgreSQL 16
+   service (with `ODH_TEST_REQUIRE_DB=1`, so a database problem fails the
+   run instead of skipping the ownership tests), and `pnpm build`.
+2. **deploy** — only if *check* passed, in the `production` environment:
+   loads the deploy key and pins the Droplet's host key, then runs the same
+   `infra/digitalocean/deploy.sh` a person would. Deploys never overlap.
+
+### 5.1 A key just for GitHub (on your Mac)
+
+A separate key, so it can be revoked without touching anyone's own.
+
+```bash
+ssh-keygen -t ed25519 -N "" -C "github-actions@odh-crm" -f ~/.ssh/odh_github_deploy
+ssh deploy@<droplet-ip> 'cat >> ~/.ssh/authorized_keys' < ~/.ssh/odh_github_deploy.pub
+ssh -i ~/.ssh/odh_github_deploy -o IdentitiesOnly=yes deploy@<droplet-ip> 'docker ps --format "{{.Names}}"'
+```
+
+### 5.2 Pin the Droplet's host key
+
+`ssh-keyscan` trusts whatever answers, so compare its fingerprint with the
+one the Droplet reports about itself before saving it:
+
+```bash
+ssh-keyscan -t ed25519 <droplet-ip> 2>/dev/null > /tmp/odh_known_hosts
+ssh-keygen -lf /tmp/odh_known_hosts                                   # from the network
+ssh deploy@<droplet-ip> 'ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub'   # from the box
+```
+
+The two `SHA256:` fingerprints must match.
+
+### 5.3 The `production` environment on GitHub
+
+With the GitHub CLI (independent of how the web UI looks this year):
+
+```bash
+gh api -X PUT repos/bboyzchecken/talon-by-owldayhouse/environments/production
+gh variable set DROPLET_HOST --env production --body "<droplet-ip>"
+gh variable set DROPLET_USER --env production --body "deploy"
+gh secret set DROPLET_SSH_KEY --env production < ~/.ssh/odh_github_deploy
+gh secret set DROPLET_KNOWN_HOSTS --env production < /tmp/odh_known_hosts
+```
+
+Or in the web UI: **Settings → Environments → New environment** →
+`production`, then add the two variables and the two secrets with exactly
+those names. Worth turning on there too:
+
+- **Deployment branches**: `main` only.
+- **Required reviewers** (optional): a person approves each deploy.
+
+Then remove the private key from the Mac — GitHub holds the only copy, and
+a lost one is replaced by repeating 5.1:
+
+```bash
+rm ~/.ssh/odh_github_deploy /tmp/odh_known_hosts
+```
+
+### 5.4 First run
+
+**Actions → Deploy internal tools → Run workflow** on `main`. The *deploy*
+job ends with `Deployed. https://crm.owldayhouse.com is serving commit …`.
+
+### 5.5 Revoking
+
+Delete the `github-actions@odh-crm` line from
+`/home/deploy/.ssh/authorized_keys` on the Droplet, then delete the
+`DROPLET_SSH_KEY` secret. If the Droplet is rebuilt, its host key changes:
+redo 5.2, or the deploy stops with a host-key error — which is the point.

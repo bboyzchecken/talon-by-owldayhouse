@@ -45,7 +45,8 @@ import (
 //	ODH_TEST_PG_DATABASE=odh_internal_test go test ./...
 //
 // With no database reachable they skip, so `go test ./...` stays green on a
-// machine without one.
+// machine without one. Set ODH_TEST_REQUIRE_DB=1 (CI does) to make that a
+// failure instead.
 func testConfig() core.Config {
 	env := func(key, fallback string) string {
 		if value := os.Getenv(key); value != "" {
@@ -102,13 +103,22 @@ func newTestEnv(t *testing.T) *testEnv {
 	log := logger.New("test")
 	log.SetLevel(logrus.ErrorLevel)
 
+	// In CI the database is part of the job, so a connection failure must fail
+	// the run rather than quietly skip the tests that matter most.
+	noDatabase := t.Skipf
+	if os.Getenv("ODH_TEST_REQUIRE_DB") == "1" {
+		noDatabase = t.Fatalf
+	}
+
 	db, err := database.New(config, log)
 	if err != nil {
-		t.Skipf("no PostgreSQL for the integration tests (%v) — see the comment at the top of this file", err)
+		noDatabase("no PostgreSQL for the integration tests (%v) — see the comment at the top of this file", err)
+		return nil
 	}
 	pool, err := db.DB()
 	if err != nil || pool.Ping() != nil {
-		t.Skipf("no PostgreSQL for the integration tests — see the comment at the top of this file")
+		noDatabase("no PostgreSQL for the integration tests — see the comment at the top of this file")
+		return nil
 	}
 	if err := database.Migrate(db); err != nil {
 		t.Fatalf("migrations failed: %v", err)
