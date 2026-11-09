@@ -1,7 +1,9 @@
 # Post 9 Nov 2026 (English): getting launch-event leads to sales on the day
 
 From today's article: /news/ngan-poet-tua-khrongkan-song-lead-sales/
-Images: `slide-1.jpg` to `slide-5.jpg` (1080×1350, 4:5). The same set works on Facebook (album/carousel) and on Instagram (carousel).
+Images:
+- Facebook: `facebook.jpg` (1080×1350, 4:5), one image holding all four steps. Post it as a single photo; five photos would show as a grid collage on Facebook and lose the reading order.
+- Instagram: `slide-1.jpg` to `slide-5.jpg` (1080×1350, 4:5) as a carousel.
 The photo on slide 1 is the AI-made atmosphere photo from the article's share card. It shows no client and no real job, so do not caption it as our own work.
 
 The Thai article has no English version, so the English post links to the Property & Automotive page, which covers the same topic: https://owldayhouse.com/en/industries/property-auto/
@@ -9,7 +11,7 @@ Check that the page is live before posting.
 
 ---
 
-## Facebook
+## Facebook (image: facebook.jpg)
 
 A project launch or a Motor Show booth can draw a big crowd. The leads often take a week to reach the sales team, and by then some of those people have visited another project or booked a car with another dealer.
 
@@ -28,7 +30,7 @@ Planning your next launch or booth? Message us on Messenger or call +66 92 455 2
 
 ---
 
-## Instagram
+## Instagram (images: slide-1.jpg to slide-5.jpg)
 
 A project launch or a Motor Show booth can draw a big crowd, but the leads often take a week to reach sales. By then some people have already decided.
 
@@ -39,7 +41,7 @@ Send us a DM or call +66 92 455 2450.
 
 #EventMarketing #ProjectLaunch #MotorShow #ExperientialMarketing #OwlDayHouse
 
-Alt text for slide 1: People in business clothes looking at an architectural model in a bright white event hall, with the headline "Get event leads to your sales team on the day".
+Alt text for slide 1 and facebook.jpg: People in business clothes looking at an architectural model in a bright white event hall, with the headline "Get event leads to your sales team on the day".
 
 ---
 
