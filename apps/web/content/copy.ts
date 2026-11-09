@@ -167,19 +167,19 @@ export const copy = {
         { title: "ออกใบกำกับภาษีได้", text: "เบิกจ่ายในนามบริษัทหรือหน่วยงานได้ สะดวกกับงานองค์กรและราชการ" },
       ],
       teamLabel: "ทีมของเรา",
-      teamTitle: "4 ทีมที่ทำงานด้วยกัน และพาร์ตเนอร์ด้านข้อมูล",
+      teamTitle: "3 ทีมของเรา และพาร์ตเนอร์ที่ทำงานร่วมกันประจำ",
       teamPeople: "คน",
       // Until the KOL team's contract ends, do not name them or say they are creators with followings.
       // The Social Listening partner is not named until it approves.
       teamStats: [
         { value: "7", title: "ทีมพัฒนา", text: "นักพัฒนาเกม วิศวกรซอฟต์แวร์ที่มีประสบการณ์จากธนาคารและองค์กรชั้นนำ และนักออกแบบ UX/UI" },
         { value: "3", title: "ทีม Project Manager และ KOL", text: "ดูแลโปรเจกต์และแคมเปญ KOL จากประสบการณ์ตรงในวงการครีเอเตอร์" },
-        { value: "3", title: "ทีมอีเวนต์", text: "คิดแคมเปญ นำเสนอไอเดีย และดูแลงานหน้างาน" },
+        { value: "3", title: "ทีมอีเวนต์", text: "บริษัทพาร์ตเนอร์ด้านอีเวนต์ที่ส่งงานถึงกันประจำ คิดแคมเปญ นำเสนอไอเดีย และดูแลงานหน้างาน", partner: true },
         { value: "2", title: "ทีม Digital Marketing", text: "วางกลยุทธ์และผลิตคอนเทนต์ลงช่องทางของแบรนด์" },
         { value: "10", title: "ทีมวิเคราะห์ข้อมูล", text: "นักวิเคราะห์ข้อมูลจากบริษัทพาร์ตเนอร์ด้าน Social Listening", partner: true },
       ] as readonly TeamStat[],
       metaTitle: "เกี่ยวกับ Owl Day House",
-      metaDescription: "Owl Day House ทีมมากประสบการณ์ 4 ทีม ทั้งนักพัฒนา ทีม KOL ทีมอีเวนต์ และ Digital Marketing พร้อมพาร์ตเนอร์ด้านวิเคราะห์ข้อมูล บริษัทจดทะเบียน",
+      metaDescription: "Owl Day House ทีมมากประสบการณ์ ทั้งนักพัฒนา ทีม KOL และ Digital Marketing พร้อมพาร์ตเนอร์ด้านอีเวนต์และวิเคราะห์ข้อมูล บริษัทจดทะเบียน",
     },
     contactPage: {
       label: "Contact",
@@ -360,17 +360,17 @@ export const copy = {
         { title: "Tax invoices issued", text: "Ready for corporate and government procurement." },
       ],
       teamLabel: "Our team",
-      teamTitle: "Four teams that work together, plus a data partner",
+      teamTitle: "Three teams of our own, and partners we work with regularly",
       teamPeople: "people",
       teamStats: [
         { value: "7", title: "Development", text: "Game developers, software engineers with experience at banks and leading companies, and UX/UI designers." },
         { value: "3", title: "Project management & KOLs", text: "Runs projects and KOL campaigns, with first-hand experience in the creator world." },
-        { value: "3", title: "Events", text: "Creates campaigns, pitches ideas and runs the event floor." },
+        { value: "3", title: "Events", text: "An events partner company we pass work back and forth with. Creates campaigns, pitches ideas and runs the event floor.", partner: true },
         { value: "2", title: "Digital marketing", text: "Plans strategy and produces content for the brand's channels." },
         { value: "10", title: "Data analysis", text: "Data analysts from our social listening partner company.", partner: true },
       ] as readonly TeamStat[],
       metaTitle: "About Owl Day House",
-      metaDescription: "Owl Day House is an experienced, registered team of four groups (development, KOLs, events and digital marketing) with a data analysis partner.",
+      metaDescription: "Owl Day House is an experienced, registered team for development, KOLs and digital marketing, working with regular partners for events and data analysis.",
     },
     contactPage: {
       label: "Contact",
