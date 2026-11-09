@@ -12,6 +12,8 @@ importers:
         specifier: ^2.3.3
         version: 2.9.18
 
+  apps/api: {}
+
   apps/web:
     dependencies:
       '@odh/brand':
