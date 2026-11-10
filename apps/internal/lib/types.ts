@@ -192,6 +192,30 @@ export interface Meta {
   };
 }
 
+export type CalendarKind = "egp_deadline" | "meeting" | "follow_up";
+
+/** One dated item on the team calendar. */
+export interface CalendarEvent {
+  kind: CalendarKind;
+  /** Bangkok day, YYYY-MM-DD. */
+  date: string;
+  /** HH:MM, meetings only. */
+  time?: string;
+  title: string;
+  detail?: string;
+  lead_id: number;
+  lead_name: string;
+  owner_id?: number;
+  owner_name?: string;
+  project_id?: string;
+}
+
+export interface CalendarResponse {
+  from: string;
+  to: string;
+  data: CalendarEvent[];
+}
+
 export interface TodayResponse {
   due: Lead[];
   upcoming: Lead[];

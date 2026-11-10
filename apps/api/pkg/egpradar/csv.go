@@ -74,6 +74,21 @@ var (
 	numberPattern = regexp.MustCompile(`[^0-9.\-]`)
 )
 
+// fieldForHeader maps a header cell to a field: an exact alias first, then
+// any date column that speaks of the end of bidding, whatever e-GP calls it
+// ("วันสิ้นสุดเสนอราคา", "วันที่สิ้นสุดการยื่นข้อเสนอ", "วันปิดรับ…").
+func fieldForHeader(cell string) (string, bool) {
+	h := squashHeader(cell)
+	if field, ok := headerAliases[h]; ok {
+		return field, true
+	}
+	if strings.HasPrefix(h, "วัน") && !strings.Contains(h, "ผู้ชนะ") &&
+		(strings.Contains(h, "สิ้นสุด") || strings.Contains(h, "ปิดรับ") || strings.Contains(h, "ยื่นข้อเสนอ") || strings.Contains(h, "เสนอราคา")) {
+		return "deadline", true
+	}
+	return "", false
+}
+
 func squashHeader(h string) string {
 	h = strings.TrimPrefix(h, "\ufeff")
 	h = parenPattern.ReplaceAllString(h, "")
@@ -115,7 +130,7 @@ func ParseCSV(r io.Reader) ([]Row, []RowProblem, error) {
 	for i, rec := range records {
 		found := map[string]int{}
 		for j, cell := range rec {
-			if field, ok := headerAliases[squashHeader(cell)]; ok {
+			if field, ok := fieldForHeader(cell); ok {
 				if _, dup := found[field]; !dup {
 					found[field] = j
 				}

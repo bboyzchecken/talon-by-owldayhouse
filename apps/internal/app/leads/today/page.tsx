@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { CalendarClock, Users } from "lucide-react";
 import { Button } from "@odh/ui";
 import { LeadCard, leadHref } from "@/components/lead-card";
+import { TeamCalendar } from "@/components/team-calendar";
 import { Alert, EmptyState, Panel, Spinner, StatTile } from "@/components/ui";
 import { leads as leadsApi } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
@@ -63,6 +64,8 @@ export default function TodayPage() {
           </ul>
         )}
       </Panel>
+
+      <TeamCalendar userId={user?.id} />
 
       <Panel title={`นัดที่กำลังจะถึง (${meetings.length})`}>
         {meetings.length === 0 ? (

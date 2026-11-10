@@ -3,6 +3,7 @@ package lead
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/owldayhouse/odh-internal-api/pkg/models"
 	"github.com/owldayhouse/odh-internal-api/pkg/store"
@@ -233,6 +234,14 @@ func (s *leadStoreService) Today(query models.TodayQuery) (*models.TodayResult, 
 		return nil, err
 	}
 	return result, nil
+}
+
+func (s *leadStoreService) FollowUpsBetween(from, to time.Time) ([]*models.Lead, error) {
+	var rows []*models.Lead
+	err := s.db.Where("next_action_date >= ? AND next_action_date < ?", from, to).
+		Where("stage NOT IN ?", []string{models.StageWon, models.StageLost}).
+		Preload("Owner").Order("next_action_date ASC, id ASC").Find(&rows).Error
+	return rows, err
 }
 
 // compile-time guard that the repository satisfies the model's contract.

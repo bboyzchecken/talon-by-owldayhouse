@@ -155,6 +155,8 @@ type LeadStore interface {
 	ListAll(query ListLeadQuery) ([]*Lead, error)
 	Update(lead *Lead) error
 	Today(query TodayQuery) (*TodayResult, error)
+	// FollowUpsBetween returns open leads with a follow-up date in [from, to).
+	FollowUpsBetween(from, to time.Time) ([]*Lead, error)
 }
 
 // ListLeadQuery filters the lead list.

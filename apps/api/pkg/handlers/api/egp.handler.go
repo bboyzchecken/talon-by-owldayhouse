@@ -215,10 +215,22 @@ func (s *Server) ImportEgpCSV(c echo.Context) error {
 	if err != nil {
 		return s.serverError(c, err)
 	}
+	settings, err := s.egpSettings()
+	if err != nil {
+		return s.serverError(c, err)
+	}
+	moved := 0
+	for _, row := range rows {
+		if row.DeadlineChanged && s.syncEgpFollowUp(row, settings) {
+			moved++
+		}
+	}
 	return c.JSON(http.StatusOK, map[string]interface{}{
-		"created":  result.Created,
-		"updated":  result.Updated,
-		"problems": problems,
+		// Leads whose follow-up moved because a closing date arrived.
+		"follow_ups_moved": moved,
+		"created":          result.Created,
+		"updated":          result.Updated,
+		"problems":         problems,
 		// e-GP exports only the first 1,000 rows of a search.
 		"maybe_truncated": len(parsed)+len(problems) >= egpradar.ExportLimit,
 	})
@@ -265,7 +277,36 @@ func (s *Server) UpdateEgpAnnouncement(c echo.Context) error {
 	if err := s.EgpStore.Update(row); err != nil {
 		return s.serverError(c, err)
 	}
+	if row.DeadlineAt != nil {
+		if settings, err := s.egpSettings(); err == nil {
+			s.syncEgpFollowUp(row, settings)
+		}
+	}
 	return c.JSON(http.StatusOK, row)
+}
+
+// syncEgpFollowUp moves the follow-up of a lead the project was sent to when
+// its closing date becomes known or changes — but only while the lead's next
+// action is still the one the Radar wrote for this project. A follow-up a
+// person has set is never touched. It reports whether the lead changed.
+func (s *Server) syncEgpFollowUp(row *models.EgpAnnouncement, settings egpradar.Settings) bool {
+	if row.Decision != models.EgpDecisionSent || row.LeadID == nil || row.DeadlineAt == nil {
+		return false
+	}
+	lead, err := s.LeadStore.Find(*row.LeadID)
+	if err != nil || lead.NextAction != egpNextAction(row) {
+		return false
+	}
+	follow := egpFollowUpDate(row.DeadlineAt, settings.LeadTimeDays)
+	if lead.NextActionDate != nil && lead.NextActionDate.Equal(follow) {
+		return false
+	}
+	lead.NextActionDate = &follow
+	if err := s.LeadStore.Update(lead); err != nil {
+		s.Log.WithError(err).Error("failed to move an e-GP lead's follow-up")
+		return false
+	}
+	return true
 }
 
 func (s *Server) setEgpDecision(c echo.Context, decision string) error {

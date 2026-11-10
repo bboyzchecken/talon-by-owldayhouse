@@ -43,6 +43,10 @@ type EgpAnnouncement struct {
 	DecidedBy     *uint      `json:"decided_by,omitempty"`
 	DecidedAt     *time.Time `json:"decided_at,omitempty"`
 
+	// DeadlineChanged is set by Upsert when an import brings a new closing
+	// date, so a lead's follow-up can move with it. Not stored.
+	DeadlineChanged bool `gorm:"-" json:"-"`
+
 	ImportedBy  uint      `gorm:"not null" json:"imported_by"`
 	FirstSeenAt time.Time `gorm:"not null" json:"first_seen_at"`
 	LastSeenAt  time.Time `gorm:"not null" json:"last_seen_at"`
@@ -71,6 +75,9 @@ type EgpStore interface {
 	List(decision string, limit int) ([]*EgpAnnouncement, error)
 	// ListByAgency returns other projects of an agency, newest first.
 	ListByAgency(agency string, excludeID uint, limit int) ([]*EgpAnnouncement, error)
+	// DeadlinesBetween returns projects sent to the Lead Tracker whose
+	// closing date falls in [from, to).
+	DeadlinesBetween(from, to time.Time) ([]*EgpAnnouncement, error)
 	Update(row *EgpAnnouncement) error
 	LoadSettings() (string, error)
 	SaveSettings(data string, updatedBy uint) error

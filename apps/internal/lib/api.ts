@@ -8,6 +8,7 @@ import type {
   EgpSendResult,
   EgpSettings,
   EgpBrief,
+  CalendarResponse,
   EgpSettingsResponse,
   EgpView,
   CheckNameResponse,
@@ -376,6 +377,11 @@ export const csv = {
 };
 
 // --- e-GP Radar (admin only) -------------------------------------------------
+
+/** The team calendar: e-GP closing dates, meetings and follow-ups. */
+export const calendar = {
+  range: (from: string, to: string) => get<CalendarResponse>("/api/calendar", { from, to }),
+};
 
 export const egp = {
   list: (view: EgpView) => get<EgpListResponse>("/api/egp/announcements", { view }),

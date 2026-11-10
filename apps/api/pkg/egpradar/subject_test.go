@@ -157,3 +157,21 @@ func TestShortTitle(t *testing.T) {
 		t.Errorf("cut: %q", got)
 	}
 }
+
+func TestParseCSVReadsTheClosingDateWhateverItIsCalled(t *testing.T) {
+	for _, header := range []string{"วันสิ้นสุดเสนอราคา", "วันที่สิ้นสุดการยื่นข้อเสนอ", "วันสิ้นสุดเสนอ", "วันที่ปิดรับข้อเสนอ (วัน/เดือน/ปี)"} {
+		file := "หน่วยงาน,เลขที่โครงการ,ชื่อโครงการ,วันที่ประกาศผู้ชนะ," + header + "\n" +
+			"มหาวิทยาลัยเชียงใหม่,69119000001,จ้างพัฒนาเว็บไซต์,,20/11/2569 16:30\n"
+		rows, problems, err := ParseCSV(strings.NewReader(file))
+		if err != nil || len(problems) != 0 || len(rows) != 1 {
+			t.Fatalf("%s: rows=%d problems=%v err=%v", header, len(rows), problems, err)
+		}
+		d := rows[0].DeadlineAt
+		if d == nil || d.Year() != 2026 || d.Month() != 11 || d.Day() != 20 {
+			t.Errorf("%s: deadline = %v", header, d)
+		}
+		if rows[0].WinnerAt != nil {
+			t.Errorf("%s: the winner column was read as a date", header)
+		}
+	}
+}

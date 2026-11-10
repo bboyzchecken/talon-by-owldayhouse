@@ -66,6 +66,9 @@ func (s *egpStoreService) Upsert(rows []*models.EgpAnnouncement) (models.EgpUpse
 					existing.AnnouncedAt = row.AnnouncedAt
 				}
 				if row.DeadlineAt != nil {
+					if existing.DeadlineAt == nil || !existing.DeadlineAt.Equal(*row.DeadlineAt) {
+						existing.DeadlineChanged = true
+					}
 					existing.DeadlineAt = row.DeadlineAt
 				}
 				existing.LastSeenAt = now
@@ -107,6 +110,14 @@ func (s *egpStoreService) ListByAgency(agency string, excludeID uint, limit int)
 	var rows []*models.EgpAnnouncement
 	err := s.db.Where("agency = ? AND id <> ?", agency, excludeID).
 		Order("announced_at DESC NULLS LAST, id DESC").Limit(limit).Find(&rows).Error
+	return rows, err
+}
+
+func (s *egpStoreService) DeadlinesBetween(from, to time.Time) ([]*models.EgpAnnouncement, error) {
+	var rows []*models.EgpAnnouncement
+	err := s.db.Where("decision = ? AND lead_id IS NOT NULL", models.EgpDecisionSent).
+		Where("deadline_at >= ? AND deadline_at < ?", from, to).
+		Order("deadline_at ASC, id ASC").Find(&rows).Error
 	return rows, err
 }
 
