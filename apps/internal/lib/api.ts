@@ -3,6 +3,12 @@
 import { api } from "@odh/query";
 import type {
   Activity,
+  EgpImportResult,
+  EgpListResponse,
+  EgpSendResult,
+  EgpSettings,
+  EgpSettingsResponse,
+  EgpView,
   CheckNameResponse,
   Contact,
   Deal,
@@ -61,6 +67,23 @@ export function toApiError(error: unknown): ApiError {
 async function get<T>(url: string, params?: Record<string, unknown>): Promise<T> {
   try {
     const response = await api.get<T>(url, { params });
+    return response.data;
+  } catch (error) {
+    throw toApiError(error);
+  }
+}
+
+/**
+ * POST a file. The shared axios client defaults to JSON, and axios turns a
+ * FormData into a JSON string whenever the content type says JSON, so the
+ * file would never arrive. Saying multipart keeps it as FormData; the browser
+ * then sets the real Content-Type, boundary included.
+ */
+async function postForm<T>(url: string, body: FormData): Promise<T> {
+  try {
+    const response = await api.post<T>(url, body, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
     return response.data;
   } catch (error) {
     throw toApiError(error);
@@ -327,12 +350,7 @@ export const csv = {
     if (form.owner_user_id) body.append("owner_user_id", String(form.owner_user_id));
     if (form.confirm_similar) body.append("confirm_similar", "1");
 
-    try {
-      const response = await api.post<ImportResponse>("/api/leads/import", body);
-      return response.data;
-    } catch (error) {
-      throw toApiError(error);
-    }
+    return postForm<ImportResponse>("/api/leads/import", body);
   },
 
   /** Download the admin CSV export through the authenticated axios instance. */
@@ -354,4 +372,30 @@ export const csv = {
       throw toApiError(error);
     }
   },
+};
+
+// --- e-GP Radar (admin only) -------------------------------------------------
+
+export const egp = {
+  list: (view: EgpView) => get<EgpListResponse>("/api/egp/announcements", { view }),
+
+  /** The file from e-GP's own "Export .CSV" button. */
+  importCSV: async (file: File): Promise<EgpImportResult> => {
+    const body = new FormData();
+    body.append("file", file);
+    return postForm<EgpImportResult>("/api/egp/import", body);
+  },
+
+  setDeadline: (id: number, deadline: string) =>
+    send<unknown>("patch", `/api/egp/announcements/${id}`, { deadline_at: deadline }),
+
+  send: (id: number, body: { owner_user_id?: number; lead_id?: number; confirm_similar?: boolean }) =>
+    send<EgpSendResult>("post", `/api/egp/announcements/${id}/send`, body),
+
+  skip: (id: number) => send<unknown>("post", `/api/egp/announcements/${id}/skip`),
+  restore: (id: number) => send<unknown>("post", `/api/egp/announcements/${id}/restore`),
+
+  settings: () => get<EgpSettingsResponse>("/api/egp/settings"),
+  saveSettings: (settings: EgpSettings) =>
+    send<{ settings: EgpSettings }>("put", "/api/egp/settings", settings),
 };

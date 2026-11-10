@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import { Users } from "lucide-react";
+import { Radar, Users } from "lucide-react";
 
 /**
  * The internal tool registry. Today there is one tool; the next one adds an
@@ -22,6 +22,14 @@ export const tools: Tool[] = [
     summary: "รายชื่อลูกค้ากลางของทีมขาย ใครดูแลใคร มาจากไหน อยู่ขั้นไหน และ KPI",
     href: "/leads/today",
     icon: Users,
+  },
+  {
+    slug: "egp",
+    name: "e-GP Radar",
+    summary: "คัดประกาศจัดซื้อจัดจ้างภาครัฐจากไฟล์ e-GP ให้คะแนน ติดป้ายระวัง แล้วส่งให้เซลส์",
+    href: "/egp/radar",
+    icon: Radar,
+    adminOnly: true,
   },
 ];
 

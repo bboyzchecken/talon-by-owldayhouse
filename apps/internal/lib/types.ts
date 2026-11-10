@@ -272,3 +272,103 @@ export interface Setting {
   value: string;
   updated_at: string;
 }
+
+// --- e-GP Radar ---------------------------------------------------------------
+
+export type EgpView = "inbox" | "flagged" | "excluded" | "sent" | "skipped";
+
+export interface EgpFlag {
+  code: string;
+  label: string;
+  reason: string;
+  severity: "warn" | "info";
+}
+
+export interface EgpExclusion {
+  code: string;
+  reason: string;
+}
+
+export interface EgpResult {
+  group: string;
+  group_label: string;
+  industry: string;
+  passed: boolean;
+  exclusions: EgpExclusion[];
+  flags: EgpFlag[];
+  flagged: boolean;
+  score: number;
+  matched_services: string[];
+  matched_keywords: string[];
+  interests: string[];
+  watchlisted: boolean;
+  days_left: number | null;
+}
+
+export interface EgpAnnouncement {
+  id: number;
+  project_id: string;
+  agency: string;
+  procurement_unit: string;
+  title: string;
+  method: string;
+  method_label: string;
+  hire: boolean;
+  budget: number;
+  project_status: string;
+  province: string;
+  announced_at?: string;
+  deadline_at?: string;
+  decision: "new" | "sent" | "skipped";
+  lead_id?: number;
+  first_seen_at: string;
+  result: EgpResult;
+}
+
+export interface EgpListResponse {
+  view: EgpView;
+  counts: Record<EgpView, number>;
+  data: EgpAnnouncement[];
+}
+
+export interface EgpServiceGroup {
+  key: string;
+  label: string;
+  enabled: boolean;
+  keywords: string[];
+  interest: string;
+}
+
+export interface EgpSettings {
+  agency_groups: string[];
+  provinces: string[];
+  watchlist: string[];
+  blocklist: string[];
+  budget_min: number;
+  budget_max: number;
+  service_groups: EgpServiceGroup[];
+  exclude_keywords: string[];
+  hire_only: boolean;
+  min_prep_days: number;
+  hide_flagged_by_default: boolean;
+  default_assignee_id: number | null;
+  lead_time_days: number;
+}
+
+export interface EgpSettingsResponse {
+  settings: EgpSettings;
+  defaults: EgpSettings;
+  groups: { key: string; label: string }[];
+}
+
+export interface EgpImportResult {
+  created: number;
+  updated: number;
+  problems: { line: number; reason: string }[];
+}
+
+export interface EgpSendResult {
+  action: "created" | "attached";
+  lead_id: number;
+  owner_name: string;
+}
