@@ -135,6 +135,25 @@ func ParseCSV(r io.Reader) ([]Row, []RowProblem, error) {
 		return nil, nil, errors.New("ไม่พบหัวตาราง ต้องมีอย่างน้อยคอลัมน์ “หน่วยงาน” และ “ชื่อโครงการ” — ใช้ไฟล์จากปุ่ม Export .CSV ของ e-GP")
 	}
 
+	// A filtered export repeats the search filters above the header, e.g.
+	// วิธีการจัดหา "ประกวดราคาอิเล็กทรอนิกส์ (e-bidding)" and
+	// ประเภทการจัดหา "จ้างทำของ/จ้างเหมาบริการ". They hold for every row.
+	fileMethod, fileHire := MethodUnknown, (*bool)(nil)
+	for _, rec := range records[:headerAt] {
+		line := strings.Join(rec, " ")
+		value := strings.Trim(strings.TrimSpace(afterLabel(line)), `"`)
+		switch {
+		case strings.HasPrefix(strings.TrimSpace(line), "วิธีการจัดหา"):
+			fileMethod = MethodOf(value)
+		case strings.HasPrefix(strings.TrimSpace(line), "ประเภทการจัดหา"):
+			hire := strings.Contains(value, "จ้าง") && !strings.Contains(value, "ซื้อ")
+			buy := strings.Contains(value, "ซื้อ") && !strings.Contains(value, "จ้าง")
+			if hire || buy {
+				fileHire = &hire
+			}
+		}
+	}
+
 	at := func(rec []string, field string) string {
 		j, ok := columns[field]
 		if !ok || j >= len(rec) {
@@ -167,6 +186,12 @@ func ParseCSV(r io.Reader) ([]Row, []RowProblem, error) {
 		if row.ProjectID == "" {
 			row.ProjectID = parsed.ProjectID
 		}
+		if fileMethod != MethodUnknown && row.Method == MethodUnknown {
+			row.Method = fileMethod
+		}
+		if fileHire != nil {
+			row.Hire = *fileHire
+		}
 		if m := at(rec, "method"); m != "" {
 			if method := MethodOf(m); method != MethodUnknown {
 				row.Method = method
@@ -192,6 +217,15 @@ func ParseCSV(r io.Reader) ([]Row, []RowProblem, error) {
 		rows = append(rows, row)
 	}
 	return rows, problems, nil
+}
+
+// afterLabel returns what follows the first word of a "label value" line.
+func afterLabel(line string) string {
+	line = strings.TrimSpace(line)
+	if i := strings.IndexAny(line, " \t"); i >= 0 {
+		return line[i+1:]
+	}
+	return ""
 }
 
 func parseMoney(text string) float64 {

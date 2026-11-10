@@ -51,9 +51,14 @@ func (s *Server) egpSettings() (egpradar.Settings, error) {
 		return egpradar.Defaults(), nil
 	}
 	settings := egpradar.Defaults()
+	// Settings saved before versions existed have no "version" key.
+	settings.Version = 0
 	if err := json.Unmarshal([]byte(raw), &settings); err != nil {
 		return egpradar.Defaults(), nil
 	}
+	// New built-in words reach saved settings here; the admin sees them on
+	// the settings screen and they are stored with the next save.
+	settings, _ = settings.Upgrade()
 	return settings.Normalize(), nil
 }
 
@@ -533,6 +538,7 @@ func (s *Server) UpdateEgpSettings(c echo.Context) error {
 		return badRequest(c, "ข้อมูลที่ส่งมาไม่ถูกต้อง")
 	}
 	settings = settings.Normalize()
+	settings.Version = egpradar.SettingsVersion
 	if err := settings.Validate(); err != nil {
 		return badRequest(c, err.Error())
 	}

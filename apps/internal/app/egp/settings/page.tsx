@@ -182,7 +182,9 @@ export default function RadarSettingsPage() {
 
       <Panel title="บริการและคำค้น">
         <p className="mb-4 font-body text-sm text-muted">
-          ชื่อโครงการต้องมีคำในกลุ่มที่เปิดไว้อย่างน้อยหนึ่งคำ บรรทัดละคำ
+          ชื่อโครงการต้องมีคำในกลุ่มที่เปิดไว้อย่างน้อยหนึ่งคำ บรรทัดละคำ ระบบหาคำเฉพาะส่วนที่บอกว่า
+          <strong className="text-ink">จ้างอะไร</strong> (ก่อนคำอย่าง “เพื่อ” “สำหรับ” “ตามโครงการ” “ไปกลับ”) เช่น
+          “จ้างเหมารถตู้ไปอบรม” งานที่จ้างคือรถตู้ จึงไม่ตรงคำว่า “อบรม”
         </p>
         <div className="grid gap-4 sm:grid-cols-2">
           {form.service_groups.map((group, index) => (
@@ -215,7 +217,7 @@ export default function RadarSettingsPage() {
           ))}
         </div>
         <div className="mt-4">
-          <Field label="คำที่ตัดทิ้ง" hint="ชื่อโครงการที่มีคำเหล่านี้ไม่แสดง แม้ตรงกับคำค้นด้านบน">
+          <Field label="คำที่ตัดทิ้ง" hint="ตัดทิ้งเมื่อคำนี้อยู่ในส่วนที่บอกว่าจ้างอะไร ยกเว้นคำที่ตามหลังคำค้นของงานระบบ สื่อ และออนไลน์ (“พัฒนาระบบลงทะเบียนยานพาหนะ” ยังผ่าน)">
             <Textarea
               rows={4}
               value={toLines(form.exclude_keywords)}

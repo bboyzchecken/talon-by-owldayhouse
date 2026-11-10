@@ -44,8 +44,19 @@ type ServiceGroup struct {
 	Interest string `json:"interest"`
 }
 
+// SettingsVersion goes up whenever Defaults gains words that settings saved
+// earlier should pick up (see Upgrade).
+const SettingsVersion = 2
+
+// DefaultBudgetMin drops tiny purchases (stamps, vinyl banners, a van for a
+// day) that are not worth a bid.
+const DefaultBudgetMin = 50_000
+
 // Settings is everything an admin can change on the Radar settings screen.
 type Settings struct {
+	// Version is the SettingsVersion these settings were last saved under.
+	Version int `json:"version"`
+
 	AgencyGroups []string `json:"agency_groups"`
 	// Provinces filters only announcements whose province is known.
 	Provinces []string `json:"provinces"`
@@ -84,16 +95,17 @@ type Settings struct {
 // projects up to 1 million baht from universities, schools and public health.
 func Defaults() Settings {
 	return Settings{
+		Version:       SettingsVersion,
 		AgencyGroups:  []string{GroupUniversity, GroupSchool, GroupHealth},
 		Provinces:     []string{},
 		Watchlist:     []string{},
 		Blocklist:     []string{},
-		BudgetMin:     0,
+		BudgetMin:     DefaultBudgetMin,
 		BudgetMax:     1_000_000,
 		ServiceGroups: DefaultServiceGroups(),
-		// From a real export: bus hire for a seminar matched "สัมมนา", and
-		// catering for an event would match "จัดงาน".
-		ExcludeKeywords: []string{"ก่อสร้าง", "ครุภัณฑ์", "จัดซื้อวัสดุ", "เช่ารถ", "เหมารถ", "รถโดยสาร", "ยานพาหนะ", "อาหาร", "ซ่อมแซม", "ทำความสะอาด", "ไฟฟ้า", "ปรับอากาศ", "ประปา", "กล้องวงจรปิด", "รักษาความปลอดภัย"},
+		// Matched against what is hired (see Subject), so a video about a
+		// construction project is not dropped for "ก่อสร้าง".
+		ExcludeKeywords: []string{"ก่อสร้าง", "ครุภัณฑ์", "จัดซื้อวัสดุ", "เช่ารถ", "เหมารถ", "รถตู้", "รถโดยสาร", "พาหนะ", "อาหาร", "น้ำดื่ม", "ที่พัก", "ซ่อมแซม", "ทำความสะอาด", "ไฟฟ้า", "ปรับอากาศ", "ประปา", "กล้องวงจรปิด", "รักษาความปลอดภัย", "ถ่ายเอกสาร", "ตรายาง"},
 		HireOnly:        true,
 
 		MinPrepDays:          7,
@@ -108,21 +120,84 @@ func DefaultServiceGroups() []ServiceGroup {
 	return []ServiceGroup{
 		{
 			Key: "system", Label: "ระบบ / เว็บ", Enabled: true, Interest: "system",
-			Keywords: []string{"พัฒนาระบบ", "ระบบสารสนเทศ", "ระบบบริหารจัดการ", "ระบบลงทะเบียน", "ระบบฐานข้อมูล", "ฐานข้อมูล", "จัดทำระบบ", "ปรับปรุงระบบ", "เว็บไซต์", "website", "แอปพลิเคชัน", "แอปพลิเคชั่น", "application", "ซอฟต์แวร์", "แพลตฟอร์ม", "dashboard"},
+			Keywords: []string{"พัฒนาระบบ", "ระบบสารสนเทศ", "ระบบบริหารจัดการ", "ระบบลงทะเบียน", "ระบบฐานข้อมูล", "ฐานข้อมูล", "จัดทำระบบ", "เว็บไซต์", "website", "แอปพลิเคชัน", "แอปพลิเคชั่น", "application", "ซอฟต์แวร์", "แพลตฟอร์ม", "dashboard"},
 		},
 		{
 			Key: "event", Label: "จัดงาน / กิจกรรม", Enabled: true, Interest: "event",
-			Keywords: []string{"จัดงาน", "จัดกิจกรรม", "นิทรรศการ", "อีเวนต์", "อีเว้นท์", "event", "สัมมนา", "เปิดตัว", "บูธ"},
+			Keywords: []string{"จัดงาน", "จัดกิจกรรม", "นิทรรศการ", "อีเวนต์", "อีเว้นท์", "event", "สัมมนา", "จัดอบรม", "จัดฝึกอบรม", "จัดประชุม", "เปิดตัว", "บูธ"},
 		},
 		{
 			Key: "media", Label: "สื่อ / วิดีโอ", Enabled: true, Interest: "kol",
-			Keywords: []string{"วิดีโอ", "วีดีโอ", "วีดิทัศน์", "คลิป", "ถ่ายทำ", "ผลิตสื่อ", "สื่อประชาสัมพันธ์", "อินฟลูเอนเซอร์", "influencer", "kol", "แอนิเมชัน", "ภาพยนตร์สั้น"},
+			Keywords: []string{"วิดีโอ", "วีดีโอ", "วีดิทัศน์", "คลิป", "ถ่ายทำ", "ผลิตสื่อ", "สื่อประชาสัมพันธ์", "อินฟลูเอนเซอร์", "influencer", "kol", "แอนิเมชัน", "ภาพยนตร์สั้น", "สกู๊ป", "สารคดี", "อินโฟกราฟิก"},
 		},
 		{
 			Key: "digital", Label: "การตลาดออนไลน์", Enabled: true, Interest: "digital_marketing",
 			Keywords: []string{"สื่อออนไลน์", "การตลาดออนไลน์", "ประชาสัมพันธ์ออนไลน์", "โซเชียล", "social media", "เฟซบุ๊ก", "facebook", "digital marketing", "ดิจิทัลมาร์เก็ตติ้ง", "โฆษณาออนไลน์"},
 		},
 	}
+}
+
+// Upgrade brings settings saved under an older SettingsVersion up to date
+// without undoing the admin's choices: new built-in excluded words and service
+// keywords are added to what was saved, and a minimum budget is set only if
+// none was. It reports whether anything changed.
+func (s Settings) Upgrade() (Settings, bool) {
+	if s.Version >= SettingsVersion {
+		return s, false
+	}
+	d := Defaults()
+	s.ExcludeKeywords = union(s.ExcludeKeywords, d.ExcludeKeywords)
+	for i := range s.ServiceGroups {
+		g := &s.ServiceGroups[i]
+		g.Keywords = without(g.Keywords, retiredKeywords[g.Key])
+		for _, dg := range d.ServiceGroups {
+			if dg.Key == g.Key {
+				g.Keywords = union(g.Keywords, dg.Keywords)
+			}
+		}
+	}
+	if s.BudgetMin == 0 && (s.BudgetMax == 0 || s.BudgetMax >= DefaultBudgetMin) {
+		s.BudgetMin = DefaultBudgetMin
+	}
+	s.Version = SettingsVersion
+	return s, true
+}
+
+// retiredKeywords were built-in once and caught the wrong work:
+// "ปรับปรุงระบบ" matched plumbing (ปรับปรุงระบบประปา) more than software.
+var retiredKeywords = map[string][]string{
+	"system": {"ปรับปรุงระบบ"},
+}
+
+func without(have, drop []string) []string {
+	out := make([]string, 0, len(have))
+	for _, v := range have {
+		keep := true
+		for _, d := range drop {
+			if strings.EqualFold(strings.TrimSpace(v), d) {
+				keep = false
+			}
+		}
+		if keep {
+			out = append(out, v)
+		}
+	}
+	return out
+}
+
+func union(have, add []string) []string {
+	out := append([]string{}, have...)
+	seen := map[string]bool{}
+	for _, v := range have {
+		seen[strings.ToLower(strings.TrimSpace(v))] = true
+	}
+	for _, v := range add {
+		if !seen[strings.ToLower(v)] {
+			seen[strings.ToLower(v)] = true
+			out = append(out, v)
+		}
+	}
+	return out
 }
 
 // Normalize trims every list, drops blanks and fills missing numbers, so a

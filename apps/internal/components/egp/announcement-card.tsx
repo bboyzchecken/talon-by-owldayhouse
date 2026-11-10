@@ -148,6 +148,11 @@ export function AnnouncementCard({
         ) : null}
       </p>
       <h3 className="mt-1 font-display text-base font-semibold leading-snug text-ink">{item.title}</h3>
+      {r.subject && r.subject.length < item.title.length - 4 ? (
+        <p className="mt-1 font-body text-xs text-muted">
+          งานที่จ้าง: <span className="text-ink">{r.subject}</span>
+        </p>
+      ) : null}
 
       <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 font-body text-sm sm:grid-cols-4">
         <div>

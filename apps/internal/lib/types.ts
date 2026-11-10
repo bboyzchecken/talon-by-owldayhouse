@@ -292,6 +292,8 @@ export interface EgpExclusion {
 }
 
 export interface EgpResult {
+  /** The part of the title that names what is hired; keywords match only here. */
+  subject: string;
   stage: EgpStage;
   stage_label: string;
   group: string;
@@ -346,6 +348,7 @@ export interface EgpServiceGroup {
 }
 
 export interface EgpSettings {
+  version?: number;
   agency_groups: string[];
   provinces: string[];
   watchlist: string[];
