@@ -1,23 +1,68 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
-import { KeyRound, UserPlus } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Check, Copy, KeyRound, UserPlus } from "lucide-react";
 import { Button } from "@odh/ui";
-import { Alert, Field, Input, Panel, Select, Spinner } from "@/components/ui";
+import { Alert, Field, Input, Panel, Select, Spinner, Textarea } from "@/components/ui";
 import { ApiError, admin as adminApi } from "@/lib/api";
+import { buildAccountMessage, loginUrl } from "@/lib/account-message";
 import { roleLabels } from "@/lib/labels";
+import type { Role } from "@/lib/types";
+
+interface Handoff {
+  name: string;
+  username: string;
+  password: string;
+  role: Role;
+  kind: "new" | "reset";
+}
 
 /**
  * Accounts. There is no e-mail in this system, so a new password is shown once
- * in the response and the admin passes it on; nothing is ever sent anywhere.
+ * in the response, together with a ready-made message the admin copies and
+ * sends to the account's owner. Nothing is ever sent from here.
  */
 export function UsersPanel() {
   const queryClient = useQueryClient();
   const [adding, setAdding] = useState(false);
   const [form, setForm] = useState({ username: "", name: "", role: "sales", password: "" });
   const [error, setError] = useState("");
-  const [shownPassword, setShownPassword] = useState<{ username: string; password: string } | null>(null);
+  const [handoff, setHandoff] = useState<Handoff | null>(null);
+  const [message, setMessage] = useState("");
+  const [copied, setCopied] = useState<"message" | "password" | null>(null);
+  const [copyError, setCopyError] = useState("");
+  const [origin, setOrigin] = useState<string | null>(null);
+
+  // The tools and the sign-in page share one origin, so the link in the
+  // message is simply where this page is being read from.
+  useEffect(() => setOrigin(window.location.origin), []);
+
+  function openHandoff(next: Handoff) {
+    setHandoff(next);
+    setMessage(buildAccountMessage({ ...next, origin }));
+    setCopied(null);
+    setCopyError("");
+  }
+
+  function closeHandoff() {
+    setHandoff(null);
+    setMessage("");
+    setCopied(null);
+    setCopyError("");
+  }
+
+  async function copy(kind: "message" | "password", text: string) {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopyError("");
+      setCopied(kind);
+      window.setTimeout(() => setCopied(null), 2000);
+    } catch {
+      setCopied(null);
+      setCopyError("คัดลอกอัตโนมัติไม่ได้ — เลือกข้อความแล้วคัดลอกเอง");
+    }
+  }
 
   const { data, isLoading } = useQuery({ queryKey: ["admin", "users"], queryFn: adminApi.listUsers });
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ["admin", "users"] });
@@ -33,10 +78,19 @@ export function UsersPanel() {
     onSuccess: async (result) => {
       setError("");
       setAdding(false);
-      setForm({ username: "", name: "", role: "sales", password: "" });
-      if (result.password) {
-        setShownPassword({ username: result.user.username, password: result.password });
+      // A password the admin typed never comes back in the response, so the
+      // message is built from whichever of the two we have.
+      const password = result.password || form.password;
+      if (password) {
+        openHandoff({
+          name: result.user.name,
+          username: result.user.username,
+          password,
+          role: result.user.role,
+          kind: "new",
+        });
       }
+      setForm({ username: "", name: "", role: "sales", password: "" });
       await invalidate();
       await queryClient.invalidateQueries({ queryKey: ["meta"] });
     },
@@ -58,7 +112,13 @@ export function UsersPanel() {
     onSuccess: (result) => {
       setError("");
       if (result.password) {
-        setShownPassword({ username: result.user.username, password: result.password });
+        openHandoff({
+          name: result.user.name,
+          username: result.user.username,
+          password: result.password,
+          role: result.user.role,
+          kind: "reset",
+        });
       }
     },
     onError: (caught) => setError((caught as ApiError).body?.error ?? "รีเซ็ตรหัสไม่สำเร็จ"),
@@ -78,23 +138,65 @@ export function UsersPanel() {
     >
       {error ? <Alert tone="stop">{error}</Alert> : null}
 
-      {shownPassword ? (
-        <Alert>
-          <p className="font-display font-semibold">
-            รหัสผ่านของ {shownPassword.username}
+      {handoff ? (
+        <div className="mb-4 rounded-xl border border-gold bg-gold-soft p-4">
+          <p className="font-display font-semibold text-navy">
+            {handoff.kind === "new"
+              ? `สร้างบัญชีของ ${handoff.name} แล้ว`
+              : `รีเซ็ตรหัสผ่านของ ${handoff.name} แล้ว`}
           </p>
-          <p className="mt-1 font-mono text-base">{shownPassword.password}</p>
-          <p className="mt-1 text-xs">
-            แสดงครั้งเดียว — คัดลอกไปส่งให้เจ้าของบัญชีเอง ระบบไม่ส่งอีเมล
+          <p className="mt-1 font-body text-xs text-navy">
+            แสดงครั้งเดียว — คัดลอกข้อความด้านล่างไปส่งให้เจ้าของบัญชีทาง LINE หรือ Messenger
+            ระบบไม่ส่งอีเมล
           </p>
-          <button
-            type="button"
-            onClick={() => setShownPassword(null)}
-            className="mt-2 font-display text-sm font-semibold underline"
-          >
-            ปิด
-          </button>
-        </Alert>
+
+          <dl className="mt-3 grid gap-1 font-mono text-sm text-navy sm:grid-cols-[auto_1fr] sm:gap-x-3">
+            <dt className="font-body text-xs text-navy/70">ชื่อผู้ใช้</dt>
+            <dd>{handoff.username}</dd>
+            <dt className="font-body text-xs text-navy/70">รหัสผ่าน</dt>
+            <dd className="flex items-center gap-2">
+              <span className="text-base">{handoff.password}</span>
+              <button
+                type="button"
+                onClick={() => copy("password", handoff.password)}
+                className="font-display text-xs font-semibold text-navy underline"
+              >
+                {copied === "password" ? "คัดลอกแล้ว" : "คัดลอกรหัส"}
+              </button>
+            </dd>
+            <dt className="font-body text-xs text-navy/70">ลิงก์</dt>
+            <dd className="break-all">{loginUrl(origin)}</dd>
+          </dl>
+
+          <div className="mt-3">
+            <Field label="ข้อความส่งให้เจ้าของบัญชี" hint="แก้ข้อความได้ก่อนคัดลอก">
+              <Textarea
+                rows={12}
+                value={message}
+                onChange={(event) => setMessage(event.target.value)}
+                className="bg-white font-mono text-sm"
+              />
+            </Field>
+          </div>
+
+          {copyError ? (
+            <p className="mt-2 font-body text-xs font-semibold text-ink">{copyError}</p>
+          ) : null}
+
+          <div className="mt-3 flex flex-wrap gap-2">
+            <Button size="sm" onClick={() => copy("message", message)}>
+              {copied === "message" ? (
+                <Check className="size-4" aria-hidden />
+              ) : (
+                <Copy className="size-4" aria-hidden />
+              )}
+              {copied === "message" ? "คัดลอกข้อความแล้ว" : "คัดลอกข้อความ"}
+            </Button>
+            <Button size="sm" variant="line" onClick={closeHandoff}>
+              ปิด
+            </Button>
+          </div>
+        </div>
       ) : null}
 
       {adding ? (
