@@ -1,18 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { Download, Search } from "lucide-react";
+import { CheckSquare, Download, Search, X } from "lucide-react";
 import { Button } from "@odh/ui";
 import { LeadCard } from "@/components/lead-card";
-import { Alert, EmptyState, Panel, Select, Spinner } from "@/components/ui";
-import { csv, leads as leadsApi, type LeadListFilters } from "@/lib/api";
+import { Alert, EmptyState, Input, Panel, Select, Spinner } from "@/components/ui";
+import { ApiError, csv, leads as leadsApi, type LeadListFilters } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { useMeta } from "@/lib/hooks";
 import { industryLabels, labelOf, ownerTypeLabels, sourceLabels, stageLabels } from "@/lib/labels";
 
 const PAGE_SIZE = 20;
+// The API returns at most 200 rows a page, and one bulk move takes 200.
+const SELECT_ALL_LIMIT = 200;
 
 export default function LeadListPage() {
   const { isAdmin, user } = useAuth();
@@ -22,6 +24,60 @@ export default function LeadListPage() {
   const [page, setPage] = useState(1);
   const [filters, setFilters] = useState<LeadListFilters>({ sort: "updated" });
   const [exportError, setExportError] = useState("");
+
+  // Selection mode: tick leads (across pages) and move them to ไม่รับงาน.
+  const queryClient = useQueryClient();
+  const [selecting, setSelecting] = useState(false);
+  const [selected, setSelected] = useState<Set<number>>(new Set());
+  const [reason, setReason] = useState("");
+  const [confirming, setConfirming] = useState(false);
+  const [moveResult, setMoveResult] = useState<{ tone: "warn" | "stop"; text: string } | null>(null);
+  const [selectingAll, setSelectingAll] = useState(false);
+
+  const toggle = (id: number) =>
+    setSelected((current) => {
+      const next = new Set(current);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+
+  const stopSelecting = () => {
+    setSelecting(false);
+    setSelected(new Set());
+    setConfirming(false);
+    setReason("");
+  };
+
+  async function selectAllMatching() {
+    setSelectingAll(true);
+    try {
+      const all = await leadsApi.list({ ...query, page: 1, limit: SELECT_ALL_LIMIT });
+      setSelected(new Set(all.data.map((lead) => lead.id)));
+      if ((all.pagination?.total ?? 0) > SELECT_ALL_LIMIT) {
+        setMoveResult({ tone: "warn", text: `เลือกได้ครั้งละ ${SELECT_ALL_LIMIT} รายแรก ย้ายชุดนี้ก่อนแล้วค่อยเลือกชุดถัดไป` });
+      }
+    } finally {
+      setSelectingAll(false);
+    }
+  }
+
+  const decline = useMutation({
+    mutationFn: () => leadsApi.decline([...selected], reason.trim()),
+    onSuccess: async (result) => {
+      const skipped = result.skipped.length
+        ? ` · ข้าม ${result.skipped.length} ราย (${[...new Set(result.skipped.map((s) => s.reason))].join(", ")})`
+        : "";
+      setMoveResult({ tone: "warn", text: `ย้ายไป “ไม่รับงาน” แล้ว ${result.updated} ราย${skipped}` });
+      stopSelecting();
+      await queryClient.invalidateQueries({ queryKey: ["leads"] });
+      await queryClient.invalidateQueries({ queryKey: ["calendar"] });
+    },
+    onError: (caught) => {
+      setConfirming(false);
+      setMoveResult({ tone: "stop", text: (caught as ApiError).body?.error ?? "ย้ายไม่สำเร็จ" });
+    },
+  });
 
   const query = useMemo<LeadListFilters>(
     () => ({ ...filters, search: search.trim() || undefined, page, limit: PAGE_SIZE }),
@@ -215,14 +271,94 @@ export default function LeadListPage() {
         />
       ) : (
         <>
-          <p className="font-mono text-xs text-muted">
-            ทั้งหมด {pagination?.total ?? rows.length} ราย
-            {isFetching ? " · กำลังอัปเดต…" : ""}
-          </p>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <p className="font-mono text-xs text-muted">
+              ทั้งหมด {pagination?.total ?? rows.length} ราย
+              {isFetching ? " · กำลังอัปเดต…" : ""}
+            </p>
+            {selecting ? null : (
+              <Button
+                variant="line"
+                size="sm"
+                onClick={() => {
+                  setMoveResult(null);
+                  setSelecting(true);
+                }}
+              >
+                <CheckSquare className="size-4" aria-hidden />
+                เลือกเพื่อย้ายไป ไม่รับงาน
+              </Button>
+            )}
+          </div>
+
+          {moveResult ? <Alert tone={moveResult.tone}>{moveResult.text}</Alert> : null}
+
+          {selecting ? (
+            <div className="sticky bottom-20 z-10 space-y-3 rounded-2xl border border-navy bg-white p-4 shadow-lg sm:bottom-4">
+              <div className="flex flex-wrap items-center gap-2">
+                <p className="mr-auto font-display text-sm font-semibold text-ink">เลือกแล้ว {selected.size} ราย</p>
+                <Button
+                  variant="line"
+                  size="sm"
+                  onClick={() => setSelected((current) => new Set([...current, ...rows.map((lead) => lead.id)]))}
+                >
+                  เลือกทั้งหน้านี้
+                </Button>
+                <Button variant="line" size="sm" onClick={selectAllMatching} disabled={selectingAll}>
+                  {selectingAll ? "กำลังเลือก…" : `เลือกทั้งหมดตามตัวกรอง (${Math.min(pagination?.total ?? 0, SELECT_ALL_LIMIT)})`}
+                </Button>
+                <button
+                  type="button"
+                  onClick={stopSelecting}
+                  className="rounded-full p-2 text-muted hover:bg-navy/5 hover:text-ink"
+                  aria-label="เลิกเลือก"
+                >
+                  <X className="size-4" aria-hidden />
+                </button>
+              </div>
+              <Input
+                value={reason}
+                onChange={(event) => setReason(event.target.value)}
+                placeholder="เหตุผล (ไม่บังคับ) เช่น วงเงินเกินผลงานเรา / งานต่อเนื่องจากระยะ 1"
+                aria-label="เหตุผลที่ไม่รับงาน"
+                maxLength={512}
+              />
+              {confirming ? (
+                <div className="flex flex-wrap items-center gap-2">
+                  <p className="font-body text-sm text-ink">
+                    ย้าย {selected.size} รายไป “ไม่รับงาน”? ย้ายกลับได้ทีละรายในหน้าลูกค้า
+                  </p>
+                  <Button size="sm" onClick={() => decline.mutate()} disabled={decline.isPending}>
+                    {decline.isPending ? "กำลังย้าย…" : "ยืนยัน"}
+                  </Button>
+                  <Button variant="line" size="sm" onClick={() => setConfirming(false)}>
+                    ยกเลิก
+                  </Button>
+                </div>
+              ) : (
+                <Button size="sm" onClick={() => setConfirming(true)} disabled={selected.size === 0}>
+                  ย้ายไป ไม่รับงาน ({selected.size})
+                </Button>
+              )}
+            </div>
+          ) : null}
+
           <ul className="space-y-3">
             {rows.map((lead) => (
-              <li key={lead.id}>
-                <LeadCard lead={lead} />
+              <li key={lead.id} className={selecting ? "flex items-center gap-3" : undefined}>
+                {selecting ? (
+                  // The label pads the tap target; the card itself still opens the lead.
+                  <label className="-m-2 flex shrink-0 cursor-pointer items-center p-2">
+                    <input
+                      type="checkbox"
+                      checked={selected.has(lead.id)}
+                      onChange={() => toggle(lead.id)}
+                      aria-label={`เลือก ${lead.name}`}
+                      className="size-5 rounded border-line-control accent-navy"
+                    />
+                  </label>
+                ) : null}
+                <LeadCard lead={lead} className={selecting ? "min-w-0 flex-1" : undefined} />
               </li>
             ))}
           </ul>

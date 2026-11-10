@@ -17,6 +17,7 @@ const stageClasses: Record<Stage, string> = {
   won: "bg-gold text-navy",
   lost: "bg-ink/5 text-muted",
   nurture: "border border-dashed border-line-control text-muted",
+  declined: "bg-ink/5 text-muted line-through decoration-muted/60",
 };
 
 export function StageBadge({ stage, className }: { stage: Stage; className?: string }) {

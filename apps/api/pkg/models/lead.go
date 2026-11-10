@@ -45,7 +45,15 @@ const (
 	StageWon       = "won"
 	StageLost      = "lost"
 	StageNurture   = "nurture"
+	// StageDeclined: we chose not to take the work (too big, locked to an
+	// incumbent, not our service). Unlike lost, nobody beat us.
+	StageDeclined = "declined"
 )
+
+// ClosedStages are the stages with nothing left to follow up.
+func ClosedStages() []string {
+	return []string{StageWon, StageLost, StageDeclined}
+}
 
 // Services the lead is interested in.
 const (
@@ -72,7 +80,7 @@ func Sources() []string {
 
 // Stages lists the pipeline stages in board order.
 func Stages() []string {
-	return []string{StageNew, StageContacted, StageMeeting, StageProposal, StageWon, StageLost, StageNurture}
+	return []string{StageNew, StageContacted, StageMeeting, StageProposal, StageWon, StageLost, StageNurture, StageDeclined}
 }
 
 // Interests lists every valid interest tag.
@@ -90,7 +98,7 @@ func OwnerTypes() []string { return []string{OwnerTypeCompany, OwnerTypeSalesExi
 // the "whoever registers first owns it" guard (see pkg/leadrules).
 //
 // Soft deletes are not used anywhere in this system; a lead that goes nowhere
-// is flagged with stage `lost` or `nurture`.
+// is flagged with stage `lost`, `declined` or `nurture`.
 type Lead struct {
 	ID             uint    `gorm:"primarykey" json:"id"`
 	Name           string  `gorm:"size:255;not null" json:"name"`

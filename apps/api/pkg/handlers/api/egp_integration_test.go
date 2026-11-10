@@ -261,9 +261,11 @@ func TestEgpRealExportGoesToTheRightTabs(t *testing.T) {
 
 	counts := env.egpView("inbox").Counts
 	// The open tender and the TOR-stage project are opportunities; the
-	// awarded and the cancelled ones are history.
-	if counts["inbox"] != 2 || counts["closed"] != 2 || counts["excluded"] != 0 {
-		t.Fatalf("counts = %+v, want inbox 2 / closed 2 / excluded 0", counts)
+	// awarded and the cancelled ones are history. The tender is "TU GPT
+	// ระยะ 2", a follow-on phase, so it carries a warning and waits in the
+	// flagged tab.
+	if counts["inbox"] != 1 || counts["flagged"] != 1 || counts["closed"] != 2 || counts["excluded"] != 0 {
+		t.Fatalf("counts = %+v, want inbox 1 / flagged 1 / closed 2 / excluded 0", counts)
 	}
 }
 
@@ -312,7 +314,7 @@ func TestEgpShortlistAndExportForAnalysis(t *testing.T) {
 	}
 	// Starred projects keep their own tab and also show in the shortlist.
 	list := env.egpView("shortlist")
-	if list.Counts["shortlist"] != 1 || list.Counts["inbox"] != 2 || len(list.Data) != 1 || list.Data[0].ID != cmu {
+	if list.Counts["shortlist"] != 1 || list.Counts["inbox"] != 1 || len(list.Data) != 1 || list.Data[0].ID != cmu {
 		t.Fatalf("shortlist view: counts %+v, %d items", list.Counts, len(list.Data))
 	}
 

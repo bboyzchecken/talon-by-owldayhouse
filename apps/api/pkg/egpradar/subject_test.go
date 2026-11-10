@@ -175,3 +175,42 @@ func TestParseCSVReadsTheClosingDateWhateverItIsCalled(t *testing.T) {
 		}
 	}
 }
+
+func TestContinuation(t *testing.T) {
+	yes := map[string]string{
+		"ประกวดราคาจ้างทำระบบสารสนเทศอัจฉริยะ TU GPT ระยะ 2 จำนวน 1 ระบบ": "ระยะ 2",
+		"จ้างพัฒนาระบบดิจิทัลไอดี ระยะที่ 3":                              "ระยะที่ 3",
+		"จ้างพัฒนาแพลตฟอร์มข้อมูล ระยะที่ ๒":                              "ระยะที่ ๒",
+		"จ้างพัฒนาระบบ Phase 2":                                           "phase 2",
+		"จ้างต่อยอดระบบบริหารจัดการงานวิจัย":                              "ต่อยอดระบบ",
+		"จ้างพัฒนาระบบสารสนเทศเพื่อการบริหาร เฟส 2":                       "เฟส 2",
+	}
+	for title, want := range yes {
+		if ok, got := Continuation(title); !ok || got != want {
+			t.Errorf("Continuation(%q) = %v %q, want %q", title, ok, got, want)
+		}
+	}
+	for _, title := range []string{
+		"จ้างเช่าระบบคลาวด์ ระยะ 2 ปี",                  // a length of time
+		"จ้างเหมาบริการระยะเวลา 2 เดือน",                // ระยะเวลา
+		"จ้างจัดกิจกรรมนักศึกษาชั้นปีที่ 2",             // a year of study
+		"ซื้อตลับเมตรวัดระยะ 5 เมตร",                    // a distance
+		"จ้างงดจ่ายไฟ มิเตอร์แรงต่ำ 1 เฟส 2 สาย",        // electrical phases
+		"ซื้อระบบ Solar Rooftop ขนาด 1 เฟส 5 กิโลวัตต์", // electrical phases
+		"จ้างโครงการพัฒนาต่อยอดสินค้าชุมชน",             // builds on an idea
+		"จ้างทำวารสาร ปีที่ ๒๐ ประจำปี ๒๕๖๙",            // a volume
+		"จ้างพัฒนาระบบลงทะเบียนนักศึกษา",
+		"จ้างจัดงานประจำปี 2570",
+	} {
+		if ok, got := Continuation(title); ok {
+			t.Errorf("Continuation(%q) matched %q", title, got)
+		}
+	}
+
+	// On the Radar it is a warning: the card moves to "ติดป้ายระวัง".
+	s := Defaults()
+	r := Evaluate(Input{Agency: "มหาวิทยาลัยธรรมศาสตร์", Title: "ประกวดราคาจ้างทำระบบสารสนเทศอัจฉริยะ TU GPT ระยะ 2", Budget: 900000, Hire: true, ProjectStatus: "หนังสือเชิญชวน/ประกาศเชิญชวน"}, s, time.Now())
+	if !r.Passed || !r.Flagged || !hasFlag(r, FlagContinuation) {
+		t.Fatalf("want a passing, flagged result with the continuation flag: %+v", r)
+	}
+}

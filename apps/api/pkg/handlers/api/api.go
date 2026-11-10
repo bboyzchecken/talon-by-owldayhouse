@@ -161,6 +161,7 @@ func (s *Server) registerLeadRoutes(api *echo.Group) {
 	leads.GET("/export", s.ExportLeads, s.IsAdmin())
 	leads.POST("/import", s.ImportLeads, s.IsAdmin())
 	leads.GET("/ownership-logs", s.ListRecentOwnershipLogs, s.IsAdmin())
+	leads.POST("/decline", s.DeclineLeads)
 
 	// One lead.
 	leads.GET("/:id", s.GetLead)

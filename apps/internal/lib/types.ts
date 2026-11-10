@@ -4,7 +4,7 @@ export type Role = "admin" | "sales";
 export type AccountStatus = "active" | "deactivated";
 export type OwnerType = "company" | "sales_existing";
 export type Industry = "education" | "property_auto" | "healthcare" | "other";
-export type Stage = "new" | "contacted" | "meeting" | "proposal" | "won" | "lost" | "nurture";
+export type Stage = "new" | "contacted" | "meeting" | "proposal" | "won" | "lost" | "nurture" | "declined";
 export type ActivityType = "call" | "line" | "meeting" | "proposal_sent" | "note";
 export type Source =
   | "trade_fair"

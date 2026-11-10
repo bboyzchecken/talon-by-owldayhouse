@@ -218,6 +218,10 @@ export const leads = {
   assign: (id: number, body: { owner_type: string; owner_user_id?: number; note?: string }) =>
     send<Lead>("post", `/api/leads/${id}/assign`, body),
   today: (userId?: number) => get<TodayResponse>("/api/leads/today", { user_id: userId }),
+
+  /** Move many leads to "ไม่รับงาน" at once; leads one may not edit come back in skipped. */
+  decline: (ids: number[], reason: string) =>
+    send<{ updated: number; skipped: { id: number; reason: string }[] }>("post", "/api/leads/decline", { ids, reason }),
   stageCounts: (params: { user_id?: number; mine?: boolean }) =>
     get<{ stages: Stage[]; counts: Record<string, number> }>("/api/leads/stages", {
       user_id: params.user_id,
