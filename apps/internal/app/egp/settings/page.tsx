@@ -227,6 +227,26 @@ export default function RadarSettingsPage() {
         </div>
       </Panel>
 
+      <Panel title="ข้อมูลบริษัทสำหรับการวิเคราะห์">
+        <Field
+          label="ติดไปกับทุกไฟล์ที่ส่งออกให้ Claude"
+          hint="เขียนเท่าที่เป็นจริง ผลวิเคราะห์ว่ายื่นได้ไหมขึ้นกับข้อมูลนี้ ไม่เกิน 4,000 ตัวอักษร"
+        >
+          <Textarea
+            rows={7}
+            value={form.analysis_context ?? ""}
+            onChange={(event) => update({ analysis_context: event.target.value })}
+            placeholder={[
+              "ทุนจดทะเบียน:",
+              "ผลงานที่มีสัญญาหรือหนังสือรับรองผลงาน (หน่วยงาน, ปี, มูลค่า, งานอะไร):",
+              "ทีมที่ลงงานได้จริง (จำนวนคน, ความถนัด):",
+              "พาร์ทเนอร์ที่ร่วมยื่นหรือรับช่วงได้:",
+              "ขนาดงานที่รับไหว และงานที่ไม่รับ:",
+            ].join("\n")}
+          />
+        </Field>
+      </Panel>
+
       <Panel title="การส่งให้เซลส์">
         <Field label="ผู้รับโดยค่าเริ่มต้น" hint="เปลี่ยนได้ทีละประกาศในหน้า Radar">
           <Select

@@ -286,6 +286,9 @@ func appendUnique(values []string, v string) []string {
 	return append(values, v)
 }
 
+// Baht formats an amount as "1,234,567 บาท".
+func Baht(v float64) string { return baht(v) }
+
 func baht(v float64) string {
 	whole := int64(math.Round(v))
 	s := fmt.Sprintf("%d", whole)

@@ -113,6 +113,15 @@ func Migrate(db *gorm.DB) error {
 				return m.DropColumn(&models.EgpAnnouncement{}, "winner_announced_at")
 			},
 		},
+		{
+			ID: "20261111_01_egp_shortlist",
+			Migrate: func(tx *gorm.DB) error {
+				return tx.AutoMigrate(&models.EgpAnnouncement{})
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Migrator().DropColumn(&models.EgpAnnouncement{}, "shortlisted_at")
+			},
+		},
 	})
 
 	return m.Migrate()

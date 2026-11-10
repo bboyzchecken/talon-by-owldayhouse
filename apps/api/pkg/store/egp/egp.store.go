@@ -103,6 +103,13 @@ func (s *egpStoreService) List(decision string, limit int) ([]*models.EgpAnnounc
 	return rows, err
 }
 
+func (s *egpStoreService) ListByAgency(agency string, excludeID uint, limit int) ([]*models.EgpAnnouncement, error) {
+	var rows []*models.EgpAnnouncement
+	err := s.db.Where("agency = ? AND id <> ?", agency, excludeID).
+		Order("announced_at DESC NULLS LAST, id DESC").Limit(limit).Find(&rows).Error
+	return rows, err
+}
+
 func (s *egpStoreService) Update(row *models.EgpAnnouncement) error {
 	return s.db.Save(row).Error
 }

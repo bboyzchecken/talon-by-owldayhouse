@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 	"net/http"
+	"strings"
 	"testing"
 
 	"github.com/owldayhouse/odh-internal-api/pkg/models"
@@ -274,5 +275,73 @@ func TestEgpIsAdminOnly(t *testing.T) {
 	}
 	if r := env.doMultipart(env.sales1, "/api/egp/import", nil, egpCSV); r.Status != http.StatusForbidden {
 		t.Errorf("import as sales: got %d, want 403", r.Status)
+	}
+}
+
+func TestEgpShortlistAndExportForAnalysis(t *testing.T) {
+	env := newTestEnv(t)
+	env.doMultipart(env.admin, "/api/egp/import", nil, egpRealCSV)
+	cmu := env.egpIDByProject("69119000103")
+
+	if r := env.do(env.admin, http.MethodGet, "/api/egp/export", nil); r.Status != http.StatusBadRequest {
+		t.Fatalf("export with nothing starred: %d %s", r.Status, r.Raw)
+	}
+
+	if r := env.do(env.admin, http.MethodPost, fmt.Sprintf("/api/egp/announcements/%d/shortlist", cmu), map[string]bool{"on": true}); r.Status != http.StatusOK {
+		t.Fatalf("shortlist: %d %s", r.Status, r.Raw)
+	}
+	// Starred projects keep their own tab and also show in the shortlist.
+	list := env.egpView("shortlist")
+	if list.Counts["shortlist"] != 1 || list.Counts["inbox"] != 2 || len(list.Data) != 1 || list.Data[0].ID != cmu {
+		t.Fatalf("shortlist view: counts %+v, %d items", list.Counts, len(list.Data))
+	}
+
+	r := env.do(env.admin, http.MethodGet, "/api/egp/export", nil)
+	if r.Status != http.StatusOK {
+		t.Fatalf("export: %d %s", r.Status, r.Raw)
+	}
+	md, _ := r.Body["markdown"].(string)
+	for _, want := range []string{
+		"## สิ่งที่อยากให้ช่วย",
+		"จ้างพัฒนาเว็บไซต์คณะ", // the starred project
+		"69119000103", // its e-GP number
+		"ระยะเตรียมการ",              // its stage
+		"300,000 บาท",                // its budget
+		"จ้างจัดงานนิทรรศการ",        // the same agency's other project
+		"ยังไม่ได้กรอกในหน้าตั้งค่า", // the company template, until filled in
+	} {
+		if !strings.Contains(md, want) {
+			t.Errorf("export lacks %q:\n%s", want, md)
+		}
+	}
+	if strings.Contains(md, "TU GPT") {
+		t.Error("an unstarred project was exported")
+	}
+
+	// The company notes from the settings head every export.
+	settings := env.do(env.admin, http.MethodGet, "/api/egp/settings", nil)
+	var s map[string]interface{}
+	settings.as(t, "settings", &s)
+	s["analysis_context"] = "ทุนจดทะเบียน 1 ล้านบาท"
+	if r := env.do(env.admin, http.MethodPut, "/api/egp/settings", s); r.Status != http.StatusOK {
+		t.Fatalf("save settings: %d %s", r.Status, r.Raw)
+	}
+	r = env.do(env.admin, http.MethodGet, "/api/egp/export", nil)
+	if md, _ := r.Body["markdown"].(string); !strings.Contains(md, "ทุนจดทะเบียน 1 ล้านบาท") || strings.Contains(md, "ยังไม่ได้กรอกในหน้าตั้งค่า") {
+		t.Errorf("company notes missing:\n%s", md)
+	}
+
+	if r := env.do(env.admin, http.MethodPost, fmt.Sprintf("/api/egp/announcements/%d/shortlist", cmu), map[string]bool{"on": false}); r.Status != http.StatusOK {
+		t.Fatalf("un-shortlist: %d %s", r.Status, r.Raw)
+	}
+	if n := env.egpView("shortlist").Counts["shortlist"]; n != 0 {
+		t.Fatalf("shortlist count after removing = %d", n)
+	}
+	if r := env.do(env.admin, http.MethodGet, "/api/egp/export", nil); r.Status != http.StatusBadRequest {
+		t.Fatalf("export after removing: %d", r.Status)
+	}
+	// Sales cannot export.
+	if r := env.do(env.sales1, http.MethodGet, "/api/egp/export", nil); r.Status != http.StatusForbidden {
+		t.Fatalf("sales export: %d", r.Status)
 	}
 }

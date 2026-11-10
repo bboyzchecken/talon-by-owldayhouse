@@ -89,7 +89,15 @@ type Settings struct {
 	// LeadTimeDays sets the lead's follow-up date this many days before the
 	// project closes.
 	LeadTimeDays int `json:"lead_time_days"`
+
+	// AnalysisContext is what the admin writes about the company (registered
+	// capital, contracts and reference letters, team, partners). It heads
+	// every export for Claude, so the analysis is about this company.
+	AnalysisContext string `json:"analysis_context"`
 }
+
+// MaxAnalysisContext keeps the company notes to a size worth reading.
+const MaxAnalysisContext = 4000
 
 // Defaults are the settings the Radar starts with: the user's current work —
 // projects up to 1 million baht from universities, schools and public health.
@@ -231,6 +239,7 @@ func (s Settings) Normalize() Settings {
 	if s.ServiceGroups == nil {
 		s.ServiceGroups = DefaultServiceGroups()
 	}
+	s.AnalysisContext = strings.TrimSpace(s.AnalysisContext)
 	if s.MinPrepDays < 0 {
 		s.MinPrepDays = 0
 	}
@@ -264,6 +273,9 @@ func (s Settings) Validate() error {
 		if g.Key == "" || g.Label == "" {
 			return errors.New("กลุ่มบริการต้องมีทั้ง key และชื่อ")
 		}
+	}
+	if len([]rune(s.AnalysisContext)) > MaxAnalysisContext {
+		return errors.New("ข้อมูลบริษัทสำหรับการวิเคราะห์ยาวเกิน 4,000 ตัวอักษร")
 	}
 	if s.MinPrepDays > 90 || s.LeadTimeDays > 90 {
 		return errors.New("จำนวนวันต้องไม่เกิน 90")

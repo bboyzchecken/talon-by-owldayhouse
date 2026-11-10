@@ -25,6 +25,8 @@ const (
 	egpViewClosed   = "closed"
 	egpViewSent     = "sent"
 	egpViewSkipped  = "skipped"
+	// egpViewShortlist lists starred projects from every tab.
+	egpViewShortlist = "shortlist"
 )
 
 // registerEgpRoutes wires e-GP Radar, the second internal tool. Admin only:
@@ -37,6 +39,8 @@ func (s *Server) registerEgpRoutes(api *echo.Group) {
 	egp.POST("/announcements/:id/send", s.SendEgpAnnouncement)
 	egp.POST("/announcements/:id/skip", s.SkipEgpAnnouncement)
 	egp.POST("/announcements/:id/restore", s.RestoreEgpAnnouncement)
+	egp.POST("/announcements/:id/shortlist", s.ShortlistEgpAnnouncement)
+	egp.GET("/export", s.ExportEgpBrief)
 	egp.GET("/settings", s.GetEgpSettings)
 	egp.PUT("/settings", s.UpdateEgpSettings)
 }
@@ -101,17 +105,24 @@ func (s *Server) ListEgpAnnouncements(c echo.Context) error {
 	}
 
 	today := startOfToday()
-	counts := map[string]int{egpViewInbox: 0, egpViewFlagged: 0, egpViewExcluded: 0, egpViewClosed: 0, egpViewSent: 0, egpViewSkipped: 0}
+	counts := map[string]int{egpViewInbox: 0, egpViewShortlist: 0, egpViewFlagged: 0, egpViewExcluded: 0, egpViewClosed: 0, egpViewSent: 0, egpViewSkipped: 0}
 	items := make([]egpItem, 0, len(rows))
 	for _, row := range rows {
 		result := egpradar.Evaluate(egpInput(row), settings, today)
 		tab := egpTab(row.Decision, result, settings)
 		counts[tab]++
-		if tab == view {
+		// The shortlist cuts across tabs: a project stays in its own tab too.
+		if row.ShortlistedAt != nil {
+			counts[egpViewShortlist]++
+		}
+		if tab == view || (view == egpViewShortlist && row.ShortlistedAt != nil) {
 			items = append(items, egpItem{EgpAnnouncement: row, MethodLabel: egpradar.MethodLabel(row.Method), Result: result})
 		}
 	}
 
+	if view == egpViewShortlist {
+		sort.SliceStable(items, func(i, j int) bool { return items[i].ShortlistedAt.After(*items[j].ShortlistedAt) })
+	}
 	if view == egpViewInbox || view == egpViewFlagged {
 		sort.SliceStable(items, func(i, j int) bool {
 			if items[i].Result.Score != items[j].Result.Score {

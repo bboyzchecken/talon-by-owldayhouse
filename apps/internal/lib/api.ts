@@ -7,6 +7,7 @@ import type {
   EgpListResponse,
   EgpSendResult,
   EgpSettings,
+  EgpBrief,
   EgpSettingsResponse,
   EgpView,
   CheckNameResponse,
@@ -394,6 +395,10 @@ export const egp = {
 
   skip: (id: number) => send<unknown>("post", `/api/egp/announcements/${id}/skip`),
   restore: (id: number) => send<unknown>("post", `/api/egp/announcements/${id}/restore`),
+  shortlist: (id: number, on: boolean) => send<unknown>("post", `/api/egp/announcements/${id}/shortlist`, { on }),
+
+  /** The starred projects as one Markdown brief to hand to Claude. */
+  brief: () => get<EgpBrief>("/api/egp/export"),
 
   settings: () => get<EgpSettingsResponse>("/api/egp/settings"),
   saveSettings: (settings: EgpSettings) =>

@@ -6,6 +6,7 @@ import { useRef, useState } from "react";
 import { FileUp } from "lucide-react";
 import { Button, cn } from "@odh/ui";
 import { AnnouncementCard } from "@/components/egp/announcement-card";
+import { BriefExport } from "@/components/egp/brief-export";
 import { Alert, EmptyState, Panel, Spinner } from "@/components/ui";
 import { ApiError, egp } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
@@ -15,6 +16,11 @@ import type { EgpAnnouncement, EgpImportResult, EgpSendResult, EgpView } from "@
 
 const tabs: { view: EgpView; label: string; hint: string }[] = [
   { view: "inbox", label: "น่าสนใจ", hint: "ผ่านตัวกรอง เรียงตามคะแนน" },
+  {
+    view: "shortlist",
+    label: "คัดไว้วิเคราะห์",
+    hint: "งานที่กด “คัดไว้” จากทุกแท็บ (รวมงานติดป้ายระวัง) ส่งออกให้ Claude วิเคราะห์ความเป็นไปได้",
+  },
   { view: "flagged", label: "ติดป้ายระวัง", hint: "ผ่านตัวกรอง แต่มีสัญญาณควรระวัง" },
   { view: "excluded", label: "ไม่ผ่านตัวกรอง", hint: "ดูเหตุผล ไว้ปรับคำค้นในหน้าตั้งค่า" },
   {
@@ -179,17 +185,32 @@ export default function RadarPage() {
         </Alert>
       ) : null}
 
+      {view === "shortlist" ? (
+        <BriefExport
+          count={counts?.shortlist ?? 0}
+          hasCompanyNotes={Boolean(settings.data?.settings.analysis_context?.trim())}
+        />
+      ) : null}
+
       {list.error ? <Alert tone="stop">{(list.error as Error).message}</Alert> : null}
 
       {list.isLoading ? (
         <Spinner />
       ) : items.length === 0 ? (
         <EmptyState
-          title={view === "inbox" ? "ยังไม่มีประกาศที่น่าสนใจ" : "ไม่มีรายการในหมวดนี้"}
+          title={
+            view === "inbox"
+              ? "ยังไม่มีประกาศที่น่าสนใจ"
+              : view === "shortlist"
+                ? "ยังไม่ได้คัดงานไว้"
+                : "ไม่มีรายการในหมวดนี้"
+          }
           hint={
             view === "inbox"
               ? "นำเข้าไฟล์ CSV จาก e-GP ด้านบน ถ้านำเข้าแล้วแต่ไม่มีอะไรเลย ดูแท็บ “ไม่ผ่านตัวกรอง” แล้วปรับคำค้นในหน้าตั้งค่า"
-              : undefined
+              : view === "shortlist"
+                ? "กด “คัดไว้” ที่มุมขวาบนของการ์ดงานในแท็บไหนก็ได้ แล้วกลับมาส่งออกที่นี่"
+                : undefined
           }
         />
       ) : (
