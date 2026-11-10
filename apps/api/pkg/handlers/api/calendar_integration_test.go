@@ -107,6 +107,17 @@ func TestClosingDateMovesTheFollowUpAndShowsOnTheTeamCalendar(t *testing.T) {
 		t.Errorf("the new closing date is not on the calendar: %+v", events)
 	}
 
+	// Once the lead is declined, its closing date leaves the calendar.
+	if r := env.do(env.sales1, http.MethodPost, "/api/leads/decline", map[string]interface{}{"ids": []uint{leadID}}); r.Status != http.StatusOK {
+		t.Fatalf("decline: %d %s", r.Status, r.Raw)
+	}
+	env.do(env.sales2, http.MethodGet, "/api/calendar?from="+from+"&to="+to, nil).as(t, "data", &events)
+	for _, e := range events {
+		if e.LeadID == leadID {
+			t.Errorf("a declined lead is still on the calendar: %+v", e)
+		}
+	}
+
 	if r := env.do(env.sales1, http.MethodGet, "/api/calendar?from="+from+"&to="+today.AddDate(0, 0, 90).Format("2006-01-02"), nil); r.Status != http.StatusBadRequest {
 		t.Errorf("a 90-day range: got %d, want 400", r.Status)
 	}

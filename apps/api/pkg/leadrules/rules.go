@@ -129,7 +129,7 @@ var directSaleStages = map[string]bool{"proposal": true, "won": true}
 
 var validStages = map[string]bool{
 	"new": true, "contacted": true, "meeting": true, "proposal": true,
-	"won": true, "lost": true, "nurture": true,
+	"won": true, "lost": true, "nurture": true, "declined": true,
 }
 
 // ValidateStageChange checks a stage move against the do_not_pitch flag.

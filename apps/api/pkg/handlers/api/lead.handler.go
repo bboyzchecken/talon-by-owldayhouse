@@ -173,7 +173,7 @@ type createLeadBody struct {
 	UTMCampaign    string   `json:"utm_campaign" validate:"omitempty,max=128"`
 	OwnerType      string   `json:"owner_type" validate:"omitempty,oneof=company sales_existing"`
 	OwnerUserID    *uint    `json:"owner_user_id"`
-	Stage          string   `json:"stage" validate:"omitempty,oneof=new contacted meeting proposal won lost nurture"`
+	Stage          string   `json:"stage" validate:"omitempty,oneof=new contacted meeting proposal won lost nurture declined"`
 	Interests      []string `json:"interests"`
 	EstimatedValue float64  `json:"estimated_value" validate:"omitempty,gte=0"`
 	NextAction     string   `json:"next_action" validate:"omitempty,max=512"`
@@ -492,7 +492,7 @@ func (s *Server) UpdateLead(c echo.Context) error {
 }
 
 type changeStageBody struct {
-	Stage      string `json:"stage" validate:"required,oneof=new contacted meeting proposal won lost nurture"`
+	Stage      string `json:"stage" validate:"required,oneof=new contacted meeting proposal won lost nurture declined"`
 	LostReason string `json:"lost_reason" validate:"omitempty,max=512"`
 	// Deal is required when moving to `won`.
 	Deal *struct {
@@ -556,7 +556,8 @@ func (s *Server) ChangeLeadStage(c echo.Context) error {
 	}
 
 	lead.Stage = body.Stage
-	if body.Stage == models.StageLost {
+	// lost_reason holds the reason for both: why we lost, or why we declined.
+	if body.Stage == models.StageLost || body.Stage == models.StageDeclined {
 		lead.LostReason = strings.TrimSpace(body.LostReason)
 	}
 	if err := s.LeadStore.Update(lead); err != nil {

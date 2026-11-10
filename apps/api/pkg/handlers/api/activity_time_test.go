@@ -47,3 +47,55 @@ func TestActivityTimeIsKept(t *testing.T) {
 		t.Errorf("a date alone: got %s", got)
 	}
 }
+
+func TestDeclineLeadsInBulk(t *testing.T) {
+	env := newTestEnv(t)
+	mine1 := leadID(t, env.createLead(env.sales1, newLead("บริษัท หนึ่ง จำกัด")))
+	mine2 := leadID(t, env.createLead(env.sales1, newLead("บริษัท สอง จำกัด")))
+	theirs := leadID(t, env.createLead(env.sales2, newLead("บริษัท สาม จำกัด")))
+
+	// A sales person moves their own leads; someone else's is reported back.
+	r := env.do(env.sales1, http.MethodPost, "/api/leads/decline", map[string]interface{}{
+		"ids": []uint{mine1, mine2, theirs, mine1}, "reason": "งานต่อเนื่องจากระยะ 1",
+	})
+	if r.Status != http.StatusOK || r.Body["updated"].(float64) != 2 {
+		t.Fatalf("decline: %d %s", r.Status, r.Raw)
+	}
+	if skipped := r.Body["skipped"].([]interface{}); len(skipped) != 1 {
+		t.Fatalf("skipped = %v", skipped)
+	}
+
+	var lead struct {
+		Stage      string `json:"stage"`
+		LostReason string `json:"lost_reason"`
+	}
+	env.do(env.admin, http.MethodGet, fmt.Sprintf("/api/leads/%d", mine1), nil).as(t, "lead", &lead)
+	if lead.Stage != models.StageDeclined || lead.LostReason != "งานต่อเนื่องจากระยะ 1" {
+		t.Errorf("lead = %+v", lead)
+	}
+	env.do(env.admin, http.MethodGet, fmt.Sprintf("/api/leads/%d", theirs), nil).as(t, "lead", &lead)
+	if lead.Stage == models.StageDeclined {
+		t.Error("another sales person's lead was moved")
+	}
+
+	// The timeline says why.
+	var acts []struct {
+		Summary string `json:"summary"`
+	}
+	env.do(env.sales1, http.MethodGet, fmt.Sprintf("/api/leads/%d/activities", mine2), nil).as(t, "data", &acts)
+	if len(acts) == 0 || acts[0].Summary != "ย้ายไป ไม่รับงาน: งานต่อเนื่องจากระยะ 1" {
+		t.Errorf("timeline = %+v", acts)
+	}
+
+	// Declined leads leave the follow-up lists and can still be filtered.
+	list := env.do(env.admin, http.MethodGet, "/api/leads?stage=declined", nil)
+	var p struct{ Total int64 }
+	list.as(t, "pagination", &p)
+	if p.Total != 2 {
+		t.Errorf("declined filter found %d, want 2", p.Total)
+	}
+	// And a declined lead can be brought back like any other stage change.
+	if r := env.do(env.sales1, http.MethodPost, fmt.Sprintf("/api/leads/%d/stage", mine1), map[string]string{"stage": "new"}); r.Status != http.StatusOK {
+		t.Errorf("bring back: %d %s", r.Status, r.Raw)
+	}
+}

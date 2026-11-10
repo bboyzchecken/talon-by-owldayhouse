@@ -13,7 +13,7 @@ import { labelOf, stageLabels } from "@/lib/labels";
 import type { Lead, Stage } from "@/lib/types";
 
 /** The board shows the live stages; won and lost are the closed ones. */
-const boardStages: Stage[] = ["new", "contacted", "meeting", "proposal", "nurture", "won", "lost"];
+const boardStages: Stage[] = ["new", "contacted", "meeting", "proposal", "nurture", "won", "lost", "declined"];
 
 export default function PipelinePage() {
   const { isAdmin, user } = useAuth();

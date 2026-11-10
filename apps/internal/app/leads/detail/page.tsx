@@ -203,8 +203,8 @@ function LeadFacts({ lead, canEdit }: { lead: Lead; canEdit: boolean }) {
             }
           />
           <Fact label="utm" value={[lead.utm_source, lead.utm_campaign].filter(Boolean).join(" / ") || "—"} />
-          {lead.stage === "lost" && lead.lost_reason ? (
-            <Fact label="เหตุผลที่ไม่ได้งาน" value={lead.lost_reason} />
+          {(lead.stage === "lost" || lead.stage === "declined") && lead.lost_reason ? (
+            <Fact label={lead.stage === "lost" ? "เหตุผลที่ไม่ได้งาน" : "เหตุผลที่ไม่รับงาน"} value={lead.lost_reason} />
           ) : null}
           <div className="sm:col-span-2">
             <dt className="font-mono text-[11px] uppercase tracking-wide text-muted">บันทึก</dt>

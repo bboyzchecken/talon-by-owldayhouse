@@ -87,7 +87,8 @@ func (s *Server) GetCalendar(c echo.Context) error {
 	}
 	for _, row := range deadlines {
 		lead := findLead(*row.LeadID)
-		if lead == nil {
+		// A lead we declined, lost or won has no closing date to watch.
+		if lead == nil || isClosedStage(lead.Stage) {
 			continue
 		}
 		event := CalendarEvent{
@@ -170,6 +171,15 @@ func meetingTime(at time.Time) string {
 		return ""
 	}
 	return at.Format("15:04")
+}
+
+func isClosedStage(stage string) bool {
+	for _, closed := range models.ClosedStages() {
+		if stage == closed {
+			return true
+		}
+	}
+	return false
 }
 
 func egpDeadlineDetail(row *models.EgpAnnouncement) string {

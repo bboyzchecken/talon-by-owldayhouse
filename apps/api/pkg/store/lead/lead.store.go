@@ -152,7 +152,7 @@ func (s *leadStoreService) filter(q *gorm.DB, query models.ListLeadQuery) *gorm.
 	if query.DueToday {
 		endOfDay := query.Today.AddDate(0, 0, 1)
 		q = q.Where("next_action_date IS NOT NULL AND next_action_date < ?", endOfDay).
-			Where("stage NOT IN ?", []string{models.StageWon, models.StageLost})
+			Where("stage NOT IN ?", models.ClosedStages())
 	}
 	return q
 }
@@ -210,7 +210,7 @@ func (s *leadStoreService) Today(query models.TodayQuery) (*models.TodayResult, 
 	startOfTomorrow := query.Today.AddDate(0, 0, 1)
 	horizon := query.Today.AddDate(0, 0, query.AheadDays+1)
 
-	open := []string{models.StageWon, models.StageLost}
+	open := models.ClosedStages()
 	result := &models.TodayResult{Due: []*models.Lead{}, Upcoming: []*models.Lead{}}
 
 	due := s.db.Model(&models.Lead{}).
@@ -239,7 +239,7 @@ func (s *leadStoreService) Today(query models.TodayQuery) (*models.TodayResult, 
 func (s *leadStoreService) FollowUpsBetween(from, to time.Time) ([]*models.Lead, error) {
 	var rows []*models.Lead
 	err := s.db.Where("next_action_date >= ? AND next_action_date < ?", from, to).
-		Where("stage NOT IN ?", []string{models.StageWon, models.StageLost}).
+		Where("stage NOT IN ?", models.ClosedStages()).
 		Preload("Owner").Order("next_action_date ASC, id ASC").Find(&rows).Error
 	return rows, err
 }

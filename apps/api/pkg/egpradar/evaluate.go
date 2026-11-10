@@ -20,6 +20,9 @@ const (
 	FlagShortPrep  = "short_prep"
 	FlagNoDeadline = "no_deadline"
 	FlagUpcoming   = "upcoming"
+	// FlagContinuation: a follow-on phase, probably built on the earlier
+	// contractor's work.
+	FlagContinuation = "continuation"
 )
 
 // Flag is a label on an announcement, always with the reason behind it. The
@@ -200,6 +203,12 @@ func Evaluate(in Input, s Settings, today time.Time) Result {
 		r.Flags = append(r.Flags, Flag{
 			Code: FlagShortPrep, Label: "เวลาเตรียมสั้น", Severity: SeverityWarn,
 			Reason: fmt.Sprintf("เหลือ %d วันก่อนปิดรับ (ตั้งไว้อย่างน้อย %d วัน) คนที่เตรียมไว้ก่อนได้เปรียบ", *r.DaysLeft, s.MinPrepDays),
+		})
+	}
+	if follow, words := Continuation(in.Title); follow {
+		r.Flags = append(r.Flags, Flag{
+			Code: FlagContinuation, Label: "งานต่อเนื่อง", Severity: SeverityWarn,
+			Reason: "ชื่อโครงการมี “" + words + "” อาจมีผู้ทำระยะก่อนอยู่แล้ว เช็ก TOR ว่าต้องต่อยอดจากระบบหรือข้อมูลเดิมไหม และค้นผู้ชนะระยะก่อนใน e-GP ก่อนเตรียมยื่น (อาจเข้าทางรับช่วงกับผู้ชนะแทน)",
 		})
 	}
 	if r.Stage == StageUpcoming {

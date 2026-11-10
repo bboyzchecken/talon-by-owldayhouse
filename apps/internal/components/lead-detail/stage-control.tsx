@@ -28,7 +28,7 @@ export function StageControl({ lead, canEdit }: { lead: Lead; canEdit: boolean }
     mutationFn: (stage: Stage) =>
       leadsApi.changeStage(lead.id, {
         stage,
-        lost_reason: stage === "lost" ? lostReason : undefined,
+        lost_reason: stage === "lost" || stage === "declined" ? lostReason : undefined,
         deal:
           stage === "won"
             ? { service, amount: Number(amount || 0), won_at: wonAt }
@@ -46,7 +46,7 @@ export function StageControl({ lead, canEdit }: { lead: Lead; canEdit: boolean }
     },
   });
 
-  const available: Stage[] = (["new", "contacted", "meeting", "proposal", "won", "lost", "nurture"] as Stage[])
+  const available: Stage[] = (["new", "contacted", "meeting", "proposal", "won", "lost", "nurture", "declined"] as Stage[])
     .filter((stage) => stage !== lead.stage)
     .filter((stage) => !(lead.do_not_pitch && (stage === "proposal" || stage === "won")));
 
@@ -73,7 +73,7 @@ export function StageControl({ lead, canEdit }: { lead: Lead; canEdit: boolean }
                 type="button"
                 onClick={() => {
                   setError("");
-                  if (stage === "won" || stage === "lost") {
+                  if (stage === "won" || stage === "lost" || stage === "declined") {
                     setTarget(stage);
                     return;
                   }
@@ -123,20 +123,22 @@ export function StageControl({ lead, canEdit }: { lead: Lead; canEdit: boolean }
             </div>
           ) : null}
 
-          {target === "lost" ? (
+          {target === "lost" || target === "declined" ? (
             <div className="space-y-3 rounded-xl border border-line p-4">
-              <Field label="เหตุผลที่ไม่ได้งาน" required>
+              <Field label={target === "lost" ? "เหตุผลที่ไม่ได้งาน" : "เหตุผลที่ไม่รับงาน"} required={target === "lost"}>
                 <Input
                   value={lostReason}
                   onChange={(event) => setLostReason(event.target.value)}
-                  placeholder="เช่น งบไม่พอ / เลือกเจ้าอื่น"
+                  placeholder={
+                    target === "lost" ? "เช่น งบไม่พอ / เลือกเจ้าอื่น" : "เช่น งานต่อเนื่องจากระยะ 1 / วงเงินเกินผลงานเรา"
+                  }
                 />
               </Field>
               <div className="flex gap-2">
                 <Button
                   size="sm"
-                  onClick={() => change.mutate("lost")}
-                  disabled={change.isPending || !lostReason.trim()}
+                  onClick={() => change.mutate(target)}
+                  disabled={change.isPending || (target === "lost" && !lostReason.trim())}
                 >
                   บันทึก
                 </Button>

@@ -36,6 +36,8 @@ export const stageLabels: Record<Stage, string> = {
   won: "ปิดการขาย",
   lost: "ไม่ได้งาน",
   nurture: "เก็บไว้ติดตาม",
+  // We chose not to take it (too big, locked to an incumbent, not our work).
+  declined: "ไม่รับงาน",
 };
 
 export const ownerTypeLabels: Record<OwnerType, string> = {
