@@ -192,6 +192,30 @@ export interface Meta {
   };
 }
 
+export type CalendarKind = "egp_deadline" | "meeting" | "follow_up";
+
+/** One dated item on the team calendar. */
+export interface CalendarEvent {
+  kind: CalendarKind;
+  /** Bangkok day, YYYY-MM-DD. */
+  date: string;
+  /** HH:MM, meetings only. */
+  time?: string;
+  title: string;
+  detail?: string;
+  lead_id: number;
+  lead_name: string;
+  owner_id?: number;
+  owner_name?: string;
+  project_id?: string;
+}
+
+export interface CalendarResponse {
+  from: string;
+  to: string;
+  data: CalendarEvent[];
+}
+
 export interface TodayResponse {
   due: Lead[];
   upcoming: Lead[];
@@ -275,7 +299,7 @@ export interface Setting {
 
 // --- e-GP Radar ---------------------------------------------------------------
 
-export type EgpView = "inbox" | "flagged" | "excluded" | "closed" | "sent" | "skipped";
+export type EgpView = "inbox" | "shortlist" | "flagged" | "excluded" | "closed" | "sent" | "skipped";
 
 export type EgpStage = "upcoming" | "open" | "awarded" | "cancelled" | "unknown";
 
@@ -292,6 +316,8 @@ export interface EgpExclusion {
 }
 
 export interface EgpResult {
+  /** The part of the title that names what is hired; keywords match only here. */
+  subject: string;
   stage: EgpStage;
   stage_label: string;
   group: string;
@@ -327,6 +353,8 @@ export interface EgpAnnouncement {
   deadline_at?: string;
   decision: "new" | "sent" | "skipped";
   lead_id?: number;
+  /** Starred for analysis; independent of the tab. */
+  shortlisted_at?: string;
   first_seen_at: string;
   result: EgpResult;
 }
@@ -346,6 +374,9 @@ export interface EgpServiceGroup {
 }
 
 export interface EgpSettings {
+  version?: number;
+  /** About the company; heads every export for Claude. */
+  analysis_context: string;
   agency_groups: string[];
   provinces: string[];
   watchlist: string[];
@@ -373,6 +404,12 @@ export interface EgpImportResult {
   problems: { line: number; reason: string }[];
   /** The file hit e-GP's 1,000-row export cap, so later rows may be missing. */
   maybe_truncated: boolean;
+}
+
+export interface EgpBrief {
+  filename: string;
+  count: number;
+  markdown: string;
 }
 
 export interface EgpSendResult {

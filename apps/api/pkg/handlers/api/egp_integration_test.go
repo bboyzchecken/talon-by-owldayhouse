@@ -3,6 +3,8 @@ package api
 import (
 	"fmt"
 	"net/http"
+	"net/url"
+	"strings"
 	"testing"
 
 	"github.com/owldayhouse/odh-internal-api/pkg/models"
@@ -133,13 +135,14 @@ func TestEgpSendCreatesALeadThenAttachesTheNextProject(t *testing.T) {
 
 	lead := env.do(env.sales1, http.MethodGet, fmt.Sprintf("/api/leads/%d", leadID), nil)
 	var l struct {
-		Name        string   `json:"name"`
-		Source      string   `json:"source"`
-		OwnerType   string   `json:"owner_type"`
-		OwnerUserID *uint    `json:"owner_user_id"`
-		Industry    string   `json:"industry"`
-		Interests   []string `json:"interests"`
-		NextAction  string   `json:"next_action"`
+		Name         string   `json:"name"`
+		Source       string   `json:"source"`
+		OwnerType    string   `json:"owner_type"`
+		OwnerUserID  *uint    `json:"owner_user_id"`
+		Industry     string   `json:"industry"`
+		Interests    []string `json:"interests"`
+		NextAction   string   `json:"next_action"`
+		SourceDetail string   `json:"source_detail"`
 	}
 	lead.as(t, "lead", &l)
 	if l.Name != "มหาวิทยาลัยเชียงใหม่" || l.Source != models.SourceEGP || l.OwnerType != models.OwnerTypeCompany {
@@ -153,6 +156,14 @@ func TestEgpSendCreatesALeadThenAttachesTheNextProject(t *testing.T) {
 	}
 	if l.NextAction == "" {
 		t.Error("a follow-up must be set so it shows on the sales person's วันนี้ screen")
+	}
+	// A lead is named after the agency: the card must still say what the
+	// work is, without e-GP's method words.
+	if !strings.HasPrefix(l.SourceDetail, "จ้างพัฒนาระบบลงทะเบียนและเว็บไซต์ · e-GP 69119000001") || strings.Contains(l.SourceDetail, "โดยวิธี") {
+		t.Errorf("source detail = %q", l.SourceDetail)
+	}
+	if !strings.Contains(l.NextAction, "จ้างพัฒนาระบบลงทะเบียนและเว็บไซต์") || !strings.Contains(l.NextAction, "69119000001") {
+		t.Errorf("next action = %q", l.NextAction)
 	}
 
 	// The second project from the same university joins the same lead.
@@ -176,6 +187,16 @@ func TestEgpSendCreatesALeadThenAttachesTheNextProject(t *testing.T) {
 	list.as(t, "pagination", &p)
 	if p.Total != 1 {
 		t.Errorf("there must be one lead for the university, got %d", p.Total)
+	}
+
+	// Searching the Lead Tracker by the work or the e-GP number finds it.
+	for _, q := range []string{"เว็บไซต์", "69119000002"} {
+		found := env.do(env.admin, http.MethodGet, "/api/leads?search="+url.QueryEscape(q), nil)
+		var fp struct{ Total int64 }
+		found.as(t, "pagination", &fp)
+		if fp.Total != 1 {
+			t.Errorf("search %q found %d leads, want 1", q, fp.Total)
+		}
 	}
 
 	if env.egpView("sent").Counts["sent"] != 2 {
@@ -274,5 +295,73 @@ func TestEgpIsAdminOnly(t *testing.T) {
 	}
 	if r := env.doMultipart(env.sales1, "/api/egp/import", nil, egpCSV); r.Status != http.StatusForbidden {
 		t.Errorf("import as sales: got %d, want 403", r.Status)
+	}
+}
+
+func TestEgpShortlistAndExportForAnalysis(t *testing.T) {
+	env := newTestEnv(t)
+	env.doMultipart(env.admin, "/api/egp/import", nil, egpRealCSV)
+	cmu := env.egpIDByProject("69119000103")
+
+	if r := env.do(env.admin, http.MethodGet, "/api/egp/export", nil); r.Status != http.StatusBadRequest {
+		t.Fatalf("export with nothing starred: %d %s", r.Status, r.Raw)
+	}
+
+	if r := env.do(env.admin, http.MethodPost, fmt.Sprintf("/api/egp/announcements/%d/shortlist", cmu), map[string]bool{"on": true}); r.Status != http.StatusOK {
+		t.Fatalf("shortlist: %d %s", r.Status, r.Raw)
+	}
+	// Starred projects keep their own tab and also show in the shortlist.
+	list := env.egpView("shortlist")
+	if list.Counts["shortlist"] != 1 || list.Counts["inbox"] != 2 || len(list.Data) != 1 || list.Data[0].ID != cmu {
+		t.Fatalf("shortlist view: counts %+v, %d items", list.Counts, len(list.Data))
+	}
+
+	r := env.do(env.admin, http.MethodGet, "/api/egp/export", nil)
+	if r.Status != http.StatusOK {
+		t.Fatalf("export: %d %s", r.Status, r.Raw)
+	}
+	md, _ := r.Body["markdown"].(string)
+	for _, want := range []string{
+		"## สิ่งที่อยากให้ช่วย",
+		"จ้างพัฒนาเว็บไซต์คณะ", // the starred project
+		"69119000103", // its e-GP number
+		"ระยะเตรียมการ",              // its stage
+		"300,000 บาท",                // its budget
+		"จ้างจัดงานนิทรรศการ",        // the same agency's other project
+		"ยังไม่ได้กรอกในหน้าตั้งค่า", // the company template, until filled in
+	} {
+		if !strings.Contains(md, want) {
+			t.Errorf("export lacks %q:\n%s", want, md)
+		}
+	}
+	if strings.Contains(md, "TU GPT") {
+		t.Error("an unstarred project was exported")
+	}
+
+	// The company notes from the settings head every export.
+	settings := env.do(env.admin, http.MethodGet, "/api/egp/settings", nil)
+	var s map[string]interface{}
+	settings.as(t, "settings", &s)
+	s["analysis_context"] = "ทุนจดทะเบียน 1 ล้านบาท"
+	if r := env.do(env.admin, http.MethodPut, "/api/egp/settings", s); r.Status != http.StatusOK {
+		t.Fatalf("save settings: %d %s", r.Status, r.Raw)
+	}
+	r = env.do(env.admin, http.MethodGet, "/api/egp/export", nil)
+	if md, _ := r.Body["markdown"].(string); !strings.Contains(md, "ทุนจดทะเบียน 1 ล้านบาท") || strings.Contains(md, "ยังไม่ได้กรอกในหน้าตั้งค่า") {
+		t.Errorf("company notes missing:\n%s", md)
+	}
+
+	if r := env.do(env.admin, http.MethodPost, fmt.Sprintf("/api/egp/announcements/%d/shortlist", cmu), map[string]bool{"on": false}); r.Status != http.StatusOK {
+		t.Fatalf("un-shortlist: %d %s", r.Status, r.Raw)
+	}
+	if n := env.egpView("shortlist").Counts["shortlist"]; n != 0 {
+		t.Fatalf("shortlist count after removing = %d", n)
+	}
+	if r := env.do(env.admin, http.MethodGet, "/api/egp/export", nil); r.Status != http.StatusBadRequest {
+		t.Fatalf("export after removing: %d", r.Status)
+	}
+	// Sales cannot export.
+	if r := env.do(env.sales1, http.MethodGet, "/api/egp/export", nil); r.Status != http.StatusForbidden {
+		t.Fatalf("sales export: %d", r.Status)
 	}
 }

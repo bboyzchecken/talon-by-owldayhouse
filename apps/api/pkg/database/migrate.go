@@ -1,9 +1,14 @@
 package database
 
 import (
+	"errors"
+	"strings"
+
 	"github.com/go-gormigrate/gormigrate/v2"
-	"github.com/owldayhouse/odh-internal-api/pkg/models"
 	"gorm.io/gorm"
+
+	"github.com/owldayhouse/odh-internal-api/pkg/egpradar"
+	"github.com/owldayhouse/odh-internal-api/pkg/models"
 )
 
 // allModels is the AutoMigrate list. A new internal tool adds its models here.
@@ -113,7 +118,61 @@ func Migrate(db *gorm.DB) error {
 				return m.DropColumn(&models.EgpAnnouncement{}, "winner_announced_at")
 			},
 		},
+		{
+			ID: "20261111_01_egp_shortlist",
+			Migrate: func(tx *gorm.DB) error {
+				return tx.AutoMigrate(&models.EgpAnnouncement{})
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Migrator().DropColumn(&models.EgpAnnouncement{}, "shortlisted_at")
+			},
+		},
+		{
+			// Leads sent from e-GP before this showed only the agency and a
+			// project number. Add the project title to the text the system
+			// wrote; anything a person has edited since is left alone.
+			ID:       "20261111_02_egp_lead_titles",
+			Migrate:  backfillEgpLeadTitles,
+			Rollback: func(tx *gorm.DB) error { return nil },
+		},
 	})
 
 	return m.Migrate()
+}
+
+func backfillEgpLeadTitles(tx *gorm.DB) error {
+	var rows []models.EgpAnnouncement
+	if err := tx.Where("decision = ? AND lead_id IS NOT NULL", models.EgpDecisionSent).Find(&rows).Error; err != nil {
+		return err
+	}
+	for _, row := range rows {
+		var lead models.Lead
+		if err := tx.First(&lead, *row.LeadID).Error; err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				continue
+			}
+			return err
+		}
+		updates := map[string]interface{}{}
+		if strings.HasPrefix(lead.SourceDetail, "e-GP "+row.ProjectID) {
+			updates["source_detail"] = cutRunes(egpradar.ShortTitle(row.Title, 90)+" · "+lead.SourceDetail, 512)
+		}
+		if lead.NextAction == "อ่าน TOR / เตรียมยื่น e-GP "+row.ProjectID {
+			updates["next_action"] = cutRunes("อ่าน TOR / เตรียมยื่น: "+egpradar.ShortTitle(row.Title, 60)+" (e-GP "+row.ProjectID+")", 500)
+		}
+		if len(updates) == 0 {
+			continue
+		}
+		if err := tx.Model(&models.Lead{}).Where("id = ?", lead.ID).Updates(updates).Error; err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func cutRunes(s string, n int) string {
+	if r := []rune(s); len(r) > n {
+		return string(r[:n])
+	}
+	return s
 }

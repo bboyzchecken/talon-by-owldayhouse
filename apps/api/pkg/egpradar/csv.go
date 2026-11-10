@@ -74,6 +74,21 @@ var (
 	numberPattern = regexp.MustCompile(`[^0-9.\-]`)
 )
 
+// fieldForHeader maps a header cell to a field: an exact alias first, then
+// any date column that speaks of the end of bidding, whatever e-GP calls it
+// ("วันสิ้นสุดเสนอราคา", "วันที่สิ้นสุดการยื่นข้อเสนอ", "วันปิดรับ…").
+func fieldForHeader(cell string) (string, bool) {
+	h := squashHeader(cell)
+	if field, ok := headerAliases[h]; ok {
+		return field, true
+	}
+	if strings.HasPrefix(h, "วัน") && !strings.Contains(h, "ผู้ชนะ") &&
+		(strings.Contains(h, "สิ้นสุด") || strings.Contains(h, "ปิดรับ") || strings.Contains(h, "ยื่นข้อเสนอ") || strings.Contains(h, "เสนอราคา")) {
+		return "deadline", true
+	}
+	return "", false
+}
+
 func squashHeader(h string) string {
 	h = strings.TrimPrefix(h, "\ufeff")
 	h = parenPattern.ReplaceAllString(h, "")
@@ -115,7 +130,7 @@ func ParseCSV(r io.Reader) ([]Row, []RowProblem, error) {
 	for i, rec := range records {
 		found := map[string]int{}
 		for j, cell := range rec {
-			if field, ok := headerAliases[squashHeader(cell)]; ok {
+			if field, ok := fieldForHeader(cell); ok {
 				if _, dup := found[field]; !dup {
 					found[field] = j
 				}
@@ -133,6 +148,25 @@ func ParseCSV(r io.Reader) ([]Row, []RowProblem, error) {
 	}
 	if headerAt < 0 {
 		return nil, nil, errors.New("ไม่พบหัวตาราง ต้องมีอย่างน้อยคอลัมน์ “หน่วยงาน” และ “ชื่อโครงการ” — ใช้ไฟล์จากปุ่ม Export .CSV ของ e-GP")
+	}
+
+	// A filtered export repeats the search filters above the header, e.g.
+	// วิธีการจัดหา "ประกวดราคาอิเล็กทรอนิกส์ (e-bidding)" and
+	// ประเภทการจัดหา "จ้างทำของ/จ้างเหมาบริการ". They hold for every row.
+	fileMethod, fileHire := MethodUnknown, (*bool)(nil)
+	for _, rec := range records[:headerAt] {
+		line := strings.Join(rec, " ")
+		value := strings.Trim(strings.TrimSpace(afterLabel(line)), `"`)
+		switch {
+		case strings.HasPrefix(strings.TrimSpace(line), "วิธีการจัดหา"):
+			fileMethod = MethodOf(value)
+		case strings.HasPrefix(strings.TrimSpace(line), "ประเภทการจัดหา"):
+			hire := strings.Contains(value, "จ้าง") && !strings.Contains(value, "ซื้อ")
+			buy := strings.Contains(value, "ซื้อ") && !strings.Contains(value, "จ้าง")
+			if hire || buy {
+				fileHire = &hire
+			}
+		}
 	}
 
 	at := func(rec []string, field string) string {
@@ -167,6 +201,12 @@ func ParseCSV(r io.Reader) ([]Row, []RowProblem, error) {
 		if row.ProjectID == "" {
 			row.ProjectID = parsed.ProjectID
 		}
+		if fileMethod != MethodUnknown && row.Method == MethodUnknown {
+			row.Method = fileMethod
+		}
+		if fileHire != nil {
+			row.Hire = *fileHire
+		}
 		if m := at(rec, "method"); m != "" {
 			if method := MethodOf(m); method != MethodUnknown {
 				row.Method = method
@@ -192,6 +232,15 @@ func ParseCSV(r io.Reader) ([]Row, []RowProblem, error) {
 		rows = append(rows, row)
 	}
 	return rows, problems, nil
+}
+
+// afterLabel returns what follows the first word of a "label value" line.
+func afterLabel(line string) string {
+	line = strings.TrimSpace(line)
+	if i := strings.IndexAny(line, " \t"); i >= 0 {
+		return line[i+1:]
+	}
+	return ""
 }
 
 func parseMoney(text string) float64 {

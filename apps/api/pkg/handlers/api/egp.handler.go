@@ -25,6 +25,8 @@ const (
 	egpViewClosed   = "closed"
 	egpViewSent     = "sent"
 	egpViewSkipped  = "skipped"
+	// egpViewShortlist lists starred projects from every tab.
+	egpViewShortlist = "shortlist"
 )
 
 // registerEgpRoutes wires e-GP Radar, the second internal tool. Admin only:
@@ -37,6 +39,8 @@ func (s *Server) registerEgpRoutes(api *echo.Group) {
 	egp.POST("/announcements/:id/send", s.SendEgpAnnouncement)
 	egp.POST("/announcements/:id/skip", s.SkipEgpAnnouncement)
 	egp.POST("/announcements/:id/restore", s.RestoreEgpAnnouncement)
+	egp.POST("/announcements/:id/shortlist", s.ShortlistEgpAnnouncement)
+	egp.GET("/export", s.ExportEgpBrief)
 	egp.GET("/settings", s.GetEgpSettings)
 	egp.PUT("/settings", s.UpdateEgpSettings)
 }
@@ -51,9 +55,14 @@ func (s *Server) egpSettings() (egpradar.Settings, error) {
 		return egpradar.Defaults(), nil
 	}
 	settings := egpradar.Defaults()
+	// Settings saved before versions existed have no "version" key.
+	settings.Version = 0
 	if err := json.Unmarshal([]byte(raw), &settings); err != nil {
 		return egpradar.Defaults(), nil
 	}
+	// New built-in words reach saved settings here; the admin sees them on
+	// the settings screen and they are stored with the next save.
+	settings, _ = settings.Upgrade()
 	return settings.Normalize(), nil
 }
 
@@ -96,17 +105,24 @@ func (s *Server) ListEgpAnnouncements(c echo.Context) error {
 	}
 
 	today := startOfToday()
-	counts := map[string]int{egpViewInbox: 0, egpViewFlagged: 0, egpViewExcluded: 0, egpViewClosed: 0, egpViewSent: 0, egpViewSkipped: 0}
+	counts := map[string]int{egpViewInbox: 0, egpViewShortlist: 0, egpViewFlagged: 0, egpViewExcluded: 0, egpViewClosed: 0, egpViewSent: 0, egpViewSkipped: 0}
 	items := make([]egpItem, 0, len(rows))
 	for _, row := range rows {
 		result := egpradar.Evaluate(egpInput(row), settings, today)
 		tab := egpTab(row.Decision, result, settings)
 		counts[tab]++
-		if tab == view {
+		// The shortlist cuts across tabs: a project stays in its own tab too.
+		if row.ShortlistedAt != nil {
+			counts[egpViewShortlist]++
+		}
+		if tab == view || (view == egpViewShortlist && row.ShortlistedAt != nil) {
 			items = append(items, egpItem{EgpAnnouncement: row, MethodLabel: egpradar.MethodLabel(row.Method), Result: result})
 		}
 	}
 
+	if view == egpViewShortlist {
+		sort.SliceStable(items, func(i, j int) bool { return items[i].ShortlistedAt.After(*items[j].ShortlistedAt) })
+	}
 	if view == egpViewInbox || view == egpViewFlagged {
 		sort.SliceStable(items, func(i, j int) bool {
 			if items[i].Result.Score != items[j].Result.Score {
@@ -199,10 +215,22 @@ func (s *Server) ImportEgpCSV(c echo.Context) error {
 	if err != nil {
 		return s.serverError(c, err)
 	}
+	settings, err := s.egpSettings()
+	if err != nil {
+		return s.serverError(c, err)
+	}
+	moved := 0
+	for _, row := range rows {
+		if row.DeadlineChanged && s.syncEgpFollowUp(row, settings) {
+			moved++
+		}
+	}
 	return c.JSON(http.StatusOK, map[string]interface{}{
-		"created":  result.Created,
-		"updated":  result.Updated,
-		"problems": problems,
+		// Leads whose follow-up moved because a closing date arrived.
+		"follow_ups_moved": moved,
+		"created":          result.Created,
+		"updated":          result.Updated,
+		"problems":         problems,
 		// e-GP exports only the first 1,000 rows of a search.
 		"maybe_truncated": len(parsed)+len(problems) >= egpradar.ExportLimit,
 	})
@@ -249,7 +277,36 @@ func (s *Server) UpdateEgpAnnouncement(c echo.Context) error {
 	if err := s.EgpStore.Update(row); err != nil {
 		return s.serverError(c, err)
 	}
+	if row.DeadlineAt != nil {
+		if settings, err := s.egpSettings(); err == nil {
+			s.syncEgpFollowUp(row, settings)
+		}
+	}
 	return c.JSON(http.StatusOK, row)
+}
+
+// syncEgpFollowUp moves the follow-up of a lead the project was sent to when
+// its closing date becomes known or changes — but only while the lead's next
+// action is still the one the Radar wrote for this project. A follow-up a
+// person has set is never touched. It reports whether the lead changed.
+func (s *Server) syncEgpFollowUp(row *models.EgpAnnouncement, settings egpradar.Settings) bool {
+	if row.Decision != models.EgpDecisionSent || row.LeadID == nil || row.DeadlineAt == nil {
+		return false
+	}
+	lead, err := s.LeadStore.Find(*row.LeadID)
+	if err != nil || lead.NextAction != egpNextAction(row) {
+		return false
+	}
+	follow := egpFollowUpDate(row.DeadlineAt, settings.LeadTimeDays)
+	if lead.NextActionDate != nil && lead.NextActionDate.Equal(follow) {
+		return false
+	}
+	lead.NextActionDate = &follow
+	if err := s.LeadStore.Update(lead); err != nil {
+		s.Log.WithError(err).Error("failed to move an e-GP lead's follow-up")
+		return false
+	}
+	return true
 }
 
 func (s *Server) setEgpDecision(c echo.Context, decision string) error {
@@ -335,7 +392,7 @@ func (s *Server) SendEgpAnnouncement(c echo.Context) error {
 	}
 
 	detail := egpDetail(row)
-	nextAction := truncateRunes("อ่าน TOR / เตรียมยื่น e-GP "+row.ProjectID, 500)
+	nextAction := egpNextAction(row)
 	nextActionDate := egpFollowUpDate(row.DeadlineAt, settings.LeadTimeDays)
 
 	// 1. An existing lead: chosen explicitly, or the same agency by name.
@@ -447,8 +504,13 @@ func (s *Server) SendEgpAnnouncement(c echo.Context) error {
 }
 
 // egpDetail is the one-line summary used for source_detail and the timeline.
+// egpTitleRunes is how much of a project title goes on a lead card.
+const egpTitleRunes = 90
+
 func egpDetail(row *models.EgpAnnouncement) string {
-	parts := []string{"e-GP " + row.ProjectID}
+	// The title comes first: a lead is named after the agency, so without it
+	// a card does not say what the work is.
+	parts := []string{egpradar.ShortTitle(row.Title, egpTitleRunes), "e-GP " + row.ProjectID}
 	if label := egpradar.MethodLabel(row.Method); row.Method != "" {
 		parts = append(parts, label)
 	}
@@ -462,6 +524,12 @@ func egpDetail(row *models.EgpAnnouncement) string {
 		parts = append(parts, row.ProcurementUnit)
 	}
 	return strings.Join(parts, " · ")
+}
+
+// egpNextAction names the project as well as its number: an agency can have
+// several projects, and the follow-up must say which one is due.
+func egpNextAction(row *models.EgpAnnouncement) string {
+	return truncateRunes("อ่าน TOR / เตรียมยื่น: "+egpradar.ShortTitle(row.Title, 60)+" (e-GP "+row.ProjectID+")", 500)
 }
 
 // egpFollowUpDate is leadDays before the closing date, but never in the past;
@@ -533,6 +601,7 @@ func (s *Server) UpdateEgpSettings(c echo.Context) error {
 		return badRequest(c, "ข้อมูลที่ส่งมาไม่ถูกต้อง")
 	}
 	settings = settings.Normalize()
+	settings.Version = egpradar.SettingsVersion
 	if err := settings.Validate(); err != nil {
 		return badRequest(c, err.Error())
 	}

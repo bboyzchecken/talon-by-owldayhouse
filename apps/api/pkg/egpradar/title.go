@@ -80,3 +80,34 @@ func MethodLabel(method string) string {
 		return "ไม่ระบุ"
 	}
 }
+
+// shortTitleTails are the method phrases e-GP appends to a title.
+var shortTitleTails = []string{"ด้วยวิธี", "โดยวิธี"}
+
+// ShortTitle is a title trimmed for a card: without e-GP's method words at
+// the start ("ประกวดราคา") and the end ("ด้วยวิธีประกวดราคาอิเล็กทรอนิกส์
+// (e-bidding)"), the doubled "จ้างจ้าง", and cut to maxRunes.
+func ShortTitle(title string, maxRunes int) string {
+	t := spacePattern.ReplaceAllString(strings.TrimSpace(title), " ")
+	for _, prefix := range []string{"ประกวดราคา", "สอบราคา"} {
+		if rest := strings.TrimSpace(strings.TrimPrefix(t, prefix)); rest != t && rest != "" {
+			t = rest
+			break
+		}
+	}
+	for strings.HasPrefix(t, "จ้างจ้าง") || strings.HasPrefix(t, "ซื้อซื้อ") {
+		t = t[len("จ้าง"):]
+		if strings.HasPrefix(t, "ซื้อ") && !strings.HasPrefix(t, "ซื้อซื้อ") {
+			break
+		}
+	}
+	for _, tail := range shortTitleTails {
+		if i := strings.Index(t, tail); i > 0 {
+			t = strings.TrimSpace(t[:i])
+		}
+	}
+	if r := []rune(t); maxRunes > 0 && len(r) > maxRunes {
+		t = strings.TrimSpace(string(r[:maxRunes])) + "…"
+	}
+	return t
+}

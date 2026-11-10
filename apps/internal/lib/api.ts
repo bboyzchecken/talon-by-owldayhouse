@@ -7,6 +7,8 @@ import type {
   EgpListResponse,
   EgpSendResult,
   EgpSettings,
+  EgpBrief,
+  CalendarResponse,
   EgpSettingsResponse,
   EgpView,
   CheckNameResponse,
@@ -376,6 +378,11 @@ export const csv = {
 
 // --- e-GP Radar (admin only) -------------------------------------------------
 
+/** The team calendar: e-GP closing dates, meetings and follow-ups. */
+export const calendar = {
+  range: (from: string, to: string) => get<CalendarResponse>("/api/calendar", { from, to }),
+};
+
 export const egp = {
   list: (view: EgpView) => get<EgpListResponse>("/api/egp/announcements", { view }),
 
@@ -394,6 +401,10 @@ export const egp = {
 
   skip: (id: number) => send<unknown>("post", `/api/egp/announcements/${id}/skip`),
   restore: (id: number) => send<unknown>("post", `/api/egp/announcements/${id}/restore`),
+  shortlist: (id: number, on: boolean) => send<unknown>("post", `/api/egp/announcements/${id}/shortlist`, { on }),
+
+  /** The starred projects as one Markdown brief to hand to Claude. */
+  brief: () => get<EgpBrief>("/api/egp/export"),
 
   settings: () => get<EgpSettingsResponse>("/api/egp/settings"),
   saveSettings: (settings: EgpSettings) =>

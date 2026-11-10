@@ -127,6 +127,7 @@ func (s *Server) Handler() *echo.Echo {
 	s.registerFileRoutes(api)
 	s.registerLeadRoutes(api)
 	s.registerEgpRoutes(api)
+	s.registerCalendarRoutes(api)
 	s.registerAdminRoutes(api)
 
 	return e

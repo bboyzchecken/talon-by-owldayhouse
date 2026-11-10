@@ -85,8 +85,8 @@ export default function LeadListPage() {
                 setPage(1);
                 setSearch(event.target.value);
               }}
-              placeholder="ค้นหาชื่อบริษัท หรือเลขผู้เสียภาษี"
-              aria-label="ค้นหาชื่อบริษัท"
+              placeholder="ค้นหาชื่อบริษัท ชื่องาน เลข e-GP หรือเลขผู้เสียภาษี"
+              aria-label="ค้นหาลูกค้า"
               className="w-full rounded-xl border border-line bg-white py-3 pl-11 pr-4 font-body text-base text-ink placeholder:text-muted/70 focus:border-navy focus:outline-none focus:ring-2 focus:ring-navy/20"
             />
           </div>

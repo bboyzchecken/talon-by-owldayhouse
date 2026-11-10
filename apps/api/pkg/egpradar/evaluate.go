@@ -56,6 +56,9 @@ type Input struct {
 
 // Result is the verdict on one announcement under the current settings.
 type Result struct {
+	// Subject is the part of the title that names what is hired; keywords
+	// and excluded words are matched against it, not the purpose.
+	Subject         string      `json:"subject"`
 	Stage           string      `json:"stage"`
 	StageLabel      string      `json:"stage_label"`
 	Group           string      `json:"group"`
@@ -79,6 +82,7 @@ type Result struct {
 // the current day in Asia/Bangkok.
 func Evaluate(in Input, s Settings, today time.Time) Result {
 	title := strings.ToLower(in.Title)
+	subject := Subject(in.Title)
 	agencyText := strings.ToLower(in.Agency + " " + in.ProcurementUnit)
 
 	r := Result{
@@ -88,6 +92,7 @@ func Evaluate(in Input, s Settings, today time.Time) Result {
 		MatchedServices: []string{},
 		MatchedKeywords: []string{},
 		Interests:       []string{},
+		Subject:         subject,
 	}
 	r.GroupLabel = GroupLabel(r.Group)
 	r.Stage = StageOf(in.ProjectStatus, in.WinnerAnnounced)
@@ -109,23 +114,32 @@ func Evaluate(in Input, s Settings, today time.Time) Result {
 	if hit := firstHit(agencyText, s.Blocklist); hit != "" {
 		exclude("blocklist", "หน่วยงานอยู่ในรายชื่อที่ไม่เอา ("+hit+")")
 	}
-	if hit := firstHit(title, s.ExcludeKeywords); hit != "" {
-		exclude("exclude_keyword", "มีคำที่ตัดทิ้ง: "+hit)
-	}
 	if s.HireOnly && !in.Hire {
 		exclude("not_hire", "เป็นงานซื้อของ ไม่ใช่งานจ้าง")
 	}
 
+	purposeOnly := ""
+	var topicKeywords []string
 	for _, g := range s.ServiceGroups {
 		if !g.Enabled {
 			continue
 		}
 		matched := false
 		for _, kw := range g.Keywords {
-			if kw != "" && strings.Contains(title, strings.ToLower(kw)) {
-				r.MatchedKeywords = append(r.MatchedKeywords, kw)
-				matched = true
+			if kw == "" {
+				continue
 			}
+			if !strings.Contains(subject, strings.ToLower(kw)) {
+				if purposeOnly == "" && strings.Contains(title, strings.ToLower(kw)) {
+					purposeOnly = kw
+				}
+				continue
+			}
+			r.MatchedKeywords = append(r.MatchedKeywords, kw)
+			if topicGroups[g.Key] {
+				topicKeywords = append(topicKeywords, kw)
+			}
+			matched = true
 		}
 		if matched {
 			r.MatchedServices = append(r.MatchedServices, g.Label)
@@ -134,8 +148,25 @@ func Evaluate(in Input, s Settings, today time.Time) Result {
 			}
 		}
 	}
+	// A system, a video or a campaign is named after its topic: an excluded
+	// word after such a keyword says what the work is about
+	// ("พัฒนาระบบลงทะเบียนยานพาหนะ" is a system, not a vehicle), so only the
+	// words before it count. Events keep the whole subject, so an admin can
+	// still drop "จัดกิจกรรมทัศนศึกษา" by excluding ทัศนศึกษา.
+	excludeIn := subject
+	if first := firstIndex(subject, topicKeywords); first >= 0 {
+		excludeIn = subject[:first]
+	}
+	if hit := firstHit(excludeIn, s.ExcludeKeywords); hit != "" {
+		exclude("exclude_keyword", "มีคำที่ตัดทิ้ง: "+hit)
+	}
+
 	if len(r.MatchedServices) == 0 {
-		exclude("no_service", "ชื่องานไม่ตรงกลุ่มบริการที่เลือก")
+		if purposeOnly != "" {
+			exclude("purpose_only", "คำว่า “"+purposeOnly+"” อยู่ในส่วนวัตถุประสงค์ ส่วนงานที่จ้างจริงคือ “"+shorten(subject, 60)+"”")
+		} else {
+			exclude("no_service", "ชื่องานไม่ตรงกลุ่มบริการที่เลือก")
+		}
 	}
 
 	if !r.Watchlisted && !contains(s.AgencyGroups, r.Group) {
@@ -255,6 +286,9 @@ func appendUnique(values []string, v string) []string {
 	return append(values, v)
 }
 
+// Baht formats an amount as "1,234,567 บาท".
+func Baht(v float64) string { return baht(v) }
+
 func baht(v float64) string {
 	whole := int64(math.Round(v))
 	s := fmt.Sprintf("%d", whole)
@@ -266,4 +300,19 @@ func baht(v float64) string {
 		b.WriteRune(c)
 	}
 	return b.String() + " บาท"
+}
+
+// topicGroups are the service groups whose titles name a topic after the
+// keyword.
+var topicGroups = map[string]bool{"system": true, "media": true, "digital": true}
+
+// firstIndex is where the earliest of words starts in text, or -1.
+func firstIndex(text string, words []string) int {
+	first := -1
+	for _, w := range words {
+		if i := strings.Index(text, strings.ToLower(w)); i >= 0 && (first < 0 || i < first) {
+			first = i
+		}
+	}
+	return first
 }

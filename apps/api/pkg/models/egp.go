@@ -35,10 +35,17 @@ type EgpAnnouncement struct {
 	// longer be bid on.
 	WinnerAnnouncedAt *time.Time `json:"winner_announced_at,omitempty"`
 
-	Decision  string     `gorm:"size:16;not null;default:new;index" json:"decision"`
-	LeadID    *uint      `gorm:"index" json:"lead_id,omitempty"`
-	DecidedBy *uint      `json:"decided_by,omitempty"`
-	DecidedAt *time.Time `json:"decided_at,omitempty"`
+	Decision string `gorm:"size:16;not null;default:new;index" json:"decision"`
+	LeadID   *uint  `gorm:"index" json:"lead_id,omitempty"`
+	// ShortlistedAt marks a project the admin wants analysed before deciding;
+	// it is independent of the tab the project sits in.
+	ShortlistedAt *time.Time `gorm:"index" json:"shortlisted_at,omitempty"`
+	DecidedBy     *uint      `json:"decided_by,omitempty"`
+	DecidedAt     *time.Time `json:"decided_at,omitempty"`
+
+	// DeadlineChanged is set by Upsert when an import brings a new closing
+	// date, so a lead's follow-up can move with it. Not stored.
+	DeadlineChanged bool `gorm:"-" json:"-"`
 
 	ImportedBy  uint      `gorm:"not null" json:"imported_by"`
 	FirstSeenAt time.Time `gorm:"not null" json:"first_seen_at"`
@@ -66,6 +73,11 @@ type EgpStore interface {
 	Upsert(rows []*EgpAnnouncement) (EgpUpsertResult, error)
 	Find(id uint) (*EgpAnnouncement, error)
 	List(decision string, limit int) ([]*EgpAnnouncement, error)
+	// ListByAgency returns other projects of an agency, newest first.
+	ListByAgency(agency string, excludeID uint, limit int) ([]*EgpAnnouncement, error)
+	// DeadlinesBetween returns projects sent to the Lead Tracker whose
+	// closing date falls in [from, to).
+	DeadlinesBetween(from, to time.Time) ([]*EgpAnnouncement, error)
 	Update(row *EgpAnnouncement) error
 	LoadSettings() (string, error)
 	SaveSettings(data string, updatedBy uint) error

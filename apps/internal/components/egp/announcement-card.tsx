@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { AlertTriangle, CalendarClock, ExternalLink, Info } from "lucide-react";
+import { AlertTriangle, CalendarClock, ExternalLink, Info, Star } from "lucide-react";
 import { Button, cn } from "@odh/ui";
 import { leadHref } from "@/components/lead-card";
 import { Alert, Input, Select } from "@/components/ui";
@@ -62,6 +62,8 @@ export function AnnouncementCard({
   });
 
   const skip = useMutation({ mutationFn: () => egp.skip(item.id), onSuccess: refresh });
+  const starred = Boolean(item.shortlisted_at);
+  const star = useMutation({ mutationFn: () => egp.shortlist(item.id, !starred), onSuccess: refresh });
   const restore = useMutation({ mutationFn: () => egp.restore(item.id), onSuccess: refresh });
   const saveDeadline = useMutation({
     mutationFn: (value: string) => egp.setDeadline(item.id, value),
@@ -79,7 +81,8 @@ export function AnnouncementCard({
         r.flagged ? "border-ink/40" : "border-line",
       )}
     >
-      <div className="flex flex-wrap items-center gap-1.5">
+      <div className="flex items-start gap-2">
+      <div className="flex min-w-0 flex-1 flex-wrap items-center gap-1.5">
         {r.stage && r.stage !== "unknown" ? (
           <span
             className={cn(
@@ -140,6 +143,21 @@ export function AnnouncementCard({
           </span>
         ))}
       </div>
+        <button
+          type="button"
+          onClick={() => star.mutate()}
+          disabled={star.isPending}
+          aria-pressed={starred}
+          title={starred ? "เอาออกจากรายการคัดไว้วิเคราะห์" : "คัดไว้วิเคราะห์กับ Claude"}
+          className={cn(
+            "inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 font-display text-xs font-semibold transition-colors",
+            starred ? "bg-navy text-white" : "border border-line text-muted hover:border-navy hover:text-navy",
+          )}
+        >
+          <Star className={cn("size-3.5", starred ? "fill-current" : "")} aria-hidden />
+          {starred ? "คัดไว้แล้ว" : "คัดไว้"}
+        </button>
+      </div>
 
       <p className="mt-3 font-display text-sm font-semibold text-muted">
         {item.agency}
@@ -148,6 +166,11 @@ export function AnnouncementCard({
         ) : null}
       </p>
       <h3 className="mt-1 font-display text-base font-semibold leading-snug text-ink">{item.title}</h3>
+      {r.subject && r.subject.length < item.title.length - 4 ? (
+        <p className="mt-1 font-body text-xs text-muted">
+          งานที่จ้าง: <span className="text-ink">{r.subject}</span>
+        </p>
+      ) : null}
 
       <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 font-body text-sm sm:grid-cols-4">
         <div>
