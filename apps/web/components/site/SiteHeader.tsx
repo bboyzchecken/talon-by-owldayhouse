@@ -8,6 +8,7 @@ import { Button, OwlLogo } from "@odh/ui";
 import { getCopy } from "@/content/copy";
 import { getServices } from "@/content/services";
 import { localeHref, switchLocalePath, type Locale } from "@/lib/i18n";
+import { ThemeToggle } from "./ThemeToggle";
 
 const PILLARS = ["Build", "Activate", "Grow"] as const;
 
@@ -85,6 +86,7 @@ export function SiteHeader({ locale, languageHref }: SiteHeaderProps) {
           <Link className="odh-lang" href={languageHref ?? switchLocalePath(pathname, other)} hrefLang={other} aria-label={t.switchLabel} onClick={close}>
             {other.toUpperCase()}
           </Link>
+          <ThemeToggle label={t.themeLabel} />
           <Button variant="key" size="sm" asChild className="odh-header__cta">
             <Link href={href("/contact/")} onClick={close}>
               {t.cta}

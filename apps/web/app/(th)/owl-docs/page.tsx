@@ -10,5 +10,9 @@ export const metadata: Metadata = {
 };
 
 export default function OwlDocsPage() {
-  return <OwlDocsApp />;
+  return (
+    <div className="odh-keep-light">
+      <OwlDocsApp />
+    </div>
+  );
 }

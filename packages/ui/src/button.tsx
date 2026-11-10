@@ -3,10 +3,10 @@ import { Slot } from "@radix-ui/react-slot";
 import { cn } from "./utils/cn";
 
 const base =
-  "inline-flex items-center justify-center gap-2 rounded-full font-display font-semibold whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50";
+  "inline-flex items-center justify-center gap-2 rounded-full font-display font-semibold whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--surface)] disabled:pointer-events-none disabled:opacity-50";
 
 const variantClasses = {
-  key: "bg-navy text-white hover:bg-gold hover:text-navy",
+  key: "bg-[var(--key)] text-[color:var(--on-key)] hover:bg-gold hover:text-navy",
   line: "border border-line-control bg-transparent text-ink hover:border-ink",
   // Kept for the internal document tools.
   gold: "bg-gold text-navy hover:bg-gold/90",

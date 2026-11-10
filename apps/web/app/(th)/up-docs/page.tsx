@@ -12,9 +12,9 @@ export const metadata: Metadata = {
 
 export default function UpDocsPage() {
   return (
-    <>
+    <div className="odh-keep-light">
       <UpDocsAnalytics />
       <UpDocsApp />
-    </>
+    </div>
   );
 }

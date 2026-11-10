@@ -14,9 +14,9 @@ export function Prose({ children, className }: { children: ReactNode; className?
         "[&_ul]:my-4 [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:text-muted",
         "[&_ol]:my-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:text-muted",
         "[&_li]:my-1.5 [&_li]:leading-7",
-        "[&_a]:font-medium [&_a]:text-navy [&_a]:underline [&_a]:underline-offset-4",
+        "[&_a]:font-medium [&_a]:text-[color:var(--text-key)] [&_a]:underline [&_a]:underline-offset-4",
         "[&_strong]:font-semibold [&_strong]:text-ink",
-        "[&_blockquote]:my-10 [&_blockquote]:font-display [&_blockquote]:text-2xl [&_blockquote]:leading-relaxed [&_blockquote]:text-navy",
+        "[&_blockquote]:my-10 [&_blockquote]:font-display [&_blockquote]:text-2xl [&_blockquote]:leading-relaxed [&_blockquote]:text-[color:var(--text-key)]",
         className,
       )}
     >

@@ -7,8 +7,8 @@
     "node": ">=20"
   },
   "scripts": {
-    "kill-port": "lsof -ti tcp:3000 | xargs -I{} kill -9 {} 2>/dev/null || true",
-    "predev": "lsof -ti tcp:3000 | xargs -I{} kill -9 {} 2>/dev/null || true",
+    "kill-port": "node scripts/kill-port.mjs 3000",
+    "predev": "node scripts/kill-port.mjs 3000",
     "dev": "turbo run dev",
     "build": "turbo run build",
     "build:web": "turbo run build --filter web",
