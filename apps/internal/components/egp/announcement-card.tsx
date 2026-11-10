@@ -65,11 +65,44 @@ export function AnnouncementCard({
   const starred = Boolean(item.shortlisted_at);
   const star = useMutation({ mutationFn: () => egp.shortlist(item.id, !starred), onSuccess: refresh });
   const restore = useMutation({ mutationFn: () => egp.restore(item.id), onSuccess: refresh });
+  const [deadlineNote, setDeadlineNote] = useState("");
   const saveDeadline = useMutation({
     mutationFn: (value: string) => egp.setDeadline(item.id, value),
-    onSuccess: refresh,
-    onError: (caught) => setError((caught as ApiError).body?.error ?? "บันทึกวันปิดรับไม่สำเร็จ"),
+    onSuccess: async (result, value) => {
+      setError("");
+      if (item.decision === "sent") {
+        setDeadlineNote(
+          !value
+            ? "ลบวันปิดรับแล้ว"
+            : result.follow_up_moved
+              ? "บันทึกแล้ว · เลื่อนวันตามต่อของลูกค้าเป็นก่อนวันปิดรับ และขึ้นในปฏิทินกลางแล้ว"
+              : "บันทึกแล้ว · ขึ้นในปฏิทินกลางแล้ว (วันตามต่อไม่เปลี่ยน เพราะเซลส์ตั้งขั้นต่อไปเองแล้ว หรือตรงอยู่แล้ว)",
+        );
+        await queryClient.invalidateQueries({ queryKey: ["leads"] });
+        await queryClient.invalidateQueries({ queryKey: ["calendar"] });
+      }
+      await refresh();
+    },
+    onError: (caught) => {
+      setDeadlineNote("");
+      setError((caught as ApiError).body?.error ?? "บันทึกวันปิดรับไม่สำเร็จ");
+    },
   });
+  const deadlineInput = (
+    <label className="min-w-40 flex-1 sm:flex-none">
+      <span className="mb-1 block font-display text-xs font-semibold text-muted">วันปิดรับ</span>
+      <Input
+        type="date"
+        value={deadline}
+        onChange={(event) => setDeadline(event.target.value)}
+        onBlur={() => {
+          if (deadline !== (item.deadline_at?.slice(0, 10) ?? "")) saveDeadline.mutate(deadline);
+        }}
+        disabled={saveDeadline.isPending}
+        aria-label="วันปิดรับข้อเสนอ"
+      />
+    </label>
+  );
 
   const warnings = r.flags.filter((f) => f.severity === "warn");
   const notices = r.flags.filter((f) => f.severity === "info");
@@ -272,18 +305,7 @@ export function AnnouncementCard({
 
       {open ? (
         <div className="mt-4 flex flex-wrap items-end gap-2 border-t border-line pt-4">
-          <label className="min-w-40 flex-1 sm:flex-none">
-            <span className="mb-1 block font-display text-xs font-semibold text-muted">วันปิดรับ</span>
-            <Input
-              type="date"
-              value={deadline}
-              onChange={(event) => setDeadline(event.target.value)}
-              onBlur={() => {
-                if (deadline !== (item.deadline_at?.slice(0, 10) ?? "")) saveDeadline.mutate(deadline);
-              }}
-              aria-label="วันปิดรับข้อเสนอ"
-            />
-          </label>
+          {deadlineInput}
           <label className="min-w-44 flex-1">
             <span className="mb-1 block font-display text-xs font-semibold text-muted">ส่งให้</span>
             <Select value={assignee} onChange={(event) => setAssignee(event.target.value)} aria-label="ส่งให้ใคร">
@@ -306,13 +328,19 @@ export function AnnouncementCard({
 
       {item.decision === "sent" && item.lead_id ? (
         <div className="mt-4 border-t border-line pt-3">
-          <Link
-            href={leadHref(item.lead_id)}
-            className="inline-flex items-center gap-1.5 font-display text-sm font-semibold text-navy underline"
-          >
-            <ExternalLink className="size-4" aria-hidden />
-            เปิดลูกค้าใน Lead Tracker
-          </Link>
+          <div className="flex flex-wrap items-end gap-3">
+            {/* A sent project still needs its closing date: it drives the
+                team calendar and the sales person's follow-up. */}
+            {closed ? null : deadlineInput}
+            <Link
+              href={leadHref(item.lead_id)}
+              className="inline-flex items-center gap-1.5 pb-2 font-display text-sm font-semibold text-navy underline"
+            >
+              <ExternalLink className="size-4" aria-hidden />
+              เปิดลูกค้าใน Lead Tracker
+            </Link>
+          </div>
+          {deadlineNote ? <p className="mt-2 font-body text-xs text-muted" role="status">{deadlineNote}</p> : null}
         </div>
       ) : null}
 
