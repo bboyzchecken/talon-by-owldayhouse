@@ -140,3 +140,20 @@ func TestParseCSVReadsTheFiltersAboveTheHeader(t *testing.T) {
 		t.Fatalf("filters not applied: %+v", rows[0])
 	}
 }
+
+func TestShortTitle(t *testing.T) {
+	cases := map[string]string{
+		"ประกวดราคาจ้างบำรุงรักษาโปรแกรมระบบสารสนเทศ จำนวน 2 รายการ ด้วยวิธีประกวดราคาอิเล็กทรอนิกส์ (e-bidding)": "จ้างบำรุงรักษาโปรแกรมระบบสารสนเทศ จำนวน 2 รายการ",
+		"ประกวดราคาจ้างจ้างเหมาจัดงานตามโครงการส่งเสริมการท่องเที่ยว":                                             "จ้างเหมาจัดงานตามโครงการส่งเสริมการท่องเที่ยว",
+		"ซื้อซื้อวัสดุอุปกรณ์กิจกรรม โดยวิธีเฉพาะเจาะจง":                                                          "ซื้อวัสดุอุปกรณ์กิจกรรม",
+		"จ้างทำตรายาง": "จ้างทำตรายาง",
+	}
+	for in, want := range cases {
+		if got := ShortTitle(in, 0); got != want {
+			t.Errorf("ShortTitle(%q) = %q, want %q", in, got, want)
+		}
+	}
+	if got := ShortTitle("จ้างพัฒนาระบบลงทะเบียนนักศึกษาและระบบประเมินผลการเรียน", 20); len([]rune(got)) != 21 || !strings.HasSuffix(got, "…") {
+		t.Errorf("cut: %q", got)
+	}
+}

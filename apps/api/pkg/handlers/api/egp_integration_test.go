@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 	"net/http"
+	"net/url"
 	"strings"
 	"testing"
 
@@ -134,13 +135,14 @@ func TestEgpSendCreatesALeadThenAttachesTheNextProject(t *testing.T) {
 
 	lead := env.do(env.sales1, http.MethodGet, fmt.Sprintf("/api/leads/%d", leadID), nil)
 	var l struct {
-		Name        string   `json:"name"`
-		Source      string   `json:"source"`
-		OwnerType   string   `json:"owner_type"`
-		OwnerUserID *uint    `json:"owner_user_id"`
-		Industry    string   `json:"industry"`
-		Interests   []string `json:"interests"`
-		NextAction  string   `json:"next_action"`
+		Name         string   `json:"name"`
+		Source       string   `json:"source"`
+		OwnerType    string   `json:"owner_type"`
+		OwnerUserID  *uint    `json:"owner_user_id"`
+		Industry     string   `json:"industry"`
+		Interests    []string `json:"interests"`
+		NextAction   string   `json:"next_action"`
+		SourceDetail string   `json:"source_detail"`
 	}
 	lead.as(t, "lead", &l)
 	if l.Name != "มหาวิทยาลัยเชียงใหม่" || l.Source != models.SourceEGP || l.OwnerType != models.OwnerTypeCompany {
@@ -154,6 +156,14 @@ func TestEgpSendCreatesALeadThenAttachesTheNextProject(t *testing.T) {
 	}
 	if l.NextAction == "" {
 		t.Error("a follow-up must be set so it shows on the sales person's วันนี้ screen")
+	}
+	// A lead is named after the agency: the card must still say what the
+	// work is, without e-GP's method words.
+	if !strings.HasPrefix(l.SourceDetail, "จ้างพัฒนาระบบลงทะเบียนและเว็บไซต์ · e-GP 69119000001") || strings.Contains(l.SourceDetail, "โดยวิธี") {
+		t.Errorf("source detail = %q", l.SourceDetail)
+	}
+	if !strings.Contains(l.NextAction, "จ้างพัฒนาระบบลงทะเบียนและเว็บไซต์") || !strings.Contains(l.NextAction, "69119000001") {
+		t.Errorf("next action = %q", l.NextAction)
 	}
 
 	// The second project from the same university joins the same lead.
@@ -177,6 +187,16 @@ func TestEgpSendCreatesALeadThenAttachesTheNextProject(t *testing.T) {
 	list.as(t, "pagination", &p)
 	if p.Total != 1 {
 		t.Errorf("there must be one lead for the university, got %d", p.Total)
+	}
+
+	// Searching the Lead Tracker by the work or the e-GP number finds it.
+	for _, q := range []string{"เว็บไซต์", "69119000002"} {
+		found := env.do(env.admin, http.MethodGet, "/api/leads?search="+url.QueryEscape(q), nil)
+		var fp struct{ Total int64 }
+		found.as(t, "pagination", &fp)
+		if fp.Total != 1 {
+			t.Errorf("search %q found %d leads, want 1", q, fp.Total)
+		}
 	}
 
 	if env.egpView("sent").Counts["sent"] != 2 {

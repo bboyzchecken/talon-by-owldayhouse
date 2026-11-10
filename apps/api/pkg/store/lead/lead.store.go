@@ -140,7 +140,13 @@ func (s *leadStoreService) filter(q *gorm.DB, query models.ListLeadQuery) *gorm.
 	}
 	if query.Search != "" {
 		like := "%" + query.Search + "%"
-		q = q.Where("name ILIKE ? OR normalized_name ILIKE ? OR COALESCE(tax_id, '') ILIKE ?", like, like, like)
+		// The source detail, the next action and the timeline carry project
+		// titles and e-GP numbers, so "เว็บไซต์" or "69109177935" finds the
+		// lead too, including a second project attached to it.
+		q = q.Where("leads.name ILIKE ? OR leads.normalized_name ILIKE ? OR COALESCE(leads.tax_id, '') ILIKE ? "+
+			"OR leads.source_detail ILIKE ? OR leads.next_action ILIKE ? "+
+			"OR EXISTS (SELECT 1 FROM activities a WHERE a.lead_id = leads.id AND a.summary ILIKE ?)",
+			like, like, like, like, like, like)
 	}
 	if query.DueToday {
 		endOfDay := query.Today.AddDate(0, 0, 1)

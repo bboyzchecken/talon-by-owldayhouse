@@ -351,7 +351,7 @@ func (s *Server) SendEgpAnnouncement(c echo.Context) error {
 	}
 
 	detail := egpDetail(row)
-	nextAction := truncateRunes("อ่าน TOR / เตรียมยื่น e-GP "+row.ProjectID, 500)
+	nextAction := egpNextAction(row)
 	nextActionDate := egpFollowUpDate(row.DeadlineAt, settings.LeadTimeDays)
 
 	// 1. An existing lead: chosen explicitly, or the same agency by name.
@@ -463,8 +463,13 @@ func (s *Server) SendEgpAnnouncement(c echo.Context) error {
 }
 
 // egpDetail is the one-line summary used for source_detail and the timeline.
+// egpTitleRunes is how much of a project title goes on a lead card.
+const egpTitleRunes = 90
+
 func egpDetail(row *models.EgpAnnouncement) string {
-	parts := []string{"e-GP " + row.ProjectID}
+	// The title comes first: a lead is named after the agency, so without it
+	// a card does not say what the work is.
+	parts := []string{egpradar.ShortTitle(row.Title, egpTitleRunes), "e-GP " + row.ProjectID}
 	if label := egpradar.MethodLabel(row.Method); row.Method != "" {
 		parts = append(parts, label)
 	}
@@ -478,6 +483,12 @@ func egpDetail(row *models.EgpAnnouncement) string {
 		parts = append(parts, row.ProcurementUnit)
 	}
 	return strings.Join(parts, " · ")
+}
+
+// egpNextAction names the project as well as its number: an agency can have
+// several projects, and the follow-up must say which one is due.
+func egpNextAction(row *models.EgpAnnouncement) string {
+	return truncateRunes("อ่าน TOR / เตรียมยื่น: "+egpradar.ShortTitle(row.Title, 60)+" (e-GP "+row.ProjectID+")", 500)
 }
 
 // egpFollowUpDate is leadDays before the closing date, but never in the past;

@@ -47,9 +47,13 @@ export function LeadCard({
 
         <h3 className="mt-2 truncate font-display text-base font-semibold text-ink">{lead.name}</h3>
 
+        {lead.source_detail ? (
+          // What the work is: for an e-GP lead (named after the agency) this
+          // is the project title, so it gets its own, readable line.
+          <p className="mt-0.5 line-clamp-2 font-body text-sm text-ink">{lead.source_detail}</p>
+        ) : null}
         <p className="mt-0.5 font-body text-xs text-muted">
           {labelOf(industryLabels, lead.industry)} · {labelOf(sourceLabels, lead.source)}
-          {lead.source_detail ? ` · ${lead.source_detail}` : ""}
         </p>
 
         {lead.estimated_value > 0 ? (
@@ -59,17 +63,19 @@ export function LeadCard({
         {showNextAction && lead.next_action_date ? (
           <p
             className={cn(
-              "mt-2 inline-flex items-center gap-1.5 rounded-full px-2 py-1 font-body text-xs",
+              "mt-2 inline-flex max-w-full items-center gap-1.5 rounded-full px-2 py-1 font-body text-xs",
               overdue > 0 ? "bg-ink text-white" : "bg-gray-50 text-muted",
             )}
           >
-            <CalendarClock className="size-3.5" aria-hidden />
-            {overdue > 0
-              ? `เลยกำหนด ${overdue} วัน`
-              : overdue === 0
-                ? "ต้องตามวันนี้"
-                : `ตามต่อ ${formatDate(lead.next_action_date)}`}
-            {lead.next_action ? ` · ${lead.next_action}` : ""}
+            <CalendarClock className="size-3.5 shrink-0" aria-hidden />
+            <span className="truncate">
+              {overdue > 0
+                ? `เลยกำหนด ${overdue} วัน`
+                : overdue === 0
+                  ? "ต้องตามวันนี้"
+                  : `ตามต่อ ${formatDate(lead.next_action_date)}`}
+              {lead.next_action ? ` · ${lead.next_action}` : ""}
+            </span>
           </p>
         ) : null}
       </div>
