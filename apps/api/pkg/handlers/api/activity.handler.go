@@ -60,6 +60,11 @@ func (s *Server) CreateActivity(c echo.Context) error {
 		return err
 	} else if parsed != nil {
 		happenedAt = *parsed
+		// A bare date for today means "just now", not midnight: older
+		// screens send only the date.
+		if isDateOnly(body.HappenedAt) && sameBangkokDay(*parsed, time.Now()) {
+			happenedAt = time.Now().In(leadrules.Bangkok)
+		}
 	}
 
 	me := actor(c)
@@ -133,6 +138,15 @@ func (s *Server) DeleteActivity(c echo.Context) error {
 		return s.serverError(c, err)
 	}
 	return c.JSON(http.StatusOK, map[string]string{"status": "deleted"})
+}
+
+func isDateOnly(value string) bool {
+	_, err := time.Parse("2006-01-02", strings.TrimSpace(value))
+	return err == nil
+}
+
+func sameBangkokDay(a, b time.Time) bool {
+	return a.In(leadrules.Bangkok).Format("2006-01-02") == b.In(leadrules.Bangkok).Format("2006-01-02")
 }
 
 // parseDateTime reads a date or a full timestamp in Asia/Bangkok.
