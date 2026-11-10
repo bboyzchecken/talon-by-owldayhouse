@@ -219,6 +219,33 @@ func TestEgpSendStopsOnASimilarName(t *testing.T) {
 	}
 }
 
+// The real export layout: mostly projects that are already awarded.
+const egpRealCSV = "\ufeffข้อมูลโครงการจัดซื้อจัดจ้าง ประจำปีงบประมาณ พ.ศ. 2570\n" +
+	",,,,,,,,,\n" +
+	"ลำดับ,หน่วยงาน,จังหวัด,เลขที่โครงการ,ชื่อโครงการ,วันที่ประกาศเชิญชวน,วงเงินงบประมาณ(บาท),ราคากลาง(บาท),วันที่ประกาศผู้ชนะ,สถานะโครงการ\n" +
+	`1,โรงเรียนสตรีวัดมหาพฤฒาราม,กรุงเทพมหานคร,69119000101,"จ้างค่าบำรุงระบบสารสนเทศและบัตรนักเรียน โดยวิธีเฉพาะเจาะจง",,"152,100.00","152,100.00",10/11/2569,จัดทำสัญญา/บริหารสัญญา` + "\n" +
+	`2,มหาวิทยาลัยธรรมศาสตร์ ศูนย์รังสิต,ปทุมธานี,69119000102,"ประกวดราคาจ้างทำระบบสารสนเทศอัจฉริยะ TU GPT ระยะ 2 ด้วยวิธีประกวดราคาอิเล็กทรอนิกส์ (e-bidding)",10/11/2569,"900,000.00","890,000.00",,หนังสือเชิญชวน/ประกาศเชิญชวน` + "\n" +
+	`3,มหาวิทยาลัยเชียงใหม่,เชียงใหม่,69119000103,"จ้างพัฒนาเว็บไซต์คณะ โดยวิธีเฉพาะเจาะจง",,"300,000.00","300,000.00",,จัดทำ TOR` + "\n" +
+	`4,มหาวิทยาลัยเชียงใหม่,เชียงใหม่,69119000104,"จ้างจัดงานนิทรรศการ โดยวิธีเฉพาะเจาะจง",,"200,000.00","200,000.00",,ยกเลิกโครงการ` + "\n"
+
+func TestEgpRealExportGoesToTheRightTabs(t *testing.T) {
+	env := newTestEnv(t)
+	r := env.doMultipart(env.admin, "/api/egp/import", nil, egpRealCSV)
+	if r.Status != http.StatusOK || r.Body["created"].(float64) != 4 {
+		t.Fatalf("import: %d %s", r.Status, r.Raw)
+	}
+	if truncated, _ := r.Body["maybe_truncated"].(bool); truncated {
+		t.Error("4 rows is nowhere near e-GP's 1,000-row cut")
+	}
+
+	counts := env.egpView("inbox").Counts
+	// The open tender and the TOR-stage project are opportunities; the
+	// awarded and the cancelled ones are history.
+	if counts["inbox"] != 2 || counts["closed"] != 2 || counts["excluded"] != 0 {
+		t.Fatalf("counts = %+v, want inbox 2 / closed 2 / excluded 0", counts)
+	}
+}
+
 func TestEgpSkipAndRestore(t *testing.T) {
 	env := newTestEnv(t)
 	env.doMultipart(env.admin, "/api/egp/import", nil, egpCSV)

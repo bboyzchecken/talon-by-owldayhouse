@@ -22,6 +22,7 @@ const (
 	egpViewInbox    = "inbox"
 	egpViewFlagged  = "flagged"
 	egpViewExcluded = "excluded"
+	egpViewClosed   = "closed"
 	egpViewSent     = "sent"
 	egpViewSkipped  = "skipped"
 )
@@ -65,6 +66,8 @@ func egpInput(a *models.EgpAnnouncement) egpradar.Input {
 		Province:        a.Province,
 		Hire:            a.Hire,
 		DeadlineAt:      a.DeadlineAt,
+		ProjectStatus:   a.ProjectStatus,
+		WinnerAnnounced: a.WinnerAnnouncedAt != nil,
 	}
 }
 
@@ -93,7 +96,7 @@ func (s *Server) ListEgpAnnouncements(c echo.Context) error {
 	}
 
 	today := startOfToday()
-	counts := map[string]int{egpViewInbox: 0, egpViewFlagged: 0, egpViewExcluded: 0, egpViewSent: 0, egpViewSkipped: 0}
+	counts := map[string]int{egpViewInbox: 0, egpViewFlagged: 0, egpViewExcluded: 0, egpViewClosed: 0, egpViewSent: 0, egpViewSkipped: 0}
 	items := make([]egpItem, 0, len(rows))
 	for _, row := range rows {
 		result := egpradar.Evaluate(egpInput(row), settings, today)
@@ -123,6 +126,10 @@ func egpTab(decision string, r egpradar.Result, s egpradar.Settings) string {
 		return egpViewSent
 	case decision == models.EgpDecisionSkipped:
 		return egpViewSkipped
+	// Awarded and cancelled projects get their own tab: they are most of any
+	// real export and would bury the reasons that matter for tuning keywords.
+	case r.Stage == egpradar.StageAwarded || r.Stage == egpradar.StageCancelled:
+		return egpViewClosed
 	case !r.Passed:
 		return egpViewExcluded
 	case r.Flagged && s.HideFlaggedByDefault:
@@ -171,18 +178,20 @@ func (s *Server) ImportEgpCSV(c echo.Context) error {
 	rows := make([]*models.EgpAnnouncement, 0, len(parsed))
 	for _, p := range parsed {
 		rows = append(rows, &models.EgpAnnouncement{
-			ProjectID:       p.ProjectID,
-			Agency:          p.Agency,
-			ProcurementUnit: p.ProcurementUnit,
-			Title:           p.Title,
-			Method:          p.Method,
-			Hire:            p.Hire,
-			Budget:          p.Budget,
-			ProjectStatus:   p.ProjectStatus,
-			Province:        p.Province,
-			AnnouncedAt:     p.AnnouncedAt,
-			DeadlineAt:      p.DeadlineAt,
-			ImportedBy:      me.ID,
+			ProjectID:         p.ProjectID,
+			Agency:            p.Agency,
+			ProcurementUnit:   p.ProcurementUnit,
+			Title:             p.Title,
+			Method:            p.Method,
+			Hire:              p.Hire,
+			Budget:            p.Budget,
+			ProjectStatus:     p.ProjectStatus,
+			Province:          p.Province,
+			ReferencePrice:    p.ReferencePrice,
+			WinnerAnnouncedAt: p.WinnerAt,
+			AnnouncedAt:       p.AnnouncedAt,
+			DeadlineAt:        p.DeadlineAt,
+			ImportedBy:        me.ID,
 		})
 	}
 
@@ -194,6 +203,8 @@ func (s *Server) ImportEgpCSV(c echo.Context) error {
 		"created":  result.Created,
 		"updated":  result.Updated,
 		"problems": problems,
+		// e-GP exports only the first 1,000 rows of a search.
+		"maybe_truncated": len(parsed)+len(problems) >= egpradar.ExportLimit,
 	})
 }
 

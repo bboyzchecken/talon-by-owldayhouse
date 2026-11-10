@@ -17,18 +17,23 @@ const (
 // current Radar settings every time the list is read, so a settings change
 // re-evaluates everything at once.
 type EgpAnnouncement struct {
-	ID              uint       `gorm:"primarykey" json:"id"`
-	ProjectID       string     `gorm:"size:32;uniqueIndex;not null" json:"project_id"`
-	Agency          string     `gorm:"size:255;not null;index" json:"agency"`
-	ProcurementUnit string     `gorm:"size:255" json:"procurement_unit"`
-	Title           string     `gorm:"type:text;not null" json:"title"`
-	Method          string     `gorm:"size:20" json:"method"`
-	Hire            bool       `gorm:"not null;default:false" json:"hire"`
-	Budget          float64    `gorm:"type:numeric(16,2);not null;default:0" json:"budget"`
-	ProjectStatus   string     `gorm:"size:128" json:"project_status"`
-	Province        string     `gorm:"size:64" json:"province"`
-	AnnouncedAt     *time.Time `json:"announced_at,omitempty"`
-	DeadlineAt      *time.Time `json:"deadline_at,omitempty"`
+	ID              uint    `gorm:"primarykey" json:"id"`
+	ProjectID       string  `gorm:"size:32;uniqueIndex;not null" json:"project_id"`
+	Agency          string  `gorm:"size:255;not null;index" json:"agency"`
+	ProcurementUnit string  `gorm:"size:255" json:"procurement_unit"`
+	Title           string  `gorm:"type:text;not null" json:"title"`
+	Method          string  `gorm:"size:20" json:"method"`
+	Hire            bool    `gorm:"not null;default:false" json:"hire"`
+	Budget          float64 `gorm:"type:numeric(16,2);not null;default:0" json:"budget"`
+	// ReferencePrice is e-GP's ราคากลาง, the price bids are measured against.
+	ReferencePrice float64    `gorm:"type:numeric(16,2);not null;default:0" json:"reference_price"`
+	ProjectStatus  string     `gorm:"size:128" json:"project_status"`
+	Province       string     `gorm:"size:64" json:"province"`
+	AnnouncedAt    *time.Time `json:"announced_at,omitempty"`
+	DeadlineAt     *time.Time `json:"deadline_at,omitempty"`
+	// WinnerAnnouncedAt is set once e-GP shows a winner: the project can no
+	// longer be bid on.
+	WinnerAnnouncedAt *time.Time `json:"winner_announced_at,omitempty"`
 
 	Decision  string     `gorm:"size:16;not null;default:new;index" json:"decision"`
 	LeadID    *uint      `gorm:"index" json:"lead_id,omitempty"`

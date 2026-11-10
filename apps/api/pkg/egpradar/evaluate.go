@@ -19,6 +19,7 @@ const (
 	FlagOverBudget = "over_budget"
 	FlagShortPrep  = "short_prep"
 	FlagNoDeadline = "no_deadline"
+	FlagUpcoming   = "upcoming"
 )
 
 // Flag is a label on an announcement, always with the reason behind it. The
@@ -47,10 +48,16 @@ type Input struct {
 	Province        string
 	Hire            bool
 	DeadlineAt      *time.Time
+	// ProjectStatus is e-GP's สถานะโครงการ; WinnerAnnounced is true when the
+	// export carries a winner-announced date.
+	ProjectStatus   string
+	WinnerAnnounced bool
 }
 
 // Result is the verdict on one announcement under the current settings.
 type Result struct {
+	Stage           string      `json:"stage"`
+	StageLabel      string      `json:"stage_label"`
 	Group           string      `json:"group"`
 	GroupLabel      string      `json:"group_label"`
 	Industry        string      `json:"industry"`
@@ -83,6 +90,8 @@ func Evaluate(in Input, s Settings, today time.Time) Result {
 		Interests:       []string{},
 	}
 	r.GroupLabel = GroupLabel(r.Group)
+	r.Stage = StageOf(in.ProjectStatus, in.WinnerAnnounced)
+	r.StageLabel = StageLabel(r.Stage)
 	r.Industry = IndustryFor(r.Group)
 	r.Watchlisted = containsAny(agencyText, s.Watchlist)
 
@@ -91,6 +100,12 @@ func Evaluate(in Input, s Settings, today time.Time) Result {
 	}
 
 	// --- hard filters ---------------------------------------------------
+	switch r.Stage {
+	case StageAwarded:
+		exclude("awarded", "ได้ผู้ชนะแล้ว ยื่นข้อเสนอไม่ได้ (ใช้ดูว่าหน่วยงานนี้จ้างอะไร)")
+	case StageCancelled:
+		exclude("cancelled", "หน่วยงานยกเลิกโครงการแล้ว")
+	}
 	if hit := firstHit(agencyText, s.Blocklist); hit != "" {
 		exclude("blocklist", "หน่วยงานอยู่ในรายชื่อที่ไม่เอา ("+hit+")")
 	}
@@ -156,10 +171,16 @@ func Evaluate(in Input, s Settings, today time.Time) Result {
 			Reason: fmt.Sprintf("เหลือ %d วันก่อนปิดรับ (ตั้งไว้อย่างน้อย %d วัน) คนที่เตรียมไว้ก่อนได้เปรียบ", *r.DaysLeft, s.MinPrepDays),
 		})
 	}
-	if in.DeadlineAt == nil {
+	if r.Stage == StageUpcoming {
+		r.Flags = append(r.Flags, Flag{
+			Code: FlagUpcoming, Label: "ระยะเตรียมการ", Severity: SeverityInfo,
+			Reason: "ยังไม่ประกาศเชิญชวน (สถานะ: " + strings.TrimSpace(in.ProjectStatus) + ") แนะนำบริษัทกับหน่วยงานได้ก่อนประกาศ และส่งใบเสนอราคาเมื่อถูกขอ",
+		})
+	}
+	if in.DeadlineAt == nil && (r.Stage == StageOpen || r.Stage == StageUnknown) {
 		r.Flags = append(r.Flags, Flag{
 			Code: FlagNoDeadline, Label: "ไม่ทราบวันปิดรับ", Severity: SeverityInfo,
-			Reason: "ไฟล์จาก e-GP ไม่มีวันปิดรับ ดูในหน้าประกาศก่อนตัดสินใจ",
+			Reason: "ไฟล์ export ของ e-GP ไม่มีวันปิดรับ ดูในหน้าประกาศแล้วกรอกในช่องวันปิดรับ",
 		})
 	}
 	for _, f := range r.Flags {
@@ -188,6 +209,11 @@ func score(r Result, in Input, s Settings) int {
 		total += 10
 	}
 	if r.DaysLeft != nil && *r.DaysLeft >= 2*s.MinPrepDays {
+		total += 10
+	}
+	// The earliest stage is the most valuable: there is time to be known
+	// before the invitation is out.
+	if r.Stage == StageUpcoming {
 		total += 10
 	}
 	for _, f := range r.Flags {

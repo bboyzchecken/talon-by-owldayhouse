@@ -54,6 +54,10 @@ func (s *egpStoreService) Upsert(rows []*models.EgpAnnouncement) (models.EgpUpse
 				existing.Method = row.Method
 				existing.Hire = row.Hire
 				existing.Budget = row.Budget
+				existing.ReferencePrice = row.ReferencePrice
+				if row.WinnerAnnouncedAt != nil {
+					existing.WinnerAnnouncedAt = row.WinnerAnnouncedAt
+				}
 				existing.ProjectStatus = row.ProjectStatus
 				if row.Province != "" {
 					existing.Province = row.Province
