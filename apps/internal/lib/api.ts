@@ -393,8 +393,9 @@ export const egp = {
     return postForm<EgpImportResult>("/api/egp/import", body);
   },
 
+  /** follow_up_moved: a sent project's lead now follows up before the new date. */
   setDeadline: (id: number, deadline: string) =>
-    send<unknown>("patch", `/api/egp/announcements/${id}`, { deadline_at: deadline }),
+    send<{ follow_up_moved: boolean }>("patch", `/api/egp/announcements/${id}`, { deadline_at: deadline }),
 
   send: (id: number, body: { owner_user_id?: number; lead_id?: number; confirm_similar?: boolean }) =>
     send<EgpSendResult>("post", `/api/egp/announcements/${id}/send`, body),

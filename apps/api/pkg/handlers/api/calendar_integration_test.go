@@ -111,3 +111,37 @@ func TestClosingDateMovesTheFollowUpAndShowsOnTheTeamCalendar(t *testing.T) {
 		t.Errorf("a 90-day range: got %d, want 400", r.Status)
 	}
 }
+
+func TestSettingTheClosingDateOnASentProjectMovesTheFollowUp(t *testing.T) {
+	env := newTestEnv(t)
+	env.doMultipart(env.admin, "/api/egp/import", nil, egpCSV)
+	website := env.egpIDByProject("69119000001")
+	sent := env.do(env.admin, http.MethodPost, fmt.Sprintf("/api/egp/announcements/%d/send", website), map[string]interface{}{
+		"owner_user_id": env.sales1.ID,
+	})
+	leadID := uint(sent.Body["lead_id"].(float64))
+
+	deadline := time.Now().In(leadrules.Bangkok).AddDate(0, 0, 14)
+	r := env.do(env.admin, http.MethodPatch, fmt.Sprintf("/api/egp/announcements/%d", website), map[string]string{
+		"deadline_at": deadline.Format("2006-01-02"),
+	})
+	if r.Status != http.StatusOK || r.Body["follow_up_moved"] != true || r.Body["project_id"] != "69119000001" {
+		t.Fatalf("set closing date: %d %s", r.Status, r.Raw)
+	}
+	var lead struct {
+		NextActionDate string `json:"next_action_date"`
+	}
+	env.do(env.admin, http.MethodGet, fmt.Sprintf("/api/leads/%d", leadID), nil).as(t, "lead", &lead)
+	got, _ := time.Parse(time.RFC3339, lead.NextActionDate)
+	if want := deadline.AddDate(0, 0, -3).Format("2006-01-02"); got.In(leadrules.Bangkok).Format("2006-01-02") != want {
+		t.Errorf("follow-up = %s, want %s", lead.NextActionDate, want)
+	}
+
+	// The same date again changes nothing.
+	r = env.do(env.admin, http.MethodPatch, fmt.Sprintf("/api/egp/announcements/%d", website), map[string]string{
+		"deadline_at": deadline.Format("2006-01-02"),
+	})
+	if r.Body["follow_up_moved"] != false {
+		t.Errorf("saving the same date again reported a move: %s", r.Raw)
+	}
+}

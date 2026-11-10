@@ -277,12 +277,18 @@ func (s *Server) UpdateEgpAnnouncement(c echo.Context) error {
 	if err := s.EgpStore.Update(row); err != nil {
 		return s.serverError(c, err)
 	}
+	moved := false
 	if row.DeadlineAt != nil {
 		if settings, err := s.egpSettings(); err == nil {
-			s.syncEgpFollowUp(row, settings)
+			moved = s.syncEgpFollowUp(row, settings)
 		}
 	}
-	return c.JSON(http.StatusOK, row)
+	return c.JSON(http.StatusOK, struct {
+		*models.EgpAnnouncement
+		// FollowUpMoved: the lead this project was sent to now follows up
+		// before the new closing date.
+		FollowUpMoved bool `json:"follow_up_moved"`
+	}{row, moved})
 }
 
 // syncEgpFollowUp moves the follow-up of a lead the project was sent to when
