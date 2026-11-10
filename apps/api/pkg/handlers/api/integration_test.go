@@ -23,6 +23,7 @@ import (
 	storeactivity "github.com/owldayhouse/odh-internal-api/pkg/store/activity"
 	storecontact "github.com/owldayhouse/odh-internal-api/pkg/store/contact"
 	storedeal "github.com/owldayhouse/odh-internal-api/pkg/store/deal"
+	storeegp "github.com/owldayhouse/odh-internal-api/pkg/store/egp"
 	storefile "github.com/owldayhouse/odh-internal-api/pkg/store/file"
 	storekpi "github.com/owldayhouse/odh-internal-api/pkg/store/kpi"
 	storelead "github.com/owldayhouse/odh-internal-api/pkg/store/lead"
@@ -124,7 +125,7 @@ func newTestEnv(t *testing.T) *testEnv {
 		t.Fatalf("migrations failed: %v", err)
 	}
 
-	err = db.Exec(`TRUNCATE ownership_logs, targets, deals, activities, contacts, leads, files, users RESTART IDENTITY CASCADE`).Error
+	err = db.Exec(`TRUNCATE egp_announcements, egp_settings_rows, ownership_logs, targets, deals, activities, contacts, leads, files, users RESTART IDENTITY CASCADE`).Error
 	if err != nil {
 		t.Fatalf("cannot clear the test database: %v", err)
 	}
@@ -142,7 +143,7 @@ func newTestEnv(t *testing.T) *testEnv {
 		config, log,
 		users, settings, storefile.New(db), leads, storecontact.New(db),
 		storeactivity.New(db), storedeal.New(db), storetarget.New(db),
-		storeownership.New(db), storekpi.New(db),
+		storeownership.New(db), storekpi.New(db), storeegp.New(db),
 		storage.New(config, storage.NewR2Client(config)),
 	)
 

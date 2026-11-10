@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, type ReactNode } from "react";
-import { BarChart3, CalendarCheck, Columns3, List, LogOut, Plus, Settings } from "lucide-react";
+import { BarChart3, CalendarCheck, Columns3, List, LogOut, Plus, Radar, Settings, SlidersHorizontal } from "lucide-react";
 import { OwlLogo, cn } from "@odh/ui";
 import { Spinner } from "@/components/ui";
 import { useAuth } from "@/lib/auth";
@@ -27,8 +27,16 @@ const leadNav: NavItem[] = [
   { href: "/leads/admin", label: "Admin", icon: Settings, adminOnly: true },
 ];
 
+/** e-GP Radar is admin only, so every item is too. */
+const egpNav: NavItem[] = [
+  { href: "/egp/radar", label: "Radar", icon: Radar, adminOnly: true },
+  { href: "/egp/settings", label: "ตั้งค่า", icon: SlidersHorizontal, adminOnly: true },
+];
+
 export function navForTool(slug: string | undefined): NavItem[] {
-  return slug === "leads" ? leadNav : [];
+  if (slug === "leads") return leadNav;
+  if (slug === "egp") return egpNav;
+  return [];
 }
 
 /**

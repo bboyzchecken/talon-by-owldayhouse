@@ -18,6 +18,8 @@ func allModels() []interface{} {
 		&models.Deal{},
 		&models.Target{},
 		&models.OwnershipLog{},
+		&models.EgpAnnouncement{},
+		&models.EgpSettingsRow{},
 	}
 }
 
@@ -83,6 +85,17 @@ func Migrate(db *gorm.DB) error {
 			Rollback: func(tx *gorm.DB) error {
 				return tx.Where("key = ?", models.SettingSalesExistingCutoff).
 					Delete(&models.Setting{}).Error
+			},
+		},
+		{
+			// e-GP Radar: public-procurement announcements imported from
+			// e-GP's own CSV export, and the Radar's settings.
+			ID: "20261110_01_egp_radar",
+			Migrate: func(tx *gorm.DB) error {
+				return tx.AutoMigrate(&models.EgpAnnouncement{}, &models.EgpSettingsRow{})
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Migrator().DropTable("egp_announcements", "egp_settings_rows")
 			},
 		},
 	})
