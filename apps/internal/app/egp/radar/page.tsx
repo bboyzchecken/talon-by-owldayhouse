@@ -17,6 +17,11 @@ const tabs: { view: EgpView; label: string; hint: string }[] = [
   { view: "inbox", label: "น่าสนใจ", hint: "ผ่านตัวกรอง เรียงตามคะแนน" },
   { view: "flagged", label: "ติดป้ายระวัง", hint: "ผ่านตัวกรอง แต่มีสัญญาณควรระวัง" },
   { view: "excluded", label: "ไม่ผ่านตัวกรอง", hint: "ดูเหตุผล ไว้ปรับคำค้นในหน้าตั้งค่า" },
+  {
+    view: "closed",
+    label: "ปิดแล้ว",
+    hint: "ได้ผู้ชนะหรือยกเลิกแล้ว ยื่นไม่ได้ ใช้ดูว่าหน่วยงานไหนจ้างอะไร ราคาเท่าไร",
+  },
   { view: "sent", label: "ส่งแล้ว", hint: "อยู่ใน Lead Tracker แล้ว" },
   { view: "skipped", label: "ข้าม", hint: "เอากลับมาพิจารณาได้" },
 ];
@@ -79,13 +84,18 @@ export default function RadarPage() {
       <Panel title="นำเข้าประกาศจาก e-GP (ทุกเช้า)">
         <ol className="list-decimal space-y-1 pl-5 font-body text-sm text-ink">
           <li>
-            เปิด e-GP → <strong>ค้นหาขั้นสูง</strong> (หรือ <strong>ดูประกาศวันนี้</strong>) เลือกวันที่ประกาศและวงเงินตามต้องการ
+            เปิด e-GP → <strong>ค้นหาขั้นสูง</strong> เลือก <strong>สถานะโครงการ</strong> เป็น “ประกาศเชิญชวน” หรือ
+            “จัดทำ TOR / ร่างประกาศ” และเลือกวันที่ประกาศช่วงสั้น ๆ (เช่น 1–3 วันล่าสุด)
           </li>
           <li>
             กด <strong>Export .CSV</strong> บนหน้าผลค้นหาของ e-GP
           </li>
           <li>เลือกไฟล์นั้นที่ปุ่มด้านล่าง — นำเข้าไฟล์เดิมซ้ำได้ ระบบไม่สร้างรายการซ้ำ</li>
         </ol>
+        <p className="mt-2 font-body text-xs text-muted">
+          e-GP export ได้ครั้งละ 1,000 รายการแรกเท่านั้น ถ้าไม่กรองสถานะ ไฟล์จะเต็มไปด้วยงานที่ได้ผู้ชนะแล้ว
+          (ระบบย้ายไปแท็บ “ปิดแล้ว”) และงานที่ยังเปิดรับอาจตกหล่น
+        </p>
         <div className="mt-4 flex flex-wrap items-center gap-3">
           <input
             ref={fileRef}
@@ -122,6 +132,14 @@ export default function RadarPage() {
                     .join(", ")}${imported.problems.length > 3 ? " …" : ""})`
                 : ""}
             </Alert>
+            {imported.maybe_truncated ? (
+              <div className="mt-2">
+                <Alert tone="stop">
+                  ไฟล์นี้มีครบ 1,000 รายการ ซึ่งเป็นเพดานของ e-GP รายการหลังจากนั้นอาจไม่ได้มา ให้กรองสถานะโครงการหรือแบ่งช่วงวันที่ให้แคบลง
+                  แล้ว export ใหม่
+                </Alert>
+              </div>
+            ) : null}
           </div>
         ) : null}
       </Panel>

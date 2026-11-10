@@ -275,7 +275,9 @@ export interface Setting {
 
 // --- e-GP Radar ---------------------------------------------------------------
 
-export type EgpView = "inbox" | "flagged" | "excluded" | "sent" | "skipped";
+export type EgpView = "inbox" | "flagged" | "excluded" | "closed" | "sent" | "skipped";
+
+export type EgpStage = "upcoming" | "open" | "awarded" | "cancelled" | "unknown";
 
 export interface EgpFlag {
   code: string;
@@ -290,6 +292,8 @@ export interface EgpExclusion {
 }
 
 export interface EgpResult {
+  stage: EgpStage;
+  stage_label: string;
   group: string;
   group_label: string;
   industry: string;
@@ -315,9 +319,11 @@ export interface EgpAnnouncement {
   method_label: string;
   hire: boolean;
   budget: number;
+  reference_price: number;
   project_status: string;
   province: string;
   announced_at?: string;
+  winner_announced_at?: string;
   deadline_at?: string;
   decision: "new" | "sent" | "skipped";
   lead_id?: number;
@@ -365,6 +371,8 @@ export interface EgpImportResult {
   created: number;
   updated: number;
   problems: { line: number; reason: string }[];
+  /** The file hit e-GP's 1,000-row export cap, so later rows may be missing. */
+  maybe_truncated: boolean;
 }
 
 export interface EgpSendResult {

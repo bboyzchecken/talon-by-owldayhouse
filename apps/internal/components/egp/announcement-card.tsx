@@ -30,7 +30,8 @@ export function AnnouncementCard({
 }) {
   const queryClient = useQueryClient();
   const r = item.result;
-  const open = item.decision === "new";
+  const closed = r.stage === "awarded" || r.stage === "cancelled";
+  const open = item.decision === "new" && !closed;
 
   const [assignee, setAssignee] = useState<string>(defaultAssigneeId ? String(defaultAssigneeId) : "");
   const [deadline, setDeadline] = useState(item.deadline_at?.slice(0, 10) ?? "");
@@ -79,6 +80,20 @@ export function AnnouncementCard({
       )}
     >
       <div className="flex flex-wrap items-center gap-1.5">
+        {r.stage && r.stage !== "unknown" ? (
+          <span
+            className={cn(
+              "rounded-full px-2.5 py-1 font-display text-xs font-semibold",
+              r.stage === "open"
+                ? "bg-navy/10 text-navy"
+                : r.stage === "upcoming"
+                  ? "border border-navy/40 text-navy"
+                  : "bg-gray-50 text-muted",
+            )}
+          >
+            {r.stage_label}
+          </span>
+        ) : null}
         {r.passed ? (
           <span
             className={cn(
@@ -139,14 +154,27 @@ export function AnnouncementCard({
           <dt className="font-mono text-[11px] uppercase tracking-wide text-muted">วงเงิน</dt>
           <dd className="tabular-nums text-ink">{item.budget ? formatBaht(item.budget) : "—"}</dd>
         </div>
+        {item.reference_price && item.reference_price !== item.budget ? (
+          <div>
+            <dt className="font-mono text-[11px] uppercase tracking-wide text-muted">ราคากลาง</dt>
+            <dd className="tabular-nums text-ink">{formatBaht(item.reference_price)}</dd>
+          </div>
+        ) : null}
         <div>
           <dt className="font-mono text-[11px] uppercase tracking-wide text-muted">เลขที่โครงการ</dt>
           <dd className="select-all font-mono text-ink">{item.project_id}</dd>
         </div>
-        <div>
-          <dt className="font-mono text-[11px] uppercase tracking-wide text-muted">วันปิดรับ</dt>
-          <dd className="text-ink">{formatDate(item.deadline_at)}</dd>
-        </div>
+        {item.winner_announced_at ? (
+          <div>
+            <dt className="font-mono text-[11px] uppercase tracking-wide text-muted">ประกาศผู้ชนะ</dt>
+            <dd className="text-ink">{formatDate(item.winner_announced_at)}</dd>
+          </div>
+        ) : (
+          <div>
+            <dt className="font-mono text-[11px] uppercase tracking-wide text-muted">วันปิดรับ</dt>
+            <dd className="text-ink">{formatDate(item.deadline_at)}</dd>
+          </div>
+        )}
         <div>
           <dt className="font-mono text-[11px] uppercase tracking-wide text-muted">สถานะใน e-GP</dt>
           <dd className="text-ink">{item.project_status || "—"}</dd>
@@ -180,7 +208,8 @@ export function AnnouncementCard({
         <ul className="mt-3 space-y-1 rounded-xl bg-gray-50 px-3 py-2">
           {r.exclusions.map((ex) => (
             <li key={ex.code} className="font-body text-xs text-muted">
-              ไม่ผ่านตัวกรอง: {ex.reason}
+              {closed ? "" : "ไม่ผ่านตัวกรอง: "}
+              {ex.reason}
             </li>
           ))}
         </ul>

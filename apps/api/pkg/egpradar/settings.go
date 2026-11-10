@@ -84,14 +84,16 @@ type Settings struct {
 // projects up to 1 million baht from universities, schools and public health.
 func Defaults() Settings {
 	return Settings{
-		AgencyGroups:    []string{GroupUniversity, GroupSchool, GroupHealth},
-		Provinces:       []string{},
-		Watchlist:       []string{},
-		Blocklist:       []string{},
-		BudgetMin:       0,
-		BudgetMax:       1_000_000,
-		ServiceGroups:   DefaultServiceGroups(),
-		ExcludeKeywords: []string{"ก่อสร้าง", "ครุภัณฑ์", "จัดซื้อวัสดุ", "เช่ารถ", "ซ่อมแซม", "ทำความสะอาด", "ไฟฟ้า", "ปรับอากาศ", "ประปา", "กล้องวงจรปิด", "รักษาความปลอดภัย"},
+		AgencyGroups:  []string{GroupUniversity, GroupSchool, GroupHealth},
+		Provinces:     []string{},
+		Watchlist:     []string{},
+		Blocklist:     []string{},
+		BudgetMin:     0,
+		BudgetMax:     1_000_000,
+		ServiceGroups: DefaultServiceGroups(),
+		// From a real export: bus hire for a seminar matched "สัมมนา", and
+		// catering for an event would match "จัดงาน".
+		ExcludeKeywords: []string{"ก่อสร้าง", "ครุภัณฑ์", "จัดซื้อวัสดุ", "เช่ารถ", "เหมารถ", "รถโดยสาร", "ยานพาหนะ", "อาหาร", "ซ่อมแซม", "ทำความสะอาด", "ไฟฟ้า", "ปรับอากาศ", "ประปา", "กล้องวงจรปิด", "รักษาความปลอดภัย"},
 		HireOnly:        true,
 
 		MinPrepDays:          7,

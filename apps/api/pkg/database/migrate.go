@@ -98,6 +98,21 @@ func Migrate(db *gorm.DB) error {
 				return tx.Migrator().DropTable("egp_announcements", "egp_settings_rows")
 			},
 		},
+		{
+			// From the first real e-GP export: its ราคากลาง and
+			// วันที่ประกาศผู้ชนะ columns.
+			ID: "20261110_02_egp_reference_price_and_winner",
+			Migrate: func(tx *gorm.DB) error {
+				return tx.AutoMigrate(&models.EgpAnnouncement{})
+			},
+			Rollback: func(tx *gorm.DB) error {
+				m := tx.Migrator()
+				if err := m.DropColumn(&models.EgpAnnouncement{}, "reference_price"); err != nil {
+					return err
+				}
+				return m.DropColumn(&models.EgpAnnouncement{}, "winner_announced_at")
+			},
+		},
 	})
 
 	return m.Migrate()

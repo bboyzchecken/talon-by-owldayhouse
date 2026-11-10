@@ -26,8 +26,10 @@ type Row struct {
 	Budget          float64
 	ProjectStatus   string
 	Province        string
+	ReferencePrice  float64
 	AnnouncedAt     *time.Time
 	DeadlineAt      *time.Time
+	WinnerAt        *time.Time
 }
 
 // RowProblem is a line that could not be used, and why.
@@ -63,6 +65,8 @@ var headerAliases = map[string]string{
 	"วันที่ยื่นข้อเสนอ":     "deadline",
 	"วันสิ้นสุดการเสนอราคา": "deadline",
 	"วันที่ปิดรับ":          "deadline",
+	"ราคากลาง":              "reference",
+	"วันที่ประกาศผู้ชนะ":    "winner",
 }
 
 var (
@@ -168,13 +172,14 @@ func ParseCSV(r io.Reader) ([]Row, []RowProblem, error) {
 				row.Method = method
 			}
 		}
-		if b := at(rec, "budget"); b != "" {
-			if v, err := strconv.ParseFloat(numberPattern.ReplaceAllString(b, ""), 64); err == nil {
-				row.Budget = v
-			}
+		row.Budget = parseMoney(at(rec, "budget"))
+		row.ReferencePrice = parseMoney(at(rec, "reference"))
+		if row.Budget == 0 {
+			row.Budget = row.ReferencePrice
 		}
 		row.AnnouncedAt = ParseThaiDate(at(rec, "announced"))
 		row.DeadlineAt = ParseThaiDate(at(rec, "deadline"))
+		row.WinnerAt = ParseThaiDate(at(rec, "winner"))
 
 		switch {
 		case row.ProjectID == "":
@@ -188,6 +193,22 @@ func ParseCSV(r io.Reader) ([]Row, []RowProblem, error) {
 	}
 	return rows, problems, nil
 }
+
+func parseMoney(text string) float64 {
+	cleaned := numberPattern.ReplaceAllString(text, "")
+	if cleaned == "" {
+		return 0
+	}
+	v, err := strconv.ParseFloat(cleaned, 64)
+	if err != nil {
+		return 0
+	}
+	return v
+}
+
+// ExportLimit is the most rows e-GP puts in one export ("ระบบ export ข้อมูล
+// 1,000 รายการแรกเท่านั้น"); a file that size has probably been cut short.
+const ExportLimit = 1000
 
 func isBlank(rec []string) bool {
 	for _, c := range rec {
