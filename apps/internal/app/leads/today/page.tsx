@@ -9,7 +9,7 @@ import { TeamCalendar } from "@/components/team-calendar";
 import { Alert, EmptyState, Panel, Spinner, StatTile } from "@/components/ui";
 import { leads as leadsApi } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
-import { formatDateTime } from "@/lib/format";
+import { formatWhen } from "@/lib/format";
 import { activityTypeLabels, labelOf } from "@/lib/labels";
 
 export default function TodayPage() {
@@ -84,7 +84,7 @@ export default function TodayPage() {
                       {activity.lead?.name ?? `ลูกค้า #${activity.lead_id}`}
                     </div>
                     <div className="font-body text-xs text-muted">
-                      {formatDateTime(activity.happened_at)} ·{" "}
+                      {formatWhen(activity.happened_at)} ·{" "}
                       {labelOf(activityTypeLabels, activity.type)}
                       {activity.user ? ` · ${activity.user.name}` : ""}
                     </div>

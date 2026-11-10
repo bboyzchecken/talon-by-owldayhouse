@@ -43,6 +43,29 @@ export function formatDateTime(value?: string | null): string {
   return Number.isNaN(date.getTime()) ? "—" : dateTimeFormatter.format(date);
 }
 
+const bangkokClock = new Intl.DateTimeFormat("en-GB", {
+  timeZone: BANGKOK,
+  hour: "2-digit",
+  minute: "2-digit",
+  hourCycle: "h23",
+});
+
+/**
+ * An activity's moment: date and time, or the date alone when the time is
+ * exactly midnight — entries logged before the form had a time field.
+ */
+export function formatWhen(value?: string | null): string {
+  if (!value) return "—";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "—";
+  return bangkokClock.format(date) === "00:00" ? dateFormatter.format(date) : dateTimeFormatter.format(date);
+}
+
+/** "YYYY-MM-DDTHH:MM" in Asia/Bangkok, for <input type="datetime-local">. */
+export function toISODateTime(date: Date = new Date()): string {
+  return `${toISODate(date)}T${bangkokClock.format(date)}`;
+}
+
 export function formatBaht(value: number): string {
   return bahtFormatter.format(value ?? 0);
 }

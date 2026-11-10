@@ -7,7 +7,7 @@ import { Button } from "@odh/ui";
 import { Alert, EmptyState, Field, Input, Panel, Select, Spinner, Textarea } from "@/components/ui";
 import { ApiError, leads as leadsApi } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
-import { formatDateTime, toISODate } from "@/lib/format";
+import { formatWhen, toISODateTime } from "@/lib/format";
 import { activityTypeLabels, labelOf } from "@/lib/labels";
 import type { Lead } from "@/lib/types";
 
@@ -20,7 +20,8 @@ export function ActivityPanel({ lead, canEdit }: { lead: Lead; canEdit: boolean 
   const { user, isAdmin } = useAuth();
 
   const [type, setType] = useState("call");
-  const [happenedAt, setHappenedAt] = useState(toISODate());
+  // Date and time, now by default: a date alone was saved as midnight.
+  const [happenedAt, setHappenedAt] = useState(() => toISODateTime());
   const [summary, setSummary] = useState("");
   const [nextAction, setNextAction] = useState(lead.next_action ?? "");
   const [nextActionDate, setNextActionDate] = useState(lead.next_action_date?.slice(0, 10) ?? "");
@@ -44,6 +45,7 @@ export function ActivityPanel({ lead, canEdit }: { lead: Lead; canEdit: boolean 
       }),
     onSuccess: async () => {
       setSummary("");
+      setHappenedAt(toISODateTime());
       setError("");
       await invalidate();
     },
@@ -79,9 +81,9 @@ export function ActivityPanel({ lead, canEdit }: { lead: Lead; canEdit: boolean 
                 ))}
               </Select>
             </Field>
-            <Field label="วันที่" hint="นัดในอนาคตก็ใส่ได้ จะไปโผล่ในหน้าวันนี้">
+            <Field label="วันและเวลา" hint="นัดในอนาคตก็ใส่ได้ จะไปโผล่ในหน้าวันนี้และปฏิทินกลาง">
               <Input
-                type="date"
+                type="datetime-local"
                 value={happenedAt}
                 onChange={(event) => setHappenedAt(event.target.value)}
               />
@@ -131,7 +133,7 @@ export function ActivityPanel({ lead, canEdit }: { lead: Lead; canEdit: boolean 
                     {labelOf(activityTypeLabels, activity.type)}
                   </span>
                   <span className="font-mono text-[11px] text-muted">
-                    {formatDateTime(activity.happened_at)}
+                    {formatWhen(activity.happened_at)}
                   </span>
                   {activity.user ? (
                     <span className="font-body text-xs text-muted">· {activity.user.name}</span>
@@ -150,7 +152,7 @@ export function ActivityPanel({ lead, canEdit }: { lead: Lead; canEdit: boolean 
                   ) : null}
                 </div>
                 {activity.summary ? (
-                  <p className="mt-1 whitespace-pre-line font-body text-sm text-ink">{activity.summary}</p>
+                  <p className="mt-1 whitespace-pre-line font-body text-sm text-ink [overflow-wrap:anywhere]">{activity.summary}</p>
                 ) : null}
               </div>
             </li>

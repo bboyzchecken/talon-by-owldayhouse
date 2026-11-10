@@ -110,9 +110,10 @@ func (s *Server) GetCalendar(c echo.Context) error {
 	for _, m := range meetings {
 		at := m.HappenedAt.In(leadrules.Bangkok)
 		event := CalendarEvent{
-			Kind:   CalendarMeeting,
-			Date:   at.Format("2006-01-02"),
-			Time:   at.Format("15:04"),
+			Kind: CalendarMeeting,
+			Date: at.Format("2006-01-02"),
+			// Midnight means no time was given (older entries were date-only).
+			Time:   meetingTime(at),
 			Title:  "นัดพบ",
 			Detail: m.Summary,
 			LeadID: m.LeadID,
@@ -162,6 +163,13 @@ func (s *Server) GetCalendar(c echo.Context) error {
 		"to":   end.AddDate(0, 0, -1).Format("2006-01-02"),
 		"data": events,
 	})
+}
+
+func meetingTime(at time.Time) string {
+	if at.Hour() == 0 && at.Minute() == 0 {
+		return ""
+	}
+	return at.Format("15:04")
 }
 
 func egpDeadlineDetail(row *models.EgpAnnouncement) string {
