@@ -64,7 +64,7 @@ export const copy = {
       body: "เล่าโจทย์ของแบรนด์ให้เราฟัง แล้วเราจะจัดทีมให้ตรงกับเป้าหมายของคุณ",
       disc: ["คุยผ่าน", "LINE"],
     },
-    footer: { services: "Services", company: "Company", contact: "Contact", legal: "สงวนลิขสิทธิ์", tools: "เครื่องมือ" },
+    footer: { services: "Services", company: "Company", contact: "Contact", legal: "สงวนลิขสิทธิ์", tools: "เครื่องมือ", privacy: "นโยบายความเป็นส่วนตัว" },
     servicesPage: {
       label: "Services",
       title: "ทีมเดียว ตั้งแต่ระบบถึงหน้างาน",
@@ -269,7 +269,7 @@ export const copy = {
       body: "Tell us about your brief and we'll build the right team around your goal.",
       disc: ["Email", "us"],
     },
-    footer: { services: "Services", company: "Company", contact: "Contact", legal: "All rights reserved", tools: "Tools" },
+    footer: { services: "Services", company: "Company", contact: "Contact", legal: "All rights reserved", tools: "Tools", privacy: "Privacy policy" },
     servicesPage: {
       label: "Services",
       title: "One team, from systems to the show floor",

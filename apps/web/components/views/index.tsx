@@ -22,6 +22,7 @@ import { getIndustry } from "@/content/industries";
 import { getGuide, getPost, getPosts } from "@/content/news";
 import { bodies } from "@/content/news/bodies";
 import { cases, earlierWork, liveWork, portfolio } from "@/content/portfolio";
+import { getPrivacy } from "@/content/privacy";
 import { getService, getServices } from "@/content/services";
 import { company, contact } from "@/content/site";
 import { localeHref, type Locale } from "@/lib/i18n";
@@ -665,6 +666,73 @@ export function IndustryView({ locale, slug }: { locale: Locale; slug: string })
       ) : null}
 
       <ContactClose locale={locale} location={`industry-${slug}`} />
+    </main>
+  );
+}
+
+/* Privacy */
+
+export function privacyMeta(locale: Locale): Metadata {
+  const t = getPrivacy(locale);
+  return pageMeta({ locale, title: t.metaTitle, description: t.metaDescription, path: "/privacy/", absoluteTitle: true });
+}
+
+export function PrivacyView({ locale }: { locale: Locale }) {
+  const t = getPrivacy(locale);
+  // Company facts come from content/site.ts, never from the policy text.
+  const legalName = locale === "th" ? company.legalName : company.legalNameEn;
+  const office =
+    locale === "th"
+      ? `${company.address.line} ${company.address.district} ${company.address.city} ${company.address.postcode}`
+      : company.addressEn;
+  const phone = locale === "th" ? contact.phoneDisplay : contact.phoneDisplayEn;
+
+  return (
+    <main>
+      <JsonLd data={breadcrumbSchema(locale, t.title, "/privacy/")} />
+      <PageIntro label={t.label} title={t.title} lead={t.lead} />
+      <section className="odh-wrap pb-24">
+        <Prose className="max-w-3xl">
+          <p className="odh-mono">
+            {t.updatedLabel} {t.updated}
+          </p>
+
+          <h2>{t.controller.heading}</h2>
+          <p>
+            {t.controller.intro} <strong>{legalName}</strong>
+          </p>
+          <h3>{t.controller.officeLabel}</h3>
+          <address className="not-italic">{office}</address>
+          <h3>{t.controller.contactLabel}</h3>
+          <ul>
+            <li>
+              <a href={contact.emailHref}>{contact.email}</a>
+            </li>
+            <li>
+              <a href={contact.phoneTel}>{phone}</a>
+            </li>
+          </ul>
+
+          {t.sections.map((section) => (
+            <section key={section.heading}>
+              <h2>{section.heading}</h2>
+              {section.paragraphs?.map((text) => (
+                <p key={text}>{text}</p>
+              ))}
+              {section.bullets ? (
+                <ul>
+                  {section.bullets.map((text) => (
+                    <li key={text}>{text}</li>
+                  ))}
+                </ul>
+              ) : null}
+              {section.after?.map((text) => (
+                <p key={text}>{text}</p>
+              ))}
+            </section>
+          ))}
+        </Prose>
+      </section>
     </main>
   );
 }

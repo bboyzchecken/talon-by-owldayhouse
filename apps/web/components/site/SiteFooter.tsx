@@ -46,6 +46,9 @@ export function SiteFooter({ locale }: { locale: Locale }) {
             <li>
               <Link href={href("/about/")}>{copy.nav.about}</Link>
             </li>
+            <li>
+              <Link href={href("/privacy/")}>{t.privacy}</Link>
+            </li>
           </ul>
         </div>
         <div>
