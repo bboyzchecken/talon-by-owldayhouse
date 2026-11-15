@@ -3,7 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Button } from "@odh/ui";
-import { Alert, Field, Input, Panel, Select, Spinner } from "@/components/ui";
+import { Alert, Field, Input, Panel, Select, Spinner } from "@/components/odh";
 import { ApiError, kpi as kpiApi } from "@/lib/api";
 import { formatBaht } from "@/lib/format";
 
@@ -26,6 +26,7 @@ export function TargetsPanel() {
   });
 
   const save = useMutation({
+    meta: { success: "บันทึกเป้าแล้ว" },
     mutationFn: (body: {
       user_id: number;
       revenue_target: number;
@@ -81,11 +82,11 @@ export function TargetsPanel() {
               setDrafts((current) => ({ ...current, [row.user_id]: { ...draft, ...patch } }));
 
             return (
-              <li key={row.user_id} className="rounded-xl border border-line p-4">
-                <p className="font-display text-sm font-semibold text-ink">
+              <li key={row.user_id} className="rounded-xl border border-border p-4">
+                <p className="font-display text-sm font-semibold text-foreground">
                   {row.user?.name ?? `ผู้ใช้ #${row.user_id}`}
                   {row.id === 0 ? (
-                    <span className="ml-2 font-body text-xs font-normal text-muted">(ค่าเริ่มต้น ยังไม่บันทึก)</span>
+                    <span className="ml-2 font-body text-xs font-normal text-muted-foreground">(ค่าเริ่มต้น ยังไม่บันทึก)</span>
                   ) : null}
                 </p>
                 <div className="mt-3 grid gap-3 sm:grid-cols-3">
@@ -126,7 +127,7 @@ export function TargetsPanel() {
                   >
                     บันทึกเป้า
                   </Button>
-                  <span className="font-mono text-xs text-muted">
+                  <span className="font-mono text-xs text-muted-foreground">
                     ≈ {formatBaht(Number(draft.revenue || 0) / 3)} ต่อเดือน
                   </span>
                 </div>

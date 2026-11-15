@@ -3,7 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Button } from "@odh/ui";
-import { Alert, Field, Input, Panel, Select, Spinner } from "@/components/ui";
+import { Alert, Field, Input, Panel, Select, Spinner } from "@/components/odh";
 import { ApiError, leads as leadsApi } from "@/lib/api";
 import { formatDateTime } from "@/lib/format";
 import { useMeta } from "@/lib/hooks";
@@ -29,6 +29,7 @@ export function AssignPanel({ lead, isAdmin }: { lead: Lead; isAdmin: boolean })
   });
 
   const assign = useMutation({
+    meta: { success: "เปลี่ยนเจ้าของแล้ว" },
     mutationFn: () =>
       leadsApi.assign(lead.id, {
         owner_type: ownerType,
@@ -50,13 +51,13 @@ export function AssignPanel({ lead, isAdmin }: { lead: Lead; isAdmin: boolean })
     <Panel title="เจ้าของและประวัติการเปลี่ยน">
       {error ? <Alert tone="stop">{error}</Alert> : null}
 
-      <p className="font-body text-sm text-ink">
+      <p className="font-body text-sm text-foreground">
         ปัจจุบัน: <span className="font-semibold">{labelOf(ownerTypeLabels, lead.owner_type)}</span> ·{" "}
         {who(lead.owner_user_id)}
       </p>
 
       {isAdmin ? (
-        <div className="mt-4 space-y-3 rounded-xl border border-line p-4">
+        <div className="mt-4 space-y-3 rounded-xl border border-border p-4">
           <div className="grid gap-3 sm:grid-cols-2">
             <Field label="ประเภทเจ้าของ">
               <Select
@@ -89,20 +90,20 @@ export function AssignPanel({ lead, isAdmin }: { lead: Lead; isAdmin: boolean })
           </Button>
         </div>
       ) : (
-        <p className="mt-2 font-body text-xs text-muted">เปลี่ยนเจ้าของได้เฉพาะแอดมิน</p>
+        <p className="mt-2 font-body text-xs text-muted-foreground">เปลี่ยนเจ้าของได้เฉพาะแอดมิน</p>
       )}
 
       <div className="mt-5">
-        <h3 className="font-display text-sm font-semibold text-ink">ประวัติการเปลี่ยนเจ้าของ</h3>
+        <h3 className="font-display text-sm font-semibold text-foreground">ประวัติการเปลี่ยนเจ้าของ</h3>
         {logs.isLoading ? (
           <Spinner label="กำลังโหลดประวัติ…" />
         ) : (logs.data?.data ?? []).length === 0 ? (
-          <p className="mt-2 font-body text-sm text-muted">ยังไม่มีประวัติ</p>
+          <p className="mt-2 font-body text-sm text-muted-foreground">ยังไม่มีประวัติ</p>
         ) : (
           <ol className="mt-2 space-y-2">
             {(logs.data?.data ?? []).map((entry) => (
-              <li key={entry.id} className="border-b border-line pb-2 last:border-0 last:pb-0">
-                <p className="font-body text-sm text-ink">
+              <li key={entry.id} className="border-b border-border pb-2 last:border-0 last:pb-0">
+                <p className="font-body text-sm text-foreground">
                   {entry.from_owner_type ? (
                     <>
                       {labelOf(ownerTypeLabels, entry.from_owner_type)} · {who(entry.from_owner_user_id)} →{" "}
@@ -110,7 +111,7 @@ export function AssignPanel({ lead, isAdmin }: { lead: Lead; isAdmin: boolean })
                   ) : null}
                   {labelOf(ownerTypeLabels, entry.to_owner_type)} · {who(entry.to_owner_user_id)}
                 </p>
-                <p className="font-mono text-[11px] text-muted">
+                <p className="font-mono text-[11px] text-muted-foreground">
                   {formatDateTime(entry.created_at)} · โดย{" "}
                   {entry.changed_by_user?.name ?? `ผู้ใช้ #${entry.changed_by}`}
                   {entry.note ? ` · ${entry.note}` : ""}

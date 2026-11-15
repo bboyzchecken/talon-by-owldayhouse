@@ -1,5 +1,11 @@
 @import "tailwindcss";
 @import "@odh/brand/theme.css";
+@import "@odh/brand/shadcn.css";
+@import "tw-animate-css";
+
+/* shadcn components use `dark:` utilities; the brand switches themes with
+   data-theme on <html>, so the variant points there instead of `.dark`. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 /* Tailwind v4 skips node_modules — explicitly scan the shared UI package. */
 @source "../../../packages/ui/src";
@@ -18,3 +24,4 @@ body {
 .pb-safe {
   padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 0.5rem);
 }
+

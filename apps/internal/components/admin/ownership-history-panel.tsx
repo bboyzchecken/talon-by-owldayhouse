@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { leadHref } from "@/components/lead-card";
-import { EmptyState, Panel, Spinner } from "@/components/ui";
+import { EmptyState, Panel, Spinner } from "@/components/odh";
 import { admin as adminApi } from "@/lib/api";
 import { formatDateTime } from "@/lib/format";
 import { useMeta } from "@/lib/hooks";
@@ -31,7 +31,7 @@ export function OwnershipHistoryPanel() {
         <ol className="divide-y divide-line">
           {rows.map((entry) => (
             <li key={entry.id} className="py-3 first:pt-0 last:pb-0">
-              <p className="font-body text-sm text-ink">
+              <p className="font-body text-sm text-foreground">
                 <Link href={leadHref(entry.lead_id)} className="font-display font-semibold underline">
                   {entry.lead?.name ?? `ลูกค้า #${entry.lead_id}`}
                 </Link>
@@ -43,7 +43,7 @@ export function OwnershipHistoryPanel() {
                 ) : null}
                 {labelOf(ownerTypeLabels, entry.to_owner_type)} · {who(entry.to_owner_user_id)}
               </p>
-              <p className="font-mono text-[11px] text-muted">
+              <p className="font-mono text-[11px] text-muted-foreground">
                 {formatDateTime(entry.created_at)} · โดย{" "}
                 {entry.changed_by_user?.name ?? `ผู้ใช้ #${entry.changed_by}`}
                 {entry.note ? ` · ${entry.note}` : ""}

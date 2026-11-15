@@ -11,9 +11,9 @@ import { cn } from "@odh/ui";
  */
 
 const controlClasses =
-  "w-full rounded-xl border border-line bg-white px-4 py-3 font-body text-base text-ink " +
-  "placeholder:text-muted/70 focus:border-navy focus:outline-none focus:ring-2 focus:ring-navy/20 " +
-  "disabled:bg-gray-50 disabled:text-muted";
+  "w-full rounded-xl border border-border bg-card px-4 py-3 font-body text-base text-foreground " +
+  "placeholder:text-muted-foreground/70 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 " +
+  "disabled:bg-muted disabled:text-muted-foreground";
 
 export function Field({
   label,
@@ -30,14 +30,14 @@ export function Field({
 }) {
   return (
     <label className="block">
-      <span className="mb-1.5 flex items-baseline gap-1 font-display text-sm font-semibold text-ink">
+      <span className="mb-1.5 flex items-baseline gap-1 font-display text-sm font-semibold text-foreground">
         {label}
-        {required ? <span className="text-gold-ink">*</span> : null}
+        {required ? <span className="text-gold">*</span> : null}
       </span>
       {children}
-      {hint ? <span className="mt-1.5 block font-body text-xs text-muted">{hint}</span> : null}
+      {hint ? <span className="mt-1.5 block font-body text-xs text-muted-foreground">{hint}</span> : null}
       {error ? (
-        <span className="mt-1.5 block font-body text-xs font-semibold text-navy">{error}</span>
+        <span className="mt-1.5 block font-body text-xs font-semibold text-primary">{error}</span>
       ) : null}
     </label>
   );
@@ -71,10 +71,10 @@ export function Panel({
   className?: string;
 }) {
   return (
-    <section className={cn("rounded-2xl border border-line bg-white", className)}>
+    <section className={cn("rounded-2xl border border-border bg-card", className)}>
       {title ? (
-        <header className="flex flex-wrap items-center justify-between gap-3 border-b border-line px-4 py-3 sm:px-5">
-          <h2 className="font-display text-base font-semibold text-ink">{title}</h2>
+        <header className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-4 py-3 sm:px-5">
+          <h2 className="font-display text-base font-semibold text-foreground">{title}</h2>
           {action}
         </header>
       ) : null}
@@ -99,20 +99,20 @@ export function StatTile({
     <div
       className={cn(
         "rounded-2xl border p-4",
-        tone === "key" ? "border-navy bg-navy text-white" : "border-line bg-white text-ink",
+        tone === "key" ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-foreground",
       )}
     >
       <div
         className={cn(
           "font-mono text-[11px] uppercase tracking-wide",
-          tone === "key" ? "text-white/70" : "text-muted",
+          tone === "key" ? "text-primary-foreground/70" : "text-muted-foreground",
         )}
       >
         {label}
       </div>
       <div className="mt-1 font-display text-2xl font-semibold tabular-nums">{value}</div>
       {sub ? (
-        <div className={cn("mt-1 font-body text-xs", tone === "key" ? "text-white/70" : "text-muted")}>
+        <div className={cn("mt-1 font-body text-xs", tone === "key" ? "text-primary-foreground/70" : "text-muted-foreground")}>
           {sub}
         </div>
       ) : null}
@@ -122,8 +122,8 @@ export function StatTile({
 
 export function Spinner({ label = "กำลังโหลด…" }: { label?: string }) {
   return (
-    <div className="flex items-center justify-center gap-3 py-10 text-muted" role="status">
-      <span className="size-4 animate-spin rounded-full border-2 border-line border-t-navy" aria-hidden />
+    <div className="flex items-center justify-center gap-3 py-10 text-muted-foreground" role="status">
+      <span className="size-4 animate-spin rounded-full border-2 border-border border-t-navy" aria-hidden />
       <span className="font-body text-sm">{label}</span>
     </div>
   );
@@ -131,9 +131,9 @@ export function Spinner({ label = "กำลังโหลด…" }: { label?: 
 
 export function EmptyState({ title, hint, action }: { title: string; hint?: string; action?: ReactNode }) {
   return (
-    <div className="rounded-2xl border border-dashed border-line-control/60 px-5 py-10 text-center">
-      <p className="font-display text-base font-semibold text-ink">{title}</p>
-      {hint ? <p className="mx-auto mt-1 max-w-md font-body text-sm text-muted">{hint}</p> : null}
+    <div className="rounded-2xl border border-dashed border-input/60 px-5 py-10 text-center">
+      <p className="font-display text-base font-semibold text-foreground">{title}</p>
+      {hint ? <p className="mx-auto mt-1 max-w-md font-body text-sm text-muted-foreground">{hint}</p> : null}
       {action ? <div className="mt-4 flex justify-center">{action}</div> : null}
     </div>
   );
@@ -146,7 +146,7 @@ export function Alert({ children, tone = "warn" }: { children: ReactNode; tone?:
       role="alert"
       className={cn(
         "rounded-xl border px-4 py-3 font-body text-sm",
-        tone === "stop" ? "border-ink bg-ink/5 text-ink" : "border-gold bg-gold-soft text-navy",
+        tone === "stop" ? "border-foreground bg-foreground/5 text-foreground" : "border-gold bg-notice text-primary",
       )}
     >
       {children}
@@ -159,13 +159,13 @@ export function Meter({ percent, label }: { percent: number; label?: string }) {
   const clamped = Math.max(0, Math.min(100, percent));
   return (
     <div>
-      <div className="h-2 w-full overflow-hidden rounded-full bg-gray-100">
+      <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
         <div
-          className={cn("h-full rounded-full", clamped >= 100 ? "bg-gold" : "bg-navy")}
+          className={cn("h-full rounded-full", clamped >= 100 ? "bg-gold" : "bg-primary")}
           style={{ width: `${clamped}%` }}
         />
       </div>
-      {label ? <div className="mt-1 font-mono text-[11px] text-muted">{label}</div> : null}
+      {label ? <div className="mt-1 font-mono text-[11px] text-muted-foreground">{label}</div> : null}
     </div>
   );
 }

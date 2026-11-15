@@ -30,8 +30,11 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="th" className={fontVariables}>
-      <body className="min-h-screen bg-white font-body text-ink antialiased">
+    // suppressHydrationWarning: next-themes writes data-theme on <html>
+    // before React hydrates, which is the whole point — no flash of the
+    // wrong theme — and the attribute it adds is not in the served HTML.
+    <html lang="th" className={fontVariables} suppressHydrationWarning>
+      <body className="min-h-screen bg-background font-body text-foreground antialiased">
         <Providers>{children}</Providers>
       </body>
     </html>

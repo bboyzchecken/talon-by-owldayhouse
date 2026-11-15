@@ -1,0 +1,141 @@
+/**
+ * @odh/brand/shadcn.css — the shadcn/ui token bridge.
+ *
+ * shadcn components are written against a fixed set of semantic names, and
+ * reach for them two ways: as utilities (`bg-background`, `bg-primary`,
+ * `text-muted-foreground`, `border-input`) and, in a few places, as raw CSS
+ * variables (`var(--popover)`, `var(--radius)`). Both layers are defined here,
+ * in the same shape the registry's own globals.css uses, and every value
+ * points at an @odh/brand token — so a component pasted from the registry,
+ * unedited, comes out in ODH's colors.
+ *
+ * Dark mode falls out of it: the brand's semantic layer already flips under
+ * [data-theme="dark"], so nothing below needs a second definition except the
+ * two values the brand has no token for.
+ *
+ * Import it AFTER the brand theme, and only in an app that uses shadcn:
+ *   @import "tailwindcss";
+ *   @import "@odh/brand/theme.css";
+ *   @import "@odh/brand/shadcn.css";
+ *
+ * The marketing site does not import this file. It is for the internal tools.
+ *
+ * TWO NAME COLLISIONS to know about:
+ *
+ *   - `muted`. The brand uses `--color-muted` for muted *text* (text-muted);
+ *     shadcn uses `muted` for a muted *surface* and `muted-foreground` for the
+ *     text on it. shadcn's meaning wins inside an app that imports this file,
+ *     so there `text-muted` is wrong and `text-muted-foreground` is the brand
+ *     gray. The brand token itself is unchanged for everyone else.
+ *   - the radius scale. ODH controls are 12px (`rounded-xl`), well above
+ *     Tailwind's 6/8px defaults that shadcn's `rounded-md`/`rounded-lg` pick
+ *     up. The scale below is lifted to match, which is safe only because this
+ *     file is scoped to the internal app.
+ */
+:root {
+  /* Page and raised surfaces. */
+  --background: var(--surface);
+  --foreground: var(--text);
+  --card: var(--surface-raised);
+  --card-foreground: var(--text);
+  --popover: var(--surface-raised);
+  --popover-foreground: var(--text);
+
+  /* The primary action. --key/--on-key, not navy directly: navy cannot carry
+     a filled button on a dark page, and the brand already inverts the pair. */
+  --primary: var(--key);
+  --primary-foreground: var(--on-key);
+
+  /* Quiet fills: secondary buttons, `bg-muted` panels, hover states. */
+  --secondary: var(--surface-soft);
+  --secondary-foreground: var(--text);
+  --muted: var(--surface-soft);
+  --muted-foreground: var(--text-2);
+  --accent: var(--surface-soft);
+  --accent-foreground: var(--text);
+
+  /* Gold is the one point per screen. shadcn has no token for it, so it stays
+     a brand utility (bg-gold / text-gold) used deliberately.
+
+     `notice` is the surface under it — the gold-bordered box that carries a
+     hand-off password, a won deal or a near-duplicate warning. It is a token
+     rather than gold-soft directly because a fixed cream panel cannot hold
+     normal text on a dark page: this one darkens, so everything inside it
+     keeps using text-foreground and stays readable in both themes. */
+  --notice: var(--color-gold-soft);
+
+  /* A destructive affordance is a safety signal, not a brand color: this is
+     the only red in the system, it lives in this file alone, and it never
+     appears on the marketing site. It sits next to --signal-positive. */
+  --destructive: #b3261e;
+  --destructive-foreground: var(--white);
+
+  /* Lines. Controls get the brand's control border, which is darker than the
+     divider line on purpose — a 1px #e8e8ec control edge is under contrast. */
+  --border: var(--line);
+  --input: var(--line-control);
+  --ring: var(--focus-ring);
+
+  /* The dashboard frame. A light sidebar keeps white as the base of the page
+     and leaves the key color for the active item — point --sidebar at
+     var(--color-navy) and the foreground tokens at white for a dark rail, and
+     nothing else has to change. */
+  --sidebar: var(--surface-soft);
+  --sidebar-foreground: var(--text);
+  --sidebar-primary: var(--key);
+  --sidebar-primary-foreground: var(--on-key);
+  --sidebar-accent: var(--surface-raised);
+  --sidebar-accent-foreground: var(--text-key);
+  --sidebar-border: var(--line);
+  --sidebar-ring: var(--focus-ring);
+
+  /* What shadcn's own components interpolate when they need a raw value. */
+  --radius: 0.75rem;
+}
+
+/* The two values the brand's dark theme has no token for. Everything else
+   above flips on its own, because what it points at flips. */
+:root[data-theme="dark"] {
+  /* The raised surface, warmed toward gold rather than filled with it. */
+  --notice: #2c2746;
+  /* Lifted so it still reads against #13122a. */
+  --destructive: #ef857d;
+  --destructive-foreground: #2a0f0d;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-notice: var(--notice);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Lifted to ODH's 12px control language (see the note at the top). */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+}

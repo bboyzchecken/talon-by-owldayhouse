@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Button } from "@odh/ui";
 import { StageBadge } from "@/components/badges";
-import { Alert, Field, Input, Panel, Select } from "@/components/ui";
+import { Alert, Field, Input, Panel, Select } from "@/components/odh";
 import { ApiError, leads as leadsApi } from "@/lib/api";
 import { toISODate } from "@/lib/format";
 import { interestLabels, labelOf, stageLabels } from "@/lib/labels";
@@ -25,6 +25,7 @@ export function StageControl({ lead, canEdit }: { lead: Lead; canEdit: boolean }
   const [error, setError] = useState("");
 
   const change = useMutation({
+    meta: { success: "ย้ายขั้นแล้ว" },
     mutationFn: (stage: Stage) =>
       leadsApi.changeStage(lead.id, {
         stage,
@@ -55,13 +56,13 @@ export function StageControl({ lead, canEdit }: { lead: Lead; canEdit: boolean }
       {error ? <Alert tone="stop">{error}</Alert> : null}
 
       {!canEdit ? (
-        <p className="font-body text-sm text-muted">
+        <p className="font-body text-sm text-muted-foreground">
           แก้ได้เฉพาะเซลส์ที่ดูแลรายนี้ หรือแอดมิน
         </p>
       ) : (
         <div className="space-y-3">
           {lead.do_not_pitch ? (
-            <p className="font-body text-xs text-muted">
+            <p className="font-body text-xs text-muted-foreground">
               รายนี้ติดสถานะห้ามเสนอขายตรง จึงไม่มีขั้น “ยื่นข้อเสนอ” และ “ปิดการขาย” ให้เลือก
             </p>
           ) : null}
@@ -80,7 +81,7 @@ export function StageControl({ lead, canEdit }: { lead: Lead; canEdit: boolean }
                   change.mutate(stage);
                 }}
                 disabled={change.isPending}
-                className="rounded-full border border-line px-4 py-2 font-display text-sm font-semibold text-ink transition-colors hover:border-navy hover:text-navy disabled:opacity-50"
+                className="rounded-full border border-border px-4 py-2 font-display text-sm font-semibold text-foreground transition-colors hover:border-primary hover:text-primary disabled:opacity-50"
               >
                 ย้ายไป {labelOf(stageLabels, stage)}
               </button>
@@ -88,8 +89,8 @@ export function StageControl({ lead, canEdit }: { lead: Lead; canEdit: boolean }
           </div>
 
           {target === "won" ? (
-            <div className="space-y-3 rounded-xl border border-gold bg-gold-soft p-4">
-              <p className="font-display text-sm font-semibold text-navy">บันทึกดีลที่ปิดได้</p>
+            <div className="space-y-3 rounded-xl border border-gold bg-notice p-4">
+              <p className="font-display text-sm font-semibold text-primary">บันทึกดีลที่ปิดได้</p>
               <div className="grid gap-3 sm:grid-cols-3">
                 <Field label="บริการ" required>
                   <Select value={service} onChange={(event) => setService(event.target.value)}>
@@ -124,7 +125,7 @@ export function StageControl({ lead, canEdit }: { lead: Lead; canEdit: boolean }
           ) : null}
 
           {target === "lost" || target === "declined" ? (
-            <div className="space-y-3 rounded-xl border border-line p-4">
+            <div className="space-y-3 rounded-xl border border-border p-4">
               <Field label={target === "lost" ? "เหตุผลที่ไม่ได้งาน" : "เหตุผลที่ไม่รับงาน"} required={target === "lost"}>
                 <Input
                   value={lostReason}

@@ -10,14 +10,14 @@ import type { OwnerType, Stage } from "@/lib/types";
  */
 
 const stageClasses: Record<Stage, string> = {
-  new: "border border-line text-muted",
-  contacted: "border border-line text-ink",
-  meeting: "border border-navy/30 text-navy",
-  proposal: "bg-navy/10 text-navy",
+  new: "border border-border text-muted-foreground",
+  contacted: "border border-border text-foreground",
+  meeting: "border border-primary/30 text-primary",
+  proposal: "bg-primary/10 text-primary",
   won: "bg-gold text-navy",
-  lost: "bg-ink/5 text-muted",
-  nurture: "border border-dashed border-line-control text-muted",
-  declined: "bg-ink/5 text-muted line-through decoration-muted/60",
+  lost: "bg-foreground/5 text-muted-foreground",
+  nurture: "border border-dashed border-input text-muted-foreground",
+  declined: "bg-foreground/5 text-muted-foreground line-through decoration-muted-foreground/60",
 };
 
 export function StageBadge({ stage, className }: { stage: Stage; className?: string }) {
@@ -48,7 +48,7 @@ export function OwnerTypeBadge({
     <span
       className={cn(
         "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 font-display text-xs font-semibold",
-        isCompany ? "bg-navy text-white" : "border border-navy/40 text-navy",
+        isCompany ? "bg-primary text-primary-foreground" : "border border-primary/40 text-primary",
         className,
       )}
       title={isCompany ? "ลูกค้าที่บริษัทหามา — นับเป็น KPI หลัก" : "ลูกค้าเดิมของเซลส์ — นับเป็นโบนัส"}
@@ -64,7 +64,7 @@ export function DoNotPitchBadge({ reason, className }: { reason?: string; classN
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full bg-ink px-2.5 py-1 font-display text-xs font-semibold text-white",
+        "inline-flex items-center gap-1.5 rounded-full bg-foreground px-2.5 py-1 font-display text-xs font-semibold text-background",
         className,
       )}
       title={reason || "ห้ามเสนอขายตรง"}

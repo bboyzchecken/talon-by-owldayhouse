@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Trash2 } from "lucide-react";
 import { Button } from "@odh/ui";
-import { Alert, EmptyState, Field, Input, Panel, Select, Spinner, Textarea } from "@/components/ui";
+import { Alert, EmptyState, Field, Input, Panel, Select, Spinner, Textarea } from "@/components/odh";
 import { ApiError, leads as leadsApi } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { formatWhen, toISODateTime } from "@/lib/format";
@@ -35,6 +35,7 @@ export function ActivityPanel({ lead, canEdit }: { lead: Lead; canEdit: boolean 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ["leads"] });
 
   const create = useMutation({
+    meta: { success: "บันทึกกิจกรรมแล้ว" },
     mutationFn: () =>
       leadsApi.activities.create(lead.id, {
         type,
@@ -53,6 +54,7 @@ export function ActivityPanel({ lead, canEdit }: { lead: Lead; canEdit: boolean 
   });
 
   const remove = useMutation({
+    meta: { success: "ลบกิจกรรมแล้ว" },
     mutationFn: (activityId: number) => leadsApi.activities.remove(lead.id, activityId),
     onSuccess: invalidate,
     onError: (caught) => setError((caught as ApiError).body?.error ?? "ลบกิจกรรมไม่สำเร็จ"),
@@ -70,7 +72,7 @@ export function ActivityPanel({ lead, canEdit }: { lead: Lead; canEdit: boolean 
       {error ? <Alert tone="stop">{error}</Alert> : null}
 
       {canEdit ? (
-        <div className="mb-5 space-y-3 rounded-xl border border-line p-4">
+        <div className="mb-5 space-y-3 rounded-xl border border-border p-4">
           <div className="grid gap-3 sm:grid-cols-2">
             <Field label="ประเภท" required>
               <Select value={type} onChange={(event) => setType(event.target.value)}>
@@ -126,17 +128,17 @@ export function ActivityPanel({ lead, canEdit }: { lead: Lead; canEdit: boolean 
         <ol className="space-y-3">
           {activities.map((activity) => (
             <li key={activity.id} className="flex gap-3">
-              <span className="mt-1.5 size-2 shrink-0 rounded-full bg-navy" aria-hidden />
-              <div className="min-w-0 flex-1 border-b border-line pb-3 last:border-0 last:pb-0">
+              <span className="mt-1.5 size-2 shrink-0 rounded-full bg-primary" aria-hidden />
+              <div className="min-w-0 flex-1 border-b border-border pb-3 last:border-0 last:pb-0">
                 <div className="flex flex-wrap items-baseline gap-2">
-                  <span className="font-display text-sm font-semibold text-ink">
+                  <span className="font-display text-sm font-semibold text-foreground">
                     {labelOf(activityTypeLabels, activity.type)}
                   </span>
-                  <span className="font-mono text-[11px] text-muted">
+                  <span className="font-mono text-[11px] text-muted-foreground">
                     {formatWhen(activity.happened_at)}
                   </span>
                   {activity.user ? (
-                    <span className="font-body text-xs text-muted">· {activity.user.name}</span>
+                    <span className="font-body text-xs text-muted-foreground">· {activity.user.name}</span>
                   ) : null}
                   {canEdit && (isAdmin || activity.user_id === user?.id) ? (
                     <button
@@ -144,7 +146,8 @@ export function ActivityPanel({ lead, canEdit }: { lead: Lead; canEdit: boolean 
                       onClick={() => {
                         if (window.confirm("ลบกิจกรรมนี้?")) remove.mutate(activity.id);
                       }}
-                      className="ml-auto text-muted transition-colors hover:text-ink"
+                      disabled={remove.isPending}
+                      className="ml-auto text-muted-foreground transition-colors hover:text-foreground disabled:opacity-50"
                       aria-label="ลบกิจกรรม"
                     >
                       <Trash2 className="size-4" aria-hidden />
@@ -152,7 +155,7 @@ export function ActivityPanel({ lead, canEdit }: { lead: Lead; canEdit: boolean 
                   ) : null}
                 </div>
                 {activity.summary ? (
-                  <p className="mt-1 whitespace-pre-line font-body text-sm text-ink [overflow-wrap:anywhere]">{activity.summary}</p>
+                  <p className="mt-1 whitespace-pre-line font-body text-sm text-foreground [overflow-wrap:anywhere]">{activity.summary}</p>
                 ) : null}
               </div>
             </li>

@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { LeadCard } from "@/components/lead-card";
-import { EmptyState, Panel, Spinner } from "@/components/ui";
+import { EmptyState, Panel, Spinner } from "@/components/odh";
 import { leads as leadsApi } from "@/lib/api";
 
 /** Every brand our sales team must not approach directly, in one list. */

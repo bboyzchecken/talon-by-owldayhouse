@@ -5,7 +5,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { Copy, Download } from "lucide-react";
 import { Button } from "@odh/ui";
-import { Alert, Panel } from "@/components/ui";
+import { Alert, Panel } from "@/components/odh";
 import { ApiError, egp } from "@/lib/api";
 import type { EgpBrief } from "@/lib/types";
 
@@ -43,7 +43,7 @@ export function BriefExport({ count, hasCompanyNotes }: { count: number; hasComp
 
   return (
     <Panel title="ส่งออกให้ Claude วิเคราะห์">
-      <ol className="list-decimal space-y-1 pl-5 font-body text-sm text-ink">
+      <ol className="list-decimal space-y-1 pl-5 font-body text-sm text-foreground">
         <li>กดดาวน์โหลด (หรือคัดลอก) งานที่คัดไว้ {count} งาน</li>
         <li>
           เปิดแชทใหม่ใน Claude แนบไฟล์นี้ และแนบ <strong>TOR / ร่างประกาศ</strong> ของงานที่สนใจที่สุดจาก e-GP
@@ -52,9 +52,9 @@ export function BriefExport({ count, hasCompanyNotes }: { count: number; hasComp
         <li>ส่งได้เลย ในไฟล์มีคำขอวิเคราะห์ ไป / ไม่ไป เขียนไว้ให้แล้ว</li>
       </ol>
       {!hasCompanyNotes ? (
-        <p className="mt-2 font-body text-xs text-muted">
+        <p className="mt-2 font-body text-xs text-muted-foreground">
           ยังไม่ได้กรอกข้อมูลบริษัท (ทุน ผลงาน ทีม พาร์ทเนอร์) ผลวิเคราะห์จะแม่นขึ้นมากถ้ากรอกไว้ใน{" "}
-          <Link href="/egp/settings" className="font-semibold text-navy underline">
+          <Link href="/egp/settings" className="font-semibold text-primary underline">
             หน้าตั้งค่า
           </Link>
         </p>

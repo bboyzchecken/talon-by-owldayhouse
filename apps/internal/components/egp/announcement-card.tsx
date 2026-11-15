@@ -6,7 +6,7 @@ import { useState } from "react";
 import { AlertTriangle, CalendarClock, ExternalLink, Info, Star } from "lucide-react";
 import { Button, cn } from "@odh/ui";
 import { leadHref } from "@/components/lead-card";
-import { Alert, Input, Select } from "@/components/ui";
+import { Alert, Input, Select } from "@/components/odh";
 import { ApiError, egp } from "@/lib/api";
 import { formatBaht, formatDate } from "@/lib/format";
 import type { EgpAnnouncement, EgpSendResult, SimilarLead, User } from "@/lib/types";
@@ -61,10 +61,22 @@ export function AnnouncementCard({
     },
   });
 
-  const skip = useMutation({ mutationFn: () => egp.skip(item.id), onSuccess: refresh });
+  const skip = useMutation({
+    mutationFn: () => egp.skip(item.id),
+    onSuccess: refresh,
+    meta: { success: "ข้ามประกาศนี้แล้ว" },
+  });
   const starred = Boolean(item.shortlisted_at);
-  const star = useMutation({ mutationFn: () => egp.shortlist(item.id, !starred), onSuccess: refresh });
-  const restore = useMutation({ mutationFn: () => egp.restore(item.id), onSuccess: refresh });
+  const star = useMutation({
+    mutationFn: () => egp.shortlist(item.id, !starred),
+    onSuccess: refresh,
+    meta: { success: starred ? "เอาออกจากรายการติดดาวแล้ว" : "ติดดาวไว้แล้ว" },
+  });
+  const restore = useMutation({
+    mutationFn: () => egp.restore(item.id),
+    onSuccess: refresh,
+    meta: { success: "กู้คืนประกาศแล้ว" },
+  });
   const [deadlineNote, setDeadlineNote] = useState("");
   const saveDeadline = useMutation({
     mutationFn: (value: string) => egp.setDeadline(item.id, value),
@@ -90,7 +102,7 @@ export function AnnouncementCard({
   });
   const deadlineInput = (
     <label className="min-w-40 flex-1 sm:flex-none">
-      <span className="mb-1 block font-display text-xs font-semibold text-muted">วันปิดรับ</span>
+      <span className="mb-1 block font-display text-xs font-semibold text-muted-foreground">วันปิดรับ</span>
       <Input
         type="date"
         value={deadline}
@@ -110,8 +122,8 @@ export function AnnouncementCard({
   return (
     <article
       className={cn(
-        "rounded-2xl border bg-white p-4 sm:p-5",
-        r.flagged ? "border-ink/40" : "border-line",
+        "rounded-2xl border bg-card p-4 sm:p-5",
+        r.flagged ? "border-foreground/40" : "border-border",
       )}
     >
       <div className="flex items-start gap-2">
@@ -121,10 +133,10 @@ export function AnnouncementCard({
             className={cn(
               "rounded-full px-2.5 py-1 font-display text-xs font-semibold",
               r.stage === "open"
-                ? "bg-navy/10 text-navy"
+                ? "bg-primary/10 text-primary"
                 : r.stage === "upcoming"
-                  ? "border border-navy/40 text-navy"
-                  : "bg-gray-50 text-muted",
+                  ? "border border-primary/40 text-primary"
+                  : "bg-muted text-muted-foreground",
             )}
           >
             {r.stage_label}
@@ -134,7 +146,7 @@ export function AnnouncementCard({
           <span
             className={cn(
               "rounded-full px-2.5 py-1 font-mono text-xs font-medium tabular-nums",
-              r.score >= 80 ? "bg-navy text-white" : "border border-navy/40 text-navy",
+              r.score >= 80 ? "bg-primary text-primary-foreground" : "border border-primary/40 text-primary",
             )}
             title="คะแนนจากความตรงของบริการ วงเงิน และเวลาเตรียม"
           >
@@ -142,15 +154,15 @@ export function AnnouncementCard({
           </span>
         ) : null}
         {item.method_label && item.method ? (
-          <span className="rounded-full border border-line px-2.5 py-1 font-display text-xs font-semibold text-ink">
+          <span className="rounded-full border border-border px-2.5 py-1 font-display text-xs font-semibold text-foreground">
             {item.method_label}
           </span>
         ) : null}
-        <span className="rounded-full border border-line px-2.5 py-1 font-display text-xs font-semibold text-muted">
+        <span className="rounded-full border border-border px-2.5 py-1 font-display text-xs font-semibold text-muted-foreground">
           {r.group_label}
         </span>
         {r.watchlisted ? (
-          <span className="rounded-full bg-navy/10 px-2.5 py-1 font-display text-xs font-semibold text-navy">
+          <span className="rounded-full bg-primary/10 px-2.5 py-1 font-display text-xs font-semibold text-primary">
             จับตา
           </span>
         ) : null}
@@ -158,7 +170,7 @@ export function AnnouncementCard({
           <span
             className={cn(
               "inline-flex items-center gap-1 rounded-full px-2.5 py-1 font-display text-xs font-semibold",
-              r.days_left < 7 ? "bg-ink text-white" : "bg-gray-50 text-muted",
+              r.days_left < 7 ? "bg-foreground text-background" : "bg-muted text-muted-foreground",
             )}
           >
             <CalendarClock className="size-3.5" aria-hidden />
@@ -168,7 +180,7 @@ export function AnnouncementCard({
         {warnings.map((flag) => (
           <span
             key={flag.code}
-            className="inline-flex items-center gap-1 rounded-full bg-ink px-2.5 py-1 font-display text-xs font-semibold text-white"
+            className="inline-flex items-center gap-1 rounded-full bg-foreground px-2.5 py-1 font-display text-xs font-semibold text-background"
             title={flag.reason}
           >
             <AlertTriangle className="size-3.5" aria-hidden />
@@ -184,7 +196,7 @@ export function AnnouncementCard({
           title={starred ? "เอาออกจากรายการคัดไว้วิเคราะห์" : "คัดไว้วิเคราะห์กับ Claude"}
           className={cn(
             "inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 font-display text-xs font-semibold transition-colors",
-            starred ? "bg-navy text-white" : "border border-line text-muted hover:border-navy hover:text-navy",
+            starred ? "bg-primary text-primary-foreground" : "border border-border text-muted-foreground hover:border-primary hover:text-primary",
           )}
         >
           <Star className={cn("size-3.5", starred ? "fill-current" : "")} aria-hidden />
@@ -192,53 +204,53 @@ export function AnnouncementCard({
         </button>
       </div>
 
-      <p className="mt-3 font-display text-sm font-semibold text-muted">
+      <p className="mt-3 font-display text-sm font-semibold text-muted-foreground">
         {item.agency}
         {item.procurement_unit && item.procurement_unit !== item.agency ? (
           <span className="font-body font-normal"> · {item.procurement_unit}</span>
         ) : null}
       </p>
-      <h3 className="mt-1 font-display text-base font-semibold leading-snug text-ink">{item.title}</h3>
+      <h3 className="mt-1 font-display text-base font-semibold leading-snug text-foreground">{item.title}</h3>
       {r.subject && r.subject.length < item.title.length - 4 ? (
-        <p className="mt-1 font-body text-xs text-muted">
-          งานที่จ้าง: <span className="text-ink">{r.subject}</span>
+        <p className="mt-1 font-body text-xs text-muted-foreground">
+          งานที่จ้าง: <span className="text-foreground">{r.subject}</span>
         </p>
       ) : null}
 
       <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 font-body text-sm sm:grid-cols-4">
         <div>
-          <dt className="font-mono text-[11px] uppercase tracking-wide text-muted">วงเงิน</dt>
-          <dd className="tabular-nums text-ink">{item.budget ? formatBaht(item.budget) : "—"}</dd>
+          <dt className="font-mono text-[11px] uppercase tracking-wide text-muted-foreground">วงเงิน</dt>
+          <dd className="tabular-nums text-foreground">{item.budget ? formatBaht(item.budget) : "—"}</dd>
         </div>
         {item.reference_price && item.reference_price !== item.budget ? (
           <div>
-            <dt className="font-mono text-[11px] uppercase tracking-wide text-muted">ราคากลาง</dt>
-            <dd className="tabular-nums text-ink">{formatBaht(item.reference_price)}</dd>
+            <dt className="font-mono text-[11px] uppercase tracking-wide text-muted-foreground">ราคากลาง</dt>
+            <dd className="tabular-nums text-foreground">{formatBaht(item.reference_price)}</dd>
           </div>
         ) : null}
         <div>
-          <dt className="font-mono text-[11px] uppercase tracking-wide text-muted">เลขที่โครงการ</dt>
-          <dd className="select-all font-mono text-ink">{item.project_id}</dd>
+          <dt className="font-mono text-[11px] uppercase tracking-wide text-muted-foreground">เลขที่โครงการ</dt>
+          <dd className="select-all font-mono text-foreground">{item.project_id}</dd>
         </div>
         {item.winner_announced_at ? (
           <div>
-            <dt className="font-mono text-[11px] uppercase tracking-wide text-muted">ประกาศผู้ชนะ</dt>
-            <dd className="text-ink">{formatDate(item.winner_announced_at)}</dd>
+            <dt className="font-mono text-[11px] uppercase tracking-wide text-muted-foreground">ประกาศผู้ชนะ</dt>
+            <dd className="text-foreground">{formatDate(item.winner_announced_at)}</dd>
           </div>
         ) : (
           <div>
-            <dt className="font-mono text-[11px] uppercase tracking-wide text-muted">วันปิดรับ</dt>
-            <dd className="text-ink">{formatDate(item.deadline_at)}</dd>
+            <dt className="font-mono text-[11px] uppercase tracking-wide text-muted-foreground">วันปิดรับ</dt>
+            <dd className="text-foreground">{formatDate(item.deadline_at)}</dd>
           </div>
         )}
         <div>
-          <dt className="font-mono text-[11px] uppercase tracking-wide text-muted">สถานะใน e-GP</dt>
-          <dd className="text-ink">{item.project_status || "—"}</dd>
+          <dt className="font-mono text-[11px] uppercase tracking-wide text-muted-foreground">สถานะใน e-GP</dt>
+          <dd className="text-foreground">{item.project_status || "—"}</dd>
         </div>
       </dl>
 
       {r.matched_services.length > 0 ? (
-        <p className="mt-2 font-body text-xs text-muted">
+        <p className="mt-2 font-body text-xs text-muted-foreground">
           ตรงกับ: {r.matched_services.join(", ")} ({r.matched_keywords.join(", ")})
         </p>
       ) : null}
@@ -246,14 +258,14 @@ export function AnnouncementCard({
       {warnings.length > 0 || notices.length > 0 ? (
         <ul className="mt-3 space-y-1">
           {[...warnings, ...notices].map((flag) => (
-            <li key={flag.code} className="flex items-start gap-1.5 font-body text-xs text-muted">
+            <li key={flag.code} className="flex items-start gap-1.5 font-body text-xs text-muted-foreground">
               {flag.severity === "warn" ? (
-                <AlertTriangle className="mt-0.5 size-3.5 shrink-0 text-ink" aria-hidden />
+                <AlertTriangle className="mt-0.5 size-3.5 shrink-0 text-foreground" aria-hidden />
               ) : (
                 <Info className="mt-0.5 size-3.5 shrink-0" aria-hidden />
               )}
               <span>
-                <span className="font-semibold text-ink">{flag.label}:</span> {flag.reason}
+                <span className="font-semibold text-foreground">{flag.label}:</span> {flag.reason}
               </span>
             </li>
           ))}
@@ -261,9 +273,9 @@ export function AnnouncementCard({
       ) : null}
 
       {!r.passed ? (
-        <ul className="mt-3 space-y-1 rounded-xl bg-gray-50 px-3 py-2">
+        <ul className="mt-3 space-y-1 rounded-xl bg-muted px-3 py-2">
           {r.exclusions.map((ex) => (
-            <li key={ex.code} className="font-body text-xs text-muted">
+            <li key={ex.code} className="font-body text-xs text-muted-foreground">
               {closed ? "" : "ไม่ผ่านตัวกรอง: "}
               {ex.reason}
             </li>
@@ -278,11 +290,11 @@ export function AnnouncementCard({
       ) : null}
 
       {similar ? (
-        <div className="mt-3 rounded-xl border border-gold bg-gold-soft p-3">
-          <p className="font-display text-sm font-semibold text-navy">มีลูกค้าชื่อคล้ายหน่วยงานนี้</p>
+        <div className="mt-3 rounded-xl border border-gold bg-notice p-3">
+          <p className="font-display text-sm font-semibold text-primary">มีลูกค้าชื่อคล้ายหน่วยงานนี้</p>
           <ul className="mt-2 space-y-2">
             {similar.map((lead) => (
-              <li key={lead.id} className="flex flex-wrap items-center gap-2 font-body text-sm text-ink">
+              <li key={lead.id} className="flex flex-wrap items-center gap-2 font-body text-sm text-foreground">
                 <span className="min-w-0 flex-1">
                   {lead.name} — {lead.owner_name || "ยังไม่มอบหมาย"} · ลงไว้ {formatDate(lead.registered_at)}
                 </span>
@@ -304,10 +316,10 @@ export function AnnouncementCard({
       ) : null}
 
       {open ? (
-        <div className="mt-4 flex flex-wrap items-end gap-2 border-t border-line pt-4">
+        <div className="mt-4 flex flex-wrap items-end gap-2 border-t border-border pt-4">
           {deadlineInput}
           <label className="min-w-44 flex-1">
-            <span className="mb-1 block font-display text-xs font-semibold text-muted">ส่งให้</span>
+            <span className="mb-1 block font-display text-xs font-semibold text-muted-foreground">ส่งให้</span>
             <Select value={assignee} onChange={(event) => setAssignee(event.target.value)} aria-label="ส่งให้ใคร">
               <option value="">ตัวฉันเอง</option>
               {users.map((person) => (
@@ -327,25 +339,25 @@ export function AnnouncementCard({
       ) : null}
 
       {item.decision === "sent" && item.lead_id ? (
-        <div className="mt-4 border-t border-line pt-3">
+        <div className="mt-4 border-t border-border pt-3">
           <div className="flex flex-wrap items-end gap-3">
             {/* A sent project still needs its closing date: it drives the
                 team calendar and the sales person's follow-up. */}
             {closed ? null : deadlineInput}
             <Link
               href={leadHref(item.lead_id)}
-              className="inline-flex items-center gap-1.5 pb-2 font-display text-sm font-semibold text-navy underline"
+              className="inline-flex items-center gap-1.5 pb-2 font-display text-sm font-semibold text-primary underline"
             >
               <ExternalLink className="size-4" aria-hidden />
               เปิดลูกค้าใน Lead Tracker
             </Link>
           </div>
-          {deadlineNote ? <p className="mt-2 font-body text-xs text-muted" role="status">{deadlineNote}</p> : null}
+          {deadlineNote ? <p className="mt-2 font-body text-xs text-muted-foreground" role="status">{deadlineNote}</p> : null}
         </div>
       ) : null}
 
       {item.decision === "skipped" ? (
-        <div className="mt-4 border-t border-line pt-3">
+        <div className="mt-4 border-t border-border pt-3">
           <Button size="sm" variant="line" onClick={() => restore.mutate()} disabled={restore.isPending}>
             เอากลับมาพิจารณา
           </Button>

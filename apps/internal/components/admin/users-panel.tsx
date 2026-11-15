@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Check, Copy, KeyRound, UserPlus } from "lucide-react";
 import { Button } from "@odh/ui";
-import { Alert, Field, Input, Panel, Select, Spinner, Textarea } from "@/components/ui";
+import { Alert, Field, Input, Panel, Select, Spinner, Textarea } from "@/components/odh";
 import { ApiError, admin as adminApi } from "@/lib/api";
 import { buildAccountMessage, loginUrl } from "@/lib/account-message";
 import { roleLabels } from "@/lib/labels";
@@ -98,6 +98,7 @@ export function UsersPanel() {
   });
 
   const update = useMutation({
+    meta: { success: "อัปเดตบัญชีแล้ว" },
     mutationFn: ({ id, status }: { id: number; status: string }) => adminApi.updateUser(id, { status }),
     onSuccess: async () => {
       setError("");
@@ -139,32 +140,32 @@ export function UsersPanel() {
       {error ? <Alert tone="stop">{error}</Alert> : null}
 
       {handoff ? (
-        <div className="mb-4 rounded-xl border border-gold bg-gold-soft p-4">
-          <p className="font-display font-semibold text-navy">
+        <div className="mb-4 rounded-xl border border-gold bg-notice p-4">
+          <p className="font-display font-semibold text-primary">
             {handoff.kind === "new"
               ? `สร้างบัญชีของ ${handoff.name} แล้ว`
               : `รีเซ็ตรหัสผ่านของ ${handoff.name} แล้ว`}
           </p>
-          <p className="mt-1 font-body text-xs text-navy">
+          <p className="mt-1 font-body text-xs text-primary">
             แสดงครั้งเดียว — คัดลอกข้อความด้านล่างไปส่งให้เจ้าของบัญชีทาง LINE หรือ Messenger
             ระบบไม่ส่งอีเมล
           </p>
 
-          <dl className="mt-3 grid gap-1 font-mono text-sm text-navy sm:grid-cols-[auto_1fr] sm:gap-x-3">
-            <dt className="font-body text-xs text-navy/70">ชื่อผู้ใช้</dt>
+          <dl className="mt-3 grid gap-1 font-mono text-sm text-primary sm:grid-cols-[auto_1fr] sm:gap-x-3">
+            <dt className="font-body text-xs text-primary/70">ชื่อผู้ใช้</dt>
             <dd>{handoff.username}</dd>
-            <dt className="font-body text-xs text-navy/70">รหัสผ่าน</dt>
+            <dt className="font-body text-xs text-primary/70">รหัสผ่าน</dt>
             <dd className="flex items-center gap-2">
               <span className="text-base">{handoff.password}</span>
               <button
                 type="button"
                 onClick={() => copy("password", handoff.password)}
-                className="font-display text-xs font-semibold text-navy underline"
+                className="font-display text-xs font-semibold text-primary underline"
               >
                 {copied === "password" ? "คัดลอกแล้ว" : "คัดลอกรหัส"}
               </button>
             </dd>
-            <dt className="font-body text-xs text-navy/70">ลิงก์</dt>
+            <dt className="font-body text-xs text-primary/70">ลิงก์</dt>
             <dd className="break-all">{loginUrl(origin)}</dd>
           </dl>
 
@@ -174,13 +175,13 @@ export function UsersPanel() {
                 rows={12}
                 value={message}
                 onChange={(event) => setMessage(event.target.value)}
-                className="bg-white font-mono text-sm"
+                className="bg-card font-mono text-sm"
               />
             </Field>
           </div>
 
           {copyError ? (
-            <p className="mt-2 font-body text-xs font-semibold text-ink">{copyError}</p>
+            <p className="mt-2 font-body text-xs font-semibold text-foreground">{copyError}</p>
           ) : null}
 
           <div className="mt-3 flex flex-wrap gap-2">
@@ -200,7 +201,7 @@ export function UsersPanel() {
       ) : null}
 
       {adding ? (
-        <div className="mb-4 space-y-3 rounded-xl border border-line p-4">
+        <div className="mb-4 space-y-3 rounded-xl border border-border p-4">
           <div className="grid gap-3 sm:grid-cols-2">
             <Field label="ชื่อผู้ใช้" required hint="ตัวพิมพ์เล็ก ไม่มีเว้นวรรค">
               <Input
@@ -248,11 +249,11 @@ export function UsersPanel() {
           {users.map((person) => (
             <li key={person.id} className="flex flex-wrap items-center gap-3 py-3 first:pt-0 last:pb-0">
               <div className="min-w-0 flex-1">
-                <p className="font-display text-sm font-semibold text-ink">
+                <p className="font-display text-sm font-semibold text-foreground">
                   {person.name}{" "}
-                  <span className="font-mono text-xs font-normal text-muted">@{person.username}</span>
+                  <span className="font-mono text-xs font-normal text-muted-foreground">@{person.username}</span>
                 </p>
-                <p className="font-body text-xs text-muted">
+                <p className="font-body text-xs text-muted-foreground">
                   {roleLabels[person.role]} ·{" "}
                   {person.status === "active" ? "ใช้งานอยู่" : "ปิดการใช้งาน"}
                 </p>
@@ -263,6 +264,7 @@ export function UsersPanel() {
                 onClick={() => {
                   if (window.confirm(`รีเซ็ตรหัสผ่านของ ${person.name}?`)) reset.mutate(person.id);
                 }}
+                disabled={reset.isPending}
               >
                 <KeyRound className="size-4" aria-hidden />
                 รีเซ็ตรหัส
@@ -276,6 +278,7 @@ export function UsersPanel() {
                     status: person.status === "active" ? "deactivated" : "active",
                   })
                 }
+                disabled={update.isPending}
               >
                 {person.status === "active" ? "ปิดบัญชี" : "เปิดบัญชี"}
               </Button>
