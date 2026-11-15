@@ -110,7 +110,7 @@ export default function LeadListPage() {
     <div className="space-y-5">
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="font-display text-2xl font-semibold text-ink sm:text-3xl">รายชื่อลูกค้า</h1>
+          <h1 className="font-display text-2xl font-semibold text-foreground sm:text-3xl">รายชื่อลูกค้า</h1>
           <p className="mt-1 font-body text-sm text-muted-foreground">
             รายชื่อชุดเดียวกันทั้งทีม ป้ายบอกว่าใครดูแล และใครห้ามเสนอขายตรง
           </p>
@@ -143,7 +143,7 @@ export default function LeadListPage() {
               }}
               placeholder="ค้นหาชื่อบริษัท ชื่องาน เลข e-GP หรือเลขผู้เสียภาษี"
               aria-label="ค้นหาลูกค้า"
-              className="w-full rounded-xl border border-line bg-white py-3 pl-11 pr-4 font-body text-base text-ink placeholder:text-muted-foreground/70 focus:border-navy focus:outline-none focus:ring-2 focus:ring-navy/20"
+              className="w-full rounded-xl border border-border bg-card py-3 pl-11 pr-4 font-body text-base text-foreground placeholder:text-muted-foreground/70 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
           </div>
 
@@ -221,21 +221,21 @@ export default function LeadListPage() {
           </div>
 
           <div className="flex flex-wrap items-center gap-4">
-            <label className="flex items-center gap-2 font-body text-sm text-ink">
+            <label className="flex items-center gap-2 font-body text-sm text-foreground">
               <input
                 type="checkbox"
                 checked={Boolean(filters.due_today)}
                 onChange={(event) => update({ due_today: event.target.checked || undefined })}
-                className="size-4 rounded border-line-control accent-navy"
+                className="size-4 rounded border-input accent-navy"
               />
               ถึงกำหนดตามต่อ
             </label>
-            <label className="flex items-center gap-2 font-body text-sm text-ink">
+            <label className="flex items-center gap-2 font-body text-sm text-foreground">
               <input
                 type="checkbox"
                 checked={Boolean(filters.do_not_pitch)}
                 onChange={(event) => update({ do_not_pitch: event.target.checked || undefined })}
-                className="size-4 rounded border-line-control accent-navy"
+                className="size-4 rounded border-input accent-navy"
               />
               เฉพาะที่ห้ามเสนอขายตรง
             </label>
@@ -294,9 +294,9 @@ export default function LeadListPage() {
           {moveResult ? <Alert tone={moveResult.tone}>{moveResult.text}</Alert> : null}
 
           {selecting ? (
-            <div className="sticky bottom-20 z-10 space-y-3 rounded-2xl border border-navy bg-white p-4 shadow-lg sm:bottom-4">
+            <div className="sticky bottom-20 z-10 space-y-3 rounded-2xl border border-primary bg-card p-4 shadow-lg sm:bottom-4">
               <div className="flex flex-wrap items-center gap-2">
-                <p className="mr-auto font-display text-sm font-semibold text-ink">เลือกแล้ว {selected.size} ราย</p>
+                <p className="mr-auto font-display text-sm font-semibold text-foreground">เลือกแล้ว {selected.size} ราย</p>
                 <Button
                   variant="line"
                   size="sm"
@@ -310,7 +310,7 @@ export default function LeadListPage() {
                 <button
                   type="button"
                   onClick={stopSelecting}
-                  className="rounded-full p-2 text-muted-foreground hover:bg-navy/5 hover:text-ink"
+                  className="rounded-full p-2 text-muted-foreground hover:bg-primary/5 hover:text-foreground"
                   aria-label="เลิกเลือก"
                 >
                   <X className="size-4" aria-hidden />
@@ -325,7 +325,7 @@ export default function LeadListPage() {
               />
               {confirming ? (
                 <div className="flex flex-wrap items-center gap-2">
-                  <p className="font-body text-sm text-ink">
+                  <p className="font-body text-sm text-foreground">
                     ย้าย {selected.size} รายไป “ไม่รับงาน”? ย้ายกลับได้ทีละรายในหน้าลูกค้า
                   </p>
                   <Button size="sm" onClick={() => decline.mutate()} disabled={decline.isPending}>
@@ -354,7 +354,7 @@ export default function LeadListPage() {
                       checked={selected.has(lead.id)}
                       onChange={() => toggle(lead.id)}
                       aria-label={`เลือก ${lead.name}`}
-                      className="size-5 rounded border-line-control accent-navy"
+                      className="size-5 rounded border-input accent-navy"
                     />
                   </label>
                 ) : null}

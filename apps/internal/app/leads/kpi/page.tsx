@@ -43,7 +43,7 @@ export default function KPIPage() {
   return (
     <div className="space-y-5">
       <header>
-        <h1 className="font-display text-2xl font-semibold text-ink sm:text-3xl">KPI</h1>
+        <h1 className="font-display text-2xl font-semibold text-foreground sm:text-3xl">KPI</h1>
         <p className="mt-1 font-body text-sm text-muted-foreground">
           แยกลูกค้าที่บริษัทหามา (KPI หลัก) ออกจากลูกค้าเดิมที่เซลส์พามาเอง (โบนัส)
         </p>
@@ -113,7 +113,7 @@ export default function KPIPage() {
             <div className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
               <table className="w-full min-w-[640px] border-collapse text-left">
                 <thead>
-                  <tr className="border-b border-line">
+                  <tr className="border-b border-border">
                     {["แหล่งที่มา", "ลูกค้าใหม่", "นัดคุย", "ใบเสนอราคา", "ปิดได้", "ยอดรวม", "อัตราปิด"].map(
                       (heading) => (
                         <th
@@ -136,8 +136,8 @@ export default function KPIPage() {
                     </tr>
                   ) : (
                     data.by_source.map((row) => (
-                      <tr key={row.source} className="border-b border-line last:border-0">
-                        <td className="py-2 font-display text-sm font-semibold text-ink">
+                      <tr key={row.source} className="border-b border-border last:border-0">
+                        <td className="py-2 font-display text-sm font-semibold text-foreground">
                           {labelOf(sourceLabels, row.source)}
                         </td>
                         <td className="py-2 font-mono text-sm tabular-nums">{formatNumber(row.new_leads)}</td>
@@ -184,7 +184,7 @@ function ScoreCard({ row }: { row: KPIUser }) {
     >
       <div className="space-y-5">
         <section>
-          <h3 className="font-display text-sm font-semibold text-ink">
+          <h3 className="font-display text-sm font-semibold text-foreground">
             ลูกค้าที่บริษัทหามา — KPI หลัก
           </h3>
           <div className="mt-2 grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -217,7 +217,7 @@ function ScoreCard({ row }: { row: KPIUser }) {
         </section>
 
         <section>
-          <h3 className="font-display text-sm font-semibold text-ink">
+          <h3 className="font-display text-sm font-semibold text-foreground">
             ลูกค้าเดิมที่พามาเอง — โบนัส
           </h3>
           <div className="mt-2 grid grid-cols-2 gap-3 sm:grid-cols-4">

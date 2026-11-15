@@ -77,7 +77,7 @@ export default function RadarPage() {
     <div className="space-y-5">
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="font-display text-2xl font-semibold text-ink sm:text-3xl">e-GP Radar</h1>
+          <h1 className="font-display text-2xl font-semibold text-foreground sm:text-3xl">e-GP Radar</h1>
           <p className="mt-1 max-w-2xl font-body text-sm text-muted-foreground">
             คัดประกาศจัดซื้อจัดจ้างภาครัฐที่ตรงกับงานของเรา แล้วส่งให้เซลส์ไป present และดูแลต่อ
           </p>
@@ -88,7 +88,7 @@ export default function RadarPage() {
       </header>
 
       <Panel title="นำเข้าประกาศจาก e-GP (ทุกเช้า)">
-        <ol className="list-decimal space-y-1 pl-5 font-body text-sm text-ink">
+        <ol className="list-decimal space-y-1 pl-5 font-body text-sm text-foreground">
           <li>
             เปิด e-GP → <strong>ค้นหาขั้นสูง</strong> เลือก <strong>สถานะโครงการ</strong> เป็น “ประกาศเชิญชวน” หรือ
             “จัดทำ TOR / ร่างประกาศ” และเลือกวันที่ประกาศช่วงสั้น ๆ (เช่น 1–3 วันล่าสุด)
@@ -161,7 +161,7 @@ export default function RadarPage() {
                 title={tab.hint}
                 className={cn(
                   "whitespace-nowrap rounded-full px-4 py-2 font-display text-sm font-semibold transition-colors",
-                  view === tab.view ? "bg-navy text-white" : "border border-line text-muted-foreground hover:border-ink",
+                  view === tab.view ? "bg-primary text-primary-foreground" : "border border-border text-muted-foreground hover:border-foreground",
                 )}
               >
                 {tab.label}

@@ -32,6 +32,7 @@ export default function RadarSettingsPage() {
   }, [data, form]);
 
   const save = useMutation({
+    meta: { success: "บันทึกเกณฑ์การคัดกรองแล้ว" },
     mutationFn: (settings: EgpSettings) => egp.saveSettings(settings),
     onSuccess: async (result) => {
       setForm(result.settings);
@@ -57,7 +58,7 @@ export default function RadarSettingsPage() {
   return (
     <div className="space-y-5">
       <header>
-        <h1 className="font-display text-2xl font-semibold text-ink sm:text-3xl">ตั้งค่า Radar</h1>
+        <h1 className="font-display text-2xl font-semibold text-foreground sm:text-3xl">ตั้งค่า Radar</h1>
         <p className="mt-1 max-w-2xl font-body text-sm text-muted-foreground">
           เปลี่ยนแล้วมีผลกับประกาศที่นำเข้าไว้แล้วทั้งหมดทันที ไม่ต้องนำเข้าใหม่
         </p>
@@ -68,7 +69,7 @@ export default function RadarSettingsPage() {
 
       <Panel title="หน่วยงาน">
         <fieldset>
-          <legend className="mb-2 font-display text-sm font-semibold text-ink">กลุ่มหน่วยงานที่สนใจ</legend>
+          <legend className="mb-2 font-display text-sm font-semibold text-foreground">กลุ่มหน่วยงานที่สนใจ</legend>
           <div className="flex flex-wrap gap-2">
             {data.groups.map((group) => {
               const checked = form.agency_groups.includes(group.key);
@@ -76,7 +77,7 @@ export default function RadarSettingsPage() {
                 <label
                   key={group.key}
                   className={`cursor-pointer rounded-full border px-3 py-2 font-display text-sm font-semibold transition-colors ${
-                    checked ? "border-navy bg-navy text-white" : "border-line text-muted-foreground hover:border-ink"
+                    checked ? "border-primary bg-primary text-primary-foreground" : "border-border text-muted-foreground hover:border-foreground"
                   }`}
                 >
                   <input
@@ -159,21 +160,21 @@ export default function RadarSettingsPage() {
           </Field>
         </div>
         <div className="mt-4 space-y-2">
-          <label className="flex items-start gap-2 font-body text-sm text-ink">
+          <label className="flex items-start gap-2 font-body text-sm text-foreground">
             <input
               type="checkbox"
               checked={form.hide_flagged_by_default}
               onChange={(event) => update({ hide_flagged_by_default: event.target.checked })}
-              className="mt-0.5 size-4 rounded border-line-control accent-navy"
+              className="mt-0.5 size-4 rounded border-input accent-navy"
             />
             แยกงานที่ติดป้ายระวังไปแท็บของมันเอง (ไม่ปนในแท็บ “น่าสนใจ”)
           </label>
-          <label className="flex items-start gap-2 font-body text-sm text-ink">
+          <label className="flex items-start gap-2 font-body text-sm text-foreground">
             <input
               type="checkbox"
               checked={form.hire_only}
               onChange={(event) => update({ hire_only: event.target.checked })}
-              className="mt-0.5 size-4 rounded border-line-control accent-navy"
+              className="mt-0.5 size-4 rounded border-input accent-navy"
             />
             เฉพาะงานจ้าง (ไม่เอางานซื้อของ)
           </label>
@@ -183,13 +184,13 @@ export default function RadarSettingsPage() {
       <Panel title="บริการและคำค้น">
         <p className="mb-4 font-body text-sm text-muted-foreground">
           ชื่อโครงการต้องมีคำในกลุ่มที่เปิดไว้อย่างน้อยหนึ่งคำ บรรทัดละคำ ระบบหาคำเฉพาะส่วนที่บอกว่า
-          <strong className="text-ink">จ้างอะไร</strong> (ก่อนคำอย่าง “เพื่อ” “สำหรับ” “ตามโครงการ” “ไปกลับ”) เช่น
+          <strong className="text-foreground">จ้างอะไร</strong> (ก่อนคำอย่าง “เพื่อ” “สำหรับ” “ตามโครงการ” “ไปกลับ”) เช่น
           “จ้างเหมารถตู้ไปอบรม” งานที่จ้างคือรถตู้ จึงไม่ตรงคำว่า “อบรม”
         </p>
         <div className="grid gap-4 sm:grid-cols-2">
           {form.service_groups.map((group, index) => (
-            <div key={group.key} className="rounded-xl border border-line p-4">
-              <label className="flex items-center gap-2 font-display text-sm font-semibold text-ink">
+            <div key={group.key} className="rounded-xl border border-border p-4">
+              <label className="flex items-center gap-2 font-display text-sm font-semibold text-foreground">
                 <input
                   type="checkbox"
                   checked={group.enabled}
@@ -198,7 +199,7 @@ export default function RadarSettingsPage() {
                     next[index] = { ...group, enabled: event.target.checked };
                     update({ service_groups: next });
                   }}
-                  className="size-4 rounded border-line-control accent-navy"
+                  className="size-4 rounded border-input accent-navy"
                 />
                 {group.label}
               </label>

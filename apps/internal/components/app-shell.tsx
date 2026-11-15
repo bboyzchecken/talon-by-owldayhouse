@@ -7,6 +7,7 @@ import { ChevronsUpDown, KeyRound, LogOut } from "lucide-react";
 import { OwlLogo, OwlMark, cn } from "@odh/ui";
 import { Spinner } from "@/components/odh";
 import { RoleBadge } from "@/components/role-badge";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -258,6 +259,11 @@ export function AppShell({ children }: { children: ReactNode }) {
                     <LogOut aria-hidden />
                     ออกจากระบบ
                   </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuLabel className="font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
+                    ธีม
+                  </DropdownMenuLabel>
+                  <ThemeToggle />
                 </DropdownMenuContent>
               </DropdownMenu>
             </SidebarMenuItem>

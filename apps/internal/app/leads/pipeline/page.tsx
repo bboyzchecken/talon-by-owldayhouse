@@ -43,7 +43,7 @@ export default function PipelinePage() {
     <div className="space-y-5">
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="font-display text-2xl font-semibold text-ink sm:text-3xl">Pipeline</h1>
+          <h1 className="font-display text-2xl font-semibold text-foreground sm:text-3xl">Pipeline</h1>
           <p className="mt-1 font-body text-sm text-muted-foreground">ลูกค้าทั้งหมดเรียงตามขั้น เลื่อนดูได้ทางขวา</p>
         </div>
         <Select
@@ -80,10 +80,10 @@ export default function PipelinePage() {
                   <header
                     className={cn(
                       "mb-3 rounded-xl border px-3 py-2",
-                      stage === "won" ? "border-gold bg-gold-soft" : "border-line bg-white",
+                      stage === "won" ? "border-gold bg-notice" : "border-border bg-card",
                     )}
                   >
-                    <h2 className="font-display text-sm font-semibold text-ink">
+                    <h2 className="font-display text-sm font-semibold text-foreground">
                       {labelOf(stageLabels, stage)}{" "}
                       <span className="font-mono text-xs text-muted-foreground">({items.length})</span>
                     </h2>
@@ -98,7 +98,7 @@ export default function PipelinePage() {
                       </li>
                     ))}
                     {items.length === 0 ? (
-                      <li className="rounded-xl border border-dashed border-line px-3 py-6 text-center font-body text-xs text-muted-foreground">
+                      <li className="rounded-xl border border-dashed border-border px-3 py-6 text-center font-body text-xs text-muted-foreground">
                         ว่าง
                       </li>
                     ) : null}

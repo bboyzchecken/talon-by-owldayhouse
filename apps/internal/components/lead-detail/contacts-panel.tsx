@@ -26,6 +26,7 @@ export function ContactsPanel({ leadId, canEdit }: { leadId: number; canEdit: bo
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ["leads", leadId] });
 
   const create = useMutation({
+    meta: { success: "เพิ่มผู้ติดต่อแล้ว" },
     mutationFn: () => leadsApi.contacts.create(leadId, form),
     onSuccess: async () => {
       setForm({ name: "", position: "", phone: "", line_id: "", email: "", note: "" });
@@ -37,6 +38,7 @@ export function ContactsPanel({ leadId, canEdit }: { leadId: number; canEdit: bo
   });
 
   const remove = useMutation({
+    meta: { success: "ลบผู้ติดต่อแล้ว" },
     mutationFn: (contactId: number) => leadsApi.contacts.remove(leadId, contactId),
     onSuccess: invalidate,
     onError: (caught) => setError((caught as ApiError).body?.error ?? "ลบผู้ติดต่อไม่สำเร็จ"),
@@ -59,7 +61,7 @@ export function ContactsPanel({ leadId, canEdit }: { leadId: number; canEdit: bo
       {error ? <Alert>{error}</Alert> : null}
 
       {adding ? (
-        <div className="mb-4 space-y-3 rounded-xl border border-line p-4">
+        <div className="mb-4 space-y-3 rounded-xl border border-border p-4">
           <div className="grid gap-3 sm:grid-cols-2">
             <Field label="ชื่อ" required>
               <Input value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} />
@@ -114,7 +116,7 @@ export function ContactsPanel({ leadId, canEdit }: { leadId: number; canEdit: bo
           {contacts.map((contact) => (
             <li key={contact.id} className="flex flex-wrap items-start gap-3 py-3 first:pt-0 last:pb-0">
               <div className="min-w-0 flex-1">
-                <p className="font-display text-sm font-semibold text-ink">
+                <p className="font-display text-sm font-semibold text-foreground">
                   {contact.name}
                   {contact.position ? (
                     <span className="font-body font-normal text-muted-foreground"> · {contact.position}</span>
@@ -128,7 +130,7 @@ export function ContactsPanel({ leadId, canEdit }: { leadId: number; canEdit: bo
                 {contact.phone ? (
                   <a
                     href={telHref(contact.phone)}
-                    className="flex h-10 items-center gap-1.5 rounded-full bg-navy px-3 font-display text-sm font-semibold text-white"
+                    className="flex h-10 items-center gap-1.5 rounded-full bg-primary px-3 font-display text-sm font-semibold text-primary-foreground"
                   >
                     <Phone className="size-4" aria-hidden />
                     โทร
@@ -139,7 +141,7 @@ export function ContactsPanel({ leadId, canEdit }: { leadId: number; canEdit: bo
                     href={lineHref(contact.line_id)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex h-10 items-center gap-1.5 rounded-full border border-line px-3 font-display text-sm font-semibold text-ink"
+                    className="flex h-10 items-center gap-1.5 rounded-full border border-border px-3 font-display text-sm font-semibold text-foreground"
                   >
                     <MessageCircle className="size-4" aria-hidden />
                     LINE
@@ -151,7 +153,7 @@ export function ContactsPanel({ leadId, canEdit }: { leadId: number; canEdit: bo
                     onClick={() => {
                       if (window.confirm(`ลบผู้ติดต่อ ${contact.name}?`)) remove.mutate(contact.id);
                     }}
-                    className="flex size-10 items-center justify-center rounded-full border border-line text-muted-foreground transition-colors hover:border-ink hover:text-ink"
+                    className="flex size-10 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-foreground hover:text-foreground"
                     aria-label={`ลบผู้ติดต่อ ${contact.name}`}
                   >
                     <Trash2 className="size-4" aria-hidden />

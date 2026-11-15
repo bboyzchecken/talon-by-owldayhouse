@@ -31,7 +31,7 @@ export function OwnershipHistoryPanel() {
         <ol className="divide-y divide-line">
           {rows.map((entry) => (
             <li key={entry.id} className="py-3 first:pt-0 last:pb-0">
-              <p className="font-body text-sm text-ink">
+              <p className="font-body text-sm text-foreground">
                 <Link href={leadHref(entry.lead_id)} className="font-display font-semibold underline">
                   {entry.lead?.name ?? `ลูกค้า #${entry.lead_id}`}
                 </Link>

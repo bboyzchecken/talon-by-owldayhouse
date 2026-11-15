@@ -27,6 +27,7 @@ export function SettingsPanel() {
   }, [data]);
 
   const save = useMutation({
+    meta: { success: "บันทึกวันตัดรอบแล้ว" },
     mutationFn: () => adminApi.setCutoff(value),
     onSuccess: async () => {
       setError("");
@@ -49,7 +50,7 @@ export function SettingsPanel() {
       {saved ? <Alert>บันทึกแล้ว</Alert> : null}
 
       <p className="font-body text-sm text-muted-foreground">
-        ปัจจุบัน: <span className="font-semibold text-ink">{formatDate(current)}</span> —{" "}
+        ปัจจุบัน: <span className="font-semibold text-foreground">{formatDate(current)}</span> —{" "}
         {open ? "เซลส์ยังลงลูกค้าเดิมของตัวเองได้" : "หมดเขตแล้ว เฉพาะแอดมินลงให้ได้"}
       </p>
 

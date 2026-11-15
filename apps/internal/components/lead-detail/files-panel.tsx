@@ -28,6 +28,7 @@ export function FilesPanel({ leadId, canEdit }: { leadId: number; canEdit: boole
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ["leads", leadId, "files"] });
 
   const upload = useMutation({
+    meta: { success: "อัปโหลดไฟล์แล้ว" },
     mutationFn: (file: File) => filesApi.upload("lead", leadId, file),
     onSuccess: async () => {
       setError("");
@@ -38,6 +39,7 @@ export function FilesPanel({ leadId, canEdit }: { leadId: number; canEdit: boole
   });
 
   const remove = useMutation({
+    meta: { success: "ลบไฟล์แล้ว" },
     mutationFn: (id: number) => filesApi.remove(id),
     onSuccess: invalidate,
     onError: (caught) => setError((caught as ApiError).body?.error ?? "ลบไฟล์ไม่สำเร็จ"),
@@ -101,7 +103,7 @@ export function FilesPanel({ leadId, canEdit }: { leadId: number; canEdit: boole
             <li key={file.id} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
               <Paperclip className="size-4 shrink-0 text-muted-foreground" aria-hidden />
               <div className="min-w-0 flex-1">
-                <p className="truncate font-display text-sm font-semibold text-ink">{file.filename}</p>
+                <p className="truncate font-display text-sm font-semibold text-foreground">{file.filename}</p>
                 <p className="font-mono text-[11px] text-muted-foreground">
                   {formatBytes(file.size)} · {formatDate(file.created_at)}
                   {file.uploader ? ` · ${file.uploader.name}` : ""}
@@ -110,7 +112,7 @@ export function FilesPanel({ leadId, canEdit }: { leadId: number; canEdit: boole
               <button
                 type="button"
                 onClick={() => openFile(file.id)}
-                className="flex size-10 items-center justify-center rounded-full border border-line text-muted-foreground transition-colors hover:border-navy hover:text-navy"
+                className="flex size-10 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-primary hover:text-primary"
                 aria-label={`ดาวน์โหลด ${file.filename}`}
               >
                 <Download className="size-4" aria-hidden />
@@ -121,7 +123,7 @@ export function FilesPanel({ leadId, canEdit }: { leadId: number; canEdit: boole
                   onClick={() => {
                     if (window.confirm(`ลบไฟล์ ${file.filename}?`)) remove.mutate(file.id);
                   }}
-                  className="flex size-10 items-center justify-center rounded-full border border-line text-muted-foreground transition-colors hover:border-ink hover:text-ink"
+                  className="flex size-10 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-foreground hover:text-foreground"
                   aria-label={`ลบ ${file.filename}`}
                 >
                   <Trash2 className="size-4" aria-hidden />

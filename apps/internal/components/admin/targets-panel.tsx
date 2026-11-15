@@ -26,6 +26,7 @@ export function TargetsPanel() {
   });
 
   const save = useMutation({
+    meta: { success: "บันทึกเป้าแล้ว" },
     mutationFn: (body: {
       user_id: number;
       revenue_target: number;
@@ -81,8 +82,8 @@ export function TargetsPanel() {
               setDrafts((current) => ({ ...current, [row.user_id]: { ...draft, ...patch } }));
 
             return (
-              <li key={row.user_id} className="rounded-xl border border-line p-4">
-                <p className="font-display text-sm font-semibold text-ink">
+              <li key={row.user_id} className="rounded-xl border border-border p-4">
+                <p className="font-display text-sm font-semibold text-foreground">
                   {row.user?.name ?? `ผู้ใช้ #${row.user_id}`}
                   {row.id === 0 ? (
                     <span className="ml-2 font-body text-xs font-normal text-muted-foreground">(ค่าเริ่มต้น ยังไม่บันทึก)</span>

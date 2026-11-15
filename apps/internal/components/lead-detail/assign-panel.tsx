@@ -29,6 +29,7 @@ export function AssignPanel({ lead, isAdmin }: { lead: Lead; isAdmin: boolean })
   });
 
   const assign = useMutation({
+    meta: { success: "เปลี่ยนเจ้าของแล้ว" },
     mutationFn: () =>
       leadsApi.assign(lead.id, {
         owner_type: ownerType,
@@ -50,13 +51,13 @@ export function AssignPanel({ lead, isAdmin }: { lead: Lead; isAdmin: boolean })
     <Panel title="เจ้าของและประวัติการเปลี่ยน">
       {error ? <Alert tone="stop">{error}</Alert> : null}
 
-      <p className="font-body text-sm text-ink">
+      <p className="font-body text-sm text-foreground">
         ปัจจุบัน: <span className="font-semibold">{labelOf(ownerTypeLabels, lead.owner_type)}</span> ·{" "}
         {who(lead.owner_user_id)}
       </p>
 
       {isAdmin ? (
-        <div className="mt-4 space-y-3 rounded-xl border border-line p-4">
+        <div className="mt-4 space-y-3 rounded-xl border border-border p-4">
           <div className="grid gap-3 sm:grid-cols-2">
             <Field label="ประเภทเจ้าของ">
               <Select
@@ -93,7 +94,7 @@ export function AssignPanel({ lead, isAdmin }: { lead: Lead; isAdmin: boolean })
       )}
 
       <div className="mt-5">
-        <h3 className="font-display text-sm font-semibold text-ink">ประวัติการเปลี่ยนเจ้าของ</h3>
+        <h3 className="font-display text-sm font-semibold text-foreground">ประวัติการเปลี่ยนเจ้าของ</h3>
         {logs.isLoading ? (
           <Spinner label="กำลังโหลดประวัติ…" />
         ) : (logs.data?.data ?? []).length === 0 ? (
@@ -101,8 +102,8 @@ export function AssignPanel({ lead, isAdmin }: { lead: Lead; isAdmin: boolean })
         ) : (
           <ol className="mt-2 space-y-2">
             {(logs.data?.data ?? []).map((entry) => (
-              <li key={entry.id} className="border-b border-line pb-2 last:border-0 last:pb-0">
-                <p className="font-body text-sm text-ink">
+              <li key={entry.id} className="border-b border-border pb-2 last:border-0 last:pb-0">
+                <p className="font-body text-sm text-foreground">
                   {entry.from_owner_type ? (
                     <>
                       {labelOf(ownerTypeLabels, entry.from_owner_type)} · {who(entry.from_owner_user_id)} →{" "}

@@ -95,18 +95,18 @@ export function TeamCalendar({ userId }: { userId?: number }) {
           <button
             type="button"
             onClick={() => shiftMonth(-1)}
-            className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-navy/5 hover:text-navy"
+            className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-primary/5 hover:text-primary"
             aria-label="เดือนก่อน"
           >
             <ChevronLeft className="size-4" aria-hidden />
           </button>
-          <h3 className="min-w-36 text-center font-display text-base font-semibold text-ink">
+          <h3 className="min-w-36 text-center font-display text-base font-semibold text-foreground">
             {monthTitle.format(day(month))}
           </h3>
           <button
             type="button"
             onClick={() => shiftMonth(1)}
-            className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-navy/5 hover:text-navy"
+            className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-primary/5 hover:text-primary"
             aria-label="เดือนถัดไป"
           >
             <ChevronRight className="size-4" aria-hidden />
@@ -118,13 +118,13 @@ export function TeamCalendar({ userId }: { userId?: number }) {
                 setMonth(today.slice(0, 7) + "-01");
                 setSelected(today);
               }}
-              className="ml-1 rounded-full border border-line px-3 py-1 font-display text-xs font-semibold text-muted-foreground hover:border-ink"
+              className="ml-1 rounded-full border border-border px-3 py-1 font-display text-xs font-semibold text-muted-foreground hover:border-foreground"
             >
               วันนี้
             </button>
           ) : null}
         </div>
-        <div className="flex rounded-full border border-line p-0.5" role="group" aria-label="แสดงของใคร">
+        <div className="flex rounded-full border border-border p-0.5" role="group" aria-label="แสดงของใคร">
           {[
             { mine: false, label: "ทั้งทีม" },
             { mine: true, label: "ของฉัน" },
@@ -136,7 +136,7 @@ export function TeamCalendar({ userId }: { userId?: number }) {
               aria-pressed={mineOnly === option.mine}
               className={cn(
                 "rounded-full px-3 py-1 font-display text-xs font-semibold transition-colors",
-                mineOnly === option.mine ? "bg-navy text-white" : "text-muted-foreground hover:text-ink",
+                mineOnly === option.mine ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground",
               )}
             >
               {option.label}
@@ -176,23 +176,23 @@ export function TeamCalendar({ userId }: { userId?: number }) {
               aria-label={`${dayTitle.format(d)}: ปิดรับ ${deadlines} นัด ${meetings} ตามต่อ ${followUps}`}
               className={cn(
                 "flex min-h-14 flex-col items-center gap-1 rounded-lg border px-0.5 py-1 transition-colors",
-                isSelected ? "border-navy bg-navy/5" : "border-transparent hover:border-line",
+                isSelected ? "border-primary bg-primary/5" : "border-transparent hover:border-border",
                 !inMonth && "opacity-40",
               )}
             >
               <span
                 className={cn(
                   "flex size-6 items-center justify-center rounded-full font-mono text-xs tabular-nums",
-                  isToday ? "bg-navy text-white" : "text-ink",
+                  isToday ? "bg-primary text-primary-foreground" : "text-foreground",
                 )}
               >
                 {d.getUTCDate()}
               </span>
               <span className="flex flex-wrap items-center justify-center gap-0.5" aria-hidden>
                 {deadlines > 0 ? (
-                  <span className="rounded bg-ink px-1 font-mono text-[10px] leading-4 text-white">{deadlines}</span>
+                  <span className="rounded bg-foreground px-1 font-mono text-[10px] leading-4 text-background">{deadlines}</span>
                 ) : null}
-                {meetings > 0 ? <span className="size-1.5 rounded-full border border-navy" /> : null}
+                {meetings > 0 ? <span className="size-1.5 rounded-full border border-primary" /> : null}
                 {followUps > 0 ? <span className="size-1.5 rounded-full bg-muted-foreground" /> : null}
               </span>
             </button>
@@ -202,18 +202,18 @@ export function TeamCalendar({ userId }: { userId?: number }) {
 
       <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-1 font-body text-xs text-muted-foreground" aria-label="คำอธิบายสัญลักษณ์">
         <li className="flex items-center gap-1.5">
-          <span className="rounded bg-ink px-1 font-mono text-[10px] leading-4 text-white">1</span> ปิดรับข้อเสนอ e-GP
+          <span className="rounded bg-foreground px-1 font-mono text-[10px] leading-4 text-background">1</span> ปิดรับข้อเสนอ e-GP
         </li>
         <li className="flex items-center gap-1.5">
-          <span className="size-1.5 rounded-full border border-navy" /> นัดพบ
+          <span className="size-1.5 rounded-full border border-primary" /> นัดพบ
         </li>
         <li className="flex items-center gap-1.5">
           <span className="size-1.5 rounded-full bg-muted-foreground" /> ตามต่อ
         </li>
       </ul>
 
-      <div className="mt-4 border-t border-line pt-4">
-        <h4 className="font-display text-sm font-semibold text-ink">{dayTitle.format(day(selected))}</h4>
+      <div className="mt-4 border-t border-border pt-4">
+        <h4 className="font-display text-sm font-semibold text-foreground">{dayTitle.format(day(selected))}</h4>
         {isLoading ? (
           <Spinner />
         ) : selectedEvents.length === 0 ? (
@@ -224,8 +224,8 @@ export function TeamCalendar({ userId }: { userId?: number }) {
       </div>
 
       {upcomingDeadlines.length > 0 ? (
-        <div className="mt-4 border-t border-line pt-4">
-          <h4 className="font-display text-sm font-semibold text-ink">ปิดรับข้อเสนอที่ใกล้ถึง</h4>
+        <div className="mt-4 border-t border-border pt-4">
+          <h4 className="font-display text-sm font-semibold text-foreground">ปิดรับข้อเสนอที่ใกล้ถึง</h4>
           <EventList events={upcomingDeadlines} showDate />
         </div>
       ) : null}
@@ -243,19 +243,19 @@ function EventList({ events, showDate = false }: { events: CalendarEvent[]; show
             <Link
               href={leadHref(e.lead_id)}
               className={cn(
-                "flex items-start gap-3 rounded-xl border p-3 transition-colors hover:border-navy",
-                e.kind === "egp_deadline" ? "border-ink/40" : "border-line",
+                "flex items-start gap-3 rounded-xl border p-3 transition-colors hover:border-primary",
+                e.kind === "egp_deadline" ? "border-foreground/40" : "border-border",
               )}
             >
-              <Icon className={cn("mt-0.5 size-4 shrink-0", e.kind === "egp_deadline" ? "text-ink" : "text-navy")} aria-hidden />
+              <Icon className={cn("mt-0.5 size-4 shrink-0", e.kind === "egp_deadline" ? "text-foreground" : "text-primary")} aria-hidden />
               <div className="min-w-0 flex-1">
                 <p className="font-mono text-[11px] text-muted-foreground">
                   {kindLabels[e.kind]}
                   {showDate ? ` · ${dayTitle.format(day(e.date))}` : ""}
                   {e.time ? ` · ${e.time} น.` : ""}
                 </p>
-                <p className="font-display text-sm font-semibold text-ink">{e.lead_name}</p>
-                <p className="line-clamp-2 font-body text-sm text-ink">{e.title}</p>
+                <p className="font-display text-sm font-semibold text-foreground">{e.lead_name}</p>
+                <p className="line-clamp-2 font-body text-sm text-foreground">{e.title}</p>
                 <p className="font-body text-xs text-muted-foreground">
                   {[e.detail, e.owner_name ? `ดูแลโดย ${e.owner_name}` : "ยังไม่มอบหมาย"].filter(Boolean).join(" · ")}
                 </p>

@@ -22,12 +22,12 @@ const statusLabels: Record<ImportRow["status"], string> = {
 };
 
 const statusClasses: Record<ImportRow["status"], string> = {
-  new: "bg-navy/10 text-navy",
+  new: "bg-primary/10 text-primary",
   created: "bg-gold text-navy",
-  duplicate: "bg-ink text-white",
-  duplicate_in_file: "bg-ink/10 text-ink",
-  similar: "bg-gold-soft text-navy",
-  invalid: "bg-ink/5 text-muted-foreground",
+  duplicate: "bg-foreground text-background",
+  duplicate_in_file: "bg-foreground/10 text-foreground",
+  similar: "bg-notice text-primary",
+  invalid: "bg-foreground/5 text-muted-foreground",
 };
 
 /**
@@ -89,7 +89,7 @@ export function ImportPanel() {
               setResult(null);
               setFile(event.target.files?.[0] ?? null);
             }}
-            className="w-full rounded-xl border border-line bg-white px-4 py-3 font-body text-sm text-ink file:mr-3 file:rounded-full file:border-0 file:bg-navy file:px-4 file:py-2 file:font-display file:text-sm file:font-semibold file:text-white"
+            className="w-full rounded-xl border border-border bg-card px-4 py-3 font-body text-sm text-foreground file:mr-3 file:rounded-full file:border-0 file:bg-primary file:px-4 file:py-2 file:font-display file:text-sm file:font-semibold file:text-primary-foreground"
           />
         </Field>
 
@@ -127,12 +127,12 @@ export function ImportPanel() {
           </Field>
         </div>
 
-        <label className="flex items-start gap-2 font-body text-sm text-ink">
+        <label className="flex items-start gap-2 font-body text-sm text-foreground">
           <input
             type="checkbox"
             checked={confirmSimilar}
             onChange={(event) => setConfirmSimilar(event.target.checked)}
-            className="mt-0.5 size-4 rounded border-line-control accent-navy"
+            className="mt-0.5 size-4 rounded border-input accent-navy"
           />
           เพิ่มแถวที่ชื่อ “คล้าย” กับรายที่มีอยู่ด้วย (ตรวจแล้วว่าไม่ใช่รายเดียวกัน)
         </label>
@@ -177,7 +177,7 @@ export function ImportPanel() {
           <div className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
             <table className="w-full min-w-[640px] border-collapse text-left">
               <thead>
-                <tr className="border-b border-line">
+                <tr className="border-b border-border">
                   {["แถว", "ชื่อบริษัท", "สถานะ", "รายละเอียด"].map((heading) => (
                     <th
                       key={heading}
@@ -191,9 +191,9 @@ export function ImportPanel() {
               </thead>
               <tbody>
                 {result.rows.map((row) => (
-                  <tr key={row.row} className="border-b border-line align-top last:border-0">
+                  <tr key={row.row} className="border-b border-border align-top last:border-0">
                     <td className="py-2 font-mono text-xs text-muted-foreground">{row.row}</td>
-                    <td className="py-2 font-body text-sm text-ink">
+                    <td className="py-2 font-body text-sm text-foreground">
                       {row.lead_id ? (
                         <Link href={leadHref(row.lead_id)} className="underline">
                           {row.name || "—"}

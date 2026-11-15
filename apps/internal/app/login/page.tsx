@@ -42,7 +42,7 @@ export default function LoginPage() {
       <div className="w-full max-w-sm">
         <div className="mb-8 flex flex-col items-center gap-3 text-center">
           <OwlLogo className="h-9 w-auto" />
-          <h1 className="font-display text-xl font-semibold text-ink">เครื่องมือภายใน</h1>
+          <h1 className="font-display text-xl font-semibold text-foreground">เครื่องมือภายใน</h1>
           <p className="font-body text-sm text-muted-foreground">
             สำหรับทีมงาน Owl Day House เท่านั้น บัญชีสร้างโดยแอดมิน
           </p>

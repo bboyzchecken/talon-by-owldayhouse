@@ -33,8 +33,8 @@ export function LeadCard({
     <Link
       href={leadHref(lead.id)}
       className={cn(
-        "flex items-start gap-3 rounded-2xl border border-line bg-white p-4 transition-colors hover:border-navy",
-        lead.do_not_pitch && "border-ink/40",
+        "flex items-start gap-3 rounded-2xl border border-border bg-card p-4 transition-colors hover:border-primary",
+        lead.do_not_pitch && "border-foreground/40",
         className,
       )}
     >
@@ -45,12 +45,12 @@ export function LeadCard({
           {lead.do_not_pitch ? <DoNotPitchBadge reason={lead.do_not_pitch_reason} /> : null}
         </div>
 
-        <h3 className="mt-2 truncate font-display text-base font-semibold text-ink">{lead.name}</h3>
+        <h3 className="mt-2 truncate font-display text-base font-semibold text-foreground">{lead.name}</h3>
 
         {lead.source_detail ? (
           // What the work is: for an e-GP lead (named after the agency) this
           // is the project title, so it gets its own, readable line.
-          <p className="mt-0.5 line-clamp-2 font-body text-sm text-ink">{lead.source_detail}</p>
+          <p className="mt-0.5 line-clamp-2 font-body text-sm text-foreground">{lead.source_detail}</p>
         ) : null}
         <p className="mt-0.5 font-body text-xs text-muted-foreground">
           {labelOf(industryLabels, lead.industry)} · {labelOf(sourceLabels, lead.source)}
@@ -64,7 +64,7 @@ export function LeadCard({
           <p
             className={cn(
               "mt-2 inline-flex max-w-full items-center gap-1.5 rounded-full px-2 py-1 font-body text-xs",
-              overdue > 0 ? "bg-ink text-white" : "bg-gray-50 text-muted-foreground",
+              overdue > 0 ? "bg-foreground text-background" : "bg-muted text-muted-foreground",
             )}
           >
             <CalendarClock className="size-3.5 shrink-0" aria-hidden />

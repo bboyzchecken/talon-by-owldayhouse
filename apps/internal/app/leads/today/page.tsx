@@ -29,7 +29,7 @@ export default function TodayPage() {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="font-display text-2xl font-semibold text-ink sm:text-3xl">วันนี้</h1>
+        <h1 className="font-display text-2xl font-semibold text-foreground sm:text-3xl">วันนี้</h1>
         <p className="mt-1 font-body text-sm text-muted-foreground">
           {isAdmin
             ? "ลูกค้าที่ถึงกำหนดตามต่อของทุกคน และนัดที่กำลังจะถึง"
@@ -76,11 +76,11 @@ export default function TodayPage() {
               <li key={activity.id} className="py-3 first:pt-0 last:pb-0">
                 <Link
                   href={leadHref(activity.lead_id)}
-                  className="flex items-start gap-3 rounded-xl p-1 transition-colors hover:bg-navy/5"
+                  className="flex items-start gap-3 rounded-xl p-1 transition-colors hover:bg-primary/5"
                 >
-                  <CalendarClock className="mt-0.5 size-4 shrink-0 text-navy" aria-hidden />
+                  <CalendarClock className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden />
                   <div className="min-w-0">
-                    <div className="truncate font-display text-sm font-semibold text-ink">
+                    <div className="truncate font-display text-sm font-semibold text-foreground">
                       {activity.lead?.name ?? `ลูกค้า #${activity.lead_id}`}
                     </div>
                     <div className="font-body text-xs text-muted-foreground">
