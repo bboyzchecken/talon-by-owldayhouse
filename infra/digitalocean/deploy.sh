@@ -13,7 +13,8 @@
 # What it does:
 #   1. builds apps/internal to a static export
 #   2. copies that export, the apps/api source and the compose files over
-#   3. rebuilds and restarts the API container on the Droplet
+#   3. rebuilds and restarts the API container on the Droplet (and the public
+#      intake, when COMPOSE_PROFILES=intake is set in .env there)
 #   4. waits for /healthz to answer
 #
 # It never touches .env on the server; secrets live there and only there.
@@ -94,14 +95,40 @@ say "Waiting for the API to answer"
 # the container). Checking through Caddy over plain HTTP would only ever see
 # Caddy's redirect to HTTPS, which says nothing about the API.
 REMOTE_CHECK="cd ${REMOTE_DIR} && docker inspect --format {{.State.Health.Status}} \$(docker compose ps -q api)"
+api_ok=""
 for _ in $(seq 1 45); do
   status="$(ssh "$SSH_TARGET" "$REMOTE_CHECK" 2>/dev/null || true)"
   if [ "$status" = "healthy" ]; then
-    say "Deployed. https://${DOMAIN} is serving commit ${COMMIT}."
-    exit 0
+    api_ok=1
+    break
   fi
   sleep 2
 done
+
+if [ -n "$api_ok" ]; then
+  # The public intake runs only when COMPOSE_PROFILES=intake is in .env on
+  # the server. If it is running, wait for it too: it starts after the API,
+  # which creates its database role.
+  INTAKE_ID="$(ssh "$SSH_TARGET" "cd ${REMOTE_DIR} && docker compose ps -q intake" 2>/dev/null || true)"
+  if [ -n "$INTAKE_ID" ]; then
+    say "Waiting for the public intake to answer"
+    intake_ok=""
+    for _ in $(seq 1 30); do
+      status="$(ssh "$SSH_TARGET" "docker inspect --format {{.State.Health.Status}} ${INTAKE_ID}" 2>/dev/null || true)"
+      if [ "$status" = "healthy" ]; then
+        intake_ok=1
+        break
+      fi
+      sleep 2
+    done
+    if [ -z "$intake_ok" ]; then
+      echo "the intake did not become healthy — check: ssh ${SSH_TARGET} 'cd ${REMOTE_DIR} && docker compose logs --tail=100 intake'" >&2
+      exit 1
+    fi
+  fi
+  say "Deployed. https://${DOMAIN} is serving commit ${COMMIT}."
+  exit 0
+fi
 
 echo "the API did not become healthy — check: ssh ${SSH_TARGET} 'cd ${REMOTE_DIR} && docker compose logs --tail=100 api'" >&2
 exit 1
