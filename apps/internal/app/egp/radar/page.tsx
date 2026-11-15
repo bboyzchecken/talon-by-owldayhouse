@@ -7,7 +7,7 @@ import { FileUp } from "lucide-react";
 import { Button, cn } from "@odh/ui";
 import { AnnouncementCard } from "@/components/egp/announcement-card";
 import { BriefExport } from "@/components/egp/brief-export";
-import { Alert, EmptyState, Panel, Spinner } from "@/components/ui";
+import { Alert, EmptyState, Panel, Spinner } from "@/components/odh";
 import { ApiError, egp } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { useMeta } from "@/lib/hooks";
@@ -78,7 +78,7 @@ export default function RadarPage() {
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="font-display text-2xl font-semibold text-ink sm:text-3xl">e-GP Radar</h1>
-          <p className="mt-1 max-w-2xl font-body text-sm text-muted">
+          <p className="mt-1 max-w-2xl font-body text-sm text-muted-foreground">
             คัดประกาศจัดซื้อจัดจ้างภาครัฐที่ตรงกับงานของเรา แล้วส่งให้เซลส์ไป present และดูแลต่อ
           </p>
         </div>
@@ -98,7 +98,7 @@ export default function RadarPage() {
           </li>
           <li>เลือกไฟล์นั้นที่ปุ่มด้านล่าง — นำเข้าไฟล์เดิมซ้ำได้ ระบบไม่สร้างรายการซ้ำ</li>
         </ol>
-        <p className="mt-2 font-body text-xs text-muted">
+        <p className="mt-2 font-body text-xs text-muted-foreground">
           e-GP export ได้ครั้งละ 1,000 รายการแรกเท่านั้น ถ้าไม่กรองสถานะ ไฟล์จะเต็มไปด้วยงานที่ได้ผู้ชนะแล้ว
           (ระบบย้ายไปแท็บ “ปิดแล้ว”) และงานที่ยังเปิดรับอาจตกหล่น
         </p>
@@ -118,7 +118,7 @@ export default function RadarPage() {
             <FileUp className="size-4" aria-hidden />
             {importFile.isPending ? "กำลังนำเข้า…" : "เลือกไฟล์ CSV จาก e-GP"}
           </Button>
-          <span className="font-body text-xs text-muted">
+          <span className="font-body text-xs text-muted-foreground">
             ระบบไม่ล็อกอิน e-GP แทนคุณ และไม่ดึงข้อมูลเอง ใช้เฉพาะไฟล์ที่คุณดาวน์โหลด
           </span>
         </div>
@@ -161,7 +161,7 @@ export default function RadarPage() {
                 title={tab.hint}
                 className={cn(
                   "whitespace-nowrap rounded-full px-4 py-2 font-display text-sm font-semibold transition-colors",
-                  view === tab.view ? "bg-navy text-white" : "border border-line text-muted hover:border-ink",
+                  view === tab.view ? "bg-navy text-white" : "border border-line text-muted-foreground hover:border-ink",
                 )}
               >
                 {tab.label}
@@ -171,7 +171,7 @@ export default function RadarPage() {
           ))}
         </ul>
       </nav>
-      <p className="font-body text-xs text-muted">{tabs.find((t) => t.view === view)?.hint}</p>
+      <p className="font-body text-xs text-muted-foreground">{tabs.find((t) => t.view === view)?.hint}</p>
 
       {lastSent ? (
         <Alert>

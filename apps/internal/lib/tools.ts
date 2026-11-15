@@ -1,18 +1,42 @@
 import type { LucideIcon } from "lucide-react";
-import { Radar, Users } from "lucide-react";
+import {
+  BarChart3,
+  CalendarCheck,
+  Columns3,
+  List,
+  Plus,
+  Radar,
+  Settings,
+  SlidersHorizontal,
+  Users,
+} from "lucide-react";
 
 /**
- * The internal tool registry. Today there is one tool; the next one adds an
- * entry here and its own route folder, and the menu and shell pick it up.
+ * The internal tool registry — the one file a new tool has to touch on the UI
+ * side (plus its own route folder). The shell reads everything from here: the
+ * sidebar, the mobile tab bar, the breadcrumb and the home grid.
+ *
+ * `nav` is the tool's own pages, in sidebar order. An `adminOnly` page is
+ * lifted out of the tool's menu into the separate "ผู้ดูแลระบบ" group, so a
+ * sales account never sees an elevated screen listed at all.
  */
+export interface ToolNavItem {
+  href: string;
+  label: string;
+  icon: LucideIcon;
+  adminOnly?: boolean;
+}
+
 export interface Tool {
   slug: string;
   name: string;
   summary: string;
+  /** Where the tool opens: the screen the day starts on. */
   href: string;
   icon: LucideIcon;
-  /** Only admins see an admin-only tool. */
+  /** Only admins see an admin-only tool at all. */
   adminOnly?: boolean;
+  nav: ToolNavItem[];
 }
 
 export const tools: Tool[] = [
@@ -22,6 +46,14 @@ export const tools: Tool[] = [
     summary: "รายชื่อลูกค้ากลางของทีมขาย ใครดูแลใคร มาจากไหน อยู่ขั้นไหน และ KPI",
     href: "/leads/today",
     icon: Users,
+    nav: [
+      { href: "/leads/today", label: "วันนี้", icon: CalendarCheck },
+      { href: "/leads/list", label: "รายชื่อ", icon: List },
+      { href: "/leads/new", label: "เพิ่มลูกค้า", icon: Plus },
+      { href: "/leads/pipeline", label: "Pipeline", icon: Columns3 },
+      { href: "/leads/kpi", label: "KPI", icon: BarChart3 },
+      { href: "/leads/admin", label: "ตั้งค่าและทีม", icon: Settings, adminOnly: true },
+    ],
   },
   {
     slug: "egp",
@@ -30,9 +62,44 @@ export const tools: Tool[] = [
     href: "/egp/radar",
     icon: Radar,
     adminOnly: true,
+    nav: [
+      { href: "/egp/radar", label: "Radar", icon: Radar },
+      { href: "/egp/settings", label: "เกณฑ์การคัดกรอง", icon: SlidersHorizontal, adminOnly: true },
+    ],
   },
 ];
 
+/** The tools an account may open. */
+export function visibleTools(isAdmin: boolean): Tool[] {
+  return tools.filter((tool) => !tool.adminOnly || isAdmin);
+}
+
 export function toolForPath(pathname: string): Tool | undefined {
   return tools.find((tool) => pathname.startsWith(`/${tool.slug}`));
+}
+
+/** The tool's everyday pages — what the sidebar sub-menu and the phone tabs show. */
+export function toolPages(tool: Tool): ToolNavItem[] {
+  return tool.nav.filter((item) => !item.adminOnly);
+}
+
+/**
+ * Every admin-only page across every tool, each tagged with the tool it
+ * belongs to, for the one group that is visibly separate in the sidebar.
+ */
+export function adminPages(isAdmin: boolean): Array<ToolNavItem & { tool: Tool }> {
+  if (!isAdmin) return [];
+  return visibleTools(isAdmin).flatMap((tool) =>
+    tool.nav.filter((item) => item.adminOnly).map((item) => ({ ...item, tool })),
+  );
+}
+
+/** The current page inside its tool, for the breadcrumb. */
+export function pageForPath(pathname: string): ToolNavItem | undefined {
+  const tool = toolForPath(pathname);
+  if (!tool) return undefined;
+  // Longest match first: /leads/list wins over a hypothetical /leads prefix.
+  return [...tool.nav]
+    .sort((a, b) => b.href.length - a.href.length)
+    .find((item) => pathname.startsWith(item.href));
 }

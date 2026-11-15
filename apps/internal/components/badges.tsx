@@ -10,14 +10,14 @@ import type { OwnerType, Stage } from "@/lib/types";
  */
 
 const stageClasses: Record<Stage, string> = {
-  new: "border border-line text-muted",
+  new: "border border-line text-muted-foreground",
   contacted: "border border-line text-ink",
   meeting: "border border-navy/30 text-navy",
   proposal: "bg-navy/10 text-navy",
   won: "bg-gold text-navy",
-  lost: "bg-ink/5 text-muted",
-  nurture: "border border-dashed border-line-control text-muted",
-  declined: "bg-ink/5 text-muted line-through decoration-muted/60",
+  lost: "bg-ink/5 text-muted-foreground",
+  nurture: "border border-dashed border-line-control text-muted-foreground",
+  declined: "bg-ink/5 text-muted-foreground line-through decoration-muted-foreground/60",
 };
 
 export function StageBadge({ stage, className }: { stage: Stage; className?: string }) {

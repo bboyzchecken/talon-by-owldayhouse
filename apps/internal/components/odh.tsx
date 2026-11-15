@@ -12,8 +12,8 @@ import { cn } from "@odh/ui";
 
 const controlClasses =
   "w-full rounded-xl border border-line bg-white px-4 py-3 font-body text-base text-ink " +
-  "placeholder:text-muted/70 focus:border-navy focus:outline-none focus:ring-2 focus:ring-navy/20 " +
-  "disabled:bg-gray-50 disabled:text-muted";
+  "placeholder:text-muted-foreground/70 focus:border-navy focus:outline-none focus:ring-2 focus:ring-navy/20 " +
+  "disabled:bg-gray-50 disabled:text-muted-foreground";
 
 export function Field({
   label,
@@ -35,7 +35,7 @@ export function Field({
         {required ? <span className="text-gold-ink">*</span> : null}
       </span>
       {children}
-      {hint ? <span className="mt-1.5 block font-body text-xs text-muted">{hint}</span> : null}
+      {hint ? <span className="mt-1.5 block font-body text-xs text-muted-foreground">{hint}</span> : null}
       {error ? (
         <span className="mt-1.5 block font-body text-xs font-semibold text-navy">{error}</span>
       ) : null}
@@ -105,14 +105,14 @@ export function StatTile({
       <div
         className={cn(
           "font-mono text-[11px] uppercase tracking-wide",
-          tone === "key" ? "text-white/70" : "text-muted",
+          tone === "key" ? "text-white/70" : "text-muted-foreground",
         )}
       >
         {label}
       </div>
       <div className="mt-1 font-display text-2xl font-semibold tabular-nums">{value}</div>
       {sub ? (
-        <div className={cn("mt-1 font-body text-xs", tone === "key" ? "text-white/70" : "text-muted")}>
+        <div className={cn("mt-1 font-body text-xs", tone === "key" ? "text-white/70" : "text-muted-foreground")}>
           {sub}
         </div>
       ) : null}
@@ -122,7 +122,7 @@ export function StatTile({
 
 export function Spinner({ label = "กำลังโหลด…" }: { label?: string }) {
   return (
-    <div className="flex items-center justify-center gap-3 py-10 text-muted" role="status">
+    <div className="flex items-center justify-center gap-3 py-10 text-muted-foreground" role="status">
       <span className="size-4 animate-spin rounded-full border-2 border-line border-t-navy" aria-hidden />
       <span className="font-body text-sm">{label}</span>
     </div>
@@ -133,7 +133,7 @@ export function EmptyState({ title, hint, action }: { title: string; hint?: stri
   return (
     <div className="rounded-2xl border border-dashed border-line-control/60 px-5 py-10 text-center">
       <p className="font-display text-base font-semibold text-ink">{title}</p>
-      {hint ? <p className="mx-auto mt-1 max-w-md font-body text-sm text-muted">{hint}</p> : null}
+      {hint ? <p className="mx-auto mt-1 max-w-md font-body text-sm text-muted-foreground">{hint}</p> : null}
       {action ? <div className="mt-4 flex justify-center">{action}</div> : null}
     </div>
   );
@@ -165,7 +165,7 @@ export function Meter({ percent, label }: { percent: number; label?: string }) {
           style={{ width: `${clamped}%` }}
         />
       </div>
-      {label ? <div className="mt-1 font-mono text-[11px] text-muted">{label}</div> : null}
+      {label ? <div className="mt-1 font-mono text-[11px] text-muted-foreground">{label}</div> : null}
     </div>
   );
 }

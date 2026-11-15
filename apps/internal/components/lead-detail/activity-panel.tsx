@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Trash2 } from "lucide-react";
 import { Button } from "@odh/ui";
-import { Alert, EmptyState, Field, Input, Panel, Select, Spinner, Textarea } from "@/components/ui";
+import { Alert, EmptyState, Field, Input, Panel, Select, Spinner, Textarea } from "@/components/odh";
 import { ApiError, leads as leadsApi } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { formatWhen, toISODateTime } from "@/lib/format";
@@ -132,11 +132,11 @@ export function ActivityPanel({ lead, canEdit }: { lead: Lead; canEdit: boolean 
                   <span className="font-display text-sm font-semibold text-ink">
                     {labelOf(activityTypeLabels, activity.type)}
                   </span>
-                  <span className="font-mono text-[11px] text-muted">
+                  <span className="font-mono text-[11px] text-muted-foreground">
                     {formatWhen(activity.happened_at)}
                   </span>
                   {activity.user ? (
-                    <span className="font-body text-xs text-muted">· {activity.user.name}</span>
+                    <span className="font-body text-xs text-muted-foreground">· {activity.user.name}</span>
                   ) : null}
                   {canEdit && (isAdmin || activity.user_id === user?.id) ? (
                     <button
@@ -144,7 +144,7 @@ export function ActivityPanel({ lead, canEdit }: { lead: Lead; canEdit: boolean 
                       onClick={() => {
                         if (window.confirm("ลบกิจกรรมนี้?")) remove.mutate(activity.id);
                       }}
-                      className="ml-auto text-muted transition-colors hover:text-ink"
+                      className="ml-auto text-muted-foreground transition-colors hover:text-ink"
                       aria-label="ลบกิจกรรม"
                     >
                       <Trash2 className="size-4" aria-hidden />

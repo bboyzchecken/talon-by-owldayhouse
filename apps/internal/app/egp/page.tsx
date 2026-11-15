@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { Spinner } from "@/components/ui";
+import { Spinner } from "@/components/odh";
 
 export default function EgpIndexPage() {
   const router = useRouter();

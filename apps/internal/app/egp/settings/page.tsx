@@ -3,7 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Button } from "@odh/ui";
-import { Alert, Field, Input, Panel, Select, Spinner, Textarea } from "@/components/ui";
+import { Alert, Field, Input, Panel, Select, Spinner, Textarea } from "@/components/odh";
 import { ApiError, egp } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { useMeta } from "@/lib/hooks";
@@ -58,7 +58,7 @@ export default function RadarSettingsPage() {
     <div className="space-y-5">
       <header>
         <h1 className="font-display text-2xl font-semibold text-ink sm:text-3xl">ตั้งค่า Radar</h1>
-        <p className="mt-1 max-w-2xl font-body text-sm text-muted">
+        <p className="mt-1 max-w-2xl font-body text-sm text-muted-foreground">
           เปลี่ยนแล้วมีผลกับประกาศที่นำเข้าไว้แล้วทั้งหมดทันที ไม่ต้องนำเข้าใหม่
         </p>
       </header>
@@ -76,7 +76,7 @@ export default function RadarSettingsPage() {
                 <label
                   key={group.key}
                   className={`cursor-pointer rounded-full border px-3 py-2 font-display text-sm font-semibold transition-colors ${
-                    checked ? "border-navy bg-navy text-white" : "border-line text-muted hover:border-ink"
+                    checked ? "border-navy bg-navy text-white" : "border-line text-muted-foreground hover:border-ink"
                   }`}
                 >
                   <input
@@ -181,7 +181,7 @@ export default function RadarSettingsPage() {
       </Panel>
 
       <Panel title="บริการและคำค้น">
-        <p className="mb-4 font-body text-sm text-muted">
+        <p className="mb-4 font-body text-sm text-muted-foreground">
           ชื่อโครงการต้องมีคำในกลุ่มที่เปิดไว้อย่างน้อยหนึ่งคำ บรรทัดละคำ ระบบหาคำเฉพาะส่วนที่บอกว่า
           <strong className="text-ink">จ้างอะไร</strong> (ก่อนคำอย่าง “เพื่อ” “สำหรับ” “ตามโครงการ” “ไปกลับ”) เช่น
           “จ้างเหมารถตู้ไปอบรม” งานที่จ้างคือรถตู้ จึงไม่ตรงคำว่า “อบรม”

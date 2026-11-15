@@ -3,45 +3,67 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, type ReactNode } from "react";
-import { BarChart3, CalendarCheck, Columns3, List, LogOut, Plus, Radar, Settings, SlidersHorizontal } from "lucide-react";
-import { OwlLogo, cn } from "@odh/ui";
-import { Spinner } from "@/components/ui";
+import { ChevronsUpDown, KeyRound, LogOut } from "lucide-react";
+import { OwlLogo, OwlMark, cn } from "@odh/ui";
+import { Spinner } from "@/components/odh";
+import { RoleBadge } from "@/components/role-badge";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Separator } from "@/components/ui/separator";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarInset,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
+  SidebarProvider,
+  SidebarRail,
+  SidebarSeparator,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
 import { useAuth } from "@/lib/auth";
-import { roleLabels } from "@/lib/labels";
-import { toolForPath, tools } from "@/lib/tools";
+import {
+  adminPages,
+  pageForPath,
+  toolForPath,
+  toolPages,
+  visibleTools,
+} from "@/lib/tools";
 
-interface NavItem {
-  href: string;
-  label: string;
-  icon: typeof List;
-  adminOnly?: boolean;
-}
-
-/** The Lead Tracker's own pages. Another tool brings its own list. */
-const leadNav: NavItem[] = [
-  { href: "/leads/today", label: "วันนี้", icon: CalendarCheck },
-  { href: "/leads/list", label: "รายชื่อ", icon: List },
-  { href: "/leads/new", label: "เพิ่มลูกค้า", icon: Plus },
-  { href: "/leads/pipeline", label: "Pipeline", icon: Columns3 },
-  { href: "/leads/kpi", label: "KPI", icon: BarChart3 },
-  { href: "/leads/admin", label: "Admin", icon: Settings, adminOnly: true },
-];
-
-/** e-GP Radar is admin only, so every item is too. */
-const egpNav: NavItem[] = [
-  { href: "/egp/radar", label: "Radar", icon: Radar, adminOnly: true },
-  { href: "/egp/settings", label: "ตั้งค่า", icon: SlidersHorizontal, adminOnly: true },
-];
-
-export function navForTool(slug: string | undefined): NavItem[] {
-  if (slug === "leads") return leadNav;
-  if (slug === "egp") return egpNav;
-  return [];
+/**
+ * The initials in the account avatar. Taken from the username, not the display
+ * name: names here are Thai, and the first two Thai characters of a name are
+ * often a vowel or a tone mark on its own.
+ */
+function initials(username: string): string {
+  return username.slice(0, 2).toUpperCase();
 }
 
 /**
- * The signed-in shell: header, tool navigation and — on a phone — a bottom tab
- * bar, because the sales team uses this outside the office.
+ * The signed-in shell.
+ *
+ * A collapsible sidebar is the frame: every tool is listed at once, the open
+ * tool shows its pages beneath it, and everything an admin may do that a sales
+ * account may not sits in one group of its own — so what your role unlocks is
+ * visible, not something you discover by hitting a 403. On a phone the sidebar
+ * becomes a sheet and the open tool keeps a bottom tab bar, because the sales
+ * team works outside the office.
  *
  * It also guards the page: with no valid session it sends you to /login.
  */
@@ -68,97 +90,242 @@ export function AppShell({ children }: { children: ReactNode }) {
   }
 
   const tool = toolForPath(pathname);
-  const nav = navForTool(tool?.slug).filter((item) => !item.adminOnly || isAdmin);
+  const page = pageForPath(pathname);
+  const openTools = visibleTools(isAdmin);
+  const elevated = adminPages(isAdmin);
+  const tabs = tool ? toolPages(tool) : [];
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <header className="sticky top-0 z-30 border-b border-line bg-white/95 backdrop-blur">
-        <div className="mx-auto flex h-16 w-full max-w-6xl items-center gap-3 px-4 sm:px-6">
-          <Link href="/" className="flex items-center gap-2" aria-label="หน้ารวมเครื่องมือ">
-            <OwlLogo className="h-7 w-auto" />
-          </Link>
+    <SidebarProvider>
+      <Sidebar collapsible="icon">
+        <SidebarHeader>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                size="lg"
+                tooltip="หน้ารวมเครื่องมือ"
+                className="group-data-[collapsible=icon]:justify-center"
+              >
+                <Link href="/" aria-label="หน้ารวมเครื่องมือ">
+                  {/* Wrapped in spans, never a bare <svg>: SidebarMenuButton
+                      forces a direct child svg to 16px, which would squash the
+                      logo into a line. The full logo gives way to the owl mark
+                      when the rail collapses — the artwork is never altered,
+                      only swapped for the other registered lockup. */}
+                  <span className="flex items-center overflow-hidden group-data-[collapsible=icon]:hidden">
+                    <OwlLogo height={22} />
+                  </span>
+                  <span className="hidden text-primary group-data-[collapsible=icon]:block">
+                    <OwlMark size={20} />
+                  </span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarHeader>
 
-          {tool ? (
-            <span className="hidden font-display text-sm font-semibold text-muted sm:inline">
-              / {tool.name}
-            </span>
+        <SidebarContent role="navigation" aria-label="เมนูหลัก">
+          <SidebarGroup>
+            <SidebarGroupLabel>เครื่องมือ</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {openTools.map((item) => {
+                  const open = item.slug === tool?.slug;
+                  const pages = toolPages(item);
+                  return (
+                    <SidebarMenuItem key={item.slug}>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={open}
+                        tooltip={item.name}
+                      >
+                        <Link href={item.href}>
+                          <item.icon aria-hidden />
+                          <span className="font-display font-semibold">
+                            {item.name}
+                          </span>
+                        </Link>
+                      </SidebarMenuButton>
+
+                      {open && pages.length > 0 ? (
+                        <SidebarMenuSub>
+                          {pages.map((sub) => (
+                            <SidebarMenuSubItem key={sub.href}>
+                              <SidebarMenuSubButton
+                                asChild
+                                isActive={pathname.startsWith(sub.href)}
+                              >
+                                <Link href={sub.href}>
+                                  <sub.icon aria-hidden />
+                                  <span>{sub.label}</span>
+                                </Link>
+                              </SidebarMenuSubButton>
+                            </SidebarMenuSubItem>
+                          ))}
+                        </SidebarMenuSub>
+                      ) : null}
+                    </SidebarMenuItem>
+                  );
+                })}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+
+          {elevated.length > 0 ? (
+            <>
+              {/* The label disappears when the rail collapses to icons, so the
+                  line is what keeps elevated pages visibly set apart there. */}
+              <SidebarSeparator className="mx-2" />
+              <SidebarGroup>
+                <SidebarGroupLabel className="gap-1.5">
+                  {/* The one gold point in the frame: everything below is elevated. */}
+                  <span className="size-1.5 rounded-full bg-gold" aria-hidden />
+                  ผู้ดูแลระบบ
+                </SidebarGroupLabel>
+                <SidebarGroupContent>
+                  <SidebarMenu>
+                    {elevated.map((item) => (
+                      <SidebarMenuItem key={item.href}>
+                        <SidebarMenuButton
+                          asChild
+                          isActive={pathname.startsWith(item.href)}
+                          tooltip={`${item.tool.name} · ${item.label}`}
+                        >
+                          <Link href={item.href}>
+                            <item.icon aria-hidden />
+                            <span className="truncate">
+                              {item.label}
+                              <span className="text-muted-foreground">
+                                {" "}
+                                · {item.tool.name}
+                              </span>
+                            </span>
+                          </Link>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    ))}
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </SidebarGroup>
+            </>
           ) : null}
+        </SidebarContent>
 
-          <div className="ml-auto flex items-center gap-3">
-            <div className="text-right">
-              <div className="font-display text-sm font-semibold leading-tight text-ink">{user.name}</div>
-              <div className="font-mono text-[11px] uppercase tracking-wide text-muted">
-                {roleLabels[user.role]}
-              </div>
-            </div>
-            <button
-              type="button"
-              onClick={signOut}
-              className="flex size-10 items-center justify-center rounded-full border border-line text-muted transition-colors hover:border-ink hover:text-ink"
-              aria-label="ออกจากระบบ"
-              title="ออกจากระบบ"
-            >
-              <LogOut className="size-4" aria-hidden />
-            </button>
+        <SidebarFooter>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <SidebarMenuButton
+                    size="lg"
+                    tooltip={`${user.name} · ${isAdmin ? "ผู้ดูแล" : "เซลส์"}`}
+                  >
+                    <Avatar className="size-8 rounded-lg">
+                      <AvatarFallback className="rounded-lg bg-primary font-display text-xs font-semibold text-primary-foreground">
+                        {initials(user.username)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className="grid flex-1 text-left leading-tight">
+                      <span className="truncate font-display text-sm font-semibold">
+                        {user.name}
+                      </span>
+                      <span className="truncate font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
+                        {isAdmin ? "ผู้ดูแล" : "เซลส์"}
+                      </span>
+                    </span>
+                    <ChevronsUpDown className="ml-auto size-4" aria-hidden />
+                  </SidebarMenuButton>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent side="top" align="start" className="w-56">
+                  <DropdownMenuLabel className="font-normal">
+                    <div className="font-display text-sm font-semibold text-foreground">
+                      {user.name}
+                    </div>
+                    <div className="mt-0.5 font-mono text-[11px] text-muted-foreground">
+                      @{user.username}
+                    </div>
+                    <RoleBadge role={user.role} className="mt-2" />
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href="/account">
+                      <KeyRound aria-hidden />
+                      เปลี่ยนรหัสผ่าน
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onSelect={signOut}>
+                    <LogOut aria-hidden />
+                    ออกจากระบบ
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarFooter>
+
+        <SidebarRail />
+      </Sidebar>
+
+      <SidebarInset className="min-w-0">
+        <header className="sticky top-0 z-20 flex h-14 shrink-0 items-center gap-2 border-b border-border bg-background/95 px-3 backdrop-blur sm:px-4">
+          <SidebarTrigger className="-ml-1" />
+          <Separator orientation="vertical" className="mr-1 !h-5" />
+          <nav aria-label="ตำแหน่งปัจจุบัน" className="min-w-0">
+            <ol className="flex items-center gap-1.5 font-display text-sm">
+              <li className="shrink-0 text-muted-foreground">
+                {tool?.name ?? "เครื่องมือภายใน"}
+              </li>
+              {page ? (
+                <>
+                  <li aria-hidden className="text-muted-foreground/60">
+                    /
+                  </li>
+                  <li className="truncate font-semibold text-foreground">
+                    {page.label}
+                  </li>
+                </>
+              ) : null}
+            </ol>
+          </nav>
+          <div className="ml-auto flex shrink-0 items-center">
+            <RoleBadge role={user.role} />
           </div>
+        </header>
+
+        <div className="flex-1 px-3 pb-28 pt-4 sm:px-6 sm:pb-10">
+          {children}
         </div>
 
-        {nav.length > 0 ? (
+        {tabs.length > 0 ? (
           <nav
-            aria-label={`เมนู ${tool?.name ?? ""}`}
-            className="mx-auto hidden w-full max-w-6xl gap-1 px-4 pb-2 sm:flex sm:px-6"
+            aria-label={`เมนู ${tool?.name ?? ""} (มือถือ)`}
+            className="pb-safe fixed inset-x-0 bottom-0 z-30 border-t border-border bg-background/95 backdrop-blur md:hidden"
           >
-            {nav.map((item) => {
-              const active = pathname.startsWith(item.href);
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  aria-current={active ? "page" : undefined}
-                  className={cn(
-                    "flex items-center gap-2 rounded-full px-4 py-2 font-display text-sm font-semibold transition-colors",
-                    active ? "bg-navy text-white" : "text-muted hover:bg-navy/5 hover:text-navy",
-                  )}
-                >
-                  <item.icon className="size-4" aria-hidden />
-                  {item.label}
-                </Link>
-              );
-            })}
+            <ul className="flex items-stretch">
+              {tabs.map((item) => {
+                const active = pathname.startsWith(item.href);
+                return (
+                  <li key={item.href} className="flex-1">
+                    <Link
+                      href={item.href}
+                      aria-current={active ? "page" : undefined}
+                      className={cn(
+                        "flex h-14 flex-col items-center justify-center gap-0.5 font-display text-[11px] font-semibold",
+                        active ? "text-primary" : "text-muted-foreground",
+                      )}
+                    >
+                      <item.icon className="size-5" aria-hidden />
+                      {item.label}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
           </nav>
         ) : null}
-      </header>
-
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 pb-28 pt-5 sm:px-6 sm:pb-12">{children}</main>
-
-      {nav.length > 0 ? (
-        <nav
-          aria-label={`เมนู ${tool?.name ?? ""} (มือถือ)`}
-          className="pb-safe fixed inset-x-0 bottom-0 z-30 border-t border-line bg-white/95 backdrop-blur sm:hidden"
-        >
-          <ul className="flex items-stretch">
-            {nav.map((item) => {
-              const active = pathname.startsWith(item.href);
-              return (
-                <li key={item.href} className="flex-1">
-                  <Link
-                    href={item.href}
-                    aria-current={active ? "page" : undefined}
-                    className={cn(
-                      "flex h-14 flex-col items-center justify-center gap-0.5 font-display text-[11px] font-semibold",
-                      active ? "text-navy" : "text-muted",
-                    )}
-                  >
-                    <item.icon className={cn("size-5", active && "text-navy")} aria-hidden />
-                    {item.label}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        </nav>
-      ) : null}
-    </div>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }
 
@@ -167,22 +334,30 @@ export function ToolMenu() {
   const { isAdmin } = useAuth();
   return (
     <ul className="grid gap-4 sm:grid-cols-2">
-      {tools
-        .filter((tool) => !tool.adminOnly || isAdmin)
-        .map((tool) => (
-          <li key={tool.slug}>
-            <Link
-              href={tool.href}
-              className="flex h-full flex-col gap-2 rounded-2xl border border-line bg-white p-5 transition-colors hover:border-navy"
-            >
-              <span className="flex size-10 items-center justify-center rounded-full bg-navy text-white">
-                <tool.icon className="size-5" aria-hidden />
+      {visibleTools(isAdmin).map((tool) => (
+        <li key={tool.slug}>
+          <Link
+            href={tool.href}
+            className="flex h-full flex-col gap-2 rounded-2xl border border-border bg-card p-5 transition-colors hover:border-primary"
+          >
+            <span className="flex size-10 items-center justify-center rounded-full bg-primary text-primary-foreground">
+              <tool.icon className="size-5" aria-hidden />
+            </span>
+            <span className="font-display text-lg font-semibold text-foreground">
+              {tool.name}
+            </span>
+            <span className="font-body text-sm text-muted-foreground">
+              {tool.summary}
+            </span>
+            {tool.adminOnly ? (
+              <span className="mt-auto inline-flex items-center gap-1.5 pt-2 font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
+                <span className="size-1.5 rounded-full bg-gold" aria-hidden />
+                เฉพาะผู้ดูแล
               </span>
-              <span className="font-display text-lg font-semibold text-ink">{tool.name}</span>
-              <span className="font-body text-sm text-muted">{tool.summary}</span>
-            </Link>
-          </li>
-        ))}
+            ) : null}
+          </Link>
+        </li>
+      ))}
     </ul>
   );
 }

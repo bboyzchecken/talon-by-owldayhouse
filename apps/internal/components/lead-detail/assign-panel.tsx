@@ -3,7 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Button } from "@odh/ui";
-import { Alert, Field, Input, Panel, Select, Spinner } from "@/components/ui";
+import { Alert, Field, Input, Panel, Select, Spinner } from "@/components/odh";
 import { ApiError, leads as leadsApi } from "@/lib/api";
 import { formatDateTime } from "@/lib/format";
 import { useMeta } from "@/lib/hooks";
@@ -89,7 +89,7 @@ export function AssignPanel({ lead, isAdmin }: { lead: Lead; isAdmin: boolean })
           </Button>
         </div>
       ) : (
-        <p className="mt-2 font-body text-xs text-muted">เปลี่ยนเจ้าของได้เฉพาะแอดมิน</p>
+        <p className="mt-2 font-body text-xs text-muted-foreground">เปลี่ยนเจ้าของได้เฉพาะแอดมิน</p>
       )}
 
       <div className="mt-5">
@@ -97,7 +97,7 @@ export function AssignPanel({ lead, isAdmin }: { lead: Lead; isAdmin: boolean })
         {logs.isLoading ? (
           <Spinner label="กำลังโหลดประวัติ…" />
         ) : (logs.data?.data ?? []).length === 0 ? (
-          <p className="mt-2 font-body text-sm text-muted">ยังไม่มีประวัติ</p>
+          <p className="mt-2 font-body text-sm text-muted-foreground">ยังไม่มีประวัติ</p>
         ) : (
           <ol className="mt-2 space-y-2">
             {(logs.data?.data ?? []).map((entry) => (
@@ -110,7 +110,7 @@ export function AssignPanel({ lead, isAdmin }: { lead: Lead; isAdmin: boolean })
                   ) : null}
                   {labelOf(ownerTypeLabels, entry.to_owner_type)} · {who(entry.to_owner_user_id)}
                 </p>
-                <p className="font-mono text-[11px] text-muted">
+                <p className="font-mono text-[11px] text-muted-foreground">
                   {formatDateTime(entry.created_at)} · โดย{" "}
                   {entry.changed_by_user?.name ?? `ผู้ใช้ #${entry.changed_by}`}
                   {entry.note ? ` · ${entry.note}` : ""}

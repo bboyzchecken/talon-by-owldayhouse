@@ -3,7 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Button } from "@odh/ui";
-import { Alert, Field, Input, Panel } from "@/components/ui";
+import { Alert, Field, Input, Panel } from "@/components/odh";
 import { ApiError, admin as adminApi } from "@/lib/api";
 import { formatDate } from "@/lib/format";
 import { useMeta } from "@/lib/hooks";
@@ -48,7 +48,7 @@ export function SettingsPanel() {
       {error ? <Alert tone="stop">{error}</Alert> : null}
       {saved ? <Alert>บันทึกแล้ว</Alert> : null}
 
-      <p className="font-body text-sm text-muted">
+      <p className="font-body text-sm text-muted-foreground">
         ปัจจุบัน: <span className="font-semibold text-ink">{formatDate(current)}</span> —{" "}
         {open ? "เซลส์ยังลงลูกค้าเดิมของตัวเองได้" : "หมดเขตแล้ว เฉพาะแอดมินลงให้ได้"}
       </p>

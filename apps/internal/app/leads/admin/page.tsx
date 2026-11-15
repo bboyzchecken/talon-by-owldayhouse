@@ -8,7 +8,7 @@ import { OwnershipHistoryPanel } from "@/components/admin/ownership-history-pane
 import { SettingsPanel } from "@/components/admin/settings-panel";
 import { TargetsPanel } from "@/components/admin/targets-panel";
 import { UsersPanel } from "@/components/admin/users-panel";
-import { Alert, Spinner } from "@/components/ui";
+import { Alert, Spinner } from "@/components/odh";
 import { useAuth } from "@/lib/auth";
 
 const tabs = [
@@ -35,7 +35,7 @@ export default function AdminPage() {
     <div className="space-y-5">
       <header>
         <h1 className="font-display text-2xl font-semibold text-ink sm:text-3xl">Admin</h1>
-        <p className="mt-1 font-body text-sm text-muted">
+        <p className="mt-1 font-body text-sm text-muted-foreground">
           บัญชีผู้ใช้ เป้า วันหมดเขต รายการห้ามเสนอขายตรง นำเข้า CSV และประวัติการเปลี่ยนเจ้าของ
         </p>
       </header>
@@ -50,7 +50,7 @@ export default function AdminPage() {
                 aria-current={tab === item.id ? "page" : undefined}
                 className={cn(
                   "whitespace-nowrap rounded-full px-4 py-2 font-display text-sm font-semibold transition-colors",
-                  tab === item.id ? "bg-navy text-white" : "border border-line text-muted hover:border-ink",
+                  tab === item.id ? "bg-navy text-white" : "border border-line text-muted-foreground hover:border-ink",
                 )}
               >
                 {item.label}

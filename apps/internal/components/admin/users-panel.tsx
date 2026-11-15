@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Check, Copy, KeyRound, UserPlus } from "lucide-react";
 import { Button } from "@odh/ui";
-import { Alert, Field, Input, Panel, Select, Spinner, Textarea } from "@/components/ui";
+import { Alert, Field, Input, Panel, Select, Spinner, Textarea } from "@/components/odh";
 import { ApiError, admin as adminApi } from "@/lib/api";
 import { buildAccountMessage, loginUrl } from "@/lib/account-message";
 import { roleLabels } from "@/lib/labels";
@@ -250,9 +250,9 @@ export function UsersPanel() {
               <div className="min-w-0 flex-1">
                 <p className="font-display text-sm font-semibold text-ink">
                   {person.name}{" "}
-                  <span className="font-mono text-xs font-normal text-muted">@{person.username}</span>
+                  <span className="font-mono text-xs font-normal text-muted-foreground">@{person.username}</span>
                 </p>
-                <p className="font-body text-xs text-muted">
+                <p className="font-body text-xs text-muted-foreground">
                   {roleLabels[person.role]} ·{" "}
                   {person.status === "active" ? "ใช้งานอยู่" : "ปิดการใช้งาน"}
                 </p>

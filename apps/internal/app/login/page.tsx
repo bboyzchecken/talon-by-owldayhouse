@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState, type FormEvent } from "react";
 import { Button, OwlLogo } from "@odh/ui";
-import { Alert, Field, Input } from "@/components/ui";
+import { Alert, Field, Input } from "@/components/odh";
 import { ApiError } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 
@@ -43,7 +43,7 @@ export default function LoginPage() {
         <div className="mb-8 flex flex-col items-center gap-3 text-center">
           <OwlLogo className="h-9 w-auto" />
           <h1 className="font-display text-xl font-semibold text-ink">เครื่องมือภายใน</h1>
-          <p className="font-body text-sm text-muted">
+          <p className="font-body text-sm text-muted-foreground">
             สำหรับทีมงาน Owl Day House เท่านั้น บัญชีสร้างโดยแอดมิน
           </p>
         </div>
@@ -80,7 +80,7 @@ export default function LoginPage() {
           </Button>
         </form>
 
-        <p className="mt-6 text-center font-body text-xs text-muted">
+        <p className="mt-6 text-center font-body text-xs text-muted-foreground">
           ลืมรหัสผ่าน? ให้แอดมินรีเซ็ตให้ — ระบบนี้ไม่มีการส่งอีเมล
         </p>
       </div>

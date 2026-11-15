@@ -7,7 +7,7 @@ import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { AlertTriangle, CheckCircle2 } from "lucide-react";
 import { Button } from "@odh/ui";
 import { leadHref } from "@/components/lead-card";
-import { Alert, Field, Input, Panel, Select, Textarea } from "@/components/ui";
+import { Alert, Field, Input, Panel, Select, Textarea } from "@/components/odh";
 import { ApiError, leads as leadsApi, type CreateLeadBody } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { formatDate } from "@/lib/format";
@@ -156,7 +156,7 @@ export default function NewLeadPage() {
     <form onSubmit={onSubmit} className="space-y-5" noValidate>
       <header>
         <h1 className="font-display text-2xl font-semibold text-ink sm:text-3xl">เพิ่มลูกค้า</h1>
-        <p className="mt-1 font-body text-sm text-muted">
+        <p className="mt-1 font-body text-sm text-muted-foreground">
           ใครลงชื่อก่อนเป็นเจ้าของ ระบบจะเช็กชื่อซ้ำและชื่อคล้ายให้ระหว่างพิมพ์
         </p>
       </header>
@@ -235,7 +235,7 @@ export default function NewLeadPage() {
           ) : null}
 
           {!duplicate && similar.length === 0 && form.name.trim().length >= 2 && !check.isFetching ? (
-            <p className="flex items-center gap-1.5 font-body text-sm text-muted">
+            <p className="flex items-center gap-1.5 font-body text-sm text-muted-foreground">
               <CheckCircle2 className="size-4 text-navy" aria-hidden />
               ยังไม่มีชื่อนี้หรือชื่อคล้ายกันในระบบ
             </p>
@@ -322,7 +322,7 @@ export default function NewLeadPage() {
               </Select>
             </Field>
           ) : (
-            <p className="font-body text-sm text-muted">
+            <p className="font-body text-sm text-muted-foreground">
               ลูกค้ารายนี้จะเป็นของ <span className="font-semibold text-ink">{user?.name}</span>
             </p>
           )}
@@ -336,7 +336,7 @@ export default function NewLeadPage() {
                   <label
                     key={value}
                     className={`cursor-pointer rounded-full border px-3 py-2 font-display text-sm font-semibold transition-colors ${
-                      checked ? "border-navy bg-navy text-white" : "border-line text-muted hover:border-ink"
+                      checked ? "border-navy bg-navy text-white" : "border-line text-muted-foreground hover:border-ink"
                     }`}
                   >
                     <input
@@ -397,7 +397,7 @@ export default function NewLeadPage() {
               />
               <span>
                 <span className="font-display font-semibold">ห้ามเสนอขายตรง (do not pitch)</span>
-                <span className="mt-0.5 block text-muted">
+                <span className="mt-0.5 block text-muted-foreground">
                   ใช้กับแบรนด์ที่เป็นลูกค้าของเอเจนซีที่จ้างเรา — ย้ายไปขั้นยื่นข้อเสนอหรือปิดการขายไม่ได้
                 </span>
               </span>
@@ -464,7 +464,7 @@ export default function NewLeadPage() {
           <Link href="/leads/list">ยกเลิก</Link>
         </Button>
         {needsConfirm ? (
-          <p className="w-full font-body text-xs text-muted">
+          <p className="w-full font-body text-xs text-muted-foreground">
             ติ๊กยืนยันด้านบนก่อน ว่าไม่ใช่รายเดียวกับที่ชื่อคล้ายกัน
           </p>
         ) : null}

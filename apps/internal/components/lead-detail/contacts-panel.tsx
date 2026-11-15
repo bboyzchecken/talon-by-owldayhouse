@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { MessageCircle, Phone, Plus, Trash2 } from "lucide-react";
 import { Button } from "@odh/ui";
-import { Alert, EmptyState, Field, Input, Panel, Spinner } from "@/components/ui";
+import { Alert, EmptyState, Field, Input, Panel, Spinner } from "@/components/odh";
 import { ApiError, leads as leadsApi } from "@/lib/api";
 import { lineHref, telHref } from "@/lib/format";
 
@@ -117,11 +117,11 @@ export function ContactsPanel({ leadId, canEdit }: { leadId: number; canEdit: bo
                 <p className="font-display text-sm font-semibold text-ink">
                   {contact.name}
                   {contact.position ? (
-                    <span className="font-body font-normal text-muted"> · {contact.position}</span>
+                    <span className="font-body font-normal text-muted-foreground"> · {contact.position}</span>
                   ) : null}
                 </p>
-                {contact.email ? <p className="font-body text-xs text-muted">{contact.email}</p> : null}
-                {contact.note ? <p className="font-body text-xs text-muted">{contact.note}</p> : null}
+                {contact.email ? <p className="font-body text-xs text-muted-foreground">{contact.email}</p> : null}
+                {contact.note ? <p className="font-body text-xs text-muted-foreground">{contact.note}</p> : null}
               </div>
 
               <div className="flex items-center gap-2">
@@ -151,7 +151,7 @@ export function ContactsPanel({ leadId, canEdit }: { leadId: number; canEdit: bo
                     onClick={() => {
                       if (window.confirm(`ลบผู้ติดต่อ ${contact.name}?`)) remove.mutate(contact.id);
                     }}
-                    className="flex size-10 items-center justify-center rounded-full border border-line text-muted transition-colors hover:border-ink hover:text-ink"
+                    className="flex size-10 items-center justify-center rounded-full border border-line text-muted-foreground transition-colors hover:border-ink hover:text-ink"
                     aria-label={`ลบผู้ติดต่อ ${contact.name}`}
                   >
                     <Trash2 className="size-4" aria-hidden />

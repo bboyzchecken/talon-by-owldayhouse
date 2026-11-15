@@ -6,7 +6,7 @@ import { useMemo, useState } from "react";
 import { CheckSquare, Download, Search, X } from "lucide-react";
 import { Button } from "@odh/ui";
 import { LeadCard } from "@/components/lead-card";
-import { Alert, EmptyState, Input, Panel, Select, Spinner } from "@/components/ui";
+import { Alert, EmptyState, Input, Panel, Select, Spinner } from "@/components/odh";
 import { ApiError, csv, leads as leadsApi, type LeadListFilters } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { useMeta } from "@/lib/hooks";
@@ -111,7 +111,7 @@ export default function LeadListPage() {
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="font-display text-2xl font-semibold text-ink sm:text-3xl">รายชื่อลูกค้า</h1>
-          <p className="mt-1 font-body text-sm text-muted">
+          <p className="mt-1 font-body text-sm text-muted-foreground">
             รายชื่อชุดเดียวกันทั้งทีม ป้ายบอกว่าใครดูแล และใครห้ามเสนอขายตรง
           </p>
         </div>
@@ -133,7 +133,7 @@ export default function LeadListPage() {
       <Panel>
         <div className="space-y-3">
           <div className="relative">
-            <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-muted" aria-hidden />
+            <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
             <input
               type="search"
               value={search}
@@ -143,7 +143,7 @@ export default function LeadListPage() {
               }}
               placeholder="ค้นหาชื่อบริษัท ชื่องาน เลข e-GP หรือเลขผู้เสียภาษี"
               aria-label="ค้นหาลูกค้า"
-              className="w-full rounded-xl border border-line bg-white py-3 pl-11 pr-4 font-body text-base text-ink placeholder:text-muted/70 focus:border-navy focus:outline-none focus:ring-2 focus:ring-navy/20"
+              className="w-full rounded-xl border border-line bg-white py-3 pl-11 pr-4 font-body text-base text-ink placeholder:text-muted-foreground/70 focus:border-navy focus:outline-none focus:ring-2 focus:ring-navy/20"
             />
           </div>
 
@@ -272,7 +272,7 @@ export default function LeadListPage() {
       ) : (
         <>
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <p className="font-mono text-xs text-muted">
+            <p className="font-mono text-xs text-muted-foreground">
               ทั้งหมด {pagination?.total ?? rows.length} ราย
               {isFetching ? " · กำลังอัปเดต…" : ""}
             </p>
@@ -310,7 +310,7 @@ export default function LeadListPage() {
                 <button
                   type="button"
                   onClick={stopSelecting}
-                  className="rounded-full p-2 text-muted hover:bg-navy/5 hover:text-ink"
+                  className="rounded-full p-2 text-muted-foreground hover:bg-navy/5 hover:text-ink"
                   aria-label="เลิกเลือก"
                 >
                   <X className="size-4" aria-hidden />
@@ -373,7 +373,7 @@ export default function LeadListPage() {
               >
                 ก่อนหน้า
               </Button>
-              <span className="font-mono text-xs text-muted">
+              <span className="font-mono text-xs text-muted-foreground">
                 หน้า {pagination.current_page} / {pagination.total_pages}
               </span>
               <Button

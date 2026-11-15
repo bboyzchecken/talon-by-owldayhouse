@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { Alert, Meter, Panel, Select, Spinner, StatTile } from "@/components/ui";
+import { Alert, Meter, Panel, Select, Spinner, StatTile } from "@/components/odh";
 import { kpi as kpiApi } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { formatBaht, formatNumber, formatPercent } from "@/lib/format";
@@ -44,7 +44,7 @@ export default function KPIPage() {
     <div className="space-y-5">
       <header>
         <h1 className="font-display text-2xl font-semibold text-ink sm:text-3xl">KPI</h1>
-        <p className="mt-1 font-body text-sm text-muted">
+        <p className="mt-1 font-body text-sm text-muted-foreground">
           แยกลูกค้าที่บริษัทหามา (KPI หลัก) ออกจากลูกค้าเดิมที่เซลส์พามาเอง (โบนัส)
         </p>
       </header>
@@ -95,7 +95,7 @@ export default function KPIPage() {
         <Spinner />
       ) : data ? (
         <>
-          <p className="font-mono text-xs uppercase tracking-wide text-muted">{data.period.label}</p>
+          <p className="font-mono text-xs uppercase tracking-wide text-muted-foreground">{data.period.label}</p>
 
           {isAdmin && !userID ? (
             <Panel title="ทีมขายรวม">
@@ -119,7 +119,7 @@ export default function KPIPage() {
                         <th
                           key={heading}
                           scope="col"
-                          className="py-2 font-mono text-[11px] uppercase tracking-wide text-muted"
+                          className="py-2 font-mono text-[11px] uppercase tracking-wide text-muted-foreground"
                         >
                           {heading}
                         </th>
@@ -130,7 +130,7 @@ export default function KPIPage() {
                 <tbody>
                   {data.by_source.length === 0 ? (
                     <tr>
-                      <td colSpan={7} className="py-4 font-body text-sm text-muted">
+                      <td colSpan={7} className="py-4 font-body text-sm text-muted-foreground">
                         ยังไม่มีข้อมูลในช่วงนี้
                       </td>
                     </tr>
@@ -180,7 +180,7 @@ function ScoreCard({ row }: { row: KPIUser }) {
   return (
     <Panel
       title={row.name}
-      action={<span className="font-mono text-xs text-muted">{row.username}</span>}
+      action={<span className="font-mono text-xs text-muted-foreground">{row.username}</span>}
     >
       <div className="space-y-5">
         <section>
@@ -210,7 +210,7 @@ function ScoreCard({ row }: { row: KPIUser }) {
               />
             </div>
           ) : (
-            <p className="mt-2 font-body text-xs text-muted">
+            <p className="mt-2 font-body text-xs text-muted-foreground">
               ยังไม่ได้ตั้งเป้าของช่วงนี้ — แอดมินตั้งได้ในหน้า Admin
             </p>
           )}
@@ -227,13 +227,13 @@ function ScoreCard({ row }: { row: KPIUser }) {
             <StatTile label="ยอดปิด" value={formatBaht(row.sales_existing.won_amount)} />
           </div>
           {row.target ? (
-            <p className="mt-2 font-body text-xs text-muted">
+            <p className="mt-2 font-body text-xs text-muted-foreground">
               โบนัสคิดเป็น {formatPercent(row.target.bonus_revenue_percent)} ของเป้าหลัก และไม่นับรวมใน KPI หลัก
             </p>
           ) : null}
         </section>
 
-        <p className="font-mono text-xs text-muted">
+        <p className="font-mono text-xs text-muted-foreground">
           รวมทั้งสองส่วน: {formatBaht(row.total.won_amount)} · ลูกค้าใหม่{" "}
           {formatNumber(row.total.new_leads)} ราย
         </p>

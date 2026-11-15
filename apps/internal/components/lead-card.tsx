@@ -52,19 +52,19 @@ export function LeadCard({
           // is the project title, so it gets its own, readable line.
           <p className="mt-0.5 line-clamp-2 font-body text-sm text-ink">{lead.source_detail}</p>
         ) : null}
-        <p className="mt-0.5 font-body text-xs text-muted">
+        <p className="mt-0.5 font-body text-xs text-muted-foreground">
           {labelOf(industryLabels, lead.industry)} · {labelOf(sourceLabels, lead.source)}
         </p>
 
         {lead.estimated_value > 0 ? (
-          <p className="mt-1 font-mono text-xs text-muted">คาดการณ์ {formatBaht(lead.estimated_value)}</p>
+          <p className="mt-1 font-mono text-xs text-muted-foreground">คาดการณ์ {formatBaht(lead.estimated_value)}</p>
         ) : null}
 
         {showNextAction && lead.next_action_date ? (
           <p
             className={cn(
               "mt-2 inline-flex max-w-full items-center gap-1.5 rounded-full px-2 py-1 font-body text-xs",
-              overdue > 0 ? "bg-ink text-white" : "bg-gray-50 text-muted",
+              overdue > 0 ? "bg-ink text-white" : "bg-gray-50 text-muted-foreground",
             )}
           >
             <CalendarClock className="size-3.5 shrink-0" aria-hidden />
@@ -80,7 +80,7 @@ export function LeadCard({
         ) : null}
       </div>
 
-      <ChevronRight className="mt-1 size-5 shrink-0 text-muted" aria-hidden />
+      <ChevronRight className="mt-1 size-5 shrink-0 text-muted-foreground" aria-hidden />
     </Link>
   );
 }

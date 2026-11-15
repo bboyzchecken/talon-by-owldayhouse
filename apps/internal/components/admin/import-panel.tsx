@@ -6,7 +6,7 @@ import { useRef, useState } from "react";
 import { cn } from "@odh/ui";
 import { Button } from "@odh/ui";
 import { leadHref } from "@/components/lead-card";
-import { Alert, Field, Input, Panel, Select } from "@/components/ui";
+import { Alert, Field, Input, Panel, Select } from "@/components/odh";
 import { ApiError, csv } from "@/lib/api";
 import { useMeta } from "@/lib/hooks";
 import { labelOf, ownerTypeLabels, sourceLabels } from "@/lib/labels";
@@ -27,7 +27,7 @@ const statusClasses: Record<ImportRow["status"], string> = {
   duplicate: "bg-ink text-white",
   duplicate_in_file: "bg-ink/10 text-ink",
   similar: "bg-gold-soft text-navy",
-  invalid: "bg-ink/5 text-muted",
+  invalid: "bg-ink/5 text-muted-foreground",
 };
 
 /**
@@ -74,7 +74,7 @@ export function ImportPanel() {
     <Panel title="นำเข้ารายชื่อจาก CSV">
       {error ? <Alert tone="stop">{error}</Alert> : null}
 
-      <p className="font-body text-sm text-muted">
+      <p className="font-body text-sm text-muted-foreground">
         คอลัมน์ที่รับ: <span className="font-mono">name, industry, source, source_detail, website, contact</span>{" "}
         (หัวตารางภาษาไทยก็ได้ เช่น ชื่อบริษัท, ผู้ติดต่อ) — ไฟล์เป็น UTF-8 ขนาดไม่เกิน 5 MB
       </p>
@@ -150,7 +150,7 @@ export function ImportPanel() {
           </Button>
         </div>
         {result?.mode === "commit" ? (
-          <p className="font-body text-xs text-muted">
+          <p className="font-body text-xs text-muted-foreground">
             นำเข้าเรียบร้อย — กด “ตรวจก่อน” อีกครั้งถ้าจะนำเข้าไฟล์ใหม่
           </p>
         ) : null}
@@ -182,7 +182,7 @@ export function ImportPanel() {
                     <th
                       key={heading}
                       scope="col"
-                      className="py-2 font-mono text-[11px] uppercase tracking-wide text-muted"
+                      className="py-2 font-mono text-[11px] uppercase tracking-wide text-muted-foreground"
                     >
                       {heading}
                     </th>
@@ -192,7 +192,7 @@ export function ImportPanel() {
               <tbody>
                 {result.rows.map((row) => (
                   <tr key={row.row} className="border-b border-line align-top last:border-0">
-                    <td className="py-2 font-mono text-xs text-muted">{row.row}</td>
+                    <td className="py-2 font-mono text-xs text-muted-foreground">{row.row}</td>
                     <td className="py-2 font-body text-sm text-ink">
                       {row.lead_id ? (
                         <Link href={leadHref(row.lead_id)} className="underline">
@@ -212,7 +212,7 @@ export function ImportPanel() {
                         {statusLabels[row.status]}
                       </span>
                     </td>
-                    <td className="py-2 font-body text-xs text-muted">
+                    <td className="py-2 font-body text-xs text-muted-foreground">
                       {row.duplicate
                         ? `มีอยู่แล้ว — ${row.duplicate.owner_name || "ยังไม่มอบหมาย"}`
                         : row.similar && row.similar.length > 0

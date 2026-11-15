@@ -6,7 +6,7 @@ import { useMemo, useState } from "react";
 import { CalendarClock, ChevronLeft, ChevronRight, FileClock, Handshake } from "lucide-react";
 import { cn } from "@odh/ui";
 import { leadHref } from "@/components/lead-card";
-import { Alert, Panel, Spinner } from "@/components/ui";
+import { Alert, Panel, Spinner } from "@/components/odh";
 import { calendar } from "@/lib/api";
 import { toISODate } from "@/lib/format";
 import type { CalendarEvent, CalendarKind } from "@/lib/types";
@@ -95,7 +95,7 @@ export function TeamCalendar({ userId }: { userId?: number }) {
           <button
             type="button"
             onClick={() => shiftMonth(-1)}
-            className="rounded-full p-2 text-muted transition-colors hover:bg-navy/5 hover:text-navy"
+            className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-navy/5 hover:text-navy"
             aria-label="เดือนก่อน"
           >
             <ChevronLeft className="size-4" aria-hidden />
@@ -106,7 +106,7 @@ export function TeamCalendar({ userId }: { userId?: number }) {
           <button
             type="button"
             onClick={() => shiftMonth(1)}
-            className="rounded-full p-2 text-muted transition-colors hover:bg-navy/5 hover:text-navy"
+            className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-navy/5 hover:text-navy"
             aria-label="เดือนถัดไป"
           >
             <ChevronRight className="size-4" aria-hidden />
@@ -118,7 +118,7 @@ export function TeamCalendar({ userId }: { userId?: number }) {
                 setMonth(today.slice(0, 7) + "-01");
                 setSelected(today);
               }}
-              className="ml-1 rounded-full border border-line px-3 py-1 font-display text-xs font-semibold text-muted hover:border-ink"
+              className="ml-1 rounded-full border border-line px-3 py-1 font-display text-xs font-semibold text-muted-foreground hover:border-ink"
             >
               วันนี้
             </button>
@@ -136,7 +136,7 @@ export function TeamCalendar({ userId }: { userId?: number }) {
               aria-pressed={mineOnly === option.mine}
               className={cn(
                 "rounded-full px-3 py-1 font-display text-xs font-semibold transition-colors",
-                mineOnly === option.mine ? "bg-navy text-white" : "text-muted hover:text-ink",
+                mineOnly === option.mine ? "bg-navy text-white" : "text-muted-foreground hover:text-ink",
               )}
             >
               {option.label}
@@ -153,7 +153,7 @@ export function TeamCalendar({ userId }: { userId?: number }) {
 
       <div className="mt-3 grid grid-cols-7 gap-1 text-center" role="grid" aria-label="ปฏิทินเดือนนี้">
         {weekdays.map((w) => (
-          <div key={w} className="pb-1 font-mono text-[11px] text-muted" role="columnheader">
+          <div key={w} className="pb-1 font-mono text-[11px] text-muted-foreground" role="columnheader">
             {w}
           </div>
         ))}
@@ -193,14 +193,14 @@ export function TeamCalendar({ userId }: { userId?: number }) {
                   <span className="rounded bg-ink px-1 font-mono text-[10px] leading-4 text-white">{deadlines}</span>
                 ) : null}
                 {meetings > 0 ? <span className="size-1.5 rounded-full border border-navy" /> : null}
-                {followUps > 0 ? <span className="size-1.5 rounded-full bg-muted" /> : null}
+                {followUps > 0 ? <span className="size-1.5 rounded-full bg-muted-foreground" /> : null}
               </span>
             </button>
           );
         })}
       </div>
 
-      <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-1 font-body text-xs text-muted" aria-label="คำอธิบายสัญลักษณ์">
+      <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-1 font-body text-xs text-muted-foreground" aria-label="คำอธิบายสัญลักษณ์">
         <li className="flex items-center gap-1.5">
           <span className="rounded bg-ink px-1 font-mono text-[10px] leading-4 text-white">1</span> ปิดรับข้อเสนอ e-GP
         </li>
@@ -208,7 +208,7 @@ export function TeamCalendar({ userId }: { userId?: number }) {
           <span className="size-1.5 rounded-full border border-navy" /> นัดพบ
         </li>
         <li className="flex items-center gap-1.5">
-          <span className="size-1.5 rounded-full bg-muted" /> ตามต่อ
+          <span className="size-1.5 rounded-full bg-muted-foreground" /> ตามต่อ
         </li>
       </ul>
 
@@ -217,7 +217,7 @@ export function TeamCalendar({ userId }: { userId?: number }) {
         {isLoading ? (
           <Spinner />
         ) : selectedEvents.length === 0 ? (
-          <p className="mt-1 font-body text-sm text-muted">ไม่มีรายการ</p>
+          <p className="mt-1 font-body text-sm text-muted-foreground">ไม่มีรายการ</p>
         ) : (
           <EventList events={selectedEvents} />
         )}
@@ -249,14 +249,14 @@ function EventList({ events, showDate = false }: { events: CalendarEvent[]; show
             >
               <Icon className={cn("mt-0.5 size-4 shrink-0", e.kind === "egp_deadline" ? "text-ink" : "text-navy")} aria-hidden />
               <div className="min-w-0 flex-1">
-                <p className="font-mono text-[11px] text-muted">
+                <p className="font-mono text-[11px] text-muted-foreground">
                   {kindLabels[e.kind]}
                   {showDate ? ` · ${dayTitle.format(day(e.date))}` : ""}
                   {e.time ? ` · ${e.time} น.` : ""}
                 </p>
                 <p className="font-display text-sm font-semibold text-ink">{e.lead_name}</p>
                 <p className="line-clamp-2 font-body text-sm text-ink">{e.title}</p>
-                <p className="font-body text-xs text-muted">
+                <p className="font-body text-xs text-muted-foreground">
                   {[e.detail, e.owner_name ? `ดูแลโดย ${e.owner_name}` : "ยังไม่มอบหมาย"].filter(Boolean).join(" · ")}
                 </p>
               </div>

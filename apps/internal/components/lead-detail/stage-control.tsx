@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Button } from "@odh/ui";
 import { StageBadge } from "@/components/badges";
-import { Alert, Field, Input, Panel, Select } from "@/components/ui";
+import { Alert, Field, Input, Panel, Select } from "@/components/odh";
 import { ApiError, leads as leadsApi } from "@/lib/api";
 import { toISODate } from "@/lib/format";
 import { interestLabels, labelOf, stageLabels } from "@/lib/labels";
@@ -55,13 +55,13 @@ export function StageControl({ lead, canEdit }: { lead: Lead; canEdit: boolean }
       {error ? <Alert tone="stop">{error}</Alert> : null}
 
       {!canEdit ? (
-        <p className="font-body text-sm text-muted">
+        <p className="font-body text-sm text-muted-foreground">
           แก้ได้เฉพาะเซลส์ที่ดูแลรายนี้ หรือแอดมิน
         </p>
       ) : (
         <div className="space-y-3">
           {lead.do_not_pitch ? (
-            <p className="font-body text-xs text-muted">
+            <p className="font-body text-xs text-muted-foreground">
               รายนี้ติดสถานะห้ามเสนอขายตรง จึงไม่มีขั้น “ยื่นข้อเสนอ” และ “ปิดการขาย” ให้เลือก
             </p>
           ) : null}

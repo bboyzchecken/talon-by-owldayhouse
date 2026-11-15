@@ -6,7 +6,7 @@ import { CalendarClock, Users } from "lucide-react";
 import { Button } from "@odh/ui";
 import { LeadCard, leadHref } from "@/components/lead-card";
 import { TeamCalendar } from "@/components/team-calendar";
-import { Alert, EmptyState, Panel, Spinner, StatTile } from "@/components/ui";
+import { Alert, EmptyState, Panel, Spinner, StatTile } from "@/components/odh";
 import { leads as leadsApi } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { formatWhen } from "@/lib/format";
@@ -30,7 +30,7 @@ export default function TodayPage() {
     <div className="space-y-6">
       <header>
         <h1 className="font-display text-2xl font-semibold text-ink sm:text-3xl">วันนี้</h1>
-        <p className="mt-1 font-body text-sm text-muted">
+        <p className="mt-1 font-body text-sm text-muted-foreground">
           {isAdmin
             ? "ลูกค้าที่ถึงกำหนดตามต่อของทุกคน และนัดที่กำลังจะถึง"
             : `สวัสดี ${user?.name ?? ""} — ลูกค้าที่ถึงกำหนดตามต่อ และนัดที่กำลังจะถึง`}
@@ -83,13 +83,13 @@ export default function TodayPage() {
                     <div className="truncate font-display text-sm font-semibold text-ink">
                       {activity.lead?.name ?? `ลูกค้า #${activity.lead_id}`}
                     </div>
-                    <div className="font-body text-xs text-muted">
+                    <div className="font-body text-xs text-muted-foreground">
                       {formatWhen(activity.happened_at)} ·{" "}
                       {labelOf(activityTypeLabels, activity.type)}
                       {activity.user ? ` · ${activity.user.name}` : ""}
                     </div>
                     {activity.summary ? (
-                      <p className="mt-0.5 font-body text-xs text-muted">{activity.summary}</p>
+                      <p className="mt-0.5 font-body text-xs text-muted-foreground">{activity.summary}</p>
                     ) : null}
                   </div>
                 </Link>

@@ -12,7 +12,7 @@ import { AssignPanel } from "@/components/lead-detail/assign-panel";
 import { ContactsPanel } from "@/components/lead-detail/contacts-panel";
 import { FilesPanel } from "@/components/lead-detail/files-panel";
 import { StageControl } from "@/components/lead-detail/stage-control";
-import { Alert, EmptyState, Field, Input, Panel, Select, Spinner, Textarea } from "@/components/ui";
+import { Alert, EmptyState, Field, Input, Panel, Select, Spinner, Textarea } from "@/components/odh";
 import { ApiError, leads as leadsApi, type UpdateLeadBody } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { formatBaht, formatDate } from "@/lib/format";
@@ -67,7 +67,7 @@ function LeadDetail() {
     <div className="space-y-5">
       <Link
         href="/leads/list"
-        className="inline-flex items-center gap-1.5 font-display text-sm font-semibold text-muted transition-colors hover:text-navy"
+        className="inline-flex items-center gap-1.5 font-display text-sm font-semibold text-muted-foreground transition-colors hover:text-navy"
       >
         <ArrowLeft className="size-4" aria-hidden />
         รายชื่อลูกค้า
@@ -96,7 +96,7 @@ function LeadDetail() {
           {lead.do_not_pitch ? <DoNotPitchBadge reason={lead.do_not_pitch_reason} /> : null}
         </div>
         <h1 className="mt-2 font-display text-2xl font-semibold text-ink sm:text-3xl">{lead.name}</h1>
-        <p className="mt-1 font-body text-sm text-muted">
+        <p className="mt-1 font-body text-sm text-muted-foreground">
           {labelOf(industryLabels, lead.industry)} · {labelOf(sourceLabels, lead.source)}
           {lead.source_detail ? ` · ${lead.source_detail}` : ""} · ลงทะเบียน{" "}
           {formatDate(lead.registered_at)}
@@ -207,7 +207,7 @@ function LeadFacts({ lead, canEdit }: { lead: Lead; canEdit: boolean }) {
             <Fact label={lead.stage === "lost" ? "เหตุผลที่ไม่ได้งาน" : "เหตุผลที่ไม่รับงาน"} value={lead.lost_reason} />
           ) : null}
           <div className="sm:col-span-2">
-            <dt className="font-mono text-[11px] uppercase tracking-wide text-muted">บันทึก</dt>
+            <dt className="font-mono text-[11px] uppercase tracking-wide text-muted-foreground">บันทึก</dt>
             <dd className="mt-1 whitespace-pre-line font-body text-sm text-ink">{lead.notes || "—"}</dd>
           </div>
         </dl>
@@ -292,7 +292,7 @@ function LeadFacts({ lead, canEdit }: { lead: Lead; canEdit: boolean }) {
                 <label
                   key={value}
                   className={`cursor-pointer rounded-full border px-3 py-2 font-display text-sm font-semibold transition-colors ${
-                    checked ? "border-navy bg-navy text-white" : "border-line text-muted hover:border-ink"
+                    checked ? "border-navy bg-navy text-white" : "border-line text-muted-foreground hover:border-ink"
                   }`}
                 >
                   <input
@@ -354,7 +354,7 @@ function LeadFacts({ lead, canEdit }: { lead: Lead; canEdit: boolean }) {
 function Fact({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <dt className="font-mono text-[11px] uppercase tracking-wide text-muted">{label}</dt>
+      <dt className="font-mono text-[11px] uppercase tracking-wide text-muted-foreground">{label}</dt>
       <dd className="mt-1 font-body text-sm text-ink">{value}</dd>
     </div>
   );
