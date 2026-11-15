@@ -58,6 +58,8 @@ func readConfig() core.Config {
 		JwtSecret:   viper.GetString("JWT_SECRET_KEY"),
 		JwtTTL:      time.Duration(viper.GetInt("JWT_TTL_HOURS")) * time.Hour,
 		CorsOrigins: origins,
+
+		IntakePostgresPassword: viper.GetString("INTAKE_POSTGRES_PASSWORD"),
 		Postgres: core.PostgresConfig{
 			Host:            viper.GetString("POSTGRES_HOST"),
 			Port:            viper.GetString("POSTGRES_PORT"),

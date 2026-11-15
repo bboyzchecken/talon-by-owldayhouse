@@ -120,5 +120,13 @@ type InboundRequestStore interface {
 	List(filter InboundFilter) ([]*InboundRequest, int64, error)
 	Find(id uint) (*InboundRequest, error)
 	Update(row *InboundRequest) error
+	MarkHandled(row *InboundRequest) (bool, error)
+	Delete(id uint) error
+	PurgeUnaccepted(before time.Time) (int64, error)
 	CountByStatus() (map[string]int64, error)
 }
+
+// InboundRetention is how long a request that was never accepted is kept.
+// The privacy policy on owldayhouse.com states this number; change both or
+// neither.
+const InboundRetention = 180 * 24 * time.Hour

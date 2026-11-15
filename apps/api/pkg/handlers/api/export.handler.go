@@ -22,6 +22,22 @@ var exportColumns = []string{
 	"ห้ามเสนอขายตรง", "เหตุผลห้ามเสนอขายตรง", "ลงทะเบียนเมื่อ",
 }
 
+// csvSafe stops a cell from being read as a formula. Lead names and notes can
+// now arrive from the public quote form, and Excel runs a cell that starts with
+// = + - or @ (or a tab or carriage return ahead of one) as a formula when our
+// own team opens the export. A leading apostrophe makes Excel show the text as
+// it is; the value in the database is not touched.
+func csvSafe(value string) string {
+	if value == "" {
+		return value
+	}
+	switch value[0] {
+	case '=', '+', '-', '@', '\t', '\r':
+		return "'" + value
+	}
+	return value
+}
+
 // ExportLeads streams the lead list as CSV for Excel (admin only). The same
 // filters as the list endpoint apply, so an admin can export one view.
 func (s *Server) ExportLeads(c echo.Context) error {
@@ -95,6 +111,9 @@ func (s *Server) ExportLeads(c echo.Context) error {
 			doNotPitch,
 			lead.DoNotPitchReason,
 			lead.RegisteredAt.In(leadrules.Bangkok).Format("2006-01-02 15:04"),
+		}
+		for i := range record {
+			record[i] = csvSafe(record[i])
 		}
 		if err := writer.Write(record); err != nil {
 			return err

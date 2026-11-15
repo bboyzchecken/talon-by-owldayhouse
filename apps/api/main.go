@@ -29,12 +29,14 @@ import (
 	"github.com/owldayhouse/odh-internal-api/pkg/database"
 	"github.com/owldayhouse/odh-internal-api/pkg/handlers/api"
 	"github.com/owldayhouse/odh-internal-api/pkg/logger"
+	"github.com/owldayhouse/odh-internal-api/pkg/models"
 	"github.com/owldayhouse/odh-internal-api/pkg/services/storage"
 	storeactivity "github.com/owldayhouse/odh-internal-api/pkg/store/activity"
 	storecontact "github.com/owldayhouse/odh-internal-api/pkg/store/contact"
 	storedeal "github.com/owldayhouse/odh-internal-api/pkg/store/deal"
 	storeegp "github.com/owldayhouse/odh-internal-api/pkg/store/egp"
 	storefile "github.com/owldayhouse/odh-internal-api/pkg/store/file"
+	storeinbound "github.com/owldayhouse/odh-internal-api/pkg/store/inbound"
 	storekpi "github.com/owldayhouse/odh-internal-api/pkg/store/kpi"
 	storelead "github.com/owldayhouse/odh-internal-api/pkg/store/lead"
 	storeownership "github.com/owldayhouse/odh-internal-api/pkg/store/ownership"
@@ -96,6 +98,7 @@ func storeModules() fx.Option {
 		storeownership.Module,
 		storekpi.Module,
 		storeegp.Module,
+		storeinbound.Module,
 	)
 }
 
@@ -127,7 +130,9 @@ func runInternalToolsAPI(
 	log *logrus.Logger,
 	db *gorm.DB,
 	server *api.Server,
+	inbound models.InboundRequestStore,
 ) {
+	stopPurge := make(chan struct{})
 	e := server.Handler()
 	httpServer := &http.Server{
 		Addr:              ":" + config.Port,
@@ -140,11 +145,19 @@ func runInternalToolsAPI(
 			if err := database.Migrate(db); err != nil {
 				return err
 			}
+			if config.IntakePostgresPassword != "" {
+				if err := database.EnsureIntakeRole(db, config.Postgres.Database, config.IntakePostgresPassword); err != nil {
+					return err
+				}
+				log.WithField("role", database.IntakeRole).Info("intake role is INSERT-only on inbound_requests")
+			}
 			log.WithFields(logrus.Fields{
 				"port":        config.Port,
 				"environment": config.Environment,
 				"commit":      config.Commit,
 			}).Info("ODH internal tools API listening")
+
+			go purgeInboundRequests(inbound, log, stopPurge)
 
 			go func() {
 				if err := httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
@@ -155,9 +168,39 @@ func runInternalToolsAPI(
 		},
 		OnStop: func(ctx context.Context) error {
 			log.Info("shutting down")
+			close(stopPurge)
 			return httpServer.Shutdown(ctx)
 		},
 	})
+}
+
+// purgeInboundRequests deletes quote-form requests that were never accepted
+// once they pass the retention period, at boot and then once a day. The
+// privacy policy on owldayhouse.com promises this, so it does not depend on
+// anyone remembering to do it.
+func purgeInboundRequests(store models.InboundRequestStore, log *logrus.Logger, stop <-chan struct{}) {
+	run := func() {
+		purged, err := store.PurgeUnaccepted(time.Now().Add(-models.InboundRetention))
+		if err != nil {
+			log.WithError(err).Error("cannot purge old inbound requests")
+			return
+		}
+		if purged > 0 {
+			log.WithField("purged", purged).Info("deleted inbound requests past the retention period")
+		}
+	}
+
+	run()
+	ticker := time.NewTicker(24 * time.Hour)
+	defer ticker.Stop()
+	for {
+		select {
+		case <-ticker.C:
+			run()
+		case <-stop:
+			return
+		}
+	}
 }
 
 // runMigrations is the `up` command.

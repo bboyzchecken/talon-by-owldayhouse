@@ -36,6 +36,7 @@ type Server struct {
 	OwnershipLogStore models.OwnershipLogStore
 	KPIStore          models.KPIStore
 	EgpStore          models.EgpStore
+	InboundStore      models.InboundRequestStore
 
 	Storage *storage.Service
 }
@@ -55,6 +56,7 @@ func NewServer(
 	ownershipLogStore models.OwnershipLogStore,
 	kpiStore models.KPIStore,
 	egpStore models.EgpStore,
+	inboundStore models.InboundRequestStore,
 	storageService *storage.Service,
 ) *Server {
 	return &Server{
@@ -71,6 +73,7 @@ func NewServer(
 		OwnershipLogStore: ownershipLogStore,
 		KPIStore:          kpiStore,
 		EgpStore:          egpStore,
+		InboundStore:      inboundStore,
 		Storage:           storageService,
 	}
 }
@@ -128,6 +131,7 @@ func (s *Server) Handler() *echo.Echo {
 	s.registerLeadRoutes(api)
 	s.registerEgpRoutes(api)
 	s.registerCalendarRoutes(api)
+	s.registerInboxRoutes(api)
 	s.registerAdminRoutes(api)
 
 	return e
