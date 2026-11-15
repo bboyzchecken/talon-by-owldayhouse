@@ -20,7 +20,8 @@ Follow the phases in `docs/design-system/project/plan-2-sitemap.md`. `BUILD_PLAN
 ## Hard constraints
 - **The internal tools are a separate app.** Never modify `apps/web` for them, and never link to `crm.owldayhouse.com` from the marketing site.
 - **No e-mail anywhere in this company's systems**, the internal tools included: no Gmail API, no OTP by e-mail, no self-registration, no password-reset request. The first admin comes from the CLI; that admin creates and resets accounts. Contact e-mail addresses are stored as data only. (LINE Login is a possible future addition; it does not exist yet.)
-- **Marketing site = 100% static. No backend, no email, no forms.** Every "ติดต่อ/สั่งซื้อ" action links out to **Facebook Messenger** (`m.me/owldayhouse`), phone (`tel:+66924552450`), LINE, or a `mailto:owldayhouse@gmail.com` link.
+- **Marketing site = 100% static. No backend, no email, no runtime of its own.** Every "ติดต่อ/สั่งซื้อ" action links out to **Facebook Messenger** (`m.me/owldayhouse`), phone (`tel:+66924552450`), LINE, or a `mailto:owldayhouse@gmail.com` link.
+- **A form is allowed only if it POSTs to another origin.** The quote-request form on `/contact/` is plain HTML plus `fetch()` to the intake endpoint at `api.owldayhouse.com` — a separate host, process and Postgres role from the CRM, write-only with no GET and no auth, landing in `inbound_requests` for an admin to accept. The site itself still has no backend, no API route and no server component that fetches. Any form that collects personal data needs the consent checkbox and a link to `/privacy/`. See `docs/design-system/project/plan-5-web-crm-bridge.md`.
 - Static export requires `images.unoptimized: true` and `trailingSlash: true`.
 - Do NOT add runtime data-fetching server components, API routes, or anything that breaks `output: 'export'`.
 
