@@ -1,6 +1,8 @@
 // Thai labels for every API enum. The UI never shows a raw enum value.
 import type {
   ActivityType,
+  BudgetBand,
+  Timeline,
   Industry,
   OwnerType,
   Interest,
@@ -65,6 +67,22 @@ export const interestLabels: Record<Interest, string> = {
 export const roleLabels: Record<Role, string> = {
   admin: "แอดมิน",
   sales: "เซลส์",
+};
+
+export const timelineLabels: Record<Timeline, string> = {
+  asap: "เร็วที่สุด",
+  "1_3_months": "ภายใน 1–3 เดือน",
+  "3_6_months": "ภายใน 3–6 เดือน",
+  planning: "ยังวางแผนอยู่",
+};
+
+/** The customer's own budget for their work — not a price of ours. */
+export const budgetLabels: Record<BudgetBand, string> = {
+  under_100k: "ต่ำกว่า 100,000 บาท",
+  "100k_300k": "100,000–300,000 บาท",
+  "300k_1m": "300,000–1,000,000 บาท",
+  over_1m: "มากกว่า 1,000,000 บาท",
+  unsure: "ยังไม่แน่ใจ",
 };
 
 /** Look a label up without crashing on a value the API added after this build. */
