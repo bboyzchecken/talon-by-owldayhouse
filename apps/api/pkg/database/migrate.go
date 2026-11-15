@@ -25,6 +25,7 @@ func allModels() []interface{} {
 		&models.OwnershipLog{},
 		&models.EgpAnnouncement{},
 		&models.EgpSettingsRow{},
+		&models.InboundRequest{},
 	}
 }
 
@@ -134,6 +135,19 @@ func Migrate(db *gorm.DB) error {
 			ID:       "20261111_02_egp_lead_titles",
 			Migrate:  backfillEgpLeadTitles,
 			Rollback: func(tx *gorm.DB) error { return nil },
+		},
+		{
+			// The public quote form writes here. It is its own table, not
+			// `leads`, because the role the intake service connects with may
+			// only INSERT into this one — nothing arriving from the open
+			// internet can read or touch a customer record.
+			ID: "20261116_01_inbound_requests",
+			Migrate: func(tx *gorm.DB) error {
+				return tx.AutoMigrate(&models.InboundRequest{})
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Migrator().DropTable("inbound_requests")
+			},
 		},
 	})
 
