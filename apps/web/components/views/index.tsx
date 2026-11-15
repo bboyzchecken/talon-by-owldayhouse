@@ -10,6 +10,7 @@ import { BrandLoop } from "@/components/site/BrandLoop";
 import { CapabilityTag } from "@/components/site/CapabilityTag";
 import { EyeHero } from "@/components/site/EyeHero";
 import { ListTabs, type ListTab } from "@/components/site/ListTabs";
+import { QuoteForm } from "@/components/site/QuoteForm";
 import { ServiceIndex } from "@/components/site/ServiceIndex";
 import { StatementFill } from "@/components/site/StatementFill";
 import { ThreeActs } from "@/components/site/ThreeActs";
@@ -23,9 +24,11 @@ import { getGuide, getPost, getPosts } from "@/content/news";
 import { bodies } from "@/content/news/bodies";
 import { cases, earlierWork, liveWork, portfolio } from "@/content/portfolio";
 import { getPrivacy } from "@/content/privacy";
+import { getQuoteFormCopy } from "@/content/quote-form";
 import { getService, getServices } from "@/content/services";
 import { company, contact } from "@/content/site";
 import { localeHref, type Locale } from "@/lib/i18n";
+import { quoteFormReady } from "@/lib/intake";
 import { pageMeta } from "@/lib/seo";
 import { articleCard, localeCard, shareCard } from "@/lib/share-cards";
 import { articleSchema, blogSchema, breadcrumbSchema, faqSchema, serviceSchema, servicesSchema } from "@/lib/structured-data";
@@ -377,6 +380,20 @@ export function contactMeta(locale: Locale): Metadata {
   return pageMeta({ locale, title: t.metaTitle, description: t.metaDescription, path: "/contact/", image: localeCard(locale, "contact") });
 }
 
+function QuoteSection({ locale, days }: { locale: Locale; days: number }) {
+  const q = getQuoteFormCopy(locale);
+  return (
+    <div className="odh-quote-wrap">
+      <div className="odh-quote-intro">
+        <p className="odh-mono">{q.label}</p>
+        <h2 id="quote-title">{q.title}</h2>
+        <p>{q.lead}</p>
+      </div>
+      <QuoteForm locale={locale} copy={q} days={days} />
+    </div>
+  );
+}
+
 export function ContactView({ locale }: { locale: Locale }) {
   const copy = getCopy(locale);
   const t = copy.contactPage;
@@ -434,6 +451,11 @@ export function ContactView({ locale }: { locale: Locale }) {
           </div>
         ) : null}
       </section>
+      {quoteFormReady() && contact.replyWithinBusinessDays ? (
+        <section className="odh-wrap pb-24" id="quote" aria-labelledby="quote-title">
+          <QuoteSection locale={locale} days={contact.replyWithinBusinessDays} />
+        </section>
+      ) : null}
       <section className="odh-wrap pb-24">
         <div className="odh-reasons odh-reasons--3">
           <div>

@@ -30,6 +30,13 @@ export const contact = {
   line: "https://line.me/ti/p/FcE785qmT2",
   /** Company profile PDF in public/, e.g. "/owl-day-house-profile.pdf". The download button shows only once this is set. */
   profilePdf: "" as string,
+  /**
+   * How many business days until the team calls back someone who used the
+   * quote form. It is a promise printed on the page, so the company sets it,
+   * not the code: the form stays hidden until this is a number (and the
+   * intake URL and Turnstile site key are set at build time, see lib/intake.ts).
+   */
+  replyWithinBusinessDays: null as number | null,
 } as const;
 
 export const social = {
