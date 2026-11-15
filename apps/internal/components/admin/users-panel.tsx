@@ -264,6 +264,7 @@ export function UsersPanel() {
                 onClick={() => {
                   if (window.confirm(`รีเซ็ตรหัสผ่านของ ${person.name}?`)) reset.mutate(person.id);
                 }}
+                disabled={reset.isPending}
               >
                 <KeyRound className="size-4" aria-hidden />
                 รีเซ็ตรหัส
@@ -277,6 +278,7 @@ export function UsersPanel() {
                     status: person.status === "active" ? "deactivated" : "active",
                   })
                 }
+                disabled={update.isPending}
               >
                 {person.status === "active" ? "ปิดบัญชี" : "เปิดบัญชี"}
               </Button>

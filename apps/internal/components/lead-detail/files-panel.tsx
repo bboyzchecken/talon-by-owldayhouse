@@ -123,7 +123,8 @@ export function FilesPanel({ leadId, canEdit }: { leadId: number; canEdit: boole
                   onClick={() => {
                     if (window.confirm(`ลบไฟล์ ${file.filename}?`)) remove.mutate(file.id);
                   }}
-                  className="flex size-10 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-foreground hover:text-foreground"
+                  disabled={remove.isPending}
+                  className="flex size-10 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-foreground hover:text-foreground disabled:opacity-50"
                   aria-label={`ลบ ${file.filename}`}
                 >
                   <Trash2 className="size-4" aria-hidden />

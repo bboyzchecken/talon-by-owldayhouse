@@ -146,7 +146,8 @@ export function ActivityPanel({ lead, canEdit }: { lead: Lead; canEdit: boolean 
                       onClick={() => {
                         if (window.confirm("ลบกิจกรรมนี้?")) remove.mutate(activity.id);
                       }}
-                      className="ml-auto text-muted-foreground transition-colors hover:text-foreground"
+                      disabled={remove.isPending}
+                      className="ml-auto text-muted-foreground transition-colors hover:text-foreground disabled:opacity-50"
                       aria-label="ลบกิจกรรม"
                     >
                       <Trash2 className="size-4" aria-hidden />

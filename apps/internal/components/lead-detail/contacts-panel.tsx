@@ -153,7 +153,8 @@ export function ContactsPanel({ leadId, canEdit }: { leadId: number; canEdit: bo
                     onClick={() => {
                       if (window.confirm(`ลบผู้ติดต่อ ${contact.name}?`)) remove.mutate(contact.id);
                     }}
-                    className="flex size-10 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-foreground hover:text-foreground"
+                    disabled={remove.isPending}
+                    className="flex size-10 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-foreground hover:text-foreground disabled:opacity-50"
                     aria-label={`ลบผู้ติดต่อ ${contact.name}`}
                   >
                     <Trash2 className="size-4" aria-hidden />
