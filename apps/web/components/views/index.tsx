@@ -22,7 +22,7 @@ import { getCopy } from "@/content/copy";
 import { getIndustry } from "@/content/industries";
 import { getGuide, getPost, getPosts } from "@/content/news";
 import { bodies } from "@/content/news/bodies";
-import { cases, earlierWork, liveWork, portfolio } from "@/content/portfolio";
+import { cases, earlierWork, featuredWork, liveWork, portfolio } from "@/content/portfolio";
 import { getPrivacy } from "@/content/privacy";
 import { getQuoteFormCopy } from "@/content/quote-form";
 import { getService, getServices } from "@/content/services";
@@ -291,7 +291,7 @@ export function WorkView({ locale }: { locale: Locale }) {
       <JsonLd data={breadcrumbSchema(locale, copy.nav.work, "/work/")} />
       <PageIntro label={t.label} title={t.title} lead={t.lead} />
       <section className="odh-wrap pb-24">
-        <WorkEditorial items={liveWork} locale={locale} showResult />
+        <WorkEditorial items={featuredWork} locale={locale} showResult />
       </section>
       <section className="odh-sec odh-wrap">
         <SectionHead label={copy.cases.label}>{copy.cases.title}</SectionHead>
@@ -304,7 +304,7 @@ export function WorkView({ locale }: { locale: Locale }) {
             <li key={item.slug} className="flex flex-col gap-2">
               <span className="flex flex-wrap items-center justify-between gap-3">
                 {item.title[locale]}
-                <CapabilityTag kind="closed" labels={copy.capability} />
+                <CapabilityTag kind={item.status} labels={copy.capability} />
               </span>
               <span className="odh-note font-body text-base">{item.result[locale]}</span>
             </li>
