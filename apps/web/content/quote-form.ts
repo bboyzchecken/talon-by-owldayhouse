@@ -65,7 +65,22 @@ export interface QuoteFormCopy {
     robot: string;
     tooMany: string;
     failed: string;
+    /** The intake did not answer at all — offline, blocked, or down. */
+    offline: string;
+    /** It answered, but the bot check could not be completed. */
+    botFailed: string;
   };
+  /** The bot check, said out loud instead of happening in silence. */
+  bot: {
+    checking: string;
+    ready: string;
+    failed: string;
+    retry: string;
+  };
+  /** Marks a required field for screen readers; the asterisk is decoration. */
+  required: string;
+  /** Screen-reader suffix on a step already filled in. */
+  stepDone: string;
   doneTitle: string;
   /** {days} as above. */
   doneBody: string;
@@ -139,7 +154,17 @@ const quoteForm = {
       robot: "รอให้ระบบยืนยันว่าไม่ใช่บอตสักครู่ แล้วกดส่งอีกครั้ง",
       tooMany: "ส่งบ่อยเกินไป กรุณารอสักครู่ แล้วลองใหม่",
       failed: "ส่งไม่สำเร็จ ลองใหม่อีกครั้ง หรือทักเราทาง LINE หรือ Messenger ด้านบน",
+      offline: "ตอนนี้ติดต่อระบบรับงานไม่ได้ อาจเป็นที่อินเทอร์เน็ตของคุณหรือที่ฝั่งเรา ทักทาง LINE หรือ Messenger ได้เลย เราตอบเหมือนกัน",
+      botFailed: "ระบบตรวจสอบว่าไม่ใช่บอตทำงานไม่สำเร็จ กดลองใหม่อีกครั้ง หรือทักเราทาง LINE หรือ Messenger",
     },
+    bot: {
+      checking: "กำลังตรวจสอบว่าไม่ใช่บอต ไม่ต้องทำอะไร กรอกต่อได้เลย",
+      ready: "ตรวจสอบเรียบร้อย พร้อมส่ง",
+      failed: "ตรวจสอบไม่สำเร็จ",
+      retry: "ลองตรวจใหม่",
+    },
+    required: "จำเป็น",
+    stepDone: "กรอกแล้ว",
     doneTitle: "ได้รับรายละเอียดแล้ว ขอบคุณที่ติดต่อเรา",
     doneBody: "ทีมงานจะติดต่อกลับภายใน {days} วันทำการ ทางช่องทางที่คุณให้ไว้ ถ้ารีบ ทักเราทาง LINE หรือโทรได้เลย",
     doneAgain: "ส่งอีกเรื่อง",
@@ -210,7 +235,17 @@ const quoteForm = {
       robot: "Give the bot check a moment to finish, then send again.",
       tooMany: "Too many attempts. Please wait a moment and try again.",
       failed: "That didn't go through. Please try again, or message us on LINE or Messenger above.",
+      offline: "We can't reach our intake right now — it may be your connection or our end. Message us on LINE or Messenger instead; it reaches the same team.",
+      botFailed: "The bot check couldn't finish. Try again, or message us on LINE or Messenger.",
     },
+    bot: {
+      checking: "Checking you're not a bot — nothing for you to do, carry on filling in.",
+      ready: "Check complete — ready to send.",
+      failed: "The check didn't finish.",
+      retry: "Check again",
+    },
+    required: "required",
+    stepDone: "filled in",
     doneTitle: "Got it — thank you",
     doneBody: "Our team will get back to you within {days} business day{s}, on the channel you gave us. In a hurry? Message us on LINE or call.",
     doneAgain: "Send another",

@@ -37,6 +37,23 @@ FTP_PROTO="${FTP_PROTO:-ftp}"
 # --- preflight checks ---
 fail() { echo "✗ $1" >&2; exit 1; }
 
+# --- the quote form's build-time values ---
+# NEXT_PUBLIC_* is inlined into the bundle, so a placeholder left in .env ships
+# to every visitor and there is no runtime to catch it. One did: the literal
+# "<Site Key จาก Cloudflare Turnstile>" went out as the Turnstile site key, the
+# form switched itself to Turnstile while the intake was on ALTCHA, and no
+# quote request could be sent at all. The site now ignores a value that is not
+# shaped like a key, and this refuses to ship one in the first place.
+if [ -n "${NEXT_PUBLIC_TURNSTILE_SITE_KEY:-}" ]; then
+  case "$NEXT_PUBLIC_TURNSTILE_SITE_KEY" in
+    0x????????????????*) ;;
+    *) fail "NEXT_PUBLIC_TURNSTILE_SITE_KEY is not a Turnstile site key: '$NEXT_PUBLIC_TURNSTILE_SITE_KEY'.
+    A real one starts with 0x (e.g. 0x4AAAAAAABkMYinukE8nzYS). Leave it EMPTY to
+    use ALTCHA, our own bot check — that is what the intake runs unless the
+    Droplet has TURNSTILE_SECRET set." ;;
+  esac
+fi
+
 command -v lftp >/dev/null 2>&1 || fail "lftp not found. Install it (macOS: brew install lftp · Debian/Ubuntu: apt-get install lftp)."
 
 missing=()
@@ -49,6 +66,13 @@ fi
 
 [ -d "$LOCAL_DIR" ] || fail "build output not found at $LOCAL_DIR — run 'pnpm build:web' first."
 [ -f "$LOCAL_DIR/index.html" ] || fail "$LOCAL_DIR has no index.html — the build looks incomplete."
+
+if [ -n "${NEXT_PUBLIC_INTAKE_URL:-}" ]; then
+  case "$NEXT_PUBLIC_INTAKE_URL" in
+    https://*) ;;
+    *) fail "NEXT_PUBLIC_INTAKE_URL must be an https origin with no trailing slash (e.g. https://api.owldayhouse.com), got '$NEXT_PUBLIC_INTAKE_URL'." ;;
+  esac
+fi
 
 # --- .htaccess: upload it only when it differs from the server's ---
 # LiteSpeed caches .htaccess until the host restarts it, so re-sending an identical
