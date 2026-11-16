@@ -304,7 +304,7 @@ export function WorkView({ locale }: { locale: Locale }) {
             <li key={item.slug} className="flex flex-col gap-2">
               <span className="flex flex-wrap items-center justify-between gap-3">
                 {item.title[locale]}
-                <CapabilityTag kind="closed" labels={copy.capability} />
+                <CapabilityTag kind={item.status} labels={copy.capability} />
               </span>
               <span className="odh-note font-body text-base">{item.result[locale]}</span>
             </li>
