@@ -77,7 +77,9 @@ type EvidenceFile struct {
 }
 
 // FinanceStore is the data access contract for the overview and the export.
-// Ranges are dates, from inclusive and to exclusive.
+// Ranges are dates, from inclusive and to exclusive. Every list comes back as
+// an empty slice when nothing matched, never nil: the overview is handed to
+// the screen as JSON, where a nil slice is null and a null blanks the page.
 type FinanceStore interface {
 	MonthlyTotals(from, to time.Time) (map[string]MonthTotals, error)
 	// OpenReceivables: issued invoices and billing notes not fully settled.

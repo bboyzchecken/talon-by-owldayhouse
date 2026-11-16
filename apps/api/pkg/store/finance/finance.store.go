@@ -79,7 +79,7 @@ func (s *financeStoreService) MonthlyTotals(from, to time.Time) (map[string]mode
 // added to each document's own payments (a billing note also counts what was
 // paid on its invoice).
 func (s *financeStoreService) openItems(where string, settled string) ([]models.OpenItem, error) {
-	var rows []models.OpenItem
+	rows := []models.OpenItem{}
 	err := s.db.Raw(`
 		SELECT d.id, d.doc_type, d.code, d.contact_id, COALESCE(c.name, '') AS contact_name, d.lead_id,
 		       d.issued_date, d.due_date, d.net_amount, ` + settled + ` AS settled
@@ -117,7 +117,7 @@ func (s *financeStoreService) OpenPayables() ([]models.OpenItem, error) {
 // issued for, in proportion to their amounts, by the service of the product
 // on each line. Lines without a product, and notes, are "other".
 func (s *financeStoreService) RevenueByService(from, to time.Time) ([]models.AmountRow, error) {
-	var rows []models.AmountRow
+	rows := []models.AmountRow{}
 	err := s.db.Raw(`
 		WITH r AS (
 			SELECT d.id, d.source_document_id, `+revenueSign+` * d.pre_tax_amount AS amount
@@ -141,7 +141,7 @@ func (s *financeStoreService) RevenueByService(from, to time.Time) ([]models.Amo
 }
 
 func (s *financeStoreService) RevenueByCustomer(from, to time.Time, limit int) ([]models.AmountRow, error) {
-	var rows []models.AmountRow
+	rows := []models.AmountRow{}
 	err := s.db.Raw(`
 		SELECT d.contact_id AS id, COALESCE(c.name, '') AS name, SUM(`+revenueSign+` * d.pre_tax_amount) AS amount
 		FROM documents d LEFT JOIN billing_contacts c ON c.id = d.contact_id
@@ -152,7 +152,7 @@ func (s *financeStoreService) RevenueByCustomer(from, to time.Time, limit int) (
 
 // JobProfit: revenue and expenses tied to the same lead.
 func (s *financeStoreService) JobProfit(from, to time.Time, limit int) ([]models.AmountRow, error) {
-	var rows []models.AmountRow
+	rows := []models.AmountRow{}
 	err := s.db.Raw(`
 		WITH money AS (
 			SELECT d.lead_id, `+revenueSign+` * d.pre_tax_amount AS revenue, 0 AS cost
@@ -169,7 +169,7 @@ func (s *financeStoreService) JobProfit(from, to time.Time, limit int) ([]models
 }
 
 func (s *financeStoreService) CashByMethod(from, to time.Time) ([]models.MethodRow, error) {
-	var rows []models.MethodRow
+	rows := []models.MethodRow{}
 	err := s.db.Raw(`
 		SELECT m.id, m.name,
 		       COALESCE(SUM(p.received_amount) FILTER (WHERE p.direction = 'in'), 0) AS "in",
