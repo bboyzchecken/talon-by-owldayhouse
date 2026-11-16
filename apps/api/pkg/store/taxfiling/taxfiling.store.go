@@ -15,6 +15,7 @@
 package taxfiling
 
 import (
+	"database/sql"
 	"time"
 
 	"github.com/shopspring/decimal"
@@ -108,7 +109,9 @@ func (s *taxStoreService) Withheld(from, to time.Time) (map[string]map[string]mo
 }
 
 func (s *taxStoreService) FirstActivity() (*time.Time, error) {
-	var first *time.Time
+	// sql.NullTime: with nothing taxable yet, MIN is NULL, which a plain
+	// *time.Time cannot be scanned from.
+	var first sql.NullTime
 	err := s.db.Raw(`
 		SELECT MIN(m) FROM (
 			SELECT MIN(d.issued_date) AS m FROM documents d WHERE ` + outputWhere + `
@@ -117,10 +120,10 @@ func (s *taxStoreService) FirstActivity() (*time.Time, error) {
 			UNION ALL
 			SELECT MIN(p.payment_date) FROM payments p WHERE ` + paidWhere + `
 		) t`).Scan(&first).Error
-	if err != nil || first == nil {
+	if err != nil || !first.Valid {
 		return nil, err
 	}
-	month := time.Date(first.Year(), first.Month(), 1, 0, 0, 0, 0, leadrules.Bangkok)
+	month := time.Date(first.Time.Year(), first.Time.Month(), 1, 0, 0, 0, 0, leadrules.Bangkok)
 	return &month, nil
 }
 
