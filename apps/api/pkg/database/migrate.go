@@ -6,6 +6,7 @@ import (
 
 	"github.com/go-gormigrate/gormigrate/v2"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 
 	"github.com/owldayhouse/odh-internal-api/pkg/egpradar"
 	"github.com/owldayhouse/odh-internal-api/pkg/models"
@@ -26,6 +27,14 @@ func allModels() []interface{} {
 		&models.EgpAnnouncement{},
 		&models.EgpSettingsRow{},
 		&models.InboundRequest{},
+		&models.BillingContact{},
+		&models.Product{},
+		&models.PaymentMethod{},
+		&models.Document{},
+		&models.DocumentItem{},
+		&models.DocumentNumbering{},
+		&models.DocumentCounter{},
+		&models.DocumentEvent{},
 	}
 }
 
@@ -149,9 +158,78 @@ func Migrate(db *gorm.DB) error {
 				return tx.Migrator().DropTable("inbound_requests")
 			},
 		},
+		{
+			// The sales document system, step 1: the registers, documents and
+			// their lines, and the numbering. Shaped to PEAK's model so the
+			// accounting firm's PEAK can be fed later without a rebuild.
+			ID:       "20261116_02_document_system",
+			Migrate:  migrateDocumentSystem,
+			Rollback: rollbackDocumentSystem,
+		},
 	})
 
 	return m.Migrate()
+}
+
+// defaultNumbering is how each type is numbered until an admin changes it:
+// PEAK's format, PREFIX-YYYYMM then five digits, reset every month. QO, IV and
+// RT are what owl-docs has been printing; the rest are proposals for the
+// company to confirm.
+func defaultNumbering() []models.DocumentNumbering {
+	return []models.DocumentNumbering{
+		{DocType: models.DocQuotation, Prefix: "QO"},
+		{DocType: models.DocInvoice, Prefix: "IV"},
+		{DocType: models.DocReceipt, Prefix: "RT"},
+		{DocType: models.DocTaxInvoice, Prefix: "TX"},
+		{DocType: models.DocCreditNote, Prefix: "CN"},
+		{DocType: models.DocBillingNote, Prefix: "BN"},
+		{DocType: models.DocDebitNote, Prefix: "DN"},
+		{DocType: models.DocExpense, Prefix: "EXP"},
+	}
+}
+
+func migrateDocumentSystem(tx *gorm.DB) error {
+	if err := tx.AutoMigrate(
+		&models.BillingContact{}, &models.Product{}, &models.PaymentMethod{},
+		&models.Document{}, &models.DocumentItem{},
+		&models.DocumentNumbering{}, &models.DocumentCounter{}, &models.DocumentEvent{},
+	); err != nil {
+		return err
+	}
+
+	// A number is unique within its type once issued; drafts all have an
+	// empty code, so the index covers issued and voided documents only.
+	if err := tx.Exec(
+		`CREATE UNIQUE INDEX IF NOT EXISTS idx_documents_type_code
+		 ON documents (doc_type, code) WHERE code <> ''`,
+	).Error; err != nil {
+		return err
+	}
+	// A draft has no number and an issued document always has one.
+	if err := tx.Exec(
+		`DO $$ BEGIN
+		   ALTER TABLE documents ADD CONSTRAINT chk_documents_code_status
+		     CHECK ((status = 'draft') = (code = ''));
+		 EXCEPTION WHEN duplicate_object THEN NULL; END $$`,
+	).Error; err != nil {
+		return err
+	}
+
+	for _, rule := range defaultNumbering() {
+		rule.Reset = models.ResetMonthly
+		rule.Digits = 5
+		if err := tx.Clauses(clause.OnConflict{DoNothing: true}).Create(&rule).Error; err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func rollbackDocumentSystem(tx *gorm.DB) error {
+	return tx.Migrator().DropTable(
+		"document_events", "document_counters", "document_numberings",
+		"document_items", "documents", "payment_methods", "products", "billing_contacts",
+	)
 }
 
 func backfillEgpLeadTitles(tx *gorm.DB) error {

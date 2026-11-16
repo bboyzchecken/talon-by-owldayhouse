@@ -15,6 +15,8 @@
 //	odh-internal-api seed   [flags]     migrate, then create the first admin
 //	odh-internal-api create-user [flags] create an account from the CLI
 //	odh-internal-api seed-demo          load demo leads (non-production only)
+//	odh-internal-api set-doc-number [flags] continue a document series from a number
+//	                                    the company already used
 package main
 
 import (
@@ -79,8 +81,10 @@ func main() {
 		runCreateUser(config, os.Args[2:])
 	case "seed-demo":
 		runSeedDemo(config)
+	case "set-doc-number":
+		runSetDocNumber(config, os.Args[2:])
 	default:
-		log.Fatalf("unknown command %q — use: serve | up | seed | create-user | seed-demo", command)
+		log.Fatalf("unknown command %q — use: serve | up | seed | create-user | seed-demo | set-doc-number", command)
 	}
 }
 
