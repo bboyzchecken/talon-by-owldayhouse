@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/owldayhouse/odh-internal-api/pkg/docnumber"
 	"log"
 	"strings"
 	"time"
@@ -256,4 +257,33 @@ func runSeedDemo(config core.Config) {
 	}
 
 	fmt.Printf("สร้างข้อมูลตัวอย่างแล้ว %d ราย (บัญชีเซลส์ตัวอย่าง: sales1-3 / demo-password-1234)\n", created)
+}
+
+// runSetDocNumber is the `set-doc-number` command: start a document series
+// from the last number the company already used before this system took
+// over. The next document of that type and period gets -next.
+//
+//	odh-internal-api set-doc-number -type 101 -period 202611 -next 42 -by admin
+func runSetDocNumber(config core.Config, args []string) {
+	flags := flag.NewFlagSet("set-doc-number", flag.ExitOnError)
+	docType := flags.Int("type", 0, "ประเภทเอกสาร (101 ใบเสนอราคา · 102 ใบแจ้งหนี้ · 103 ใบเสร็จ/ใบกำกับภาษี · 105 ใบลดหนี้ · 106 ใบวางบิล · 107 ใบเพิ่มหนี้ · 202 รายจ่าย)")
+	period := flags.String("period", "", "งวด: YYYYMM ถ้ารีเซ็ตรายเดือน หรือ YYYY ถ้ารีเซ็ตรายปี")
+	next := flags.Int64("next", 0, "เลขลำดับของเอกสารใบถัดไป (เลขล่าสุดที่ใช้ไปแล้ว + 1)")
+	by := flags.String("by", "", "ชื่อผู้ใช้แอดมินที่สั่ง (ลงในประวัติ)")
+	if err := flags.Parse(args); err != nil {
+		log.Fatal(err)
+	}
+	if *docType == 0 || strings.TrimSpace(*period) == "" || *next < 1 || strings.TrimSpace(*by) == "" {
+		log.Fatal("ต้องระบุ -type -period -next และ -by")
+	}
+
+	db := openDB(config)
+	user, err := storeuser.New(db).FindByUsername(strings.ToLower(strings.TrimSpace(*by)))
+	if err != nil || user.Role != models.RoleAdmin {
+		log.Fatalf("ไม่พบแอดมินชื่อ %q", *by)
+	}
+	if err := docnumber.SetNext(db, *docType, strings.TrimSpace(*period), *next, user.ID); err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("ตั้งแล้ว: เอกสารประเภท %d งวด %s ใบถัดไปได้เลขลำดับ %d\n", *docType, *period, *next)
 }

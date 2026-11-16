@@ -24,6 +24,7 @@ pkg/database       GORM client + gormigrate migrations
 pkg/models         GORM model + Store interface per domain
 pkg/store/<domain> GORM repository per domain
 pkg/leadrules      the ownership and duplicate rules, as pure functions
+pkg/docnumber      document numbers: reserved in the issuing transaction, no gaps or repeats
 pkg/handlers/api   Echo server, middleware, one *.handler.go per domain
 pkg/services/storage  Cloudflare R2 (presigned upload/download)
 pkg/utils          validator, dateutil, hashutil, str
@@ -37,6 +38,8 @@ go run . up             # run the migrations and exit
 go run . seed -username admin -name "ชื่อ นามสกุล"    # first admin
 go run . create-user -username somchai -name "สมชาย" -role sales
 go run . seed-demo      # demo leads (refuses to run in production)
+go run . set-doc-number -type 101 -period 202611 -next 42 -by admin
+                        # continue a document series from the company's last number
 ```
 
 Through the monorepo: `pnpm --filter api build | lint | test`.
@@ -51,7 +54,8 @@ the `do_not_pitch` stage block.
 **real PostgreSQL 16 with pg_trgm**, because the duplicate guard (a unique
 index on `normalized_name`) and the similar-name warning (`similarity()`) are
 database behaviour. With no database reachable the file skips, so
-`go test ./...` stays green either way:
+`go test ./...` stays green either way. `pkg/docnumber` does the same, with
+60 concurrent issuers checking that numbers never repeat and never skip:
 
 ```bash
 # any PostgreSQL 16 with CREATE EXTENSION rights

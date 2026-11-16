@@ -23,15 +23,18 @@ import (
 	storeactivity "github.com/owldayhouse/odh-internal-api/pkg/store/activity"
 	storecontact "github.com/owldayhouse/odh-internal-api/pkg/store/contact"
 	storedeal "github.com/owldayhouse/odh-internal-api/pkg/store/deal"
+	storedocument "github.com/owldayhouse/odh-internal-api/pkg/store/document"
 	storeegp "github.com/owldayhouse/odh-internal-api/pkg/store/egp"
 	storefile "github.com/owldayhouse/odh-internal-api/pkg/store/file"
 	storeinbound "github.com/owldayhouse/odh-internal-api/pkg/store/inbound"
 	storekpi "github.com/owldayhouse/odh-internal-api/pkg/store/kpi"
 	storelead "github.com/owldayhouse/odh-internal-api/pkg/store/lead"
 	storeownership "github.com/owldayhouse/odh-internal-api/pkg/store/ownership"
+	storeregister "github.com/owldayhouse/odh-internal-api/pkg/store/register"
 	storesetting "github.com/owldayhouse/odh-internal-api/pkg/store/setting"
 	storetarget "github.com/owldayhouse/odh-internal-api/pkg/store/target"
 	storeuser "github.com/owldayhouse/odh-internal-api/pkg/store/user"
+	"github.com/owldayhouse/odh-internal-api/pkg/testdb"
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 )
@@ -125,8 +128,9 @@ func newTestEnv(t *testing.T) *testEnv {
 	if err := database.Migrate(db); err != nil {
 		t.Fatalf("migrations failed: %v", err)
 	}
+	testdb.Lock(t, db)
 
-	err = db.Exec(`TRUNCATE inbound_requests, egp_announcements, egp_settings_rows, ownership_logs, targets, deals, activities, contacts, leads, files, users RESTART IDENTITY CASCADE`).Error
+	err = db.Exec(`TRUNCATE products, payment_methods, document_events, document_items, documents, document_counters, billing_contacts, inbound_requests, egp_announcements, egp_settings_rows, ownership_logs, targets, deals, activities, contacts, leads, files, users RESTART IDENTITY CASCADE`).Error
 	if err != nil {
 		t.Fatalf("cannot clear the test database: %v", err)
 	}
@@ -146,6 +150,8 @@ func newTestEnv(t *testing.T) *testEnv {
 		storeactivity.New(db), storedeal.New(db), storetarget.New(db),
 		storeownership.New(db), storekpi.New(db), storeegp.New(db),
 		storeinbound.New(db),
+		storedocument.New(db),
+		storeregister.New(db),
 		storage.New(config, storage.NewR2Client(config)),
 	)
 

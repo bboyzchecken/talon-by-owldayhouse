@@ -15,6 +15,8 @@
 //	odh-internal-api seed   [flags]     migrate, then create the first admin
 //	odh-internal-api create-user [flags] create an account from the CLI
 //	odh-internal-api seed-demo          load demo leads (non-production only)
+//	odh-internal-api set-doc-number [flags] continue a document series from a number
+//	                                    the company already used
 package main
 
 import (
@@ -34,12 +36,14 @@ import (
 	storeactivity "github.com/owldayhouse/odh-internal-api/pkg/store/activity"
 	storecontact "github.com/owldayhouse/odh-internal-api/pkg/store/contact"
 	storedeal "github.com/owldayhouse/odh-internal-api/pkg/store/deal"
+	storedocument "github.com/owldayhouse/odh-internal-api/pkg/store/document"
 	storeegp "github.com/owldayhouse/odh-internal-api/pkg/store/egp"
 	storefile "github.com/owldayhouse/odh-internal-api/pkg/store/file"
 	storeinbound "github.com/owldayhouse/odh-internal-api/pkg/store/inbound"
 	storekpi "github.com/owldayhouse/odh-internal-api/pkg/store/kpi"
 	storelead "github.com/owldayhouse/odh-internal-api/pkg/store/lead"
 	storeownership "github.com/owldayhouse/odh-internal-api/pkg/store/ownership"
+	storeregister "github.com/owldayhouse/odh-internal-api/pkg/store/register"
 	storesetting "github.com/owldayhouse/odh-internal-api/pkg/store/setting"
 	storetarget "github.com/owldayhouse/odh-internal-api/pkg/store/target"
 	storeuser "github.com/owldayhouse/odh-internal-api/pkg/store/user"
@@ -79,8 +83,10 @@ func main() {
 		runCreateUser(config, os.Args[2:])
 	case "seed-demo":
 		runSeedDemo(config)
+	case "set-doc-number":
+		runSetDocNumber(config, os.Args[2:])
 	default:
-		log.Fatalf("unknown command %q — use: serve | up | seed | create-user | seed-demo", command)
+		log.Fatalf("unknown command %q — use: serve | up | seed | create-user | seed-demo | set-doc-number", command)
 	}
 }
 
@@ -99,6 +105,8 @@ func storeModules() fx.Option {
 		storekpi.Module,
 		storeegp.Module,
 		storeinbound.Module,
+		storedocument.Module,
+		storeregister.Module,
 	)
 }
 

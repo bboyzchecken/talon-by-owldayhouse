@@ -2,7 +2,12 @@ import type { LucideIcon } from "lucide-react";
 import {
   BarChart3,
   CalendarCheck,
+  Building2,
   Columns3,
+  FilePlus2,
+  Landmark,
+  Package,
+  FileText,
   Inbox,
   List,
   Plus,
@@ -66,6 +71,20 @@ export const tools: Tool[] = [
       { href: "/leads/pipeline", label: "Pipeline", icon: Columns3 },
       { href: "/leads/kpi", label: "KPI", icon: BarChart3 },
       { href: "/leads/admin", label: "ตั้งค่าและทีม", icon: Settings, adminOnly: true },
+    ],
+  },
+  {
+    slug: "docs",
+    name: "เอกสาร",
+    summary: "ใบเสนอราคา ใบแจ้งหนี้ ใบเสร็จ/ใบกำกับภาษี เลขที่รันเอง ไม่ซ้ำไม่ข้าม พิมพ์จากเทมเพลตเดิม",
+    href: "/docs/list",
+    icon: FileText,
+    nav: [
+      { href: "/docs/list", label: "รายการเอกสาร", icon: List },
+      { href: "/docs/new", label: "สร้างเอกสาร", icon: FilePlus2 },
+      { href: "/docs/contacts", label: "ผู้ติดต่อ", icon: Building2 },
+      { href: "/docs/products", label: "สินค้า/บริการ", icon: Package, adminOnly: true },
+      { href: "/docs/payment-methods", label: "ช่องทางรับเงิน", icon: Landmark, adminOnly: true },
     ],
   },
   {
