@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"time"
 
 	"github.com/lib/pq"
@@ -321,4 +322,43 @@ type DocumentEvent struct {
 	Action     string    `gorm:"size:32;not null" json:"action"`
 	Note       string    `gorm:"size:1000" json:"note"`
 	CreatedAt  time.Time `gorm:"index" json:"created_at"`
+}
+
+// Errors the document store returns for a document in the wrong state.
+var (
+	ErrDocumentNotDraft  = errors.New("เอกสารนี้ออกเลขแล้ว แก้ไขหรือลบไม่ได้ ต้องยกเลิกแล้วออกใหม่")
+	ErrDocumentNotIssued = errors.New("ยกเลิกได้เฉพาะเอกสารที่ออกเลขแล้วและยังไม่ถูกยกเลิก")
+)
+
+// DocumentFilter narrows the document list.
+type DocumentFilter struct {
+	DocType   int
+	Status    string
+	ContactID uint
+	LeadID    uint
+	// OwnerUserID limits the list to documents of leads this person owns —
+	// how a sales account sees only its own customers' documents.
+	OwnerUserID *uint
+	From, To    *time.Time // issued_date range, inclusive
+	Search      string     // code, contact name or reference
+	Page, Limit int
+}
+
+// DocumentStore is the data access contract for documents. Every method that
+// changes a document's state locks its row first, so two people acting on
+// one document at once cannot both succeed.
+type DocumentStore interface {
+	CreateDraft(doc *Document, userID uint) error
+	UpdateDraft(doc *Document, userID uint) error
+	DeleteDraft(id uint) error
+	// Issue reserves a number (pkg/docnumber) and issues the draft in one
+	// transaction. check runs inside it, on the locked row, so a rule like
+	// "the contact needs a tax ID" is judged on what is actually issued.
+	Issue(id, userID uint, check func(*Document) error) (*Document, error)
+	Void(id, userID uint, reason string) (*Document, error)
+	Find(id uint) (*Document, error)
+	List(filter DocumentFilter) ([]*Document, int64, error)
+	AddEvent(event *DocumentEvent) error
+	ListEvents(documentID uint) ([]*DocumentEvent, error)
+	FindContact(id uint) (*BillingContact, error)
 }
