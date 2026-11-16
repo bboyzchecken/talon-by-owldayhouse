@@ -193,6 +193,16 @@ func (s *documentStoreService) Void(id, userID uint, reason string) (*models.Doc
 		if doc.Status != models.DocStatusIssued {
 			return models.ErrDocumentNotIssued
 		}
+		// Money recorded against it would be left pointing at a void
+		// document: the payments are cancelled first.
+		var payments int64
+		if err := tx.Model(&models.Payment{}).
+			Where("document_id = ? AND status = ?", id, models.PaymentActive).Count(&payments).Error; err != nil {
+			return err
+		}
+		if payments > 0 {
+			return models.ErrHasPayments
+		}
 		now := time.Now()
 		if err := tx.Model(&models.Document{}).Where("id = ?", id).Updates(map[string]interface{}{
 			"status":      models.DocStatusVoided,

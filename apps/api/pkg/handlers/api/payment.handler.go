@@ -26,15 +26,26 @@ import (
 // money, voiding it and the withholding certificate are the admin's; a sales
 // account sees the payments on its own customers' documents.
 
-// payableDocTypes are the documents money is received against.
+// payableDocTypes are the documents money moves against: received for the
+// sales documents, paid out for an expense.
 var payableDocTypes = map[int]bool{
 	models.DocQuotation:   true,
 	models.DocInvoice:     true,
 	models.DocBillingNote: true,
+	models.DocExpense:     true,
+}
+
+// paymentDirection: money in for a sales document, out for an expense.
+func paymentDirection(docType int) string {
+	if docType == models.DocExpense {
+		return models.PaymentOut
+	}
+	return models.PaymentIn
 }
 
 func (s *Server) registerPaymentRoutes(docs *echo.Group) {
 	docs.GET("/payments", s.ListPayments, s.IsAdmin())
+	docs.GET("/expenses", s.ListExpenses, s.IsAdmin())
 	docs.GET("/payments/:pid", s.GetPayment, s.IsAdmin())
 	docs.POST("/payments/:pid/void", s.VoidPayment, s.IsAdmin())
 	docs.POST("/payments/:pid/receipt", s.IssuePaymentReceipt, s.IsAdmin())
@@ -47,7 +58,7 @@ func (s *Server) paymentError(c echo.Context, err error) error {
 	case errors.Is(err, models.ErrOverpaid), errors.Is(err, docmath.ErrOverpaid):
 		return c.JSON(http.StatusUnprocessableEntity, errorBody(models.ErrOverpaid.Error()))
 	case errors.Is(err, models.ErrNotPayable), errors.Is(err, models.ErrPaymentVoided),
-		errors.Is(err, models.ErrReceiptExists):
+		errors.Is(err, models.ErrReceiptExists), errors.Is(err, models.ErrHasPayments):
 		return conflict(c, errorBody(err.Error()))
 	case errors.Is(err, models.ErrNoWhtCertificate), errors.Is(err, models.ErrNothingWithheld):
 		return c.JSON(http.StatusUnprocessableEntity, errorBody(err.Error()))
@@ -169,10 +180,10 @@ func (s *Server) RecordPayment(c echo.Context) error {
 		return s.paymentError(c, err)
 	}
 	if day == nil {
-		return c.JSON(http.StatusUnprocessableEntity, errorBody("ใส่วันที่ได้รับเงิน"))
+		return c.JSON(http.StatusUnprocessableEntity, errorBody("ใส่วันที่ของรายการเงิน"))
 	}
 	if day.After(startOfToday()) {
-		return c.JSON(http.StatusUnprocessableEntity, errorBody("วันที่ได้รับเงินเป็นวันในอนาคตไม่ได้"))
+		return c.JSON(http.StatusUnprocessableEntity, errorBody("วันที่ของรายการเงินเป็นวันในอนาคตไม่ได้"))
 	}
 	received := body.ReceivedAmount.Round(2)
 	withheld := body.WithholdingAmount.Round(2)
@@ -181,17 +192,18 @@ func (s *Server) RecordPayment(c echo.Context) error {
 	}
 	settled := received.Add(withheld)
 	if !settled.IsPositive() {
-		return c.JSON(http.StatusUnprocessableEntity, errorBody("ใส่ยอดที่ได้รับ"))
+		return c.JSON(http.StatusUnprocessableEntity, errorBody("ใส่ยอดเงิน"))
 	}
 	method, err := s.RegisterStore.FindPaymentMethod(body.PaymentMethodID)
 	if err != nil || !method.Active {
-		return c.JSON(http.StatusUnprocessableEntity, errorBody("เลือกช่องทางรับเงิน"))
+		return c.JSON(http.StatusUnprocessableEntity, errorBody("เลือกช่องทางการเงิน"))
 	}
+	direction := paymentDirection(doc.DocType)
 
 	me := actor(c)
 	payment := &models.Payment{
 		DocumentID:        doc.ID,
-		Direction:         models.PaymentIn,
+		Direction:         direction,
 		Status:            models.PaymentActive,
 		PaymentDate:       *day,
 		PaymentMethodID:   method.ID,
@@ -204,9 +216,19 @@ func (s *Server) RecordPayment(c echo.Context) error {
 	}
 	if withheld.IsPositive() {
 		payment.WhtCertStatus = models.WhtCertPending
+		if direction == models.PaymentOut {
+			// We withheld, so we file it: on the form the vendor's type
+			// calls for, as it stands today.
+			payment.WhtForm = models.WhtFormPND53
+			if doc.Contact != nil && doc.Contact.WhtForm != "" {
+				payment.WhtForm = doc.Contact.WhtForm
+			}
+		}
 	}
+	// Money in issues its receipt/tax invoice; paying a vendor issues nothing
+	// of ours — their tax invoice is already on the expense.
 	var plan *models.ReceiptPlan
-	if body.IssueReceipt == nil || *body.IssueReceipt {
+	if direction == models.PaymentIn && (body.IssueReceipt == nil || *body.IssueReceipt) {
 		plan = s.receiptPlan(payment, method.Name)
 	}
 	if err := s.PaymentStore.Record(payment, plan); err != nil {
@@ -302,8 +324,12 @@ func (s *Server) MarkWhtCertificate(c echo.Context) error {
 // ListPayments handles GET /api/docs/payments?wht_cert=pending&month=YYYY-MM
 // (admin): "certificates we are still waiting for" is wht_cert=pending.
 func (s *Server) ListPayments(c echo.Context) error {
+	direction := models.PaymentIn
+	if c.QueryParam("direction") == models.PaymentOut {
+		direction = models.PaymentOut
+	}
 	filter := models.PaymentFilter{
-		Direction:     models.PaymentIn,
+		Direction:     direction,
 		WhtCertStatus: c.QueryParam("wht_cert"),
 		IncludeVoided: c.QueryParam("voided") == "1",
 	}
@@ -366,4 +392,72 @@ func receiptsOnlyFromPayments(docType int) error {
 		return violation("ใบเสร็จ/ใบกำกับภาษีออกจากการบันทึกรับเงินของใบแจ้งหนี้หรือใบเสนอราคา")
 	}
 	return nil
+}
+
+// ListExpenses handles GET /api/docs/expenses?view=&month= (admin): the
+// month's expenses with what was paid on each, and the totals the tax month
+// needs. Views: unpaid (still owed to the vendor), no_tax_invoice (VAT paid
+// with no tax invoice: it cannot be claimed), all (the default).
+func (s *Server) ListExpenses(c echo.Context) error {
+	filter := models.DocumentFilter{DocType: models.DocExpense, Status: models.DocStatusIssued, Limit: 200}
+	if month := c.QueryParam("month"); month != "" {
+		start, err := time.ParseInLocation("2006-01", month, leadrules.Bangkok)
+		if err != nil {
+			return badRequest(c, "เดือนไม่ถูกต้อง ใช้รูปแบบ ปปปป-ดด")
+		}
+		end := start.AddDate(0, 1, -1)
+		filter.From, filter.To = &start, &end
+	}
+	docs, _, err := s.DocumentStore.List(filter)
+	if err != nil {
+		return s.serverError(c, err)
+	}
+	ids := make([]uint, len(docs))
+	for i, d := range docs {
+		ids[i] = d.ID
+	}
+	paid, err := s.PaymentStore.SettledFor(ids)
+	if err != nil {
+		return s.serverError(c, err)
+	}
+
+	type row struct {
+		*models.Document
+		Paid        decimal.Decimal `json:"paid"`
+		Outstanding decimal.Decimal `json:"outstanding"`
+		// Claimable: its VAT can be used as input tax (a tax invoice is on file).
+		Claimable bool `json:"claimable"`
+	}
+	view := c.QueryParam("view")
+	items := []row{}
+	sums := map[string]decimal.Decimal{
+		"net": decimal.Zero, "vat": decimal.Zero, "vat_claimable": decimal.Zero,
+		"vat_not_claimable": decimal.Zero, "withholding": decimal.Zero, "outstanding": decimal.Zero,
+	}
+	for _, d := range docs {
+		r := row{Document: d, Paid: paid[d.ID]}
+		r.Outstanding = d.NetAmount.Sub(r.Paid)
+		r.Claimable = d.ReceivedTaxInvoiceNumber != ""
+		switch view {
+		case "unpaid":
+			if !r.Outstanding.IsPositive() {
+				continue
+			}
+		case "no_tax_invoice":
+			if r.Claimable || !d.VatAmount.IsPositive() {
+				continue
+			}
+		}
+		items = append(items, r)
+		sums["net"] = sums["net"].Add(d.NetAmount)
+		sums["vat"] = sums["vat"].Add(d.VatAmount)
+		if r.Claimable {
+			sums["vat_claimable"] = sums["vat_claimable"].Add(d.VatAmount)
+		} else {
+			sums["vat_not_claimable"] = sums["vat_not_claimable"].Add(d.VatAmount)
+		}
+		sums["withholding"] = sums["withholding"].Add(d.WithholdingTotal)
+		sums["outstanding"] = sums["outstanding"].Add(r.Outstanding)
+	}
+	return c.JSON(http.StatusOK, map[string]interface{}{"items": items, "sums": sums})
 }

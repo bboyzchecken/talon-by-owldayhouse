@@ -39,7 +39,7 @@ export const eventLabels: Record<string, string> = {
   email_drafted: "ร่างอีเมล",
   sent: "ส่งให้ลูกค้าแล้ว",
   voided: "ยกเลิก",
-  payment: "บันทึกรับเงิน",
+  payment: "รายการเงิน",
 };
 
 /** The templates the print page knows. Other types print in a later step. */

@@ -467,6 +467,8 @@ export interface DocumentBody {
   received_tax_invoice_number?: string;
   received_tax_invoice_date?: string;
   input_vat_period?: string;
+  /** Expenses only: the customer job this cost belongs to. */
+  lead_id?: number;
 }
 
 export interface DocumentListFilters {
@@ -536,9 +538,23 @@ export interface PaymentBody {
   issue_receipt: boolean;
 }
 
+export interface ExpenseRow extends DocumentRow {
+  paid: string;
+  outstanding: string;
+  claimable: boolean;
+}
+
+export const expenses = {
+  list: (filters: { view?: "unpaid" | "no_tax_invoice"; month?: string }) =>
+    get<{
+      items: ExpenseRow[];
+      sums: { net: string; vat: string; vat_claimable: string; vat_not_claimable: string; withholding: string; outstanding: string };
+    }>("/api/docs/expenses", filters),
+};
+
 export const payments = {
   record: (documentId: number, body: PaymentBody) => send<Payment>("post", `/api/docs/${documentId}/payments`, body),
-  list: (filters: { wht_cert?: string; month?: string; page?: number }) =>
+  list: (filters: { wht_cert?: string; month?: string; page?: number; direction?: "in" | "out" }) =>
     get<{ items: Payment[]; total: number; page_sums: { received: string; withholding: string; settled: string } }>(
       "/api/docs/payments",
       filters,

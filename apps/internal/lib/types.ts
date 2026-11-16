@@ -594,6 +594,8 @@ export interface Payment {
   withholding_amount: Money;
   settled_amount: Money;
   note: string;
+  /** pnd3 / pnd53 when we withheld paying a vendor; empty for money in. */
+  wht_form: "" | "pnd3" | "pnd53";
   receipt_id?: number;
   receipt?: DocumentRow;
   wht_cert_status: WhtCertStatus;

@@ -224,6 +224,17 @@ func migrations(db *gorm.DB) *gormigrate.Gormigrate {
 				return tx.Migrator().DropTable("payments")
 			},
 		},
+		{
+			// Paying vendors (step 6): the withholding form is kept on the
+			// payment, for the monthly PND3/PND53.
+			ID: "20261116_05_payment_wht_form",
+			Migrate: func(tx *gorm.DB) error {
+				return tx.AutoMigrate(&models.Payment{})
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Migrator().DropColumn(&models.Payment{}, "wht_form")
+			},
+		},
 	})
 }
 

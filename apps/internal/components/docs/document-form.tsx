@@ -7,7 +7,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Plus, Text, Trash2 } from "lucide-react";
 import { Button, cn } from "@odh/ui";
 import { Alert, Field, Input, Panel, Select, Textarea } from "@/components/odh";
-import { ApiError, documents, registers, type DocumentBody } from "@/lib/api";
+import { ApiError, documents, leads as leadsApi, registers, type DocumentBody } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { adminDocTypes, docTypeLabels, money, salesDocTypes, todayISO, vatTypeLabels, isoDay } from "@/lib/docs";
 import type { BillingContact, DocType, DocumentItem, DocumentRow, DocumentTotals } from "@/lib/types";
@@ -34,12 +34,14 @@ function clean(items: DocumentItem[]): DocumentItem[] {
  * right come from the API's own calculation (POST /api/docs/calculate), so
  * what is previewed is exactly what will be stored and printed.
  */
-export function DocumentForm({ existing }: { existing?: DocumentRow }) {
+export function DocumentForm({ existing, initialType }: { existing?: DocumentRow; initialType?: DocType }) {
   const router = useRouter();
   const { isAdmin } = useAuth();
   const allowedTypes = isAdmin ? adminDocTypes : salesDocTypes;
 
-  const [docType, setDocType] = useState<DocType>(existing?.doc_type ?? 101);
+  const [docType, setDocType] = useState<DocType>(
+    existing?.doc_type ?? (initialType && allowedTypes.includes(initialType) ? initialType : 101),
+  );
   const [contact, setContact] = useState<BillingContact | undefined>(existing?.contact);
   const [search, setSearch] = useState("");
   const [issuedDate, setIssuedDate] = useState(isoDay(existing?.issued_date) || todayISO());
@@ -55,6 +57,9 @@ export function DocumentForm({ existing }: { existing?: DocumentRow }) {
   );
   const [taxInvoiceNo, setTaxInvoiceNo] = useState(existing?.received_tax_invoice_number ?? "");
   const [taxInvoiceDate, setTaxInvoiceDate] = useState(isoDay(existing?.received_tax_invoice_date));
+  const [vatPeriod, setVatPeriod] = useState(existing?.input_vat_period?.slice(0, 7) ?? "");
+  const [jobLeadId, setJobLeadId] = useState<number | undefined>(existing?.doc_type === 202 ? existing.lead_id : undefined);
+  const [jobSearch, setJobSearch] = useState("");
   const [error, setError] = useState("");
 
   const isExpense = docType === 202;
@@ -106,7 +111,12 @@ export function DocumentForm({ existing }: { existing?: DocumentRow }) {
     discount,
     items: clean(items),
     ...(isExpense
-      ? { received_tax_invoice_number: taxInvoiceNo, received_tax_invoice_date: taxInvoiceDate || undefined }
+      ? {
+          received_tax_invoice_number: taxInvoiceNo,
+          received_tax_invoice_date: taxInvoiceDate || undefined,
+          input_vat_period: vatPeriod || undefined,
+          lead_id: jobLeadId,
+        }
       : {}),
   });
 
@@ -171,6 +181,10 @@ export function DocumentForm({ existing }: { existing?: DocumentRow }) {
                 <Field label="วันที่ใบกำกับภาษี">
                   <Input type="date" value={taxInvoiceDate} onChange={(event) => setTaxInvoiceDate(event.target.value)} />
                 </Field>
+                <Field label="เดือนที่ใช้ภาษีซื้อ" hint="เว้นว่าง = เดือนของใบกำกับ · ใช้ได้ถึง 6 เดือนหลังจากนั้น">
+                  <Input type="month" value={vatPeriod} onChange={(event) => setVatPeriod(event.target.value)} />
+                </Field>
+                <JobPicker leadId={jobLeadId} search={jobSearch} onSearch={setJobSearch} onPick={setJobLeadId} />
               </>
             ) : null}
           </div>
@@ -375,6 +389,47 @@ export function DocumentForm({ existing }: { existing?: DocumentRow }) {
         </p>
       </aside>
     </form>
+  );
+}
+
+/** Expenses: the customer job a cost belongs to, for cost per job. */
+function JobPicker({
+  leadId,
+  search,
+  onSearch,
+  onPick,
+}: {
+  leadId?: number;
+  search: string;
+  onSearch: (v: string) => void;
+  onPick: (id: number | undefined) => void;
+}) {
+  const picked = useQuery({ queryKey: ["leads", leadId, "detail"], queryFn: () => leadsApi.get(leadId!), enabled: Boolean(leadId) });
+  const results = useQuery({
+    queryKey: ["leads", "job-search", search],
+    queryFn: () => leadsApi.list({ search, page: 1, limit: 6 }),
+    enabled: !leadId && search.trim().length >= 2,
+  });
+  return (
+    <Field label="ต้นทุนของงานลูกค้า" hint="ไม่บังคับ — ผูกรายจ่ายกับลูกค้า/งาน เพื่อดูกำไรต่องาน">
+      {leadId ? (
+        <div className="flex items-center justify-between gap-2 rounded-xl border border-border px-4 py-3">
+          <span className="truncate font-body text-sm text-foreground">{picked.data?.lead.name ?? "…"}</span>
+          <button type="button" className="text-xs text-muted-foreground underline" onClick={() => onPick(undefined)}>
+            เอาออก
+          </button>
+        </div>
+      ) : (
+        <div className="space-y-1">
+          <Input placeholder="ค้นหาชื่อลูกค้า" value={search} onChange={(e) => onSearch(e.target.value)} aria-label="ค้นหาลูกค้าของงาน" />
+          {(results.data?.data ?? []).map((lead) => (
+            <button key={lead.id} type="button" className="block w-full rounded-lg px-3 py-2 text-left font-body text-sm hover:bg-muted" onClick={() => onPick(lead.id)}>
+              {lead.name}
+            </button>
+          ))}
+        </div>
+      )}
+    </Field>
   );
 }
 

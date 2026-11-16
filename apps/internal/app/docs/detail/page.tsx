@@ -196,7 +196,7 @@ function DocumentDetail() {
               ) : null}
               {doc.lead_id ? (
                 <Link className="inline-block pt-1 font-display font-semibold text-primary underline" href={leadHref(doc.lead_id)}>
-                  เปิดลูกค้าใน Lead Tracker
+                  {isExpense ? "เปิดงานของลูกค้าที่รายจ่ายนี้เป็นต้นทุน" : "เปิดลูกค้าใน Lead Tracker"}
                 </Link>
               ) : null}
               {isExpense && doc.received_tax_invoice_number ? (

@@ -151,7 +151,8 @@ func (s *Server) loadDocument(c echo.Context) (*models.Document, error) {
 
 func (s *Server) documentError(c echo.Context, err error) error {
 	switch {
-	case errors.Is(err, models.ErrDocumentNotDraft), errors.Is(err, models.ErrDocumentNotIssued):
+	case errors.Is(err, models.ErrDocumentNotDraft), errors.Is(err, models.ErrDocumentNotIssued),
+		errors.Is(err, models.ErrHasPayments):
 		return conflict(c, errorBody(err.Error()))
 	case errors.Is(err, docnumber.ErrNoNumbering), errors.Is(err, docnumber.ErrSequenceFull):
 		return conflict(c, errorBody(err.Error()))
@@ -203,6 +204,9 @@ type documentBody struct {
 	Items        []documentLineBody `json:"items"`
 
 	// Expenses only.
+	// LeadID ties the expense to a customer's job, for its cost; a vendor
+	// contact belongs to no lead of its own.
+	LeadID                   *uint  `json:"lead_id"`
 	ReceivedTaxInvoiceNumber string `json:"received_tax_invoice_number"`
 	ReceivedTaxInvoiceDate   string `json:"received_tax_invoice_date"`
 	InputVatPeriod           string `json:"input_vat_period"` // YYYY-MM
@@ -341,6 +345,13 @@ func (s *Server) buildDocument(body documentBody) (*models.Document, error) {
 	if body.DocType == models.DocExpense {
 		if err := applyReceivedTaxInvoice(doc, body); err != nil {
 			return nil, err
+		}
+		doc.LeadID = nil
+		if body.LeadID != nil && *body.LeadID != 0 {
+			if err := s.checkLead(body.LeadID); err != nil {
+				return nil, err
+			}
+			doc.LeadID = body.LeadID
 		}
 	}
 	return doc, nil

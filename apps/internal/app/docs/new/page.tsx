@@ -7,6 +7,7 @@ import { DocumentForm } from "@/components/docs/document-form";
 import { Alert, Spinner } from "@/components/odh";
 import { documents } from "@/lib/api";
 import { docTypeLabels } from "@/lib/docs";
+import type { DocType } from "@/lib/types";
 
 export default function NewDocumentPage() {
   return (
@@ -18,7 +19,9 @@ export default function NewDocumentPage() {
 
 /** /docs/new makes a draft; /docs/new/?id=… edits one. */
 function NewDocument() {
-  const id = Number(useSearchParams().get("id"));
+  const params = useSearchParams();
+  const id = Number(params.get("id"));
+  const initialType = Number(params.get("type")) || undefined;
   const editing = Number.isFinite(id) && id > 0;
   const existing = useQuery({ queryKey: ["docs", id, "detail"], queryFn: () => documents.get(id), enabled: editing });
 
@@ -39,7 +42,7 @@ function NewDocument() {
           บันทึกเป็นร่างก่อน เลขที่เอกสารออกตอนกด “ออกเอกสาร” เท่านั้น ร่างที่ทิ้งไว้จึงไม่กินเลข
         </p>
       </header>
-      <DocumentForm existing={doc} />
+      <DocumentForm existing={doc} initialType={initialType as DocType | undefined} />
     </div>
   );
 }
