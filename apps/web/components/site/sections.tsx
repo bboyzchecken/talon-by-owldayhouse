@@ -8,6 +8,7 @@ import { industryNames, type CaseStudy, type PortfolioItem } from "@/content/por
 import { contact, social } from "@/content/site";
 import { localeHref, type Locale } from "@/lib/i18n";
 import { EmailLink, LineLink } from "@/components/MessengerCta";
+import { CapabilityTag } from "@/components/site/CapabilityTag";
 
 export function PageIntro({ label, title, lead }: { label: string; title: string; lead?: string }) {
   return (
@@ -61,7 +62,10 @@ export function WorkEditorial({ items, locale, showResult }: WorkEditorialProps)
               picture
             )}
             <figcaption>
-              <span className="odh-mono">{item.category[locale]}</span>
+              <span className="flex flex-wrap items-center justify-between gap-3">
+                <span className="odh-mono">{item.category[locale]}</span>
+                {item.status !== "live" ? <CapabilityTag kind={item.status} labels={getCopy(locale).capability} /> : null}
+              </span>
               <h3>{item.title[locale]}</h3>
               {showResult ? <p className="odh-work__result">{item.result[locale]}</p> : null}
               {item.imageNote ? <small className="odh-note">{item.imageNote[locale]}</small> : null}

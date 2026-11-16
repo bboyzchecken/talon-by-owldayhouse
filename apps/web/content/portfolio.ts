@@ -58,6 +58,9 @@ export const portfolio: readonly PortfolioItem[] = keepThaiWordsDeep([
       th: "แพลตฟอร์มซื้อขายออนไลน์ครบวงจร ทั้งเว็บและโมบายแอป พร้อมระบบร้านค้า สินค้า ตะกร้า และโปรโมชัน",
       en: "A full online marketplace on web and mobile, with stores, products, cart and promotions.",
     },
+    // Mockup redrawn from our old presentation board; made-up stores, people and data.
+    image: "/portfolio/pezy-mockup.webp",
+    imageNote: { th: "ภาพจำลองหน้าแรกของ PEZY ร้านค้าและสินค้าเป็นของสมมติ", en: "A mockup of PEZY's home page, with made-up stores and products" },
     status: "closed",
   },
   {
@@ -99,6 +102,9 @@ export const portfolio: readonly PortfolioItem[] = keepThaiWordsDeep([
       th: "จับคู่ผู้เรียนกับติวเตอร์ทั้งเรียนเดี่ยวและกลุ่ม พร้อมระบบจอง คะแนนสะสม และแดชบอร์ดผู้สอนและผู้เรียน",
       en: "Matches learners with tutors for private and group classes, with booking, loyalty points and dashboards for both sides.",
     },
+    // Mockup redrawn from our old presentation board; made-up stores, people and data.
+    image: "/portfolio/speek-mockup.webp",
+    imageNote: { th: "ภาพจำลองแดชบอร์ดผู้เรียนของ SPEEK ข้อมูลเป็นของสมมติ", en: "A mockup of SPEEK's learner dashboard, with made-up data" },
     status: "closed",
   },
   {
@@ -116,7 +122,7 @@ export const portfolio: readonly PortfolioItem[] = keepThaiWordsDeep([
 
 export const liveWork = portfolio.filter((item) => item.status === "live");
 /** Work shown with a picture on the work page: live sites plus earlier work we have a picture for. */
-export const featuredWork = portfolio.filter((item) => item.image);
+export const featuredWork = [...liveWork, ...portfolio.filter((item) => item.status !== "live" && item.image)];
 export const earlierWork = portfolio.filter((item) => item.status !== "live" && !item.image);
 
 /**
