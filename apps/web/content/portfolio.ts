@@ -4,8 +4,7 @@
 // "handed-over" items were built by us, then handed to another team that runs a
 // later version (describe only the version we built, never link or name it);
 // "unreleased" items we finished and handed over, but the client never put them
-// in front of the public, so there is nothing to link and the client stays
-// unnamed.
+// in front of the public, so there is nothing to link and nothing to screenshot.
 
 import type { Locale } from "@/lib/i18n";
 import { keepThaiWordsDeep } from "@/lib/thai-wrap";
@@ -127,6 +126,59 @@ export const portfolio: readonly PortfolioItem[] = keepThaiWordsDeep([
     status: "closed",
   },
   {
+    // Three years of work (2021–2024), built end to end including the servers it
+    // ran on. The service has since closed, so there is no link and no live app
+    // to point at.
+    slug: "fan-delivery",
+    title: { th: "FAN Delivery แอปเดลิเวอรีหลายบริการ", en: "FAN Delivery: a multi-service delivery app" },
+    client: { th: "FAN Delivery", en: "FAN Delivery" },
+    category: { th: "แพลตฟอร์ม / เดลิเวอรี", en: "Platform / Delivery" },
+    result: {
+      th: "แพลตฟอร์มเดลิเวอรีที่รวมสั่งอาหาร รับส่งคนและของ ซักรีด และบริการจัดโมเมนต์พิเศษไว้ที่เดียว ทำครบตั้งแต่ UX/UI หน้าเว็บ API หลังบ้าน ไปจนถึงวาง infrastructure และหาเครื่องเซิร์ฟเวอร์เอง หลังบ้านดูแลไรเดอร์ ร้านค้า ค่า GP แยกรายจังหวัด โบนัสไรเดอร์ เครดิตและส่วนลด รอบตัดบิลและโอนเงินให้ร้านและไรเดอร์ และรับชำระผ่านสิทธิ์รัฐทั้งคนละครึ่ง เราชนะ และ ม33เรารักกัน ดูแลระบบต่อเนื่องสามปี",
+      en: "A delivery platform with food, rides and parcels, laundry and special-occasion bookings in one place. We built all of it: UX/UI, the web front ends, the API, the back office, and the infrastructure and servers it ran on. The back office covered riders, merchants, commission rates set per province, rider bonuses, credit and discounts, billing cycles and payouts to shops and riders, and payment through the Thai government co-pay schemes. We ran it for three years.",
+    },
+    status: "closed",
+  },
+  {
+    // Delivered as a subcontractor for a government agency; the client knows the
+    // work as the main contractor's. Keep it unnamed: no agency, no main
+    // contractor, no link and no screenshots. Describe the risk keywords as a
+    // queue for the team — never quote the phrases themselves.
+    slug: "encourage-board",
+    title: { th: "กระดานระบายและให้กำลังใจออนไลน์", en: "An online board for venting and encouragement" },
+    client: { th: "หน่วยงานรัฐ", en: "A government agency" },
+    category: { th: "เว็บแอป / สุขภาพใจ", en: "Web app / Mental health" },
+    result: {
+      th: "พื้นที่ให้คนเข้ามาระบายเรื่องที่แบกอยู่ แล้วให้คนอื่นเข้ามาให้กำลังใจกัน หลังบ้านมีตัวกรองคำหยาบ ตั้งคีย์เวิร์ดกลุ่มเสี่ยงเพื่อดันโพสต์ที่ควรได้รับการดูแลก่อนขึ้นมาให้ทีมงานเห็น ระงับผู้ใช้ที่ก่อกวน คัดโพสต์ขึ้นหน้าฟีด และแดชบอร์ดสถิติว่าคนเข้ามาช่วงเวลาไหนและกลับมาใช้ซ้ำแค่ไหน ทำงานนี้ในฐานะผู้รับเหมาช่วง",
+      en: "A place to put down what you are carrying, and for other people to leave encouragement. Behind it: a profanity filter, risk keywords that push the posts needing attention to the top of the team's queue, suspension for users who disrupt the board, a way to feature posts, and dashboards showing when people come and how many come back. We delivered it as a subcontractor.",
+    },
+    status: "closed",
+  },
+  {
+    slug: "e-saraban",
+    title: { th: "E-Saraban ระบบบริหารงานเอกสาร", en: "E-Saraban: a document management system" },
+    client: { th: "สถาบันการศึกษา", en: "An educational institution" },
+    category: { th: "ระบบภายใน / การศึกษา", en: "Internal system / Education" },
+    result: {
+      th: "ระบบสารบรรณที่ส่งเอกสารถึงอาจารย์และเจ้าหน้าที่ตามลำดับความสำคัญ กดรับเอกสาร เห็นวันที่ต้องเซ็น แล้วจัดเก็บเข้าคลังเอกสารเมื่อจบเรื่อง แยกบัญชีและสิทธิ์ของอาจารย์กับเจ้าหน้าที่ออกจากกัน",
+      en: "A correspondence system that routes documents to teaching staff and officers by priority. They accept a document, see the date it has to be signed by, then file it into the document store once the matter is closed, with separate accounts and rights for teaching staff and officers.",
+    },
+    status: "closed",
+  },
+  {
+    // Finished and handed over, but the backer pulled out and the client never
+    // launched it, so there is nothing to link and nothing to screenshot.
+    slug: "gameconnext",
+    title: { th: "GameConnext ตลาดซื้อขายไอเทมในเกม", en: "GameConnext: a marketplace for in-game items" },
+    client: { th: "GameConnext", en: "GameConnext" },
+    category: { th: "แพลตฟอร์ม / e-Marketplace", en: "Platform / e-Marketplace" },
+    result: {
+      th: "ตลาดกลางที่ให้ผู้ขายเปิดร้านขายไอเทมในเกมของตัวเอง ตั้งแต่สมัครและอนุมัติร้านค้า ลงขายสินค้าแยกตามเกม จัดการคำสั่งซื้อ ชำระเงิน รอบตัดบิลและถอนเงินเข้าบัญชีผู้ขาย ข้อความระหว่างร้านกับลูกค้า ไปจนถึงคิวรับเรื่องร้องเรียน ทำครบทั้งหน้าเว็บ หลังบ้าน และ infrastructure งานเสร็จและส่งมอบแล้ว แต่ไม่ได้เปิดตัว เพราะผู้สนับสนุนของโปรเจกต์ถอนตัวไปก่อน",
+      en: "A marketplace where sellers open their own shop for in-game items: seller sign-up and approval, listings grouped by game, order management, payments, billing cycles and withdrawals to sellers' accounts, messaging between shops and buyers, and a queue for customer complaints. We built the front end, the back office and the infrastructure. The work was finished and handed over, but it never launched: the project's backer pulled out first.",
+    },
+    status: "unreleased",
+  },
+  {
     slug: "intersant",
     title: { th: "INTERSANT PLUS เว็บธุรกิจวัสดุก่อสร้าง", en: "INTERSANT PLUS: a building materials website" },
     client: { th: "Intersant Plus Material", en: "Intersant Plus Material" },
@@ -136,20 +188,6 @@ export const portfolio: readonly PortfolioItem[] = keepThaiWordsDeep([
       en: "A company website for a uPVC materials business, covering content structure, design and management.",
     },
     status: "closed",
-  },
-  {
-    // Built for the client and handed over, but never launched: the project's
-    // backer pulled out and the client dropped it. Keep it unnamed — no client
-    // name, logo, link or screenshots — and never imply it is running.
-    slug: "game-item-store",
-    title: { th: "เว็บไซต์ขายไอเทมในเกม", en: "An in-game item store" },
-    client: { th: "ธุรกิจเกมในไทย", en: "A Thai gaming business" },
-    category: { th: "เว็บร้านค้า / เกม", en: "E-commerce / Gaming" },
-    result: {
-      th: "เว็บไซต์ขายไอเทมในเกมพร้อมระบบสั่งซื้อ งานเสร็จและส่งมอบครบ แต่ไม่ได้เปิดตัว เพราะผู้สนับสนุนของโปรเจกต์ถอนตัวไปก่อน",
-      en: "A website for selling in-game items, with the ordering flow built in. The work was finished and handed over, but it never launched: the project's backer pulled out first.",
-    },
-    status: "unreleased",
   },
 ]);
 
