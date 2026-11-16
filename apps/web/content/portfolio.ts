@@ -2,7 +2,10 @@
 // carries its link, an in-house system has none and shows no link; "closed"
 // items were sizeable systems whose businesses have since shut down;
 // "handed-over" items were built by us, then handed to another team that runs a
-// later version (describe only the version we built, never link or name it).
+// later version (describe only the version we built, never link or name it);
+// "unreleased" items we finished and handed over, but the client never put them
+// in front of the public, so there is nothing to link and the client stays
+// unnamed.
 
 import type { Locale } from "@/lib/i18n";
 import { keepThaiWordsDeep } from "@/lib/thai-wrap";
@@ -20,7 +23,7 @@ export interface PortfolioItem {
   /** Shown under the picture when it is a mockup rather than a screenshot. */
   imageNote?: Text;
   url?: string;
-  status: "live" | "closed" | "handed-over";
+  status: "live" | "closed" | "handed-over" | "unreleased";
 }
 
 export const portfolio: readonly PortfolioItem[] = keepThaiWordsDeep([
@@ -134,6 +137,20 @@ export const portfolio: readonly PortfolioItem[] = keepThaiWordsDeep([
     },
     status: "closed",
   },
+  {
+    // Built for the client and handed over, but never launched: the project's
+    // backer pulled out and the client dropped it. Keep it unnamed — no client
+    // name, logo, link or screenshots — and never imply it is running.
+    slug: "game-item-store",
+    title: { th: "เว็บไซต์ขายไอเทมในเกม", en: "An in-game item store" },
+    client: { th: "ธุรกิจเกมในไทย", en: "A Thai gaming business" },
+    category: { th: "เว็บร้านค้า / เกม", en: "E-commerce / Gaming" },
+    result: {
+      th: "เว็บไซต์ขายไอเทมในเกมพร้อมระบบสั่งซื้อ งานเสร็จและส่งมอบครบ แต่ไม่ได้เปิดตัว เพราะผู้สนับสนุนของโปรเจกต์ถอนตัวไปก่อน",
+      en: "A website for selling in-game items, with the ordering flow built in. The work was finished and handed over, but it never launched: the project's backer pulled out first.",
+    },
+    status: "unreleased",
+  },
 ]);
 
 export const liveWork = portfolio.filter((item) => item.status === "live");
@@ -210,6 +227,6 @@ export const cases: readonly CaseStudy[] = allCases.filter((item) => !item.hidde
 
 /** Industries we have worked in, shown instead of client names (most work is under NDA). */
 export const industryNames: Record<Locale, readonly string[]> = keepThaiWordsDeep({
-  th: ["การศึกษา", "หน่วยงานรัฐ", "การท่องเที่ยว", "เทคโนโลยี", "ร้านอาหาร", "อีคอมเมิร์ซ", "ขนส่งและพัสดุ", "วัสดุก่อสร้าง", "คอมมูนิตี้รถยนต์"],
-  en: ["Education", "Government", "Tourism", "Technology", "Restaurants", "E-commerce", "Shipping & parcels", "Building materials", "Car community"],
+  th: ["การศึกษา", "หน่วยงานรัฐ", "การท่องเที่ยว", "เทคโนโลยี", "ร้านอาหาร", "อีคอมเมิร์ซ", "ขนส่งและพัสดุ", "วัสดุก่อสร้าง", "คอมมูนิตี้รถยนต์", "เกม"],
+  en: ["Education", "Government", "Tourism", "Technology", "Restaurants", "E-commerce", "Shipping & parcels", "Building materials", "Car community", "Gaming"],
 });
