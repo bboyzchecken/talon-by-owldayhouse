@@ -58,6 +58,7 @@
   --gold: #e9a41b;
   --navy-deep: #1b1938;
   --signal-positive: #0b6aa6;
+  --signal-negative: #b3261e;
   --shadow-window: 0 24px 48px -28px rgb(21 21 28 / 0.35);
 
   --space-1: 4px;
@@ -71,6 +72,8 @@
   --space-9: 240px;
 
   --radius-sm: 6px;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
   --radius-full: 9999px;
   --container: 1440px;
   --gutter: 40px;
@@ -100,6 +103,7 @@
   --on-key: #28254c;
   --focus-ring: #f2f2f6;
   --signal-positive: #62b6ec;
+  --signal-negative: #ff9a94;
   --shadow-window: 0 24px 48px -28px rgb(0 0 0 / 0.7);
 }
 

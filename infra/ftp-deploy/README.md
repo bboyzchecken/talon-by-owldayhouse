@@ -88,6 +88,17 @@ environment of `pnpm build:web` (or `apps/web/.env.local`), not on the FTP host.
 | `NEXT_PUBLIC_INTAKE_URL` | `https://api.owldayhouse.com`, no trailing slash |
 | `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | **leave unset.** The bot check is ALTCHA, our own, with no account. Set it only to switch to Cloudflare Turnstile (then the Droplet needs `TURNSTILE_SECRET`) |
 
+> **Never put a placeholder in either of these.** `NEXT_PUBLIC_*` is inlined
+> into the bundle at build time; the static site has no runtime that could
+> notice a bad value later. A build once shipped the literal text
+> `<Site Key จาก Cloudflare Turnstile>` as the site key — a non-empty string, so
+> the form switched itself to Turnstile, asked Cloudflare for a widget under a
+> key that does not exist, and answered every quote request with "give the bot
+> check a moment". The intake was on ALTCHA the whole time. `apps/web/lib/intake.ts`
+> now ignores a value that is not shaped like a real key, and `deploy.sh`
+> refuses to upload a build made with one, but the right value is still
+> an empty line.
+
 The form appears only when the intake URL is set **and** `contact.replyWithinBusinessDays`
 in `apps/web/content/site.ts` is a number (it is 1). Without the URL, `/contact/`
 builds without the form, as before. Turn the intake on (Droplet,
