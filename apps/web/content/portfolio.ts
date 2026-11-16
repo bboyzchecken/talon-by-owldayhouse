@@ -137,13 +137,19 @@ export const portfolio: readonly PortfolioItem[] = keepThaiWordsDeep([
       th: "แพลตฟอร์มเดลิเวอรีที่รวมสั่งอาหาร รับส่งคนและของ ซักรีด และบริการจัดโมเมนต์พิเศษไว้ที่เดียว ทำครบตั้งแต่ UX/UI หน้าเว็บ API หลังบ้าน ไปจนถึงวาง infrastructure และหาเครื่องเซิร์ฟเวอร์เอง หลังบ้านดูแลไรเดอร์ ร้านค้า ค่า GP แยกรายจังหวัด โบนัสไรเดอร์ เครดิตและส่วนลด รอบตัดบิลและโอนเงินให้ร้านและไรเดอร์ และรับชำระผ่านสิทธิ์รัฐทั้งคนละครึ่ง เราชนะ และ ม33เรารักกัน ดูแลระบบต่อเนื่องสามปี",
       en: "A delivery platform with food, rides and parcels, laundry and special-occasion bookings in one place. We built all of it: UX/UI, the web front ends, the API, the back office, and the infrastructure and servers it ran on. The back office covered riders, merchants, commission rates set per province, rider bonuses, credit and discounts, billing cycles and payouts to shops and riders, and payment through the Thai government co-pay schemes. We ran it for three years.",
     },
+    image: "/portfolio/fan-delivery-admin.webp",
+    imageNote: {
+      th: "ภาพจำลองหลังบ้านและแอปฝั่งลูกค้าของ FAN Delivery ออเดอร์ ร้านอาหาร และโปรโมชันเป็นของสมมติ",
+      en: "A mockup of FAN Delivery's back office and customer app, with made-up orders, restaurants and promotions",
+    },
     status: "closed",
   },
   {
     // Delivered as a subcontractor for a government agency; the client knows the
     // work as the main contractor's. Keep it unnamed: no agency, no main
-    // contractor, no link and no screenshots. Describe the risk keywords as a
-    // queue for the team — never quote the phrases themselves.
+    // contractor, no link, and no screenshots of the real board — the picture is
+    // a mockup. Describe the risk keywords as a queue for the team: never quote
+    // the phrases themselves, and keep the sample posts gentle.
     slug: "encourage-board",
     title: { th: "กระดานระบายและให้กำลังใจออนไลน์", en: "An online board for venting and encouragement" },
     client: { th: "หน่วยงานรัฐ", en: "A government agency" },
@@ -151,6 +157,11 @@ export const portfolio: readonly PortfolioItem[] = keepThaiWordsDeep([
     result: {
       th: "พื้นที่ให้คนเข้ามาระบายเรื่องที่แบกอยู่ แล้วให้คนอื่นเข้ามาให้กำลังใจกัน หลังบ้านมีตัวกรองคำหยาบ ตั้งคีย์เวิร์ดกลุ่มเสี่ยงเพื่อดันโพสต์ที่ควรได้รับการดูแลก่อนขึ้นมาให้ทีมงานเห็น ระงับผู้ใช้ที่ก่อกวน คัดโพสต์ขึ้นหน้าฟีด และแดชบอร์ดสถิติว่าคนเข้ามาช่วงเวลาไหนและกลับมาใช้ซ้ำแค่ไหน ทำงานนี้ในฐานะผู้รับเหมาช่วง",
       en: "A place to put down what you are carrying, and for other people to leave encouragement. Behind it: a profanity filter, risk keywords that push the posts needing attention to the top of the team's queue, suspension for users who disrupt the board, a way to feature posts, and dashboards showing when people come and how many come back. We delivered it as a subcontractor.",
+    },
+    image: "/portfolio/encourage-board.webp",
+    imageNote: {
+      th: "ภาพจำลองหน้าดูแลกระดาน ข้อความและตัวเลขทั้งหมดเป็นของสมมติ",
+      en: "A mockup of the moderation screen, with made-up posts and figures",
     },
     status: "closed",
   },
@@ -163,11 +174,17 @@ export const portfolio: readonly PortfolioItem[] = keepThaiWordsDeep([
       th: "ระบบสารบรรณที่ส่งเอกสารถึงอาจารย์และเจ้าหน้าที่ตามลำดับความสำคัญ กดรับเอกสาร เห็นวันที่ต้องเซ็น แล้วจัดเก็บเข้าคลังเอกสารเมื่อจบเรื่อง แยกบัญชีและสิทธิ์ของอาจารย์กับเจ้าหน้าที่ออกจากกัน",
       en: "A correspondence system that routes documents to teaching staff and officers by priority. They accept a document, see the date it has to be signed by, then file it into the document store once the matter is closed, with separate accounts and rights for teaching staff and officers.",
     },
+    image: "/portfolio/e-saraban.webp",
+    imageNote: {
+      th: "ภาพจำลองตารางเอกสาร เลขที่หนังสือ เรื่อง และชื่อเป็นของสมมติ",
+      en: "A mockup of the document table, with made-up reference numbers, subjects and names",
+    },
     status: "closed",
   },
   {
-    // Finished and handed over, but the backer pulled out and the client never
-    // launched it, so there is nothing to link and nothing to screenshot.
+    // Finished and handed over (the work is on the repository's `develop`
+    // branch, not `master`), but the backer pulled out and the client never
+    // launched it, so there is nothing to link and the picture is a mockup.
     slug: "gameconnext",
     title: { th: "GameConnext ตลาดซื้อขายไอเทมในเกม", en: "GameConnext: a marketplace for in-game items" },
     client: { th: "GameConnext", en: "GameConnext" },
@@ -175,6 +192,11 @@ export const portfolio: readonly PortfolioItem[] = keepThaiWordsDeep([
     result: {
       th: "ตลาดกลางที่ให้ผู้ขายเปิดร้านขายไอเทมในเกมของตัวเอง ตั้งแต่สมัครและอนุมัติร้านค้า ลงขายสินค้าแยกตามเกม จัดการคำสั่งซื้อ ชำระเงิน รอบตัดบิลและถอนเงินเข้าบัญชีผู้ขาย ข้อความระหว่างร้านกับลูกค้า ไปจนถึงคิวรับเรื่องร้องเรียน ทำครบทั้งหน้าเว็บ หลังบ้าน และ infrastructure งานเสร็จและส่งมอบแล้ว แต่ไม่ได้เปิดตัว เพราะผู้สนับสนุนของโปรเจกต์ถอนตัวไปก่อน",
       en: "A marketplace where sellers open their own shop for in-game items: seller sign-up and approval, listings grouped by game, order management, payments, billing cycles and withdrawals to sellers' accounts, messaging between shops and buyers, and a queue for customer complaints. We built the front end, the back office and the infrastructure. The work was finished and handed over, but it never launched: the project's backer pulled out first.",
+    },
+    image: "/portfolio/gameconnext-seller.webp",
+    imageNote: {
+      th: "ภาพจำลองแดชบอร์ดผู้ขาย ร้านค้า เกม และสินค้าเป็นของสมมติ",
+      en: "A mockup of the seller dashboard, with made-up shops, games and items",
     },
     status: "unreleased",
   },

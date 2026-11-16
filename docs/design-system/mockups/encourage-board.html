@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<title>board mock</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --teal:#24695C; --teal2:#49ACAA; --ink:#333333; --muted:#6F727A;
+    --line:#EBEBEB; --bg:#F2F6FA; --amber:#FFBD6E; --rose:#FF7171; --blue:#00759F;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{width:1280px;height:640px;overflow:hidden}
+  body{font-family:'Prompt','IBM Plex Sans Thai','Noto Sans Thai','Thonburi',sans-serif;
+       background:var(--bg);color:var(--ink);font-weight:300;display:flex}
+
+  .side{width:216px;flex:none;background:#fff;border-right:1px solid var(--line);
+        display:flex;flex-direction:column;padding:18px 0}
+  .logo{display:flex;align-items:center;gap:9px;padding:0 18px 16px}
+  .leaf{width:34px;height:34px;border-radius:10px;background:var(--teal);display:grid;place-items:center}
+  .leaf svg{width:19px;height:19px;stroke:#fff;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .lt{font-size:14px;font-weight:500;line-height:1.15}
+  .lt small{display:block;font-size:9.5px;color:var(--muted);font-weight:300;letter-spacing:.3px}
+  .nav{display:flex;flex-direction:column;gap:2px;padding:0 10px}
+  .nv{display:flex;align-items:center;gap:9px;padding:8.5px 11px;border-radius:10px;
+      font-size:12.3px;color:var(--muted)}
+  .nv.on{background:rgba(36,105,92,.08);color:var(--teal);font-weight:400}
+  .nv .bul{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.5}
+  .nv.on .bul{opacity:1}
+  .nv .cnt{margin-left:auto;font-size:9.5px;background:rgba(255,113,113,.14);color:#C94B4B;
+           padding:1px 6px;border-radius:999px}
+  .sfoot{margin-top:auto;padding:0 18px;font-size:10px;color:#A2A3A5;line-height:1.5}
+
+  .main{flex:1;display:flex;flex-direction:column;min-width:0}
+  .top{height:58px;background:#fff;border-bottom:1px solid var(--line);display:flex;
+       align-items:center;padding:0 22px;gap:12px;flex:none}
+  .h1{font-size:15.5px;font-weight:500}
+  .sub{font-size:11.5px;color:var(--muted)}
+  .sp{flex:1}
+  .who{font-size:11.5px;color:var(--muted);display:flex;align-items:center;gap:8px}
+  .av{width:29px;height:29px;border-radius:50%;background:var(--teal2);color:#fff;
+      display:grid;place-items:center;font-size:10.5px}
+
+  .body{flex:1;padding:15px 22px;display:flex;flex-direction:column;gap:13px;min-height:0}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;flex:none}
+  .st{background:#fff;border-radius:10px;padding:11px 14px;box-shadow:0 4px 16px rgba(0,0,0,.04)}
+  .st .l{font-size:11px;color:var(--muted)}
+  .st .v{font-size:21px;font-weight:500;margin-top:2px;letter-spacing:.2px}
+  .st .v small{font-size:11px;font-weight:300;color:var(--muted);margin-left:3px}
+
+  .cols{flex:1;display:grid;grid-template-columns:1fr 310px;gap:13px;min-height:0}
+  .card{background:#fff;border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,.04);
+        display:flex;flex-direction:column;min-height:0;overflow:hidden}
+  .ch{padding:12px 16px 10px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:9px}
+  .ch h2{font-size:13px;font-weight:500}
+  .chip{font-size:10px;padding:2px 9px;border-radius:999px;background:rgba(36,105,92,.08);color:var(--teal)}
+  .chip.warn{background:rgba(255,189,110,.22);color:#9A6213}
+
+  .post{padding:11px 16px;border-bottom:1px solid #F5F5F5;display:flex;gap:11px}
+  .post:last-child{border-bottom:none}
+  .pav{width:30px;height:30px;border-radius:50%;background:#F2F6FA;display:grid;place-items:center;
+       font-size:13px;flex:none}
+  .pb{flex:1;min-width:0}
+  .pm{display:flex;align-items:center;gap:7px;font-size:10px;color:#A2A3A5}
+  .pt{font-size:12.3px;line-height:1.5;margin-top:2px;color:#444}
+  .pr{display:flex;align-items:center;gap:13px;margin-top:5px;font-size:10.5px;color:var(--muted)}
+  .pr b{font-weight:400;color:var(--teal)}
+  .flag{font-size:9.5px;padding:1.5px 7px;border-radius:999px;background:rgba(255,113,113,.13);color:#C94B4B}
+  .best{font-size:9.5px;padding:1.5px 7px;border-radius:999px;background:rgba(73,172,170,.16);color:#1E6E6C}
+  .act{margin-left:auto;display:flex;gap:6px;align-items:flex-start}
+  .btn{font-size:10px;padding:3.5px 10px;border-radius:8px;border:1px solid var(--line);color:var(--muted)}
+  .btn.p{background:var(--teal);border-color:var(--teal);color:#fff}
+
+  .qrow{padding:10px 15px;border-bottom:1px solid #F5F5F5;display:flex;align-items:center;gap:10px}
+  .qt{font-size:11.6px}
+  .qs{font-size:9.8px;color:#A2A3A5;margin-top:1px}
+  .qb{margin-left:auto;font-size:9.5px;padding:2px 8px;border-radius:999px;
+      background:rgba(255,113,113,.13);color:#C94B4B;white-space:nowrap}
+  .bars{padding:12px 15px;border-top:1px solid var(--line);margin-top:auto}
+  .bl{font-size:10.5px;color:var(--muted);margin-bottom:8px}
+  .bar{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:10.5px}
+  .bar span{width:78px;color:#5A5D66}
+  .track{flex:1;height:6px;border-radius:999px;background:#EEF2F5;overflow:hidden}
+  .fill{height:100%;border-radius:999px;background:var(--teal2)}
+  .bar b{font-weight:400;color:var(--muted);width:26px;text-align:right}
+</style>
+</head>
+<body>
+  <aside class="side">
+    <div class="logo">
+      <span class="leaf"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.2-7-9a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 4.8-7 9-7 9z"/></svg></span>
+      <span class="lt">กระดานให้กำลังใจ<small>ระบบผู้ดูแล · ข้อมูลตัวอย่าง</small></span>
+    </div>
+    <nav class="nav">
+      <div class="nv"><i class="bul"></i>แดชบอร์ด</div>
+      <div class="nv on"><i class="bul"></i>จัดการกระดานระบาย</div>
+      <div class="nv"><i class="bul"></i>คีย์เวิร์ดกลุ่มเสี่ยง<span class="cnt">3</span></div>
+      <div class="nv"><i class="bul"></i>จัดการคีย์เวิร์ด</div>
+      <div class="nv"><i class="bul"></i>จัดการคำหยาบ</div>
+      <div class="nv"><i class="bul"></i>ผู้ใช้ที่โดนระงับ</div>
+    </nav>
+    <div class="sfoot">ไม่เก็บชื่อจริงของผู้ระบาย<br>ทีมดูแลเห็นเฉพาะข้อความ</div>
+  </aside>
+
+  <div class="main">
+    <header class="top">
+      <div><div class="h1">จัดการกระดานระบาย</div></div>
+      <div class="sub">· มกราคม 2565</div>
+      <div class="sp"></div>
+      <div class="who"><span class="av">ดล</span>ทีมดูแลกระดาน</div>
+    </header>
+
+    <div class="body">
+      <div class="stats">
+        <div class="st"><div class="l">ผู้เข้าชมเว็บ</div><div class="v">24,180 <small>ครั้ง</small></div></div>
+        <div class="st"><div class="l">ผู้ระบาย</div><div class="v">1,742 <small>โพสต์</small></div></div>
+        <div class="st"><div class="l">ผู้ให้กำลังใจ</div><div class="v">9,365 <small>ครั้ง</small></div></div>
+        <div class="st"><div class="l">แชร์กำลังใจ</div><div class="v">1,208 <small>ครั้ง</small></div></div>
+      </div>
+
+      <div class="cols">
+        <section class="card">
+          <div class="ch"><h2>โพสต์ระบายล่าสุด</h2><span class="chip">วันนี้ 46 โพสต์</span><span class="chip warn">รอดูแล 3</span></div>
+
+          <div class="post">
+            <span class="pav">🌙</span>
+            <div class="pb">
+              <div class="pm">ไม่ระบุชื่อ · 3 นาทีที่แล้ว <span class="flag">คีย์เวิร์ดกลุ่มเสี่ยง</span></div>
+              <div class="pt">ช่วงนี้รู้สึกไม่โอเคเลย ตื่นมาก็เหนื่อยแล้ว ไม่รู้จะเล่าให้ใครฟังดี</div>
+              <div class="pr">ให้กำลังใจ <b>18</b> · ความคิดเห็น <b>6</b></div>
+            </div>
+            <div class="act"><span class="btn p">ดูแลก่อน</span></div>
+          </div>
+
+          <div class="post">
+            <span class="pav">☁️</span>
+            <div class="pb">
+              <div class="pm">ไม่ระบุชื่อ · 25 นาทีที่แล้ว <span class="best">โพสต์ที่ดีที่สุด</span></div>
+              <div class="pt">สอบไม่ผ่านอีกรอบ ท้อมากแต่ก็จะลองใหม่ ขอบคุณทุกคนที่เข้ามาให้กำลังใจรอบที่แล้วนะ</div>
+              <div class="pr">ให้กำลังใจ <b>204</b> · ความคิดเห็น <b>57</b> · แชร์ <b>31</b></div>
+            </div>
+            <div class="act"><span class="btn">โชว์หน้าฟีด</span></div>
+          </div>
+
+          <div class="post">
+            <span class="pav">🌤️</span>
+            <div class="pb">
+              <div class="pm">ไม่ระบุชื่อ · 1 ชั่วโมงที่แล้ว</div>
+              <div class="pt">ทำงานมาทั้งอาทิตย์ ไม่มีใครถามสักคนว่าไหวไหม วันนี้เลยอยากมาพิมพ์ทิ้งไว้ตรงนี้</div>
+              <div class="pr">ให้กำลังใจ <b>86</b> · ความคิดเห็น <b>14</b></div>
+            </div>
+            <div class="act"><span class="btn">โชว์หน้าฟีด</span></div>
+          </div>
+
+          <div class="post">
+            <span class="pav">🌱</span>
+            <div class="pb">
+              <div class="pm">ไม่ระบุชื่อ · 2 ชั่วโมงที่แล้ว <span class="flag">พบคำหยาบ</span></div>
+              <div class="pt">ทะเลาะกับที่บ้านอีกแล้ว ●●●●● เบื่อจนไม่อยากกลับห้อง</div>
+              <div class="pr">ให้กำลังใจ <b>41</b> · ความคิดเห็น <b>9</b></div>
+            </div>
+            <div class="act"><span class="btn">ซ่อนคำ</span></div>
+          </div>
+        </section>
+
+        <aside class="card">
+          <div class="ch"><h2>คิวที่ระบบดันขึ้นมา</h2></div>
+          <div class="qrow"><div><div class="qt">โพสต์ #4821</div><div class="qs">3 นาทีที่แล้ว · ยังไม่มีใครเข้าไปดูแล</div></div><span class="qb">กลุ่มเสี่ยง</span></div>
+          <div class="qrow"><div><div class="qt">โพสต์ #4809</div><div class="qs">47 นาทีที่แล้ว · ทีมดูแลกำลังดู</div></div><span class="qb">กลุ่มเสี่ยง</span></div>
+          <div class="qrow"><div><div class="qt">โพสต์ #4788</div><div class="qs">2 ชั่วโมงที่แล้ว · ดูแลแล้ว</div></div><span class="qb">กลุ่มเสี่ยง</span></div>
+          <div class="bars">
+            <div class="bl">สถิติช่วงเวลาที่คนเข้ามาระบาย</div>
+            <div class="bar"><span>06:00–12:00</span><div class="track"><div class="fill" style="width:34%"></div></div><b>18%</b></div>
+            <div class="bar"><span>12:00–18:00</span><div class="track"><div class="fill" style="width:48%"></div></div><b>25%</b></div>
+            <div class="bar"><span>18:00–24:00</span><div class="track"><div class="fill" style="width:72%"></div></div><b>37%</b></div>
+            <div class="bar"><span>00:00–06:00</span><div class="track"><div class="fill" style="width:39%"></div></div><b>20%</b></div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

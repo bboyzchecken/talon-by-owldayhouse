@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<title>saraban mock</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#1A2035; --navy2:#232B45; --blue:#1572E8; --ink:#2A2F45; --muted:#8D93A6;
+    --line:#E9ECF2; --bg:#F5F7FB; --green:#31CE36; --amber:#FFAD46; --red:#F25961;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{width:1280px;height:640px;overflow:hidden}
+  body{font-family:'IBM Plex Sans Thai','Noto Sans Thai','Thonburi',sans-serif;
+       background:var(--bg);color:var(--ink);font-weight:300;display:flex}
+
+  .side{width:228px;flex:none;background:var(--navy);color:#fff;display:flex;flex-direction:column}
+  .sb{height:58px;display:flex;align-items:center;gap:9px;padding:0 18px;background:var(--navy2)}
+  .sq{width:30px;height:30px;border-radius:8px;background:var(--blue);display:grid;place-items:center}
+  .sq svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+  .sn{font-size:14.5px;font-weight:500;letter-spacing:.3px}
+  .usr{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.07)}
+  .uav{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.14);display:grid;place-items:center;font-size:11px}
+  .un{font-size:12.2px}
+  .ur{font-size:9.8px;color:#8E95AC;margin-top:1px}
+  .grp{font-size:9.5px;color:#6F7694;letter-spacing:1.1px;padding:14px 18px 6px}
+  .nv{display:flex;align-items:center;gap:10px;padding:9px 18px;font-size:12.3px;color:#B9BFD3}
+  .nv.on{background:rgba(21,114,232,.16);color:#fff;border-left:3px solid var(--blue);padding-left:15px}
+  .nv svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;opacity:.85}
+  .nv .n{margin-left:auto;font-size:9.5px;background:var(--red);padding:1px 6px;border-radius:999px;color:#fff}
+
+  .main{flex:1;display:flex;flex-direction:column;min-width:0}
+  .top{height:58px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;
+       padding:0 22px;gap:12px;flex:none}
+  .ti{font-size:15px;font-weight:500}
+  .tc{font-size:11.5px;color:var(--muted)}
+  .sp{flex:1}
+  .find{width:230px;height:33px;border:1px solid var(--line);border-radius:7px;display:flex;align-items:center;
+        gap:8px;padding:0 12px;font-size:11.5px;color:#B5BAC9}
+  .bell{width:33px;height:33px;border-radius:7px;border:1px solid var(--line);display:grid;place-items:center}
+
+  .body{flex:1;padding:15px 22px;display:flex;flex-direction:column;gap:13px;min-height:0}
+  .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;flex:none}
+  .c{background:#fff;border-radius:9px;padding:12px 14px;border:1px solid var(--line);display:flex;
+     align-items:center;gap:11px}
+  .ci{width:36px;height:36px;border-radius:9px;display:grid;place-items:center;flex:none}
+  .ci svg{width:17px;height:17px;stroke:#fff;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+  .cl{font-size:10.8px;color:var(--muted)}
+  .cv{font-size:19px;font-weight:500;line-height:1.2}
+
+  .panel{flex:1;background:#fff;border:1px solid var(--line);border-radius:9px;display:flex;
+         flex-direction:column;min-height:0;overflow:hidden}
+  .ph{padding:12px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}
+  .ph h2{font-size:13.5px;font-weight:500}
+  .tabs{display:flex;gap:4px;margin-left:6px}
+  .tb{font-size:10.5px;padding:3px 10px;border-radius:999px;color:var(--muted)}
+  .tb.on{background:rgba(21,114,232,.1);color:var(--blue)}
+  .srch{margin-left:auto;width:170px;height:29px;border:1px solid var(--line);border-radius:7px;
+        display:flex;align-items:center;padding:0 11px;font-size:10.8px;color:#B5BAC9}
+
+  table{width:100%;border-collapse:collapse}
+  th{font-size:10.5px;font-weight:400;color:var(--muted);text-align:left;padding:9px 16px;
+     background:#FAFBFD;border-bottom:1px solid var(--line);white-space:nowrap}
+  td{font-size:11.8px;padding:9px 16px;border-bottom:1px solid #F3F5F9;vertical-align:middle}
+  tr:last-child td{border-bottom:none}
+  .subj{font-weight:400;color:var(--ink)}
+  .code{font-size:9.8px;color:var(--muted);margin-top:1px}
+  .lv{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;padding:2.5px 9px;border-radius:999px}
+  .lv i{width:6px;height:6px;border-radius:50%;background:currentColor}
+  .l-urg{background:rgba(242,89,97,.1);color:#C9434A}
+  .l-fast{background:rgba(255,173,70,.14);color:#A96D10}
+  .l-norm{background:#F1F3F7;color:#6F7589}
+  .due{font-variant-numeric:tabular-nums}
+  .late{color:#C9434A}
+  .ops{display:flex;gap:6px}
+  .b{font-size:10.2px;padding:4px 11px;border-radius:7px;border:1px solid var(--line);color:var(--muted)}
+  .b.p{background:var(--blue);border-color:var(--blue);color:#fff}
+  .b.g{background:rgba(49,206,54,.12);border-color:transparent;color:#1E8C22}
+  .done{font-size:10.5px;color:#1E8C22;display:inline-flex;align-items:center;gap:5px}
+</style>
+</head>
+<body>
+  <aside class="side">
+    <div class="sb">
+      <span class="sq"><svg viewBox="0 0 24 24"><path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v5h5"/></svg></span>
+      <span class="sn">E-Saraban</span>
+    </div>
+    <div class="usr">
+      <span class="uav">สร</span>
+      <div><div class="un">สุริยา ร. (เจ้าหน้าที่)</div><div class="ur">งานสารบรรณ · ข้อมูลตัวอย่าง</div></div>
+    </div>
+    <div class="grp">เมนูหลัก</div>
+    <div class="nv on"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 9h8M8 13h8M8 17h5"/></svg>เอกสารทั้งหมด<span class="n">6</span></div>
+    <div class="nv"><svg viewBox="0 0 24 24"><path d="m5 12 4.5 4.5L19 7"/></svg>เอกสารกดรับแล้ว</div>
+    <div class="nv"><svg viewBox="0 0 24 24"><path d="M4 7h16v12H4z"/><path d="M4 7l2-3h12l2 3"/></svg>เอกสารจัดเก็บ</div>
+    <div class="grp">บัญชีผู้ใช้</div>
+    <div class="nv"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c1.2-3.4 4-5 7-5s5.8 1.6 7 5"/></svg>บัญชีอาจารย์</div>
+    <div class="nv"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20c1-3 3.4-4.5 6-4.5S14 17 15 20"/><path d="M17 11h4M19 9v4"/></svg>บัญชีเจ้าหน้าที่</div>
+  </aside>
+
+  <div class="main">
+    <header class="top">
+      <div class="ti">ระบบบริหารงานเอกสาร</div>
+      <div class="tc">· เอกสารเข้าใหม่วันนี้ 6 ฉบับ</div>
+      <div class="sp"></div>
+      <div class="find">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#C3C7D2" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        ค้นหาเลขที่หนังสือ หรือเรื่อง
+      </div>
+      <div class="bell"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8D93A6" stroke-width="1.8" stroke-linecap="round"><path d="M18 9a6 6 0 1 0-12 0c0 5-2 6-2 6h16s-2-1-2-6"/><path d="M10.5 19a2 2 0 0 0 3 0"/></svg></div>
+    </header>
+
+    <div class="body">
+      <div class="cards">
+        <div class="c"><span class="ci" style="background:#1572E8"><svg viewBox="0 0 24 24"><path d="M4 6h16v13H4z"/><path d="m4 6 8 6 8-6"/></svg></span>
+          <div><div class="cl">เอกสารเข้าใหม่</div><div class="cv">6 ฉบับ</div></div></div>
+        <div class="c"><span class="ci" style="background:#FFAD46"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4.5l3 1.8"/></svg></span>
+          <div><div class="cl">รอเซ็นภายใน 3 วัน</div><div class="cv">4 ฉบับ</div></div></div>
+        <div class="c"><span class="ci" style="background:#31CE36"><svg viewBox="0 0 24 24"><path d="m5 12 4.5 4.5L19 7"/></svg></span>
+          <div><div class="cl">กดรับแล้วเดือนนี้</div><div class="cv">128 ฉบับ</div></div></div>
+        <div class="c"><span class="ci" style="background:#6861CE"><svg viewBox="0 0 24 24"><path d="M4 7h16v12H4z"/><path d="M4 7l2-3h12l2 3"/></svg></span>
+          <div><div class="cl">จัดเก็บเข้าคลัง</div><div class="cv">1,042 ฉบับ</div></div></div>
+      </div>
+
+      <section class="panel">
+        <div class="ph">
+          <h2>ตารางแสดงเอกสารทั้งหมด</h2>
+          <div class="tabs"><span class="tb on">ยังไม่กดรับ</span><span class="tb">กดรับแล้ว</span><span class="tb">จัดเก็บ</span></div>
+          <div class="srch">ค้นหา...</div>
+        </div>
+        <table>
+          <thead><tr>
+            <th style="width:40px">ลำดับ</th><th>เรื่อง</th><th>ผู้ส่ง</th>
+            <th>ระดับความสำคัญ</th><th>วันที่ต้องเซ็น</th><th style="width:150px">การจัดการ</th>
+          </tr></thead>
+          <tbody>
+            <tr><td>1</td>
+              <td><div class="subj">ขอเชิญประชุมคณะกรรมการประจำคณะ ครั้งที่ 11/2563</div><div class="code">ศธ 0000.1/ว 284</div></td>
+              <td>งานบริหารทั่วไป</td>
+              <td><span class="lv l-urg"><i></i>ด่วนที่สุด</span></td>
+              <td class="due late">18 ก.ย. 2563</td>
+              <td><div class="ops"><span class="b p">รับ</span><span class="b">จัดเก็บ</span></div></td></tr>
+
+            <tr><td>2</td>
+              <td><div class="subj">แบบประเมินผลการปฏิบัติงานคณะอาจารย์ รอบที่ 2</div><div class="code">ศธ 0000.4/ว 119</div></td>
+              <td>งานบุคคล</td>
+              <td><span class="lv l-fast"><i></i>ด่วน</span></td>
+              <td class="due">21 ก.ย. 2563</td>
+              <td><div class="ops"><span class="b p">รับ</span><span class="b">จัดเก็บ</span></div></td></tr>
+
+            <tr><td>3</td>
+              <td><div class="subj">แจ้งกำหนดส่งรายชื่อผู้ทรงคุณวุฒิภายนอก</div><div class="code">ศธ 0000.2/ว 77</div></td>
+              <td>งานวิชาการ</td>
+              <td><span class="lv l-norm"><i></i>ปกติ</span></td>
+              <td class="due">30 ก.ย. 2563</td>
+              <td><div class="ops"><span class="b p">รับ</span><span class="b">จัดเก็บ</span></div></td></tr>
+
+            <tr><td>4</td>
+              <td><div class="subj">ขออนุมัติเดินทางไปราชการ จังหวัดเชียงใหม่</div><div class="code">ศธ 0000.1/1902</div></td>
+              <td>นายสาทร ค. (อาจารย์)</td>
+              <td><span class="lv l-fast"><i></i>ด่วน</span></td>
+              <td class="due">22 ก.ย. 2563</td>
+              <td><div class="ops"><span class="b p">รับ</span><span class="b">จัดเก็บ</span></div></td></tr>
+
+            <tr><td>5</td>
+              <td><div class="subj">รายงานผลการดำเนินงานประกันคุณภาพการศึกษา</div><div class="code">ศธ 0000.3/ว 55</div></td>
+              <td>งานแผนและประกันคุณภาพ</td>
+              <td><span class="lv l-norm"><i></i>ปกติ</span></td>
+              <td class="due">5 ต.ค. 2563</td>
+              <td><span class="done">✓ อาจารย์กดรับแล้ว</span></td></tr>
+          </tbody>
+        </table>
+      </section>
+    </div>
+  </div>
+</body>
+</html>
