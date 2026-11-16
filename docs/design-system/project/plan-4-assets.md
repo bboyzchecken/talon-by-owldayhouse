@@ -23,7 +23,7 @@
 | โลโก้ใหม่ไม่มีคำบรรยาย, `OwlMark` | ทุกหน้า |
 | `reg-tu-ac-th.webp`, `rodarea.webp`, `youwantgpu.webp` | `WorkEditorial` ถ่ายใหม่ขนาดเท่ากัน |
 | `pezy.jpg`, `speek.jpg`, `intersant.jpg` | เลิกใช้ เป็นบอร์ดนำเสนอที่มีโลโก้เก่า |
-| `pezy-mockup.webp`, `speek-mockup.webp`, `tcg-marketplace-v1.webp` | ภาพจำลองหน้าจอ วาดใหม่ด้วยข้อมูลสมมติ มีป้ายบอกใต้ภาพ ส่วน INTERSANT ยังแสดงเป็นข้อความ |
+| `pezy-mockup.webp`, `speek-mockup.webp`, `tcg-marketplace-v1.webp`, `postmailbox-counter.webp` | ภาพจำลองหน้าจอ วาดใหม่ด้วยข้อมูลสมมติ มีป้ายบอกใต้ภาพ ส่วน INTERSANT ยังแสดงเป็นข้อความ |
 | `Illustrations`, `Showcase` | เอกสารและเครื่องมือภายในเท่านั้น |
 | `og.png`, `ODH_Banding*.svg` | เลิกใช้ ต้องทำใหม่ด้วยโลโก้ใหม่และไม่มีราคา |
 

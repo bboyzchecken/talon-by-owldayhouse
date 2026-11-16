@@ -1,4 +1,5 @@
-// Real client work. Items with status "live" have a working link; "closed"
+// Real client work. Items with status "live" are still in use — a public site
+// carries its link, an in-house system has none and shows no link; "closed"
 // items were sizeable systems whose businesses have since shut down;
 // "handed-over" items were built by us, then handed to another team that runs a
 // later version (describe only the version we built, never link or name it).
@@ -47,6 +48,21 @@ export const portfolio: readonly PortfolioItem[] = keepThaiWordsDeep([
     },
     image: "/portfolio/rodarea-home.webp",
     url: "https://rodarea.com/",
+    status: "live",
+  },
+  {
+    // The counter system staff use in the shop, so there is no public link.
+    // The picture is a mockup of the weighing step, drawn with a made-up bill.
+    slug: "postmailbox",
+    title: { th: "ระบบหน้าร้านของ POST MAIL BOX", en: "POST MAIL BOX: the shop counter system" },
+    client: { th: "POST MAIL BOX", en: "POST MAIL BOX" },
+    category: { th: "ระบบหน้าร้าน / ขนส่งและพัสดุ", en: "Counter system / Shipping" },
+    result: {
+      th: "ระบบที่พนักงานหน้าร้านใช้รับงานทุกอย่างในจอเดียว ตั้งแต่ชั่งน้ำหนักพัสดุ เลือกบริการส่ง กล่องและการแพ็ก แสตมป์ งานเอกสาร ติดตามพัสดุ ไปจนถึงปิดบิลและออกใบเสร็จ เดินเป็นขั้นตอนทีละหน้าจอ พนักงานใหม่จึงรับงานได้เร็วและคิดเงินไม่ตกหล่น",
+      en: "One screen for everything at the counter: weighing the parcel, choosing the shipping service, boxes and packing, stamps, document jobs, tracking and closing the bill. It walks staff through one step at a time, so new people pick it up quickly and nothing is left off the bill.",
+    },
+    image: "/portfolio/postmailbox-counter.webp",
+    imageNote: { th: "ภาพจำลองหน้าจอชั่งน้ำหนักที่เคาน์เตอร์ ข้อมูลในบิลเป็นของสมมติ", en: "A mockup of the counter's weighing screen, with made-up bill data" },
     status: "live",
   },
   {
@@ -192,6 +208,6 @@ export const cases: readonly CaseStudy[] = allCases.filter((item) => !item.hidde
 
 /** Industries we have worked in, shown instead of client names (most work is under NDA). */
 export const industryNames: Record<Locale, readonly string[]> = keepThaiWordsDeep({
-  th: ["การศึกษา", "หน่วยงานรัฐ", "การท่องเที่ยว", "เทคโนโลยี", "ร้านอาหาร", "อีคอมเมิร์ซ", "วัสดุก่อสร้าง", "คอมมูนิตี้รถยนต์"],
-  en: ["Education", "Government", "Tourism", "Technology", "Restaurants", "E-commerce", "Building materials", "Car community"],
+  th: ["การศึกษา", "หน่วยงานรัฐ", "การท่องเที่ยว", "เทคโนโลยี", "ร้านอาหาร", "อีคอมเมิร์ซ", "ขนส่งและพัสดุ", "วัสดุก่อสร้าง", "คอมมูนิตี้รถยนต์"],
+  en: ["Education", "Government", "Tourism", "Technology", "Restaurants", "E-commerce", "Shipping & parcels", "Building materials", "Car community"],
 });
