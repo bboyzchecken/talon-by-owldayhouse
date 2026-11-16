@@ -37,7 +37,7 @@ export default function PaymentsPage() {
       <header>
         <h1 className="font-display text-2xl font-semibold text-foreground sm:text-3xl">รับเงิน</h1>
         <p className="mt-1 max-w-2xl font-body text-sm text-muted-foreground">
-          บันทึกรับเงินจากหน้าเอกสาร (ใบแจ้งหนี้ ใบเสนอราคา ใบวางบิล) ระบบออกใบเสร็จ/ใบกำกับภาษีให้ตอนบันทึก
+          บันทึกรับเงินจากหน้าเอกสาร (ใบแจ้งหนี้ หรือใบเสนอราคา) ระบบออกใบเสร็จ/ใบกำกับภาษีให้ตอนบันทึก
         </p>
       </header>
 

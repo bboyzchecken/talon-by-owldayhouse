@@ -24,16 +24,32 @@ import (
 //
 // Who may do what:
 //   - An admin: everything.
-//   - A sales account: quotations, invoices and billing notes, for customers
-//     linked to a lead it owns, and it sees only those documents. Receipts and
-//     tax invoices, credit and debit notes, and expenses are money and tax,
-//     and stay with an admin.
+//   - A sales account: quotations and invoices, for customers linked to a
+//     lead it owns, and it sees only those documents. Receipts and tax
+//     invoices and expenses are money and tax, and stay with an admin.
 
 // salesDocTypes are the types a sales account may create and issue.
 var salesDocTypes = map[int]bool{
-	models.DocQuotation:   true,
-	models.DocInvoice:     true,
+	models.DocQuotation: true,
+	models.DocInvoice:   true,
+}
+
+// retiredDocTypes are PEAK types the company does not use: billing notes,
+// credit notes and debit notes make the tax side harder than it is worth. A
+// wrong tax invoice is voided and issued again instead. They stay in the
+// model, so anything already issued still reads, pays and counts, but no new
+// one can be made or issued.
+var retiredDocTypes = map[int]bool{
+	models.DocCreditNote:  true,
 	models.DocBillingNote: true,
+	models.DocDebitNote:   true,
+}
+
+func notRetired(docType int) error {
+	if retiredDocTypes[docType] {
+		return violation("บริษัทไม่ใช้ใบวางบิล ใบลดหนี้ และใบเพิ่มหนี้ ถ้าใบกำกับภาษีผิด ให้ยกเลิกแล้วออกใหม่")
+	}
+	return nil
 }
 
 // docTypeLabels name each type in messages and e-mail drafts.
@@ -52,10 +68,8 @@ var docTypeLabels = map[int]string{
 // issued one. It follows PEAK's createbyquotation / createbyinvoice.
 var nextDocTypes = map[int][]int{
 	// A receipt is not on this list: it comes from recording a payment.
-	models.DocQuotation:  {models.DocInvoice, models.DocBillingNote},
-	models.DocInvoice:    {models.DocBillingNote},
-	models.DocReceipt:    {models.DocCreditNote, models.DocDebitNote},
-	models.DocTaxInvoice: {models.DocCreditNote, models.DocDebitNote},
+	// Billing, credit and debit notes are retired (retiredDocTypes).
+	models.DocQuotation: {models.DocInvoice},
 }
 
 const maxDocumentLines = 200
@@ -242,6 +256,9 @@ func (s *Server) buildDocument(body documentBody) (*models.Document, error) {
 		return nil, violation("ประเภทเอกสารไม่ถูกต้อง")
 	}
 	if err := receiptsOnlyFromPayments(body.DocType); err != nil {
+		return nil, err
+	}
+	if err := notRetired(body.DocType); err != nil {
 		return nil, err
 	}
 	if len(body.Items) == 0 {
@@ -595,6 +612,9 @@ func (s *Server) IssueDocument(c echo.Context) error {
 		return forbidden(c, noDocAccess)
 	}
 	if err := receiptsOnlyFromPayments(doc.DocType); err != nil {
+		return s.documentError(c, err)
+	}
+	if err := notRetired(doc.DocType); err != nil {
 		return s.documentError(c, err)
 	}
 	note, err := s.guardFiledPeriods(c, documentTaxKeys(doc))

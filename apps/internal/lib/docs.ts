@@ -19,9 +19,13 @@ export const docStatusLabels: Record<DocStatus, string> = {
 };
 
 /** Types a sales account may create; the API enforces the same. */
-export const salesDocTypes: DocType[] = [101, 102, 106];
-/** A receipt/tax invoice (103) is not here: it is issued by recording a payment. */
-export const adminDocTypes: DocType[] = [101, 102, 106, 202];
+export const salesDocTypes: DocType[] = [101, 102];
+/**
+ * A receipt/tax invoice (103) is not here: it is issued by recording a payment.
+ * Billing, credit and debit notes (106, 105, 107) are not used by the company:
+ * a wrong tax invoice is voided and issued again.
+ */
+export const adminDocTypes: DocType[] = [101, 102, 202];
 export const payableDocTypes: DocType[] = [101, 102, 106];
 
 export const whtCertLabels: Record<string, string> = {
