@@ -18,6 +18,7 @@ import type {
   FileRow,
   ImportResponse,
   BillingContact,
+  PaymentMethod,
   DocStatus,
   DocType,
   DocumentDetail,
@@ -491,6 +492,31 @@ export const documents = {
   calculate: (body: { tax_status: number; discount?: string; items: DocumentItem[] }) =>
     send<DocumentTotals>("post", "/api/docs/calculate", body),
   contacts: (search: string, side?: "customer" | "vendor") =>
-    get<{ items: BillingContact[] }>("/api/docs/contacts", { search, side }),
+    get<{ items: BillingContact[]; total: number }>("/api/docs/contacts", { search, side, limit: 30 }),
   products: (search: string) => get<{ items: Product[] }>("/api/docs/products", { search }),
+};
+
+// --- Registers: contacts, products, payment methods ---------------------------
+
+export type BillingContactBody = Omit<BillingContact, "id" | "created_at" | "lead_id"> & { lead_id?: number | null };
+export type ProductBody = Omit<Product, "id">;
+export type PaymentMethodBody = Omit<PaymentMethod, "id">;
+
+export const registers = {
+  contacts: (filters: { search?: string; side?: string; lead_id?: number; page?: number; limit?: number }) =>
+    get<{ items: BillingContact[]; total: number }>("/api/docs/contacts", filters),
+  contact: (id: number) => get<BillingContact>(`/api/docs/contacts/${id}`),
+  contactFromLead: (leadId: number) => get<BillingContact>("/api/docs/contacts/from-lead", { lead_id: leadId }),
+  createContact: (body: BillingContactBody) => send<BillingContact>("post", "/api/docs/contacts", body),
+  updateContact: (id: number, body: BillingContactBody) => send<BillingContact>("put", `/api/docs/contacts/${id}`, body),
+  deleteContact: (id: number) => send<void>("delete", `/api/docs/contacts/${id}`),
+
+  products: (all = false) => get<{ items: Product[] }>("/api/docs/products", { all: all ? 1 : undefined }),
+  createProduct: (body: ProductBody) => send<Product>("post", "/api/docs/products", body),
+  updateProduct: (id: number, body: ProductBody) => send<Product>("put", `/api/docs/products/${id}`, body),
+
+  paymentMethods: (all = false) => get<{ items: PaymentMethod[] }>("/api/docs/payment-methods", { all: all ? 1 : undefined }),
+  createPaymentMethod: (body: PaymentMethodBody) => send<PaymentMethod>("post", "/api/docs/payment-methods", body),
+  updatePaymentMethod: (id: number, body: PaymentMethodBody) =>
+    send<PaymentMethod>("put", `/api/docs/payment-methods/${id}`, body),
 };

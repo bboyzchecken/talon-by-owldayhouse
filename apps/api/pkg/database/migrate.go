@@ -38,9 +38,27 @@ func allModels() []interface{} {
 	}
 }
 
+// migrationLockKey is the PostgreSQL advisory lock taken while migrating.
+const migrationLockKey = 7262011
+
 // Migrate runs every migration in order. It is safe to call on every boot.
+//
+// It runs in one transaction that first takes an advisory lock, so two
+// processes starting at once (two containers, or two test packages on one
+// database) migrate one after the other instead of both adding the same
+// column. PostgreSQL's DDL is transactional, so a failed migration leaves
+// nothing half-applied.
 func Migrate(db *gorm.DB) error {
-	m := gormigrate.New(db, gormigrate.DefaultOptions, []*gormigrate.Migration{
+	return db.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Exec(`SELECT pg_advisory_xact_lock(?)`, migrationLockKey).Error; err != nil {
+			return err
+		}
+		return migrations(tx).Migrate()
+	})
+}
+
+func migrations(db *gorm.DB) *gormigrate.Gormigrate {
+	return gormigrate.New(db, gormigrate.DefaultOptions, []*gormigrate.Migration{
 		{
 			// pg_trgm powers the "a lead with a similar name already exists"
 			// warning, so the extension has to exist before the index.
@@ -166,9 +184,35 @@ func Migrate(db *gorm.DB) error {
 			Migrate:  migrateDocumentSystem,
 			Rollback: rollbackDocumentSystem,
 		},
+		{
+			// An issued document keeps the buyer as they were at issue, so
+			// editing a contact never changes a tax invoice already given out.
+			ID: "20261116_03_document_buyer_snapshot",
+			Migrate: func(tx *gorm.DB) error {
+				if err := tx.AutoMigrate(&models.Document{}); err != nil {
+					return err
+				}
+				// Documents issued before this column existed take the
+				// contact as it is now — the closest thing to what was issued.
+				return tx.Exec(`UPDATE documents d SET
+					buyer_name = c.name, buyer_contact_type = c.contact_type,
+					buyer_tax_number = c.tax_number, buyer_branch_code = c.branch_code,
+					buyer_address = TRIM(CONCAT_WS(' ', NULLIF(c.address,''), NULLIF(c.sub_district,''),
+						NULLIF(c.district,''), NULLIF(c.province,''), NULLIF(c.post_code,'')))
+					FROM billing_contacts c
+					WHERE c.id = d.contact_id AND d.status <> 'draft' AND COALESCE(d.buyer_name, '') = ''`).Error
+			},
+			Rollback: func(tx *gorm.DB) error {
+				m := tx.Migrator()
+				for _, col := range []string{"buyer_name", "buyer_contact_type", "buyer_tax_number", "buyer_branch_code", "buyer_address"} {
+					if err := m.DropColumn(&models.Document{}, col); err != nil {
+						return err
+					}
+				}
+				return nil
+			},
+		},
 	})
-
-	return m.Migrate()
 }
 
 // defaultNumbering is how each type is numbered until an admin changes it:

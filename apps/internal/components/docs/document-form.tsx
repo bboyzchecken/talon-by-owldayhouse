@@ -1,12 +1,13 @@
 "use client";
 
+import Link from "next/link";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { Plus, Text, Trash2 } from "lucide-react";
 import { Button, cn } from "@odh/ui";
 import { Alert, Field, Input, Panel, Select, Textarea } from "@/components/odh";
-import { ApiError, documents, type DocumentBody } from "@/lib/api";
+import { ApiError, documents, registers, type DocumentBody } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { adminDocTypes, docTypeLabels, money, salesDocTypes, todayISO, vatTypeLabels, isoDay } from "@/lib/docs";
 import type { BillingContact, DocType, DocumentItem, DocumentRow, DocumentTotals } from "@/lib/types";
@@ -58,6 +59,19 @@ export function DocumentForm({ existing }: { existing?: DocumentRow }) {
 
   const isExpense = docType === 202;
   const side = isExpense ? "vendor" : "customer";
+
+  const products = useQuery({ queryKey: ["registers", "products", "active"], queryFn: () => registers.products(false) });
+  const pickProduct = (index: number, id: number) => {
+    const p = products.data?.items.find((x) => x.id === id);
+    if (!p) return;
+    setItem(index, {
+      product_id: p.id,
+      description: p.description ? `${p.name}\n${p.description}` : p.name,
+      unit_name: p.unit_name,
+      price: String(Number(p.sell_price)),
+      vat_type: p.sell_vat_type,
+    });
+  };
 
   const contacts = useQuery({
     queryKey: ["docs", "contacts", side, search],
@@ -207,7 +221,10 @@ export function DocumentForm({ existing }: { existing?: DocumentRow }) {
                   ))}
                   {contacts.data && contacts.data.items.length === 0 ? (
                     <li className="px-4 py-3 font-body text-sm text-muted-foreground">
-                      ไม่พบผู้ติดต่อ — ทะเบียนผู้ติดต่อเพิ่มได้ในขั้นถัดไปของระบบ ตอนนี้ให้แอดมินเพิ่มให้
+                      ไม่พบผู้ติดต่อ —{" "}
+                      <Link href="/docs/contacts" className="font-semibold text-primary underline">
+                        เพิ่มในทะเบียนผู้ติดต่อ
+                      </Link>
                     </li>
                   ) : null}
                 </ul>
@@ -257,6 +274,23 @@ export function DocumentForm({ existing }: { existing?: DocumentRow }) {
                     <Trash2 className="size-4" />
                   </button>
                 </div>
+                {item.is_description || !products.data?.items.length ? null : (
+                  <div className="pl-8">
+                    <Select
+                      value={item.product_id ?? ""}
+                      onChange={(e) => (e.target.value ? pickProduct(index, Number(e.target.value)) : setItem(index, { product_id: undefined }))}
+                      aria-label={`เลือกจากสินค้า/บริการ บรรทัด ${index + 1}`}
+                      className="py-2 text-sm"
+                    >
+                      <option value="">เลือกจากสินค้า/บริการ (ไม่บังคับ)</option>
+                      {products.data.items.map((p) => (
+                        <option key={p.id} value={p.id}>
+                          {p.code} · {p.name}
+                        </option>
+                      ))}
+                    </Select>
+                  </div>
+                )}
                 {item.is_description ? null : (
                   <div className="grid grid-cols-2 gap-2 pl-8 sm:grid-cols-3 2xl:grid-cols-6">
                     <LineField label="จำนวน">

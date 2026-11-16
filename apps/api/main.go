@@ -43,6 +43,7 @@ import (
 	storekpi "github.com/owldayhouse/odh-internal-api/pkg/store/kpi"
 	storelead "github.com/owldayhouse/odh-internal-api/pkg/store/lead"
 	storeownership "github.com/owldayhouse/odh-internal-api/pkg/store/ownership"
+	storeregister "github.com/owldayhouse/odh-internal-api/pkg/store/register"
 	storesetting "github.com/owldayhouse/odh-internal-api/pkg/store/setting"
 	storetarget "github.com/owldayhouse/odh-internal-api/pkg/store/target"
 	storeuser "github.com/owldayhouse/odh-internal-api/pkg/store/user"
@@ -105,6 +106,7 @@ func storeModules() fx.Option {
 		storeegp.Module,
 		storeinbound.Module,
 		storedocument.Module,
+		storeregister.Module,
 	)
 }
 

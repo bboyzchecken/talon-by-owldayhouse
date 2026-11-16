@@ -468,12 +468,16 @@ export type DocStatus = "draft" | "issued" | "voided";
 /** Money arrives as a decimal string ("21400", "0.35"): never a float. */
 export type Money = string;
 
+export type FinanceSide = "customer" | "vendor" | "both";
+
 export interface BillingContact {
   id: number;
   code: string;
   name: string;
   contact_type: number;
-  finance_side: "customer" | "vendor" | "both";
+  name_prefix: number;
+  finance_side: FinanceSide;
+  wht_form: "pnd3" | "pnd53";
   tax_number: string;
   branch_code: string;
   address: string;
@@ -481,11 +485,14 @@ export interface BillingContact {
   district: string;
   province: string;
   post_code: string;
+  country: string;
   person_first_name: string;
   person_last_name: string;
+  person_position: string;
   person_phone: string;
   person_email: string;
   lead_id?: number;
+  created_at?: string;
 }
 
 export interface Product {
@@ -493,9 +500,22 @@ export interface Product {
   code: string;
   name: string;
   description: string;
+  product_type: number;
   unit_name: string;
   sell_price: Money;
   sell_vat_type: number;
+  interest: string;
+  active: boolean;
+}
+
+export interface PaymentMethod {
+  id: number;
+  code: string;
+  name: string;
+  method_type: number;
+  bank_name: string;
+  account_no: string;
+  active: boolean;
 }
 
 export interface DocumentItem {
@@ -522,6 +542,12 @@ export interface DocumentRow {
   contact_id: number;
   contact?: BillingContact;
   lead_id?: number;
+  /** The buyer as at issue; empty on a draft. Printed instead of the contact. */
+  buyer_name: string;
+  buyer_contact_type: number;
+  buyer_tax_number: string;
+  buyer_branch_code: string;
+  buyer_address: string;
   issued_date: string;
   due_date?: string;
   reference: string;

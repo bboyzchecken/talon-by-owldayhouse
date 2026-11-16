@@ -17,6 +17,7 @@ import (
 	"github.com/owldayhouse/odh-internal-api/pkg/database"
 	"github.com/owldayhouse/odh-internal-api/pkg/logger"
 	"github.com/owldayhouse/odh-internal-api/pkg/models"
+	"github.com/owldayhouse/odh-internal-api/pkg/testdb"
 )
 
 func bkk(y int, m time.Month, d, h, min int) time.Time {
@@ -107,15 +108,25 @@ func openDB(t *testing.T) *gorm.DB {
 	if err := database.Migrate(db); err != nil {
 		t.Fatalf("migrations failed: %v", err)
 	}
+	testdb.Lock(t, db)
 	if err := db.Exec(`TRUNCATE document_events, document_items, documents, document_counters, billing_contacts RESTART IDENTITY CASCADE`).Error; err != nil {
 		t.Fatalf("cannot clear the document tables: %v", err)
 	}
+	// Events name a user, so there has to be one.
+	user := models.User{Username: "docnumber-test", Name: "เทสต์เลขเอกสาร", Password: "x", Role: models.RoleAdmin, Status: models.StatusActive}
+	if err := db.Where("username = ?", user.Username).FirstOrCreate(&user).Error; err != nil {
+		t.Fatal(err)
+	}
+	testUserID = user.ID
 	// Tests may change a rule; put the defaults back.
 	if err := db.Exec(`UPDATE document_numberings SET reset = 'monthly', digits = 5`).Error; err != nil {
 		t.Fatal(err)
 	}
 	return db
 }
+
+// testUserID is the user the tests act as; openDB sets it.
+var testUserID uint
 
 func seedContact(t *testing.T, db *gorm.DB) uint {
 	t.Helper()
@@ -260,7 +271,7 @@ func TestSetNextStartsFromTheCompanysLastNumber(t *testing.T) {
 	date := bkk(2026, 11, 16, 9, 0)
 
 	// The company's last quotation this month was QO-20261100041.
-	if err := SetNext(db, models.DocQuotation, "202611", 42, 1); err != nil {
+	if err := SetNext(db, models.DocQuotation, "202611", 42, testUserID); err != nil {
 		t.Fatal(err)
 	}
 	code, err := issue(db, contactID, models.DocQuotation, date, false)
@@ -269,11 +280,11 @@ func TestSetNextStartsFromTheCompanysLastNumber(t *testing.T) {
 	}
 
 	// Never backwards: 42 is taken.
-	if err := SetNext(db, models.DocQuotation, "202611", 40, 1); err == nil {
+	if err := SetNext(db, models.DocQuotation, "202611", 40, testUserID); err == nil {
 		t.Fatal("moving a counter backwards must be refused")
 	}
 	// Forwards is fine, and logged.
-	if err := SetNext(db, models.DocQuotation, "202611", 100, 1); err != nil {
+	if err := SetNext(db, models.DocQuotation, "202611", 100, testUserID); err != nil {
 		t.Fatal(err)
 	}
 	var logged int64
@@ -281,7 +292,7 @@ func TestSetNextStartsFromTheCompanysLastNumber(t *testing.T) {
 	if logged != 2 {
 		t.Fatalf("want 2 logged counter moves, got %d", logged)
 	}
-	if err := SetNext(db, 999, "202611", 1, 1); !errors.Is(err, ErrNoNumbering) {
+	if err := SetNext(db, 999, "202611", 1, testUserID); !errors.Is(err, ErrNoNumbering) {
 		t.Fatalf("unknown type: want ErrNoNumbering, got %v", err)
 	}
 }
@@ -295,7 +306,7 @@ func TestSequenceFullStopsTheIssue(t *testing.T) {
 		Update("digits", 2).Error; err != nil {
 		t.Fatal(err)
 	}
-	if err := SetNext(db, models.DocBillingNote, "202611", 99, 1); err != nil {
+	if err := SetNext(db, models.DocBillingNote, "202611", 99, testUserID); err != nil {
 		t.Fatal(err)
 	}
 	if code, err := issue(db, contactID, models.DocBillingNote, date, false); err != nil || code != "BN-20261199" {

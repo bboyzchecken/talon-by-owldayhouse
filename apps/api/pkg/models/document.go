@@ -2,6 +2,7 @@ package models
 
 import (
 	"errors"
+	"strings"
 	"time"
 
 	"github.com/lib/pq"
@@ -207,6 +208,16 @@ type Document struct {
 	// contacts, and keeps them if the contact is later re-linked.
 	LeadID *uint `gorm:"index" json:"lead_id,omitempty"`
 
+	// The buyer (or vendor) as they were when the document was issued. A tax
+	// invoice must keep showing these even if the contact is edited later,
+	// so they are copied at issue and printed from here, never from the
+	// contact. Empty on a draft.
+	BuyerName        string `gorm:"size:255;not null;default:''" json:"buyer_name"`
+	BuyerContactType int    `gorm:"not null;default:0" json:"buyer_contact_type"`
+	BuyerTaxNumber   string `gorm:"size:20;not null;default:''" json:"buyer_tax_number"`
+	BuyerBranchCode  string `gorm:"size:5;not null;default:''" json:"buyer_branch_code"`
+	BuyerAddress     string `gorm:"size:1000;not null;default:''" json:"buyer_address"`
+
 	IssuedDate time.Time      `gorm:"type:date;not null;index" json:"issued_date"`
 	DueDate    *time.Time     `gorm:"type:date" json:"due_date,omitempty"`
 	Reference  string         `gorm:"size:200" json:"reference"`
@@ -361,8 +372,15 @@ type DocumentStore interface {
 	AddEvent(event *DocumentEvent) error
 	ListEvents(documentID uint) ([]*DocumentEvent, error)
 	FindContact(id uint) (*BillingContact, error)
-	// ListContacts searches the register. OwnerUserID limits it to contacts
-	// of leads that person owns.
-	ListContacts(search, side string, ownerUserID *uint, limit int) ([]*BillingContact, error)
-	ListProducts(search string, limit int) ([]*Product, error)
+}
+
+// FullAddress is the contact's address on one line, as printed.
+func (c *BillingContact) FullAddress() string {
+	parts := []string{}
+	for _, p := range []string{c.Address, c.SubDistrict, c.District, c.Province, c.PostCode} {
+		if p != "" {
+			parts = append(parts, p)
+		}
+	}
+	return strings.Join(parts, " ")
 }

@@ -102,6 +102,8 @@ function DocumentDetail() {
   const busy = issue.isPending || voidDoc.isPending || remove.isPending || next.isPending;
   const contact = doc.contact;
   const isExpense = doc.doc_type === 202;
+  // An issued document shows the buyer as recorded at issue, as it prints.
+  const issuedBuyer = doc.status !== "draft" && Boolean(doc.buyer_name);
 
   return (
     <div className="space-y-5">
@@ -163,13 +165,34 @@ function DocumentDetail() {
         <div className="min-w-0 space-y-5">
           <Panel title={isExpense ? "ผู้ขาย" : "ลูกค้า"}>
             <div className="space-y-1 p-4 font-body text-sm sm:p-5">
-              <p className="font-display text-base font-semibold text-foreground">{contact?.name ?? "—"}</p>
-              <p className="text-muted-foreground">
-                {contact?.tax_number ? `เลขผู้เสียภาษี ${contact.tax_number} · สาขา ${contact.branch_code}` : "ยังไม่มีเลขผู้เสียภาษี"}
-              </p>
-              <p className="text-muted-foreground">
-                {[contact?.address, contact?.sub_district, contact?.district, contact?.province, contact?.post_code].filter(Boolean).join(" ") || "ยังไม่มีที่อยู่"}
-              </p>
+              {issuedBuyer ? (
+                <>
+                  <p className="font-display text-base font-semibold text-foreground">{doc.buyer_name}</p>
+                  <p className="text-muted-foreground">
+                    {doc.buyer_tax_number ? `เลขผู้เสียภาษี ${doc.buyer_tax_number} · สาขา ${doc.buyer_branch_code}` : "ไม่มีเลขผู้เสียภาษี"}
+                  </p>
+                  <p className="text-muted-foreground">{doc.buyer_address || "ไม่มีที่อยู่"}</p>
+                  <p className="pt-1 text-xs text-muted-foreground">
+                    ตามข้อมูลตอนออกเอกสาร
+                    {contact && contact.name !== doc.buyer_name ? ` · ปัจจุบันในทะเบียนชื่อ ${contact.name}` : ""}
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="font-display text-base font-semibold text-foreground">{contact?.name ?? "—"}</p>
+                  <p className="text-muted-foreground">
+                    {contact?.tax_number ? `เลขผู้เสียภาษี ${contact.tax_number} · สาขา ${contact.branch_code}` : "ยังไม่มีเลขผู้เสียภาษี"}
+                  </p>
+                  <p className="text-muted-foreground">
+                    {[contact?.address, contact?.sub_district, contact?.district, contact?.province, contact?.post_code].filter(Boolean).join(" ") || "ยังไม่มีที่อยู่"}
+                  </p>
+                </>
+              )}
+              {contact && !issuedBuyer ? (
+                <Link className="inline-block pt-1 pr-4 font-display font-semibold text-primary underline" href={`/docs/contacts/edit/?id=${contact.id}`}>
+                  แก้ไขผู้ติดต่อ
+                </Link>
+              ) : null}
               {doc.lead_id ? (
                 <Link className="inline-block pt-1 font-display font-semibold text-primary underline" href={leadHref(doc.lead_id)}>
                   เปิดลูกค้าใน Lead Tracker

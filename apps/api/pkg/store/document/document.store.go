@@ -137,11 +137,11 @@ func (s *documentStoreService) Issue(id, userID uint, check func(*models.Documen
 		if doc.Status != models.DocStatusDraft {
 			return models.ErrDocumentNotDraft
 		}
+		if err := tx.Preload("Items", func(db *gorm.DB) *gorm.DB { return db.Order("position") }).
+			Preload("Contact").First(doc, id).Error; err != nil {
+			return err
+		}
 		if check != nil {
-			if err := tx.Preload("Items", func(db *gorm.DB) *gorm.DB { return db.Order("position") }).
-				Preload("Contact").First(doc, id).Error; err != nil {
-				return err
-			}
 			if err := check(doc); err != nil {
 				return err
 			}
@@ -152,6 +152,19 @@ func (s *documentStoreService) Issue(id, userID uint, check func(*models.Documen
 			return err
 		}
 		now := time.Now()
+		buyer := map[string]interface{}{}
+		if c := doc.Contact; c != nil {
+			buyer = map[string]interface{}{
+				"buyer_name":         c.Name,
+				"buyer_contact_type": c.ContactType,
+				"buyer_tax_number":   c.TaxNumber,
+				"buyer_branch_code":  c.BranchCode,
+				"buyer_address":      c.FullAddress(),
+			}
+		}
+		if err := tx.Model(&models.Document{}).Where("id = ?", id).Updates(buyer).Error; err != nil {
+			return err
+		}
 		if err := tx.Model(&models.Document{}).Where("id = ?", id).Updates(map[string]interface{}{
 			"code":       code,
 			"status":     models.DocStatusIssued,
@@ -278,41 +291,4 @@ func (s *documentStoreService) FindContact(id uint) (*models.BillingContact, err
 		return nil, err
 	}
 	return &contact, nil
-}
-
-func (s *documentStoreService) ListContacts(search, side string, ownerUserID *uint, limit int) ([]*models.BillingContact, error) {
-	q := s.db.Model(&models.BillingContact{})
-	if search = strings.TrimSpace(search); search != "" {
-		like := "%" + strings.ToLower(search) + "%"
-		q = q.Where("LOWER(name) LIKE ? OR LOWER(code) LIKE ? OR tax_number LIKE ?", like, like, like)
-	}
-	switch side {
-	case models.FinanceCustomer:
-		q = q.Where("finance_side IN ?", []string{models.FinanceCustomer, models.FinanceBoth})
-	case models.FinanceVendor:
-		q = q.Where("finance_side IN ?", []string{models.FinanceVendor, models.FinanceBoth})
-	}
-	if ownerUserID != nil {
-		q = q.Where("lead_id IN (SELECT id FROM leads WHERE owner_user_id = ?)", *ownerUserID)
-	}
-	if limit <= 0 || limit > 100 {
-		limit = 30
-	}
-	var rows []*models.BillingContact
-	err := q.Order("name").Limit(limit).Find(&rows).Error
-	return rows, err
-}
-
-func (s *documentStoreService) ListProducts(search string, limit int) ([]*models.Product, error) {
-	q := s.db.Model(&models.Product{}).Where("active")
-	if search = strings.TrimSpace(search); search != "" {
-		like := "%" + strings.ToLower(search) + "%"
-		q = q.Where("LOWER(name) LIKE ? OR LOWER(code) LIKE ?", like, like)
-	}
-	if limit <= 0 || limit > 100 {
-		limit = 50
-	}
-	var rows []*models.Product
-	err := q.Order("code").Limit(limit).Find(&rows).Error
-	return rows, err
 }

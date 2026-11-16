@@ -38,6 +38,7 @@ type Server struct {
 	EgpStore          models.EgpStore
 	InboundStore      models.InboundRequestStore
 	DocumentStore     models.DocumentStore
+	RegisterStore     models.RegisterStore
 
 	Storage *storage.Service
 }
@@ -59,6 +60,7 @@ func NewServer(
 	egpStore models.EgpStore,
 	inboundStore models.InboundRequestStore,
 	documentStore models.DocumentStore,
+	registerStore models.RegisterStore,
 	storageService *storage.Service,
 ) *Server {
 	return &Server{
@@ -77,6 +79,7 @@ func NewServer(
 		EgpStore:          egpStore,
 		InboundStore:      inboundStore,
 		DocumentStore:     documentStore,
+		RegisterStore:     registerStore,
 		Storage:           storageService,
 	}
 }

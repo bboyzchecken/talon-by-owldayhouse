@@ -66,8 +66,7 @@ func (s *Server) registerDocumentRoutes(api *echo.Group) {
 	docs.POST("", s.CreateDocument)
 	// Static segments before /:id.
 	docs.POST("/calculate", s.CalculateDocument)
-	docs.GET("/contacts", s.ListBillingContacts)
-	docs.GET("/products", s.ListDocumentProducts)
+	s.registerRegisterRoutes(docs)
 	docs.GET("/:id", s.GetDocument)
 	docs.PUT("/:id", s.UpdateDocument)
 	docs.DELETE("/:id", s.DeleteDocument)
@@ -796,31 +795,6 @@ func (s *Server) CalculateDocument(c echo.Context) error {
 		"withholding_total": result.WithholdingTotal,
 		"payable_amount":    result.PayableAmount,
 	})
-}
-
-// ListBillingContacts handles GET /api/docs/contacts?search=&side=: the
-// picker on the document form. A sales account sees only contacts of its
-// own leads. Adding and editing contacts is step 4.
-func (s *Server) ListBillingContacts(c echo.Context) error {
-	me := actor(c)
-	var owner *uint
-	if !me.IsAdmin() {
-		owner = &me.ID
-	}
-	rows, err := s.DocumentStore.ListContacts(c.QueryParam("search"), c.QueryParam("side"), owner, 30)
-	if err != nil {
-		return s.serverError(c, err)
-	}
-	return c.JSON(http.StatusOK, map[string]interface{}{"items": rows})
-}
-
-// ListDocumentProducts handles GET /api/docs/products?search=.
-func (s *Server) ListDocumentProducts(c echo.Context) error {
-	rows, err := s.DocumentStore.ListProducts(c.QueryParam("search"), 50)
-	if err != nil {
-		return s.serverError(c, err)
-	}
-	return c.JSON(http.StatusOK, map[string]interface{}{"items": rows})
 }
 
 // groupThousands writes "20330.00" as "20,330.00" for people to read.

@@ -2,8 +2,11 @@ import type { LucideIcon } from "lucide-react";
 import {
   BarChart3,
   CalendarCheck,
+  Building2,
   Columns3,
   FilePlus2,
+  Landmark,
+  Package,
   FileText,
   Inbox,
   List,
@@ -79,6 +82,9 @@ export const tools: Tool[] = [
     nav: [
       { href: "/docs/list", label: "รายการเอกสาร", icon: List },
       { href: "/docs/new", label: "สร้างเอกสาร", icon: FilePlus2 },
+      { href: "/docs/contacts", label: "ผู้ติดต่อ", icon: Building2 },
+      { href: "/docs/products", label: "สินค้า/บริการ", icon: Package, adminOnly: true },
+      { href: "/docs/payment-methods", label: "ช่องทางรับเงิน", icon: Landmark, adminOnly: true },
     ],
   },
   {

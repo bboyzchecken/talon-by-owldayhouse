@@ -1,5 +1,5 @@
 // Labels, money formatting and printing for the document tool.
-import type { BillingContact, DocStatus, DocType, DocumentRow, Money } from "./types";
+import type { DocStatus, DocType, DocumentRow, Money } from "./types";
 
 export const docTypeLabels: Record<DocType, string> = {
   101: "ใบเสนอราคา",
@@ -73,15 +73,72 @@ const issuer = {
   isWeb: "https://www.owldayhouse.com/",
 };
 
-function buyerName(c?: BillingContact): string {
-  if (!c) return "";
-  if (c.contact_type === 5) return c.name;
-  return c.branch_code && c.branch_code !== "00000" ? `${c.name} (สาขา ${c.branch_code})` : `${c.name} (สำนักงานใหญ่)`;
+interface Buyer {
+  name: string;
+  contactType: number;
+  taxNumber: string;
+  branchCode: string;
+  address: string;
 }
 
-function buyerAddress(c?: BillingContact): string {
-  if (!c) return "";
-  return [c.address, c.sub_district, c.district, c.province, c.post_code].filter(Boolean).join(" ");
+/**
+ * Who the document is to. An issued document prints the buyer as recorded at
+ * issue (buyer_*), so editing the contact later never changes a tax invoice
+ * already given out; a draft prints the contact as it is now.
+ */
+function buyerOf(doc: DocumentRow): Buyer {
+  if (doc.status !== "draft" && doc.buyer_name) {
+    return {
+      name: doc.buyer_name,
+      contactType: doc.buyer_contact_type,
+      taxNumber: doc.buyer_tax_number,
+      branchCode: doc.buyer_branch_code,
+      address: doc.buyer_address,
+    };
+  }
+  const c = doc.contact;
+  return {
+    name: c?.name ?? "",
+    contactType: c?.contact_type ?? 2,
+    taxNumber: c?.tax_number ?? "",
+    branchCode: c?.branch_code ?? "",
+    address: c ? [c.address, c.sub_district, c.district, c.province, c.post_code].filter(Boolean).join(" ") : "",
+  };
+}
+
+function buyerLabel(b: Buyer): string {
+  if (!b.name || b.contactType === 5) return b.name;
+  return b.branchCode && b.branchCode !== "00000" ? `${b.name} (สาขา ${b.branchCode})` : `${b.name} (สำนักงานใหญ่)`;
+}
+
+/** PEAK's contact types (ContactType), with the label people use. */
+export const contactTypeLabels: Record<number, string> = {
+  2: "บริษัทจำกัด",
+  3: "บริษัทมหาชน",
+  1: "ห้างหุ้นส่วนจำกัด",
+  8: "ห้างหุ้นส่วนสามัญ",
+  4: "ร้านค้า",
+  5: "บุคคลธรรมดา",
+  6: "คณะบุคคล",
+  9: "มูลนิธิ",
+  10: "สมาคม",
+  11: "กิจการร่วมค้า",
+  7: "อื่น ๆ",
+};
+
+export const namePrefixLabels: Record<number, string> = { 0: "—", 1: "คุณ", 2: "นาย", 3: "นาง", 4: "นางสาว" };
+
+export const financeSideLabels: Record<string, string> = {
+  customer: "ลูกค้า",
+  vendor: "ผู้ขาย/ผู้รับจ้าง",
+  both: "ทั้งสองฝั่ง",
+};
+
+export const paymentMethodTypeLabels: Record<number, string> = { 1: "เงินสด", 2: "บัญชีธนาคาร", 4: "e-Wallet" };
+
+/** PND3 for people and non-juristic groups, PND53 for juristic persons; the API uses the same default. */
+export function defaultWhtForm(contactType: number): "pnd3" | "pnd53" {
+  return [4, 5, 6, 8].includes(contactType) ? "pnd3" : "pnd53";
 }
 
 const printKind: Partial<Record<DocType, string>> = { 101: "quotation", 102: "invoice", 103: "receipt" };
@@ -119,6 +176,7 @@ export function openPrint(doc: DocumentRow): void {
   const copy =
     doc.status === "draft" ? "ร่าง — ยังไม่ออกเลข" : doc.status === "voided" ? "ยกเลิกแล้ว / voided" : "ต้นฉบับ / original";
   const person = [doc.contact?.person_first_name, doc.contact?.person_last_name].filter(Boolean).join(" ");
+  const buyer = buyerOf(doc);
   const withholding = Number(doc.withholding_total);
 
   const data = {
@@ -126,9 +184,9 @@ export function openPrint(doc: DocumentRow): void {
     docType: printKind[doc.doc_type] ?? "quotation",
     copy,
     asPerson: false,
-    cuName: buyerName(doc.contact),
-    cuAddr: buyerAddress(doc.contact),
-    cuTax: doc.contact?.tax_number || "-",
+    cuName: buyerLabel(buyer),
+    cuAddr: buyer.address,
+    cuTax: buyer.taxNumber || "-",
     cuEmail: doc.contact?.person_email || "-",
     cuAttn: person || "-",
     cuTel: doc.contact?.person_phone || "-",
