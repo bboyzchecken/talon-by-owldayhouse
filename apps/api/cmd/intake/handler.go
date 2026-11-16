@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
@@ -12,10 +13,18 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// botVerifier is the bot check a submission's token has to pass: Cloudflare
+// Turnstile when a secret is configured, otherwise our own ALTCHA.
+type botVerifier interface {
+	verify(ctx context.Context, token, remoteIP string) (bool, error)
+}
+
 type intakeServer struct {
-	store     models.InboundRequestStore
-	turnstile *turnstileVerifier
-	log       *logrus.Logger
+	store models.InboundRequestStore
+	bot   botVerifier
+	// altcha is set when ALTCHA is the bot check; it hands out the puzzles.
+	altcha *altchaVerifier
+	log    *logrus.Logger
 	// ipSalt keys the hash of the caller's address. Without a key the hash of
 	// an IPv4 address is trivially reversible — there are only four billion.
 	ipSalt string
@@ -60,15 +69,15 @@ func (s *intakeServer) CreateQuoteRequest(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
 	}
 
-	ok, err := s.turnstile.verify(c.Request().Context(), body.Token, c.RealIP())
+	ok, err := s.bot.verify(c.Request().Context(), body.Token, c.RealIP())
 	if err != nil {
-		s.log.WithError(err).Error("turnstile verification failed to run")
+		s.log.WithError(err).Error("the bot check failed to run")
 		return c.JSON(http.StatusServiceUnavailable, map[string]string{
 			"error": "ระบบตรวจสอบไม่ตอบสนอง กรุณาลองใหม่อีกครั้ง",
 		})
 	}
 	if !ok {
-		s.log.Info("dropped a submission that failed Turnstile")
+		s.log.Info("dropped a submission that failed the bot check")
 		return accepted(c)
 	}
 
@@ -89,4 +98,21 @@ func (s *intakeServer) CreateQuoteRequest(c echo.Context) error {
 	}).Info("stored an inbound request")
 
 	return accepted(c)
+}
+
+// CreateChallenge handles POST /intake/challenge: a fresh ALTCHA puzzle for
+// the form to solve. POST, like everything else here, so the one rule in
+// front of this service (POST /intake/* only) still holds. 404 when the bot
+// check is Turnstile.
+func (s *intakeServer) CreateChallenge(c echo.Context) error {
+	if s.altcha == nil {
+		return c.NoContent(http.StatusNotFound)
+	}
+	challenge, err := s.altcha.newChallenge()
+	if err != nil {
+		s.log.WithError(err).Error("cannot make an ALTCHA challenge")
+		return c.JSON(http.StatusServiceUnavailable, map[string]string{"error": "ระบบตรวจสอบไม่ตอบสนอง กรุณาลองใหม่อีกครั้ง"})
+	}
+	c.Response().Header().Set("Cache-Control", "no-store")
+	return c.JSON(http.StatusOK, challenge)
 }

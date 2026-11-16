@@ -14,7 +14,8 @@ import {
 import { trackEvent } from "@/lib/analytics";
 import { readAttribution } from "@/lib/attribution";
 import { localeHref, type Locale } from "@/lib/i18n";
-import { intakeUrl, turnstileSiteKey } from "@/lib/intake";
+import { solveAltcha } from "@/lib/altcha";
+import { botCheck, intakeUrl, turnstileSiteKey } from "@/lib/intake";
 
 /**
  * The quote-request form: three short steps, then one fetch() to the intake
@@ -22,8 +23,10 @@ import { intakeUrl, turnstileSiteKey } from "@/lib/intake";
  * static export. The values are the API's own enums (content/quote-form.ts).
  *
  * Anti-abuse, matching apps/api/cmd/intake: a honeypot field people never see,
- * the time the form was open, and Cloudflare Turnstile. The intake answers a
- * caught bot with the same 202 as a person, so this page cannot tell either.
+ * the time the form was open, and a bot check — ALTCHA (a puzzle from our own
+ * intake, solved in the background) or Cloudflare Turnstile when the build
+ * has its site key. The intake answers a caught bot with the same 202 as a
+ * person, so this page cannot tell either.
  */
 
 interface TurnstileApi {
@@ -82,16 +85,33 @@ export function QuoteForm({ locale, copy, days }: { locale: Locale; copy: QuoteF
   const widgetRef = useRef<HTMLDivElement>(null);
   const widgetId = useRef<string | undefined>(undefined);
   const [token, setToken] = useState("");
+  // ALTCHA: the puzzle being solved for the next submission, if any.
+  const altcha = useRef<Promise<string> | null>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
     openedAt.current = Date.now();
   }, []);
 
-  // The bot check loads only when the visitor reaches the last step, so a
-  // page view alone never calls Cloudflare.
+  // The bot check starts only when the visitor reaches the last step, so a
+  // page view alone never asks for a puzzle or calls Cloudflare. ALTCHA is
+  // solved in the background while they fill in their details.
   useEffect(() => {
-    if (step !== 2 || status !== "editing" || !widgetRef.current || widgetId.current) return;
+    if (botCheck !== "altcha" || step !== 2 || status !== "editing" || token || altcha.current) return;
+    const pending = solveAltcha(intakeUrl);
+    altcha.current = pending;
+    pending
+      .then((value) => {
+        if (altcha.current === pending) setToken(value);
+      })
+      .catch(() => {
+        // Offline or blocked: submit() asks again.
+        if (altcha.current === pending) altcha.current = null;
+      });
+  }, [step, status, token]);
+
+  useEffect(() => {
+    if (botCheck !== "turnstile" || step !== 2 || status !== "editing" || !widgetRef.current || widgetId.current) return;
     let cancelled = false;
     loadTurnstile()
       .then((api) => {
@@ -150,13 +170,24 @@ export function QuoteForm({ locale, copy, days }: { locale: Locale; copy: QuoteF
       setError(problem);
       return;
     }
-    if (!token && window.turnstile) {
+    if (botCheck === "turnstile" && !token && window.turnstile) {
       setError(copy.errors.robot);
       return;
     }
 
     setStatus("sending");
     setError("");
+    let proof = token;
+    if (botCheck === "altcha" && !proof) {
+      try {
+        proof = await (altcha.current ?? (altcha.current = solveAltcha(intakeUrl)));
+      } catch {
+        altcha.current = null;
+        setError(copy.errors.robot);
+        setStatus("editing");
+        return;
+      }
+    }
     const origin = readAttribution();
     try {
       const response = await fetch(`${intakeUrl}/intake/quote`, {
@@ -178,7 +209,7 @@ export function QuoteForm({ locale, copy, days }: { locale: Locale; copy: QuoteF
           consent,
           website,
           form_ms: Date.now() - openedAt.current,
-          token,
+          token: proof,
           ...origin,
         }),
       });
@@ -203,7 +234,9 @@ export function QuoteForm({ locale, copy, days }: { locale: Locale; copy: QuoteF
       setError(copy.errors.failed);
       setStatus("editing");
     }
+    // An answer is good once: the next attempt needs a new one.
     if (widgetId.current) window.turnstile?.reset(widgetId.current);
+    altcha.current = null;
     setToken("");
   };
 
@@ -214,6 +247,7 @@ export function QuoteForm({ locale, copy, days }: { locale: Locale; copy: QuoteF
     setBudget("");
     setConsent(false);
     setToken("");
+    altcha.current = null;
     if (widgetId.current) window.turnstile?.remove(widgetId.current);
     widgetId.current = undefined;
     openedAt.current = Date.now();
@@ -407,7 +441,7 @@ export function QuoteForm({ locale, copy, days }: { locale: Locale; copy: QuoteF
 
       {/* Always mounted, shown on the last step only, so stepping back and
           forth keeps the widget and its token. */}
-      <div ref={widgetRef} className="odh-quote__robot" hidden={step !== 2} />
+      <div ref={widgetRef} className="odh-quote__robot" hidden={step !== 2 || botCheck !== "turnstile"} />
       {step === 2 ? <p className="odh-quote__promise">{fill(copy.promise)}</p> : null}
 
       <p className="odh-quote__error" role="alert" aria-live="assertive">

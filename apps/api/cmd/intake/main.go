@@ -14,11 +14,15 @@
 //	INTAKE_PORT           port to listen on (default 5200)
 //	INTAKE_CORS_ORIGINS   comma-separated origins allowed to POST (required)
 //	INTAKE_IP_SALT        key for hashing caller addresses (required in production)
-//	TURNSTILE_SECRET      Cloudflare Turnstile secret (required in production)
+//	ALTCHA_HMAC_KEY       key that signs the ALTCHA puzzles (the default bot check)
+//	TURNSTILE_SECRET      Cloudflare Turnstile secret; when set, Turnstile is used
+//	                      instead of ALTCHA (production needs one of the two)
 //	POSTGRES_*            the intake role's connection (see pkg/core)
 package main
 
 import (
+	"crypto/rand"
+	"encoding/hex"
 	"log"
 	"net/http"
 	"os"
@@ -64,12 +68,13 @@ func main() {
 	}
 
 	secret := env("TURNSTILE_SECRET", "")
+	altchaKey := env("ALTCHA_HMAC_KEY", "")
 	salt := env("INTAKE_IP_SALT", "")
 	// Development may run without these; production may not. A service that
 	// quietly skips its anti-abuse check is worse than one that will not boot.
 	if production {
-		if secret == "" {
-			logs.Fatal("TURNSTILE_SECRET is required in production")
+		if secret == "" && len(altchaKey) < 32 {
+			logs.Fatal("production needs a bot check: ALTCHA_HMAC_KEY (openssl rand -hex 32) or TURNSTILE_SECRET")
 		}
 		if salt == "" {
 			logs.Fatal("INTAKE_IP_SALT is required in production")
@@ -81,11 +86,19 @@ func main() {
 		logs.WithError(err).Fatal("cannot connect to PostgreSQL")
 	}
 
-	server := &intakeServer{
-		store:     storeinbound.New(db),
-		turnstile: newTurnstileVerifier(secret),
-		log:       logs,
-		ipSalt:    salt,
+	server := &intakeServer{store: storeinbound.New(db), log: logs, ipSalt: salt}
+	switch {
+	case secret != "":
+		server.bot = newTurnstileVerifier(secret)
+		logs.Info("bot check: Cloudflare Turnstile")
+	default:
+		if altchaKey == "" {
+			// Development only (production refused above): a key for this run.
+			altchaKey = randomKey()
+		}
+		server.altcha = newAltchaVerifier(altchaKey)
+		server.bot = server.altcha
+		logs.Info("bot check: ALTCHA")
 	}
 
 	e := echo.New()
@@ -128,10 +141,11 @@ func main() {
 	}))
 	e.Use(logger.Middleware(logs))
 
-	// The only two routes in the service.
+	// The only routes in the service.
 	e.GET("/healthz", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, map[string]string{"status": "ok", "service": "intake"})
 	})
+	e.POST("/intake/challenge", server.CreateChallenge)
 	e.POST("/intake/quote", server.CreateQuoteRequest)
 
 	port := env("INTAKE_PORT", "5200")
@@ -189,4 +203,12 @@ func openDB(environment string) (*gorm.DB, error) {
 	pool.SetMaxIdleConns(2)
 	pool.SetConnMaxLifetime(30 * time.Minute)
 	return db, nil
+}
+
+func randomKey() string {
+	raw := make([]byte, 32)
+	if _, err := rand.Read(raw); err != nil {
+		log.Fatal(err)
+	}
+	return hex.EncodeToString(raw)
 }
