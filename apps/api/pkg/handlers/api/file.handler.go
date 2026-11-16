@@ -19,16 +19,32 @@ func (s *Server) checkFileOwner(c echo.Context, ownerType string, ownerID uint) 
 		lead, err := s.LeadStore.Find(ownerID)
 		if err != nil {
 			if isNotFound(err) {
-				return notFound(c, "ไม่พบลูกค้ารายนี้")
+				return responded(notFound(c, "ไม่พบลูกค้ารายนี้"))
 			}
-			return s.serverError(c, err)
+			return responded(s.serverError(c, err))
 		}
 		if !leadrules.CanEditLead(actor(c), lead.OwnerUserID) {
-			return forbidden(c, leadrules.ErrNotLeadOwner.Error())
+			return responded(forbidden(c, leadrules.ErrNotLeadOwner.Error()))
 		}
 		return nil
+	case models.FileOwnerPayment, models.FileOwnerPaymentWht:
+		return s.checkPaymentFile(c, ownerID)
 	default:
-		return badRequest(c, "ชนิดเจ้าของไฟล์ไม่ถูกต้อง")
+		return responded(badRequest(c, "ชนิดเจ้าของไฟล์ไม่ถูกต้อง"))
+	}
+}
+
+// checkFileRead decides who may list or download an owner's files. Every
+// account sees every lead, so their files are open to all; a payment's slip
+// and withholding certificate are the admin's.
+func (s *Server) checkFileRead(c echo.Context, ownerType string, ownerID uint) error {
+	switch ownerType {
+	case models.FileOwnerLead:
+		return nil
+	case models.FileOwnerPayment, models.FileOwnerPaymentWht:
+		return s.checkPaymentFile(c, ownerID)
+	default:
+		return responded(badRequest(c, "ชนิดเจ้าของไฟล์ไม่ถูกต้อง"))
 	}
 }
 
@@ -40,6 +56,9 @@ func (s *Server) ListFiles(c echo.Context) error {
 		return badRequest(c, "ต้องระบุ owner_type และ owner_id")
 	}
 
+	if err := s.checkFileRead(c, ownerType, *ownerID); err != nil {
+		return err
+	}
 	rows, err := s.FileStore.ListByOwner(ownerType, *ownerID)
 	if err != nil {
 		return s.serverError(c, err)
@@ -61,7 +80,7 @@ func (s *Server) ListLeadFiles(c echo.Context) error {
 }
 
 type uploadURLBody struct {
-	OwnerType string `json:"owner_type" validate:"required,oneof=lead"`
+	OwnerType string `json:"owner_type" validate:"required,oneof=lead payment payment_wht"`
 	OwnerID   uint   `json:"owner_id" validate:"required"`
 	Filename  string `json:"filename" validate:"required,max=255"`
 	Size      int64  `json:"size" validate:"required,gt=0"`
@@ -178,6 +197,9 @@ func (s *Server) CreateDownloadURL(c echo.Context) error {
 			return notFound(c, "ไม่พบไฟล์นี้")
 		}
 		return s.serverError(c, err)
+	}
+	if err := s.checkFileRead(c, row.OwnerType, row.OwnerID); err != nil {
+		return err
 	}
 	if row.Status != models.FileStatusReady {
 		return badRequest(c, "ไฟล์นี้ยังอัปโหลดไม่เสร็จ")

@@ -239,14 +239,14 @@ func (s *Server) ImportEgpCSV(c echo.Context) error {
 func (s *Server) loadEgp(c echo.Context) (*models.EgpAnnouncement, error) {
 	id, err := request.UintParam(c, "id")
 	if err != nil {
-		return nil, badRequest(c, "รหัสประกาศไม่ถูกต้อง")
+		return nil, responded(badRequest(c, "รหัสประกาศไม่ถูกต้อง"))
 	}
 	row, err := s.EgpStore.Find(id)
 	if err != nil {
 		if isNotFound(err) {
-			return nil, notFound(c, "ไม่พบประกาศนี้")
+			return nil, responded(notFound(c, "ไม่พบประกาศนี้"))
 		}
-		return nil, s.serverError(c, err)
+		return nil, responded(s.serverError(c, err))
 	}
 	return row, nil
 }

@@ -159,23 +159,34 @@ func TestDocumentChainAndTaxInvoiceRules(t *testing.T) {
 		t.Fatalf("issue invoice: %d %s", r.Status, r.Raw)
 	}
 
-	rt := env.do(env.admin, http.MethodPost, fmt.Sprintf("/api/docs/%d/next", ivID), map[string]int{"doc_type": models.DocReceipt})
-	if rt.Status != http.StatusCreated || rt.Body["is_tax_invoice"] != true {
-		t.Fatalf("receipt from invoice is a tax invoice: %d %s", rt.Status, rt.Raw)
+	// A receipt is never chained or typed in: it comes from recording money.
+	if r := env.do(env.admin, http.MethodPost, fmt.Sprintf("/api/docs/%d/next", ivID), map[string]int{"doc_type": models.DocReceipt}); r.Status != http.StatusBadRequest {
+		t.Fatalf("receipt via next: want 400, got %d", r.Status)
 	}
-	rtID := docID(t, rt)
-	refused := env.do(env.admin, http.MethodPost, fmt.Sprintf("/api/docs/%d/issue", rtID), nil)
+	method := env.seedPaymentMethod()
+	pay := map[string]interface{}{"payment_date": "2026-11-16", "payment_method_id": method, "received_amount": "20800", "withholding_amount": "600"}
+	refused := env.do(env.admin, http.MethodPost, fmt.Sprintf("/api/docs/%d/payments", ivID), pay)
 	if refused.Status != http.StatusUnprocessableEntity {
 		t.Fatalf("a tax invoice without the buyer's address and tax ID: want 422, got %d %s", refused.Status, refused.Raw)
+	}
+	var payments int64
+	env.db.Model(&models.Payment{}).Count(&payments)
+	if payments != 0 {
+		t.Fatalf("a refused receipt must take its payment with it, found %d", payments)
 	}
 	// The refusal took no number: fix the contact and the receipt is RT-…00001.
 	env.db.Model(&models.BillingContact{}).Where("id = ?", incomplete).Updates(map[string]interface{}{
 		"tax_number": "0105561234567", "branch_code": "00000", "address": "1 ถนนพระราม 9",
 	})
-	issuedRT := env.do(env.admin, http.MethodPost, fmt.Sprintf("/api/docs/%d/issue", rtID), nil)
-	if issuedRT.Status != http.StatusOK || str(issuedRT, "code") != "RT-20261100001" {
-		t.Fatalf("receipt: %d %s", issuedRT.Status, issuedRT.Raw)
+	paid := env.do(env.admin, http.MethodPost, fmt.Sprintf("/api/docs/%d/payments", ivID), pay)
+	if paid.Status != http.StatusCreated {
+		t.Fatalf("payment: %d %s", paid.Status, paid.Raw)
 	}
+	var payment models.Payment
+	if err := env.db.Preload("Receipt").Last(&payment).Error; err != nil || payment.Receipt == nil || payment.Receipt.Code != "RT-20261100001" {
+		t.Fatalf("receipt: %+v %v", payment.Receipt, err)
+	}
+	rtID := payment.Receipt.ID
 
 	cn := env.do(env.admin, http.MethodPost, fmt.Sprintf("/api/docs/%d/next", rtID), map[string]int{"doc_type": models.DocCreditNote})
 	if cn.Status != http.StatusCreated {
@@ -213,8 +224,8 @@ func TestSalesSeesAndIssuesOnlyItsOwnCustomers(t *testing.T) {
 	}
 	receipt := quotationBody(mine)
 	receipt["doc_type"] = models.DocReceipt
-	if r := env.do(env.sales1, http.MethodPost, "/api/docs", receipt); r.Status != http.StatusForbidden {
-		t.Fatalf("a receipt is the admin's: want 403, got %d", r.Status)
+	if r := env.do(env.sales1, http.MethodPost, "/api/docs", receipt); r.Status != http.StatusUnprocessableEntity {
+		t.Fatalf("a receipt comes only from a payment: want 422, got %d", r.Status)
 	}
 
 	if r := env.do(env.sales2, http.MethodGet, fmt.Sprintf("/api/docs/%d", docID(t, ok)), nil); r.Status != http.StatusNotFound {

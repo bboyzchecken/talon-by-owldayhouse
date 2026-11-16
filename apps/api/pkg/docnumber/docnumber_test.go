@@ -101,10 +101,12 @@ func openDB(t *testing.T) *gorm.DB {
 		skip("no PostgreSQL for the document-number tests (%v)", err)
 		return nil
 	}
-	if pool, err := db.DB(); err != nil || pool.Ping() != nil {
+	pool, err := db.DB()
+	if err != nil || pool.Ping() != nil {
 		skip("no PostgreSQL for the document-number tests")
 		return nil
 	}
+	t.Cleanup(func() { _ = pool.Close() })
 	if err := database.Migrate(db); err != nil {
 		t.Fatalf("migrations failed: %v", err)
 	}

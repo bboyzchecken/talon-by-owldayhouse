@@ -39,6 +39,7 @@ type Server struct {
 	InboundStore      models.InboundRequestStore
 	DocumentStore     models.DocumentStore
 	RegisterStore     models.RegisterStore
+	PaymentStore      models.PaymentStore
 
 	Storage *storage.Service
 }
@@ -61,6 +62,7 @@ func NewServer(
 	inboundStore models.InboundRequestStore,
 	documentStore models.DocumentStore,
 	registerStore models.RegisterStore,
+	paymentStore models.PaymentStore,
 	storageService *storage.Service,
 ) *Server {
 	return &Server{
@@ -80,6 +82,7 @@ func NewServer(
 		InboundStore:      inboundStore,
 		DocumentStore:     documentStore,
 		RegisterStore:     registerStore,
+		PaymentStore:      paymentStore,
 		Storage:           storageService,
 	}
 }
@@ -107,6 +110,7 @@ func (s *Server) Handler() *echo.Echo {
 	}))
 	e.Use(middleware.RateLimiter(middleware.NewRateLimiterMemoryStore(60)))
 	e.Use(logger.Middleware(s.Log))
+	e.Use(swallowResponded)
 
 	e.GET("/healthz", s.Health)
 

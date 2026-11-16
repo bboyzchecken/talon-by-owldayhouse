@@ -64,6 +64,9 @@ type Result struct {
 	// PayableAmount is what the customer actually transfers: net less what
 	// they withhold.
 	PayableAmount decimal.Decimal
+	// VatBase is the part of the pre-VAT amount that carries 7% VAT, after
+	// the document discount.
+	VatBase decimal.Decimal
 }
 
 func round(d decimal.Decimal) decimal.Decimal { return d.Round(2) }
@@ -172,11 +175,13 @@ func Compute(taxStatus int, lines []Line, documentDiscount string) (Result, erro
 		vatBase = vatBase.Add(res.Lines[i].LineAmount.Sub(shares[i]))
 	}
 	if taxStatus == models.TaxExclusive {
+		res.VatBase = vatBase
 		res.VatAmount = round(vatBase.Mul(vatRate).Div(hundred))
 		res.PreTaxAmount = afterDiscount
 		res.NetAmount = afterDiscount.Add(res.VatAmount)
 	} else {
 		res.VatAmount = round(vatBase.Mul(vatRate).Div(vatInclusive))
+		res.VatBase = vatBase.Sub(res.VatAmount)
 		res.PreTaxAmount = afterDiscount.Sub(res.VatAmount)
 		res.NetAmount = afterDiscount
 	}
@@ -196,4 +201,79 @@ func Compute(taxStatus int, lines []Line, documentDiscount string) (Result, erro
 
 	res.PayableAmount = res.NetAmount.Sub(res.WithholdingTotal)
 	return res, nil
+}
+
+// Portion is the part of a document one payment covers.
+type Portion struct {
+	PreTax decimal.Decimal
+	Vat    decimal.Decimal
+	Net    decimal.Decimal
+	// VatBase is the part of PreTax that carries VAT; the rest is the
+	// document's no-VAT and 0% lines.
+	VatBase decimal.Decimal
+}
+
+// ErrOverpaid means a payment would settle more than the document is for.
+var ErrOverpaid = errors.New("ยอดที่รับเกินยอดค้างของเอกสาร")
+
+// SplitPayment works out the receipt for a payment that settles `settled`
+// of a document whose totals are docNet, docVat and docVatBase, when
+// `settledBefore` and `vatBefore` were already settled and receipted.
+//
+// VAT follows the money: a partial payment carries the document's VAT share
+// of what it settles, rounded to the satang. The payment that clears the
+// balance takes whatever VAT is left instead of a rounded share, so the
+// receipts of one document always add up to its VAT exactly, however many
+// instalments it was paid in.
+func SplitPayment(docNet, docVat, docVatBase, settled, settledBefore, vatBefore decimal.Decimal) (Portion, error) {
+	if !settled.IsPositive() {
+		return Portion{}, errors.New("ยอดรับต้องมากกว่า 0")
+	}
+	if !docNet.IsPositive() {
+		return Portion{}, errors.New("เอกสารนี้ไม่มียอดให้รับ")
+	}
+	outstanding := docNet.Sub(settledBefore)
+	if settled.GreaterThan(outstanding) {
+		return Portion{}, ErrOverpaid
+	}
+
+	var p Portion
+	p.Net = settled
+	if settled.Equal(outstanding) {
+		p.Vat = docVat.Sub(vatBefore)
+	} else {
+		p.Vat = round(settled.Mul(docVat).Div(docNet))
+	}
+	p.PreTax = settled.Sub(p.Vat)
+
+	docPreTax := docNet.Sub(docVat)
+	if docPreTax.IsPositive() && docVatBase.IsPositive() {
+		if docVatBase.GreaterThanOrEqual(docPreTax) {
+			p.VatBase = p.PreTax
+		} else {
+			p.VatBase = round(p.PreTax.Mul(docVatBase).Div(docPreTax))
+		}
+	}
+	return p, nil
+}
+
+// Baht writes an amount for people to read: 20330 as "20,330.00".
+func Baht(d decimal.Decimal) string {
+	fixed := d.StringFixed(2)
+	sign := ""
+	if strings.HasPrefix(fixed, "-") {
+		sign, fixed = "-", fixed[1:]
+	}
+	whole, frac := fixed, ""
+	if i := strings.Index(fixed, "."); i >= 0 {
+		whole, frac = fixed[:i], fixed[i:]
+	}
+	var b strings.Builder
+	for i, r := range whole {
+		if i > 0 && (len(whole)-i)%3 == 0 {
+			b.WriteByte(',')
+		}
+		b.WriteRune(r)
+	}
+	return sign + b.String() + frac
 }

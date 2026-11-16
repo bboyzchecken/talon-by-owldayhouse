@@ -20,6 +20,34 @@ func isNotFound(err error) bool {
 	return errors.Is(err, gorm.ErrRecordNotFound)
 }
 
+// errResponded means a helper has already written the response — a 403, a
+// 404 — and the handler must stop. Helpers that check something on a
+// handler's behalf (loadLead, checkFileOwner…) return it, so the caller's
+// usual `if err != nil { return err }` stops there. A refusal written by
+// c.JSON returns nil, and a caller testing for non-nil would carry on: that
+// is how a refused upload once went on to hand out a presigned URL.
+var errResponded = errors.New("response already written")
+
+// responded is what a checking helper returns after writing a refusal.
+func responded(err error) error {
+	if err != nil {
+		return err
+	}
+	return errResponded
+}
+
+// swallowResponded turns errResponded back into success once the handler has
+// returned, so the request log shows the status that was written instead of
+// an error.
+func swallowResponded(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		if err := next(c); err != nil && !errors.Is(err, errResponded) {
+			return err
+		}
+		return nil
+	}
+}
+
 // badRequest returns 400.
 func badRequest(c echo.Context, message string) error {
 	return c.JSON(http.StatusBadRequest, errorBody(message))
