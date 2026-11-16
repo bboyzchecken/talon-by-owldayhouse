@@ -188,12 +188,34 @@ func TestDocumentChainAndTaxInvoiceRules(t *testing.T) {
 	}
 	rtID := payment.Receipt.ID
 
-	cn := env.do(env.admin, http.MethodPost, fmt.Sprintf("/api/docs/%d/next", rtID), map[string]int{"doc_type": models.DocCreditNote})
-	if cn.Status != http.StatusCreated {
-		t.Fatalf("credit note from a tax invoice: %d %s", cn.Status, cn.Raw)
+	// The company does not use credit notes: a wrong tax invoice is voided
+	// and issued again.
+	if r := env.do(env.admin, http.MethodPost, fmt.Sprintf("/api/docs/%d/next", rtID), map[string]int{"doc_type": models.DocCreditNote}); r.Status == http.StatusCreated {
+		t.Fatalf("a credit note is retired: %d %s", r.Status, r.Raw)
 	}
-	if r := env.do(env.admin, http.MethodPost, fmt.Sprintf("/api/docs/%d/issue", docID(t, cn)), nil); r.Status != http.StatusUnprocessableEntity {
-		t.Fatalf("a credit note without a reason: want 422, got %d", r.Status)
+}
+
+// Billing, credit and debit notes are not used: none can be created, and a
+// draft left from before cannot be issued.
+func TestRetiredDocumentTypes(t *testing.T) {
+	env := newTestEnv(t)
+	contact := env.seedBillingContact("C-R1", "บริษัท ไม่ใช้ใบวางบิล จำกัด", nil, models.FinanceCustomer, true)
+	for _, docType := range []int{models.DocCreditNote, models.DocBillingNote, models.DocDebitNote} {
+		body := quotationBody(contact)
+		body["doc_type"] = docType
+		if r := env.do(env.admin, http.MethodPost, "/api/docs", body); r.Status != http.StatusUnprocessableEntity {
+			t.Fatalf("creating type %d: want 422, got %d %s", docType, r.Status, r.Raw)
+		}
+	}
+	draft := models.Document{DocType: models.DocBillingNote, ContactID: contact, Status: models.DocStatusDraft, CreatedBy: env.admin.ID}
+	env.db.Create(&draft)
+	if r := env.do(env.admin, http.MethodPost, fmt.Sprintf("/api/docs/%d/issue", draft.ID), nil); r.Status != http.StatusUnprocessableEntity {
+		t.Fatalf("issuing an old draft: want 422, got %d %s", r.Status, r.Raw)
+	}
+	qo := docID(t, env.do(env.admin, http.MethodPost, "/api/docs", quotationBody(contact)))
+	env.do(env.admin, http.MethodPost, fmt.Sprintf("/api/docs/%d/issue", qo), nil)
+	if r := env.do(env.admin, http.MethodPost, fmt.Sprintf("/api/docs/%d/next", qo), map[string]int{"doc_type": models.DocBillingNote}); r.Status == http.StatusCreated {
+		t.Fatalf("a billing note from a quotation is retired: %d", r.Status)
 	}
 }
 
