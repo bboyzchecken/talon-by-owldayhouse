@@ -80,8 +80,8 @@ export const portfolio: readonly PortfolioItem[] = keepThaiWordsDeep([
     client: { th: "ธุรกิจการ์ดเกมสะสมในไทย", en: "A Thai trading card business" },
     category: { th: "แพลตฟอร์ม / e-Marketplace", en: "Platform / e-Marketplace" },
     result: {
-      th: "ทำเวอร์ชันแรก (ปี 2566) ครบทุกส่วน ตั้งแต่ UX/UI, หน้าเว็บ, API, ฐานข้อมูล ไปจนถึงระบบหลังบ้าน ได้แก่ ระบบซื้อขาย ประมูล ประวัติราคา ตั้งรับซื้อ และแจ้งเตือน ชำระเงินผ่าน payment gateway ดูแลระบบช่วงปีแรก แล้วส่งมอบ source code ให้ทีมของลูกค้าพัฒนาต่อ",
-      en: "We built the first version (2023) end to end: UX/UI, web front end, API, database and back office, covering buying and selling, live auctions, price history, buy requests and notifications, with payments through a payment gateway. We ran it through its first year, then handed the source code over for the client's next team to take forward.",
+      th: "ทำเวอร์ชันแรก (ปี 2566) ครบทุกส่วน ตั้งแต่ UX/UI, หน้าเว็บ, API, ฐานข้อมูล ไปจนถึงระบบหลังบ้าน ได้แก่ ระบบซื้อขาย ประมูล ประวัติราคา ตั้งรับซื้อ และแจ้งเตือน ชำระเงินผ่าน GB Prime Pay ดูแลระบบช่วงปีแรก แล้วส่งมอบ source code ให้ทีมของลูกค้าพัฒนาต่อ",
+      en: "We built the first version (2023) end to end: UX/UI, web front end, API, database and back office, covering buying and selling, live auctions, price history, buy requests and notifications, with payments through GB Prime Pay. We ran it through its first year, then handed the source code over for the client's next team to take forward.",
     },
     status: "handed-over",
   },
