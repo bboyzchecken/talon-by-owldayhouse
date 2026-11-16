@@ -14,7 +14,7 @@
     },
     {
       "name": "web-out",
-      "runtimeExecutable": "python",
+      "runtimeExecutable": "python3",
       "runtimeArgs": [
         "-m",
         "http.server",
