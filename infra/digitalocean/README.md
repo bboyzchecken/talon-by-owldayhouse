@@ -363,10 +363,15 @@ To switch it on:
 1. **DNS.** An A record `api` → the Droplet's IPv4, next to `crm`. Grey
    cloud if the zone is on Cloudflare (see 1.7). Check with
    `dig +short api.owldayhouse.com`.
-2. **Turnstile.** In Cloudflare: Turnstile → Add widget, hostnames
-   `owldayhouse.com` and `www.owldayhouse.com`, mode Managed. The **site
-   key** goes into the website build (`NEXT_PUBLIC_TURNSTILE_SITE_KEY`, see
-   `infra/ftp-deploy`); the **secret key** goes into `.env` here.
+2. **The bot check: ALTCHA**, our own proof-of-work puzzle (`cmd/intake/altcha.go`).
+   No account and no third party: the intake signs its puzzles with a key
+   that lives only in `.env` here. The visitor's browser solves one in the
+   background while they fill in the last step.
+   *Optional instead:* Cloudflare Turnstile. Create a widget for
+   `owldayhouse.com` and `www.owldayhouse.com`, put its secret in
+   `TURNSTILE_SECRET` below and its site key in the website build
+   (`NEXT_PUBLIC_TURNSTILE_SITE_KEY`). When `TURNSTILE_SECRET` is set,
+   Turnstile is used and ALTCHA is not.
 3. **`.env` on the Droplet**, from the intake block of `.env.example`:
 
    ```bash
@@ -375,15 +380,17 @@ To switch it on:
    INTAKE_CORS_ORIGINS=https://owldayhouse.com,https://www.owldayhouse.com
    INTAKE_POSTGRES_PASSWORD=<openssl rand -hex 24>
    INTAKE_IP_SALT=<openssl rand -hex 32>
-   TURNSTILE_SECRET=<the Turnstile secret key>
+   ALTCHA_HMAC_KEY=<openssl rand -hex 32>
    ```
 
 4. **Deploy** as usual. The API sets up the role, then the intake starts.
-5. **Check** from your own machine. A GET must be a 404, and a POST without
-   a Turnstile token gets the same 202 a real one does but stores nothing:
+5. **Check** from your own machine. A GET must be a 404, a puzzle must come
+   back, and a POST without a solved puzzle gets the same 202 a real one
+   does but stores nothing:
 
    ```bash
    curl -s -o /dev/null -w '%{http_code}\n' https://api.owldayhouse.com/intake/quote   # 404
+   curl -s -X POST https://api.owldayhouse.com/intake/challenge                         # {"algorithm":"SHA-256",...}
    ssh deploy@<droplet-ip> 'cd /opt/odh-internal && docker compose logs --tail=20 intake'
    ```
 

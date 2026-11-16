@@ -80,20 +80,18 @@ then delete the catch-all (the three commented lines) from `apps/web/public/.hta
 
 ### Build-time values for the quote form
 
-The form on `/contact/` is compiled into the static bundle, so these go in the
-environment of `pnpm build:web` (or `apps/web/.env.local`), not on the FTP
-host. Both are public by design; the Turnstile **secret** lives only on the
-Droplet (`infra/digitalocean`, section 1.11).
+The form on `/contact/` is compiled into the static bundle, so this goes in the
+environment of `pnpm build:web` (or `apps/web/.env.local`), not on the FTP host.
 
 | Var | Notes |
 | --- | --- |
 | `NEXT_PUBLIC_INTAKE_URL` | `https://api.owldayhouse.com`, no trailing slash |
-| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | the Turnstile widget's site key |
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | **leave unset.** The bot check is ALTCHA, our own, with no account. Set it only to switch to Cloudflare Turnstile (then the Droplet needs `TURNSTILE_SECRET`) |
 
-The form appears only when both are set **and** `contact.replyWithinBusinessDays`
-in `apps/web/content/site.ts` is a number — the reply time the page promises.
-Missing any one, `/contact/` builds without the form, as before. Turn the
-intake on (Droplet) before deploying a build that has the form.
+The form appears only when the intake URL is set **and** `contact.replyWithinBusinessDays`
+in `apps/web/content/site.ts` is a number (it is 1). Without the URL, `/contact/`
+builds without the form, as before. Turn the intake on (Droplet,
+`infra/digitalocean` section 1.11) before deploying a build that has the form.
 
 ## Post-deploy checklist
 

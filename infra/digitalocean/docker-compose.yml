@@ -83,7 +83,8 @@ services:
   # the API creates on boot with INSERT on inbound_requests and nothing else.
   #
   # Off until switched on: set COMPOSE_PROFILES=intake in .env once the
-  # Turnstile keys, the salt and the role password are there (README.md,
+  # bot-check key (ALTCHA_HMAC_KEY, or Turnstile's), the salt and the role
+  # password are there (README.md,
   # "The public intake"). Without it, `docker compose up` leaves this service
   # out and the CRM deploys exactly as before.
   intake:
@@ -98,6 +99,7 @@ services:
       INTAKE_PORT: "5200"
       INTAKE_CORS_ORIGINS: ${INTAKE_CORS_ORIGINS:-https://owldayhouse.com,https://www.owldayhouse.com}
       INTAKE_IP_SALT: ${INTAKE_IP_SALT:-}
+      ALTCHA_HMAC_KEY: ${ALTCHA_HMAC_KEY:-}
       TURNSTILE_SECRET: ${TURNSTILE_SECRET:-}
       POSTGRES_HOST: postgres
       POSTGRES_PORT: "5432"

@@ -11,6 +11,7 @@
 
 import { keepThaiWordsDeep } from "@/lib/thai-wrap";
 import type { Locale } from "@/lib/i18n";
+import { turnstileSiteKey } from "@/lib/intake";
 
 export interface PolicySection {
   heading: string;
@@ -97,7 +98,7 @@ const privacy = {
         bullets: [
           "ผู้ให้บริการเซิร์ฟเวอร์และฐานข้อมูลที่ระบบลูกค้าภายในของเราทำงานอยู่",
           "ผู้ให้บริการพื้นที่เก็บไฟล์ ซึ่งเก็บเอกสารที่เกี่ยวกับงานของคุณ",
-          "บริการตรวจจับบอตของ Cloudflare (Turnstile) เมื่อคุณส่งแบบฟอร์ม",
+          ...(turnstileSiteKey ? ["บริการตรวจจับบอตของ Cloudflare (Turnstile) เมื่อคุณส่งแบบฟอร์ม"] : []),
           "Google Analytics สำหรับสถิติการเข้าชมเว็บไซต์",
         ],
         after: [
@@ -200,7 +201,7 @@ const privacy = {
         bullets: [
           "The server and database provider our internal customer system runs on.",
           "The file storage provider that holds documents relating to your work.",
-          "Cloudflare's bot detection (Turnstile) when you submit a form.",
+          ...(turnstileSiteKey ? ["Cloudflare's bot detection (Turnstile) when you submit a form."] : []),
           "Google Analytics, for site statistics.",
         ],
         after: [
