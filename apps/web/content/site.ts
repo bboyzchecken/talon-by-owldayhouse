@@ -36,7 +36,7 @@ export const contact = {
    * not the code: the form stays hidden until this is a number (and the
    * intake URL and Turnstile site key are set at build time, see lib/intake.ts).
    */
-  replyWithinBusinessDays: null as number | null,
+  replyWithinBusinessDays: 1 as number | null,
 } as const;
 
 export const social = {

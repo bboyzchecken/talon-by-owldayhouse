@@ -119,7 +119,8 @@ export function QuoteForm({ locale, copy, days }: { locale: Locale; copy: QuoteF
     };
   }, []);
 
-  const fill = (template: string) => template.replace("{days}", String(days));
+  // {s} pluralises the English ("1 business day", "2 business days").
+  const fill = (template: string) => template.replace("{days}", String(days)).replace("{s}", days === 1 ? "" : "s");
 
   const toggleInterest = (value: string) =>
     setInterests((current) => (current.includes(value) ? current.filter((v) => v !== value) : [...current, value]));
