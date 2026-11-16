@@ -137,6 +137,8 @@ export const portfolio: readonly PortfolioItem[] = keepThaiWordsDeep([
 ]);
 
 export const liveWork = portfolio.filter((item) => item.status === "live");
+/** The teaser grid on the home and service pages: one full row of three, in the order the live items are listed above. The work page shows every item. */
+export const topWork = liveWork.slice(0, 3);
 /** Work shown with a picture on the work page: live sites plus earlier work we have a picture for. */
 export const featuredWork = [...liveWork, ...portfolio.filter((item) => item.status !== "live" && item.image)];
 export const earlierWork = portfolio.filter((item) => item.status !== "live" && !item.image);

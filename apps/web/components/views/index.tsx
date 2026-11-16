@@ -22,7 +22,7 @@ import { getCopy } from "@/content/copy";
 import { getIndustry } from "@/content/industries";
 import { getGuide, getPost, getPosts } from "@/content/news";
 import { bodies } from "@/content/news/bodies";
-import { cases, earlierWork, featuredWork, liveWork, portfolio } from "@/content/portfolio";
+import { cases, earlierWork, featuredWork, portfolio, topWork } from "@/content/portfolio";
 import { getPrivacy } from "@/content/privacy";
 import { getQuoteFormCopy } from "@/content/quote-form";
 import { getService, getServices } from "@/content/services";
@@ -75,7 +75,7 @@ export function HomeView({ locale }: { locale: Locale }) {
       </section>
       <section className="odh-sec odh-wrap">
         <SectionHead label="Selected work">{t.workTitle}</SectionHead>
-        <WorkEditorial items={liveWork} locale={locale} />
+        <WorkEditorial items={topWork} locale={locale} />
       </section>
       <section className="odh-sec odh-wrap">
         <SectionHead label={copy.cases.label}>{copy.cases.title}</SectionHead>
@@ -218,7 +218,7 @@ export function ServiceDetailView({ locale, slug }: { locale: Locale; slug: stri
       {isSoftware ? (
         <section className="odh-sec odh-wrap">
           <SectionHead label="Selected work">{t.relatedWork}</SectionHead>
-          <WorkEditorial items={liveWork} locale={locale} />
+          <WorkEditorial items={topWork} locale={locale} />
         </section>
       ) : null}
 
