@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<title>board mock</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --teal:#24695C; --teal2:#49ACAA; --ink:#2F3336; --muted:#6F727A;
+    --line:#E7EDEC; --amber:#FFBD6E; --rose:#FF7171; --blue:#00759F;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{width:1280px;height:640px;overflow:hidden}
+  body{font-family:'Prompt','IBM Plex Sans Thai','Noto Sans Thai','Thonburi',sans-serif;
+       color:var(--ink);font-weight:300;
+       background:linear-gradient(170deg,#EFF7F5 0%,#F6FAF9 42%,#FDFBF6 100%)}
+
+  .nav{height:58px;display:flex;align-items:center;gap:15px;padding:0 30px;
+       background:rgba(255,255,255,.72);border-bottom:1px solid var(--line)}
+  .mk{display:flex;align-items:center;gap:9px}
+  .leaf{width:33px;height:33px;border-radius:11px;background:var(--teal);display:grid;place-items:center}
+  .leaf svg{width:18px;height:18px;stroke:#fff;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .mt{font-size:14px;font-weight:500;letter-spacing:.2px}
+  .links{display:flex;gap:18px;font-size:12.2px;color:var(--muted);margin-left:10px}
+  .links .on{color:var(--teal);font-weight:400}
+  .sp{flex:1}
+  .ghost{height:32px;padding:0 15px;border-radius:999px;border:1px solid var(--line);
+         display:grid;place-items:center;font-size:11.5px;color:var(--muted)}
+  .me{width:32px;height:32px;border-radius:50%;background:var(--teal2);color:#fff;
+      display:grid;place-items:center;font-size:12px}
+
+  .wrap{padding:17px 30px 0;display:grid;grid-template-columns:1fr 316px;gap:17px;height:582px}
+  .left{display:flex;flex-direction:column;gap:13px;min-height:0}
+
+  /* composer */
+  .comp{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px;
+        box-shadow:0 4px 18px rgba(36,105,92,.05);flex:none}
+  .ct{font-size:14.5px;font-weight:500}
+  .cs{font-size:11.3px;color:var(--muted);margin-top:1px}
+  .cbox{margin-top:10px;height:42px;border:1px dashed #CFE0DC;border-radius:11px;background:#F7FBFA;
+        display:flex;align-items:center;padding:0 14px;font-size:12.3px;color:#A7AFAD}
+  .crow{display:flex;align-items:center;gap:8px;margin-top:10px}
+  .pil{font-size:10.5px;padding:4px 11px;border-radius:999px;background:rgba(36,105,92,.07);color:var(--teal)}
+  .post-btn{margin-left:auto;height:32px;padding:0 19px;border-radius:999px;background:var(--teal);
+            color:#fff;font-size:12px;display:grid;place-items:center}
+
+  /* feed */
+  .feed{flex:1;display:flex;flex-direction:column;gap:12px;min-height:0}
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:13px 16px;
+        box-shadow:0 4px 18px rgba(36,105,92,.04)}
+  .ph{display:flex;align-items:center;gap:10px}
+  .pav{width:34px;height:34px;border-radius:50%;background:#F1F7F5;display:grid;place-items:center;font-size:15px}
+  .pn{font-size:12.3px}
+  .pt{font-size:10.2px;color:#A7AFAD}
+  .best{margin-left:auto;font-size:9.8px;padding:3px 10px;border-radius:999px;
+        background:rgba(255,189,110,.2);color:#9A6213}
+  .ptx{font-size:13.3px;line-height:1.62;margin-top:9px;color:#43484B}
+  .acts{display:flex;align-items:center;gap:9px;margin-top:11px;padding-top:10px;border-top:1px solid #F2F6F5}
+  .hb{display:flex;align-items:center;gap:7px;height:31px;padding:0 14px;border-radius:999px;
+      background:rgba(255,113,113,.1);color:#D4595C;font-size:11.8px}
+  .hb svg{width:14px;height:14px;fill:currentColor}
+  .ab{display:flex;align-items:center;gap:6px;height:31px;padding:0 13px;border-radius:999px;
+      border:1px solid var(--line);color:var(--muted);font-size:11.5px}
+  .ab svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .faces{margin-left:auto;display:flex;align-items:center;gap:7px;font-size:10.5px;color:#A7AFAD}
+  .fs{display:flex}
+  .fs i{width:19px;height:19px;border-radius:50%;border:2px solid #fff;margin-left:-7px;display:block}
+  .reply{margin-top:10px;display:flex;gap:9px;background:#F7FBFA;border-radius:11px;padding:9px 12px}
+  .rav{width:24px;height:24px;border-radius:50%;background:#E3EFEC;display:grid;place-items:center;font-size:11px;flex:none}
+  .rtx{font-size:11.6px;line-height:1.5;color:#55595C}
+  .rtx b{font-weight:400;color:var(--teal);font-size:10.3px;display:block}
+
+  /* right rail */
+  .rail{display:flex;flex-direction:column;gap:13px;min-height:0}
+  .big{background:linear-gradient(150deg,var(--teal) 0%,#2F8176 100%);border-radius:14px;
+       padding:17px 18px;color:#fff;flex:none}
+  .big .l{font-size:11.5px;opacity:.82}
+  .big .v{font-size:31px;font-weight:500;line-height:1.2;margin-top:2px}
+  .big .s{font-size:11px;opacity:.82;margin-top:3px}
+  .big .bar{height:5px;border-radius:999px;background:rgba(255,255,255,.25);margin-top:12px;overflow:hidden}
+  .big .bar i{display:block;height:100%;width:72%;border-radius:999px;background:var(--amber)}
+
+  .panel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:13px 16px;flex:none}
+  .pt2{font-size:12.5px;font-weight:500;margin-bottom:9px}
+  .mini{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #F4F8F7}
+  .mini:last-child{border-bottom:none}
+  .mav{width:26px;height:26px;border-radius:50%;background:#F1F7F5;display:grid;place-items:center;font-size:12px;flex:none}
+  .mtx{font-size:11.5px;line-height:1.45;color:#52575A}
+  .mc{font-size:10px;color:#D4595C;margin-top:2px}
+  .care{background:rgba(0,117,159,.06);border:1px solid rgba(0,117,159,.14);border-radius:14px;
+        padding:12px 15px;display:flex;gap:10px;align-items:flex-start;margin-top:auto}
+  .care svg{width:17px;height:17px;stroke:var(--blue);fill:none;stroke-width:1.8;flex:none;margin-top:1px}
+  .care div{font-size:11px;line-height:1.5;color:#3F6B7E}
+  .care b{display:block;font-weight:400;color:var(--blue);font-size:11.5px}
+</style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="mk">
+      <span class="leaf"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.2-7-9a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 4.8-7 9-7 9z"/></svg></span>
+      <span class="mt">กระดานให้กำลังใจ</span>
+    </div>
+    <div class="links"><span class="on">หน้าฟีด</span><span>ระบายความรู้สึก</span><span>โพสต์ที่ดีที่สุด</span><span>แหล่งช่วยเหลือ</span></div>
+    <div class="sp"></div>
+    <div class="ghost">โพสต์ของฉัน</div>
+    <div class="me">🌿</div>
+  </nav>
+
+  <div class="wrap">
+    <div class="left">
+      <section class="comp">
+        <div class="ct">วันนี้เป็นยังไงบ้าง</div>
+        <div class="cs">พิมพ์สิ่งที่แบกอยู่ทิ้งไว้ตรงนี้ได้ ไม่มีใครเห็นว่าเป็นคุณ</div>
+        <div class="cbox">อยากเล่าอะไรก็พิมพ์ได้เลย...</div>
+        <div class="crow">
+          <span class="pil">🌙 เหนื่อย</span><span class="pil">💭 สับสน</span><span class="pil">🌱 อยากมีกำลังใจ</span>
+          <span class="post-btn">โพสต์แบบไม่ระบุชื่อ</span>
+        </div>
+      </section>
+
+      <div class="feed">
+        <article class="card">
+          <div class="ph">
+            <span class="pav">☁️</span>
+            <div><div class="pn">ไม่ระบุชื่อ</div><div class="pt">25 นาทีที่แล้ว</div></div>
+            <span class="best">โพสต์ที่ดีที่สุดวันนี้</span>
+          </div>
+          <div class="ptx">สอบไม่ผ่านอีกรอบ ท้อมากจนไม่อยากบอกใครที่บ้าน แต่เห็นคนในนี้เคยผ่านเรื่องแบบเดียวกันแล้วรู้สึกดีขึ้น ปีหน้าจะลองใหม่อีกที</div>
+          <div class="acts">
+            <span class="hb"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.2-7-9a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 4.8-7 9-7 9z"/></svg>ให้กำลังใจ 204</span>
+            <span class="ab"><svg viewBox="0 0 24 24"><path d="M20 12a7 7 0 0 1-7 7H7l-3 2 1-4a7 7 0 1 1 15-5z"/></svg>57</span>
+            <span class="ab"><svg viewBox="0 0 24 24"><path d="M4 12v7h16v-7M12 3v12M8 7l4-4 4 4"/></svg>แชร์ 31</span>
+            <span class="faces"><span class="fs">
+              <i style="background:#FFD9A0"></i><i style="background:#A8DCD1"></i><i style="background:#C5CFF5"></i><i style="background:#F7BFC3"></i>
+            </span>และอีก 200 คน</span>
+          </div>
+          <div class="reply">
+            <span class="rav">🌻</span>
+            <div class="rtx"><b>ไม่ระบุชื่อ · 12 นาทีที่แล้ว</b>เคยสอบตกสองปีติดเหมือนกัน ตอนนี้ทำงานที่ชอบอยู่ ค่อย ๆ ไปนะ ไม่ต้องรีบ</div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="ph">
+            <span class="pav">🌤️</span>
+            <div><div class="pn">ไม่ระบุชื่อ</div><div class="pt">1 ชั่วโมงที่แล้ว</div></div>
+          </div>
+          <div class="ptx">ทำงานมาทั้งอาทิตย์ ไม่มีใครถามสักคนว่าไหวไหม วันนี้เลยอยากมาพิมพ์ทิ้งไว้ตรงนี้</div>
+          <div class="acts">
+            <span class="hb"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.2-7-9a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 4.8-7 9-7 9z"/></svg>ให้กำลังใจ 86</span>
+            <span class="ab"><svg viewBox="0 0 24 24"><path d="M20 12a7 7 0 0 1-7 7H7l-3 2 1-4a7 7 0 1 1 15-5z"/></svg>14</span>
+            <span class="faces"><span class="fs">
+              <i style="background:#B8E0D2"></i><i style="background:#FFE0B2"></i><i style="background:#D7CCF0"></i>
+            </span>และอีก 83 คน</span>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <aside class="rail">
+      <div class="big">
+        <div class="l">กำลังใจที่ส่งถึงกันวันนี้</div>
+        <div class="v">9,365 ครั้ง</div>
+        <div class="s">จากผู้ระบาย 1,742 คนในเดือนนี้</div>
+        <div class="bar"><i></i></div>
+      </div>
+
+      <div class="panel">
+        <div class="pt2">โพสต์ที่คนให้กำลังใจมากที่สุด</div>
+        <div class="mini"><span class="mav">🌙</span><div><div class="mtx">กลับบ้านมาแล้วรู้สึกเหงากว่าเดิม</div><div class="mc">♥ 412</div></div></div>
+        <div class="mini"><span class="mav">🌊</span><div><div class="mtx">ย้ายมาทำงานเมืองใหญ่คนเดียว คิดถึงบ้านมาก</div><div class="mc">♥ 357</div></div></div>
+        <div class="mini"><span class="mav">🍂</span><div><div class="mtx">เลิกกันแล้ว แต่ยังต้องเจอกันทุกวัน</div><div class="mc">♥ 298</div></div></div>
+      </div>
+
+      <div class="care">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
+        <div><b>ถ้ารู้สึกไม่ไหว</b>มีสายด่วนสุขภาพจิตและทีมดูแลคอยอ่านโพสต์ในนี้อยู่ตลอด</div>
+      </div>
+    </aside>
+  </div>
+</body>
+</html>
