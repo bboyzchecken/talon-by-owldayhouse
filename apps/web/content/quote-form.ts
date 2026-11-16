@@ -25,7 +25,7 @@ export interface QuoteFormCopy {
   label: string;
   title: string;
   lead: string;
-  /** {days} is replaced with the reply time from content/site.ts. */
+  /** {days} is replaced with the reply time from content/site.ts, {s} with "s" unless it is 1. */
   promise: string;
   stepOf: string;
   steps: readonly [string, string, string];
@@ -148,7 +148,7 @@ const quoteForm = {
     label: "Quote request",
     title: "Send us your brief",
     lead: "Rather not chat? Fill this in: three short steps. Only your name and one way to reach you are required.",
-    promise: "We don't send a confirmation email. Our team will get back to you within {days} business days, on the channel you give us.",
+    promise: "We don't send a confirmation email. Our team will get back to you within {days} business day{s}, on the channel you give us.",
     stepOf: "Step",
     steps: ["What you need", "About the work", "How to reach you"],
     interestsLegend: "Which services are you interested in?",
@@ -212,7 +212,7 @@ const quoteForm = {
       failed: "That didn't go through. Please try again, or message us on LINE or Messenger above.",
     },
     doneTitle: "Got it — thank you",
-    doneBody: "Our team will get back to you within {days} business days, on the channel you gave us. In a hurry? Message us on LINE or call.",
+    doneBody: "Our team will get back to you within {days} business day{s}, on the channel you gave us. In a hurry? Message us on LINE or call.",
     doneAgain: "Send another",
   },
 } as const satisfies Record<Locale, QuoteFormCopy>;
