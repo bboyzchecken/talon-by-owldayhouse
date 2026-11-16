@@ -279,3 +279,40 @@ func (s *documentStoreService) FindContact(id uint) (*models.BillingContact, err
 	}
 	return &contact, nil
 }
+
+func (s *documentStoreService) ListContacts(search, side string, ownerUserID *uint, limit int) ([]*models.BillingContact, error) {
+	q := s.db.Model(&models.BillingContact{})
+	if search = strings.TrimSpace(search); search != "" {
+		like := "%" + strings.ToLower(search) + "%"
+		q = q.Where("LOWER(name) LIKE ? OR LOWER(code) LIKE ? OR tax_number LIKE ?", like, like, like)
+	}
+	switch side {
+	case models.FinanceCustomer:
+		q = q.Where("finance_side IN ?", []string{models.FinanceCustomer, models.FinanceBoth})
+	case models.FinanceVendor:
+		q = q.Where("finance_side IN ?", []string{models.FinanceVendor, models.FinanceBoth})
+	}
+	if ownerUserID != nil {
+		q = q.Where("lead_id IN (SELECT id FROM leads WHERE owner_user_id = ?)", *ownerUserID)
+	}
+	if limit <= 0 || limit > 100 {
+		limit = 30
+	}
+	var rows []*models.BillingContact
+	err := q.Order("name").Limit(limit).Find(&rows).Error
+	return rows, err
+}
+
+func (s *documentStoreService) ListProducts(search string, limit int) ([]*models.Product, error) {
+	q := s.db.Model(&models.Product{}).Where("active")
+	if search = strings.TrimSpace(search); search != "" {
+		like := "%" + strings.ToLower(search) + "%"
+		q = q.Where("LOWER(name) LIKE ? OR LOWER(code) LIKE ?", like, like)
+	}
+	if limit <= 0 || limit > 100 {
+		limit = 50
+	}
+	var rows []*models.Product
+	err := q.Order("code").Limit(limit).Find(&rows).Error
+	return rows, err
+}

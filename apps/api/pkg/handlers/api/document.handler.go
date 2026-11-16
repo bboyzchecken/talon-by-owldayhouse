@@ -64,6 +64,10 @@ func (s *Server) registerDocumentRoutes(api *echo.Group) {
 	docs := api.Group("/docs")
 	docs.GET("", s.ListDocuments)
 	docs.POST("", s.CreateDocument)
+	// Static segments before /:id.
+	docs.POST("/calculate", s.CalculateDocument)
+	docs.GET("/contacts", s.ListBillingContacts)
+	docs.GET("/products", s.ListDocumentProducts)
 	docs.GET("/:id", s.GetDocument)
 	docs.PUT("/:id", s.UpdateDocument)
 	docs.DELETE("/:id", s.DeleteDocument)
@@ -711,7 +715,7 @@ func (s *Server) DraftDocumentEmail(c echo.Context) error {
 		greeting,
 		"",
 		fmt.Sprintf("Owl Day House ขอส่ง%s เลขที่ %s ลงวันที่ %s ยอดรวม %s บาท ตามไฟล์แนบ",
-			label, doc.Code, doc.IssuedDate.Format("02/01/2006"), doc.NetAmount.StringFixed(2)),
+			label, doc.Code, doc.IssuedDate.Format("02/01/2006"), groupThousands(doc.NetAmount.StringFixed(2))),
 	}
 	if doc.DueDate != nil {
 		lines = append(lines, "ครบกำหนดชำระ "+doc.DueDate.Format("02/01/2006"))
@@ -744,4 +748,97 @@ func (s *Server) MarkDocumentSent(c echo.Context) error {
 		return s.serverError(c, err)
 	}
 	return c.NoContent(http.StatusNoContent)
+}
+
+type calculateBody struct {
+	TaxStatus int                `json:"tax_status"`
+	Discount  string             `json:"discount"`
+	Items     []documentLineBody `json:"items"`
+}
+
+// CalculateDocument handles POST /api/docs/calculate: the totals a document
+// would have, without saving anything. The form's live preview uses it, so
+// there is one copy of the arithmetic, here, and not a second one in the UI.
+func (s *Server) CalculateDocument(c echo.Context) error {
+	var body calculateBody
+	if err := c.Bind(&body); err != nil {
+		return badRequest(c, "ข้อมูลที่ส่งมาไม่ถูกต้อง")
+	}
+	if len(body.Items) > maxDocumentLines {
+		return c.JSON(http.StatusUnprocessableEntity, errorBody(fmt.Sprintf("เอกสารหนึ่งใบมีได้ไม่เกิน %d บรรทัด", maxDocumentLines)))
+	}
+	lines := make([]docmath.Line, len(body.Items))
+	for i, item := range body.Items {
+		vat := item.VatType
+		if vat == 0 && !item.IsDescription {
+			vat = models.VatSeven
+		}
+		lines[i] = docmath.Line{
+			IsDescription: item.IsDescription, Quantity: item.Quantity, Price: item.Price,
+			Discount: item.Discount, VatType: vat, WithholdingRate: item.WithholdingRate,
+		}
+	}
+	result, err := docmath.Compute(body.TaxStatus, lines, body.Discount)
+	if err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, errorBody(err.Error()))
+	}
+	lineAmounts := make([]map[string]decimal.Decimal, len(result.Lines))
+	for i, l := range result.Lines {
+		lineAmounts[i] = map[string]decimal.Decimal{"line_amount": l.LineAmount, "withholding_amount": l.WithholdingAmount}
+	}
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"lines":             lineAmounts,
+		"subtotal":          result.Subtotal,
+		"discount_total":    result.DiscountTotal,
+		"pre_tax_amount":    result.PreTaxAmount,
+		"vat_amount":        result.VatAmount,
+		"net_amount":        result.NetAmount,
+		"withholding_total": result.WithholdingTotal,
+		"payable_amount":    result.PayableAmount,
+	})
+}
+
+// ListBillingContacts handles GET /api/docs/contacts?search=&side=: the
+// picker on the document form. A sales account sees only contacts of its
+// own leads. Adding and editing contacts is step 4.
+func (s *Server) ListBillingContacts(c echo.Context) error {
+	me := actor(c)
+	var owner *uint
+	if !me.IsAdmin() {
+		owner = &me.ID
+	}
+	rows, err := s.DocumentStore.ListContacts(c.QueryParam("search"), c.QueryParam("side"), owner, 30)
+	if err != nil {
+		return s.serverError(c, err)
+	}
+	return c.JSON(http.StatusOK, map[string]interface{}{"items": rows})
+}
+
+// ListDocumentProducts handles GET /api/docs/products?search=.
+func (s *Server) ListDocumentProducts(c echo.Context) error {
+	rows, err := s.DocumentStore.ListProducts(c.QueryParam("search"), 50)
+	if err != nil {
+		return s.serverError(c, err)
+	}
+	return c.JSON(http.StatusOK, map[string]interface{}{"items": rows})
+}
+
+// groupThousands writes "20330.00" as "20,330.00" for people to read.
+func groupThousands(fixed string) string {
+	sign := ""
+	if strings.HasPrefix(fixed, "-") {
+		sign, fixed = "-", fixed[1:]
+	}
+	whole, frac := fixed, ""
+	if i := strings.Index(fixed, "."); i >= 0 {
+		whole, frac = fixed[:i], fixed[i:]
+	}
+	var b strings.Builder
+	for i, r := range whole {
+		if i > 0 && (len(whole)-i)%3 == 0 {
+			b.WriteByte(',')
+		}
+		b.WriteRune(r)
+	}
+	return sign + b.String() + frac
 }

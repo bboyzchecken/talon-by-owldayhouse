@@ -17,6 +17,14 @@ import type {
   DuplicateLead,
   FileRow,
   ImportResponse,
+  BillingContact,
+  DocStatus,
+  DocType,
+  DocumentDetail,
+  DocumentItem,
+  DocumentRow,
+  DocumentTotals,
+  Product,
   InboundRequest,
   InboundStatus,
   InboxListResponse,
@@ -437,4 +445,52 @@ export const inbox = {
   discard: (id: number, reason: string) => send<InboundRequest>("post", `/api/inbox/${id}/discard`, { reason }),
   /** Admin only: erase a request for good (a PDPA erasure request). */
   remove: (id: number) => send<void>("delete", `/api/inbox/${id}`),
+};
+
+// --- Documents ----------------------------------------------------------------
+
+export interface DocumentBody {
+  doc_type: DocType;
+  contact_id: number;
+  issued_date: string;
+  due_date?: string;
+  reference?: string;
+  remark?: string;
+  tax_status: number;
+  discount?: string;
+  items: DocumentItem[];
+  received_tax_invoice_number?: string;
+  received_tax_invoice_date?: string;
+  input_vat_period?: string;
+}
+
+export interface DocumentListFilters {
+  doc_type?: DocType;
+  status?: DocStatus;
+  month?: string;
+  search?: string;
+  lead_id?: number;
+  page?: number;
+  limit?: number;
+}
+
+export const documents = {
+  list: (filters: DocumentListFilters) =>
+    get<{ items: DocumentRow[]; total: number }>("/api/docs", filters as Record<string, unknown>),
+  get: (id: number) => get<DocumentDetail>(`/api/docs/${id}`),
+  create: (body: DocumentBody) => send<DocumentRow>("post", "/api/docs", body),
+  update: (id: number, body: DocumentBody) => send<DocumentRow>("put", `/api/docs/${id}`, body),
+  remove: (id: number) => send<void>("delete", `/api/docs/${id}`),
+  issue: (id: number) => send<DocumentRow>("post", `/api/docs/${id}/issue`),
+  void: (id: number, reason: string) => send<DocumentRow>("post", `/api/docs/${id}/void`, { reason }),
+  next: (id: number, docType: DocType) => send<DocumentRow>("post", `/api/docs/${id}/next`, { doc_type: docType }),
+  /** A subject and body for the person to send themselves. Nothing is sent. */
+  emailDraft: (id: number) =>
+    send<{ to: string; subject: string; body: string }>("post", `/api/docs/${id}/email-draft`),
+  markSent: (id: number) => send<void>("post", `/api/docs/${id}/sent`),
+  calculate: (body: { tax_status: number; discount?: string; items: DocumentItem[] }) =>
+    send<DocumentTotals>("post", "/api/docs/calculate", body),
+  contacts: (search: string, side?: "customer" | "vendor") =>
+    get<{ items: BillingContact[] }>("/api/docs/contacts", { search, side }),
+  products: (search: string) => get<{ items: Product[] }>("/api/docs/products", { search }),
 };

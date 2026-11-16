@@ -361,4 +361,8 @@ type DocumentStore interface {
 	AddEvent(event *DocumentEvent) error
 	ListEvents(documentID uint) ([]*DocumentEvent, error)
 	FindContact(id uint) (*BillingContact, error)
+	// ListContacts searches the register. OwnerUserID limits it to contacts
+	// of leads that person owns.
+	ListContacts(search, side string, ownerUserID *uint, limit int) ([]*BillingContact, error)
+	ListProducts(search string, limit int) ([]*Product, error)
 }

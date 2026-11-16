@@ -458,3 +458,114 @@ export interface InboxListResponse {
   total: number;
   counts: Partial<Record<InboundStatus, number>>;
 }
+
+// --- Documents (quotations, invoices, receipts …) -----------------------------
+
+/** PEAK's TransactionType numbers. */
+export type DocType = 101 | 102 | 103 | 104 | 105 | 106 | 107 | 202;
+export type DocStatus = "draft" | "issued" | "voided";
+
+/** Money arrives as a decimal string ("21400", "0.35"): never a float. */
+export type Money = string;
+
+export interface BillingContact {
+  id: number;
+  code: string;
+  name: string;
+  contact_type: number;
+  finance_side: "customer" | "vendor" | "both";
+  tax_number: string;
+  branch_code: string;
+  address: string;
+  sub_district: string;
+  district: string;
+  province: string;
+  post_code: string;
+  person_first_name: string;
+  person_last_name: string;
+  person_phone: string;
+  person_email: string;
+  lead_id?: number;
+}
+
+export interface Product {
+  id: number;
+  code: string;
+  name: string;
+  description: string;
+  unit_name: string;
+  sell_price: Money;
+  sell_vat_type: number;
+}
+
+export interface DocumentItem {
+  id?: number;
+  position?: number;
+  product_id?: number;
+  description: string;
+  is_description: boolean;
+  quantity: Money;
+  unit_name: string;
+  price: Money;
+  discount: string;
+  vat_type: number;
+  withholding_rate: Money;
+  line_amount?: Money;
+  withholding_amount?: Money;
+}
+
+export interface DocumentRow {
+  id: number;
+  doc_type: DocType;
+  code: string;
+  status: DocStatus;
+  contact_id: number;
+  contact?: BillingContact;
+  lead_id?: number;
+  issued_date: string;
+  due_date?: string;
+  reference: string;
+  remark: string;
+  tax_status: number;
+  is_tax_invoice: boolean;
+  discount_total: Money;
+  pre_tax_amount: Money;
+  vat_amount: Money;
+  net_amount: Money;
+  withholding_total: Money;
+  source_document_id?: number;
+  source_document?: DocumentRow;
+  received_tax_invoice_number: string;
+  received_tax_invoice_date?: string;
+  input_vat_period?: string;
+  issued_at?: string;
+  voided_at?: string;
+  void_reason: string;
+  items?: DocumentItem[];
+  created_at: string;
+}
+
+export interface DocumentEvent {
+  id: number;
+  action: string;
+  note: string;
+  user?: User;
+  created_at: string;
+}
+
+export interface DocumentDetail {
+  document: DocumentRow;
+  events: DocumentEvent[];
+  next: DocType[] | null;
+}
+
+export interface DocumentTotals {
+  lines: { line_amount: Money; withholding_amount: Money }[];
+  subtotal: Money;
+  discount_total: Money;
+  pre_tax_amount: Money;
+  vat_amount: Money;
+  net_amount: Money;
+  withholding_total: Money;
+  payable_amount: Money;
+}

@@ -287,7 +287,7 @@ func TestDraftsDeleteAndEmailIsOnlyADraft(t *testing.T) {
 	env.do(env.admin, http.MethodPost, fmt.Sprintf("/api/docs/%d/issue", id), nil)
 	mail := env.do(env.admin, http.MethodPost, fmt.Sprintf("/api/docs/%d/email-draft", id), nil)
 	if mail.Status != http.StatusOK || str(mail, "to") != "buyer@example.com" ||
-		!strings.Contains(str(mail, "subject"), "QO-20261100001") || !strings.Contains(str(mail, "body"), "21400.00") {
+		!strings.Contains(str(mail, "subject"), "QO-20261100001") || !strings.Contains(str(mail, "body"), "21,400.00") {
 		t.Fatalf("e-mail draft: %d %s", mail.Status, mail.Raw)
 	}
 	if r := env.do(env.admin, http.MethodPost, fmt.Sprintf("/api/docs/%d/sent", id), nil); r.Status != http.StatusNoContent {
@@ -330,5 +330,39 @@ func TestExpenseInputVatPeriod(t *testing.T) {
 	}
 	if r := env.do(env.sales1, http.MethodPost, "/api/docs", body(vendor, "")); r.Status != http.StatusForbidden {
 		t.Fatalf("expenses are the admin's: want 403, got %d", r.Status)
+	}
+}
+
+func TestCalculateAndPickers(t *testing.T) {
+	env := newTestEnv(t)
+	calc := env.do(env.sales1, http.MethodPost, "/api/docs/calculate", map[string]interface{}{
+		"tax_status": models.TaxExclusive, "discount": "1000", "items": quotationBody(0)["items"],
+	})
+	if calc.Status != http.StatusOK || str(calc, "net_amount") != "20330" || str(calc, "payable_amount") != "19760" {
+		t.Fatalf("calculate: %d %s", calc.Status, calc.Raw)
+	}
+	bad := env.do(env.admin, http.MethodPost, "/api/docs/calculate", map[string]interface{}{"items": []map[string]interface{}{}})
+	if bad.Status != http.StatusUnprocessableEntity {
+		t.Fatalf("no lines: want 422, got %d", bad.Status)
+	}
+	if n := env.db.Model(&models.Document{}).Find(&[]models.Document{}).RowsAffected; n != 0 {
+		t.Fatalf("calculate must not save anything, found %d documents", n)
+	}
+
+	lead := leadID(t, env.createLead(env.sales1, map[string]interface{}{"name": "ลูกค้าพิกเกอร์", "industry": "education", "source": "referral"}))
+	env.seedBillingContact("C-0100", "ลูกค้าพิกเกอร์", &lead, models.FinanceCustomer, true)
+	env.seedBillingContact("C-0101", "ลูกค้าแอดมิน", nil, models.FinanceCustomer, true)
+	env.seedBillingContact("V-0100", "ผู้ขายอุปกรณ์", nil, models.FinanceVendor, true)
+
+	mine := env.do(env.sales1, http.MethodGet, "/api/docs/contacts", nil)
+	var items []models.BillingContact
+	mine.as(t, "items", &items)
+	if len(items) != 1 || items[0].Code != "C-0100" {
+		t.Fatalf("sales1 sees only its own customer: %s", mine.Raw)
+	}
+	customers := env.do(env.admin, http.MethodGet, "/api/docs/contacts?side=customer&search=%E0%B8%A5%E0%B8%B9%E0%B8%81%E0%B8%84%E0%B9%89%E0%B8%B2", nil)
+	customers.as(t, "items", &items)
+	if len(items) != 2 {
+		t.Fatalf("admin searching customers: %s", customers.Raw)
 	}
 }
