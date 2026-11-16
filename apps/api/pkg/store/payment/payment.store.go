@@ -257,6 +257,37 @@ func (s *paymentStoreService) Void(paymentID, userID uint, reason string) (*mode
 
 // MarkWhtCert records that the withholding certificate is in hand. It needs
 // the certificate itself: a ready file attached to the payment as such.
+func (s *paymentStoreService) MarkWhtRequested(paymentIDs []uint, userID uint) ([]*models.Payment, error) {
+	var marked []*models.Payment
+	err := s.db.Transaction(func(tx *gorm.DB) error {
+		var rows []*models.Payment
+		if err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).
+			Where("id IN ? AND status = ? AND direction = ? AND wht_cert_status = ?",
+				paymentIDs, models.PaymentActive, models.PaymentOut, models.WhtCertPending).
+			Order("id").Find(&rows).Error; err != nil {
+			return err
+		}
+		now := time.Now()
+		for _, p := range rows {
+			if err := tx.Model(&models.Payment{}).Where("id = ?", p.ID).
+				Update("wht_requested_at", now).Error; err != nil {
+				return err
+			}
+			docID := p.DocumentID
+			if err := tx.Create(&models.DocumentEvent{
+				DocumentID: &docID, UserID: userID, Action: models.DocEventWhtRequested,
+				Note: "ขอให้สำนักบัญชีออก 50 ทวิ ภาษีที่หัก " + docmath.Baht(p.WithholdingAmount) + " บาท",
+			}).Error; err != nil {
+				return err
+			}
+			p.WhtRequestedAt = &now
+		}
+		marked = rows
+		return nil
+	})
+	return marked, err
+}
+
 func (s *paymentStoreService) MarkWhtCert(paymentID uint) (*models.Payment, error) {
 	err := s.db.Transaction(func(tx *gorm.DB) error {
 		payment, err := lockPayment(tx, paymentID)

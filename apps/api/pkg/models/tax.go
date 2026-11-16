@@ -84,6 +84,12 @@ type TaxFiling struct {
 	// The figures as they stood when the filing was confirmed.
 	TaxFigures
 
+	// The hand-off to the accounting firm, who files: when our figures were
+	// sent to them, and the amount on the e-tax QR they sent back.
+	SentAt    *time.Time      `json:"sent_at,omitempty"`
+	DueAmount decimal.Decimal `gorm:"type:numeric(14,2);not null;default:0" json:"due_amount"`
+	DueSetAt  *time.Time      `json:"due_set_at,omitempty"`
+
 	// What was actually paid (it can include a surcharge), when, and the
 	// Revenue Department's reference.
 	PaidAmount decimal.Decimal `gorm:"type:numeric(14,2);not null;default:0" json:"paid_amount"`
@@ -148,5 +154,9 @@ type TaxStore interface {
 	// figures with what was paid.
 	MarkFiled(id, userID uint, figures TaxFigures, paid TaxFiling) (*TaxFiling, error)
 	Reopen(id, userID uint, reason string) (*TaxFiling, error)
+	// MarkSent: our figures went to the accounting firm.
+	MarkSent(id, userID uint) (*TaxFiling, error)
+	// SetDue: the amount on the QR the accounting firm sent back.
+	SetDue(id, userID uint, amount decimal.Decimal) (*TaxFiling, error)
 	Events(filingID uint) ([]*DocumentEvent, error)
 }

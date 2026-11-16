@@ -328,6 +328,10 @@ const (
 	// A monthly tax filing confirmed, or reopened (tax_filing_id is set).
 	DocEventTaxFiled    = "tax_filed"
 	DocEventTaxReopened = "tax_reopened"
+	DocEventTaxSent     = "tax_sent" // figures sent to the accounting firm
+	DocEventTaxDue      = "tax_due"  // the firm's QR amount recorded
+	// The accounting firm was asked to issue a 50 ทวิ for a payment.
+	DocEventWhtRequested = "wht_requested"
 )
 
 // DocumentEvent is the log of who did what to a document, and when.

@@ -325,6 +325,52 @@ func (s *taxStoreService) Reopen(id, userID uint, reason string) (*models.TaxFil
 	return s.FindFiling(id)
 }
 
+func (s *taxStoreService) MarkSent(id, userID uint) (*models.TaxFiling, error) {
+	return s.step(id, userID, func(tx *gorm.DB, row *models.TaxFiling, now time.Time) (string, string, error) {
+		if err := tx.Model(&models.TaxFiling{}).Where("id = ?", id).
+			Updates(map[string]interface{}{"sent_at": now, "updated_at": now}).Error; err != nil {
+			return "", "", err
+		}
+		return models.DocEventTaxSent, "ส่งข้อมูลให้สำนักบัญชีแล้ว", nil
+	})
+}
+
+func (s *taxStoreService) SetDue(id, userID uint, amount decimal.Decimal) (*models.TaxFiling, error) {
+	return s.step(id, userID, func(tx *gorm.DB, row *models.TaxFiling, now time.Time) (string, string, error) {
+		if err := tx.Model(&models.TaxFiling{}).Where("id = ?", id).
+			Updates(map[string]interface{}{"due_amount": amount, "due_set_at": now, "updated_at": now}).Error; err != nil {
+			return "", "", err
+		}
+		return models.DocEventTaxDue, "สำนักบัญชีแจ้งยอดชำระตาม QR " + docmath.Baht(amount) + " บาท", nil
+	})
+}
+
+// step runs one hand-off step on an open filing (a filed month is done)
+// and logs it.
+func (s *taxStoreService) step(id, userID uint, apply func(*gorm.DB, *models.TaxFiling, time.Time) (string, string, error)) (*models.TaxFiling, error) {
+	err := s.db.Transaction(func(tx *gorm.DB) error {
+		row, err := lockFiling(tx, id)
+		if err != nil {
+			return err
+		}
+		if row.Status == models.TaxFilingFiled {
+			return models.ErrTaxFilingFiled
+		}
+		action, note, err := apply(tx, row, time.Now())
+		if err != nil {
+			return err
+		}
+		return tx.Create(&models.DocumentEvent{
+			TaxFilingID: &id, UserID: userID, Action: action,
+			Note: formLabel(row.Form) + " งวด " + row.Period.Format("01/2006") + ": " + note,
+		}).Error
+	})
+	if err != nil {
+		return nil, err
+	}
+	return s.FindFiling(id)
+}
+
 func (s *taxStoreService) Events(filingID uint) ([]*models.DocumentEvent, error) {
 	var rows []*models.DocumentEvent
 	err := s.db.Preload("User").Where("tax_filing_id = ?", filingID).Order("created_at, id").Find(&rows).Error

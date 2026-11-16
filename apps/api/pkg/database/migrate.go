@@ -249,6 +249,22 @@ func migrations(db *gorm.DB) *gormigrate.Gormigrate {
 				return tx.Migrator().DropTable("tax_filings")
 			},
 		},
+		{
+			// Working with the accounting firm: when a 50 ทวิ was asked of
+			// them, and each month's hand-off (sent, the QR amount).
+			ID: "20261117_01_accounting_handoff",
+			Migrate: func(tx *gorm.DB) error {
+				return tx.AutoMigrate(&models.Payment{}, &models.TaxFiling{})
+			},
+			Rollback: func(tx *gorm.DB) error {
+				for _, col := range []string{"sent_at", "due_amount", "due_set_at"} {
+					if err := tx.Migrator().DropColumn(&models.TaxFiling{}, col); err != nil {
+						return err
+					}
+				}
+				return tx.Migrator().DropColumn(&models.Payment{}, "wht_requested_at")
+			},
+		},
 	})
 }
 

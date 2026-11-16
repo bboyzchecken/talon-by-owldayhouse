@@ -228,9 +228,9 @@ function FollowUps({ d }: { d: FinanceOverview }) {
     {
       show: f.wht_to_send.count > 0,
       icon: <Send className="size-4" aria-hidden />,
-      title: `ต้องส่ง 50 ทวิ ให้ผู้รับเงิน ${f.wht_to_send.count} ใบ`,
-      detail: `ภาษีที่เราหัก ${money(f.wht_to_send.amount)} บาท`,
-      href: "/docs/expenses",
+      title: `50 ทวิ ที่ยังไม่ถึงผู้รับเงิน ${f.wht_to_send.count} ใบ`,
+      detail: `ภาษีที่เราหัก ${money(f.wht_to_send.amount)} บาท · ขอ/ตามจากสำนักบัญชี`,
+      href: "/docs/accounting",
     },
     {
       show: f.no_tax_invoice.count > 0,

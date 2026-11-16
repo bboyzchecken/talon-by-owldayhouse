@@ -59,6 +59,11 @@ type Payment struct {
 	// vendor does not move tax already withheld to another form.
 	WhtForm string `gorm:"size:8;not null;default:''" json:"wht_form"`
 
+	// WhtRequestedAt: money out only. The 50 ทวิ we owe a vendor is issued by
+	// the accounting firm, never by this system; this is when we asked them
+	// for it. The copy they send back is attached as payment_wht.
+	WhtRequestedAt *time.Time `json:"wht_requested_at,omitempty"`
+
 	WhtCertStatus string     `gorm:"size:10;not null;default:none;index" json:"wht_cert_status"`
 	WhtCertAt     *time.Time `json:"wht_cert_at,omitempty"`
 
@@ -112,6 +117,10 @@ type PaymentStore interface {
 	IssueReceipt(paymentID, userID uint, receipt *ReceiptPlan) (*Payment, error)
 	Void(paymentID, userID uint, reason string) (*Payment, error)
 	MarkWhtCert(paymentID uint) (*Payment, error)
+	// MarkWhtRequested records that the accounting firm was asked for the
+	// 50 ทวิ of these payments (active, money out, certificate pending). It
+	// returns the payments it marked.
+	MarkWhtRequested(paymentIDs []uint, userID uint) ([]*Payment, error)
 	Find(id uint) (*Payment, error)
 	ListByDocument(documentID uint) ([]*Payment, error)
 	List(filter PaymentFilter) ([]*Payment, int64, error)
