@@ -19,6 +19,11 @@ type Config struct {
 	JwtTTL      time.Duration
 	CorsOrigins []string
 
+	// IntakePostgresPassword is the password the CRM gives the public intake
+	// service's database role on boot. Empty means the CRM leaves that role
+	// alone (local development without the intake).
+	IntakePostgresPassword string
+
 	Postgres PostgresConfig
 	R2       R2Config
 	Leads    LeadsConfig

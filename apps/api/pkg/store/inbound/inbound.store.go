@@ -8,6 +8,9 @@
 package inbound
 
 import (
+	"time"
+
+	"github.com/lib/pq"
 	"github.com/owldayhouse/odh-internal-api/pkg/models"
 	"go.uber.org/fx"
 	"gorm.io/gorm"
@@ -27,8 +30,43 @@ var Module = fx.Module("store.inbound", fx.Provide(New))
 
 // Create stores one submission. Nothing else about it is decided here: it
 // lands as `new` and waits for a person.
+//
+// It is a plain INSERT on purpose, not gorm's Create. Gorm appends
+// `RETURNING "id"`, and PostgreSQL needs SELECT on a column to return it — a
+// privilege the intake role must not have. So the statement names its columns
+// and returns nothing, and row.ID stays zero: the intake never needs it.
 func (s *inboundStoreService) Create(row *models.InboundRequest) error {
-	return s.db.Create(row).Error
+	now := time.Now()
+	if row.CreatedAt.IsZero() {
+		row.CreatedAt = now
+	}
+	row.UpdatedAt = now
+	if row.Kind == "" {
+		row.Kind = models.InboundKindQuote
+	}
+	if row.Status == "" {
+		row.Status = models.InboundStatusNew
+	}
+	if row.Locale == "" {
+		row.Locale = "th"
+	}
+	if row.Interests == nil {
+		row.Interests = pq.StringArray{}
+	}
+
+	return s.db.Exec(`INSERT INTO inbound_requests (
+			created_at, updated_at, kind, status, locale,
+			contact_name, company, industry, phone, line_id, email,
+			interests, brief, timeline, budget_band,
+			utm_source, utm_campaign, referrer, landing_path,
+			ip_hash, user_agent, discard_reason
+		) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '')`,
+		row.CreatedAt, row.UpdatedAt, row.Kind, row.Status, row.Locale,
+		row.ContactName, row.Company, row.Industry, row.Phone, row.LineID, row.Email,
+		row.Interests, row.Brief, row.Timeline, row.BudgetBand,
+		row.UTMSource, row.UTMCampaign, row.Referrer, row.LandingPath,
+		row.IPHash, row.UserAgent,
+	).Error
 }
 
 func (s *inboundStoreService) List(filter models.InboundFilter) ([]*models.InboundRequest, int64, error) {
@@ -71,11 +109,45 @@ func (s *inboundStoreService) Find(id uint) (*models.InboundRequest, error) {
 	return &row, nil
 }
 
-// Update saves a row an admin has acted on. Requests are never deleted: a
-// discarded one keeps its text and its reason, which is what makes a flood of
-// spam readable after the fact.
+// Update saves a row someone has acted on. A discarded request keeps its
+// text and its reason until the retention purge, which is what makes a flood
+// of spam readable after the fact.
 func (s *inboundStoreService) Update(row *models.InboundRequest) error {
 	return s.db.Save(row).Error
+}
+
+// MarkHandled moves a request out of `new`, but only if it is still `new`.
+// It reports false when someone else got there first, so two people pressing
+// "accept" on the same request cannot both succeed.
+func (s *inboundStoreService) MarkHandled(row *models.InboundRequest) (bool, error) {
+	result := s.db.Model(&models.InboundRequest{}).
+		Where("id = ? AND status = ?", row.ID, models.InboundStatusNew).
+		Updates(map[string]interface{}{
+			"status":         row.Status,
+			"lead_id":        row.LeadID,
+			"handled_by":     row.HandledBy,
+			"handled_at":     row.HandledAt,
+			"discard_reason": row.DiscardReason,
+			"updated_at":     time.Now(),
+		})
+	return result.RowsAffected == 1, result.Error
+}
+
+// Delete removes one request for good. It is how a request to erase personal
+// data is carried out; nothing else deletes a single row.
+func (s *inboundStoreService) Delete(id uint) error {
+	return s.db.Delete(&models.InboundRequest{}, id).Error
+}
+
+// PurgeUnaccepted deletes every request that was never accepted and is older
+// than the cut-off. The privacy policy promises this (180 days), so it runs
+// on its own rather than waiting for someone to remember. Accepted requests
+// stay: their data now belongs to a customer record with its own retention.
+func (s *inboundStoreService) PurgeUnaccepted(before time.Time) (int64, error) {
+	result := s.db.
+		Where("status <> ? AND created_at < ?", models.InboundStatusAccepted, before).
+		Delete(&models.InboundRequest{})
+	return result.RowsAffected, result.Error
 }
 
 // CountByStatus feeds the badge on the CRM menu.

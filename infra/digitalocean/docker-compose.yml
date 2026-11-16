@@ -1,8 +1,9 @@
 # ODH internal tools — DigitalOcean Droplet (12 USD: 1 vCPU, 2 GB RAM).
 #
-# Three services: PostgreSQL 16, the Go API (reachable only inside this
-# network) and Caddy, which terminates HTTPS, serves the exported static UI
-# and reverse-proxies /api, /auth and /healthz to the API.
+# Four services: PostgreSQL 16, the Go API (reachable only inside this
+# network), the public intake service for the quote form on owldayhouse.com,
+# and Caddy, which terminates HTTPS for both hostnames, serves the exported
+# static UI and reverse-proxies to the two Go programs.
 #
 # Lives at /opt/odh-internal/docker-compose.yml on the Droplet, next to .env.
 
@@ -75,11 +76,53 @@ services:
       - "5000"
     mem_limit: 400m
 
+  # The public intake (apps/api/cmd/intake) behind api.owldayhouse.com. It
+  # gets no env_file on purpose: .env holds the JWT secret, the R2 keys and
+  # the database owner's password, and none of that belongs in the one
+  # process that faces the open internet. It connects as odh_intake, which
+  # the API creates on boot with INSERT on inbound_requests and nothing else.
+  #
+  # Off until switched on: set COMPOSE_PROFILES=intake in .env once the
+  # Turnstile keys, the salt and the role password are there (README.md,
+  # "The public intake"). Without it, `docker compose up` leaves this service
+  # out and the CRM deploys exactly as before.
+  intake:
+    profiles: ["intake"]
+    build:
+      context: ./api
+      target: intake
+    restart: unless-stopped
+    environment:
+      ENV: production
+      TZ: Asia/Bangkok
+      INTAKE_PORT: "5200"
+      INTAKE_CORS_ORIGINS: ${INTAKE_CORS_ORIGINS:-https://owldayhouse.com,https://www.owldayhouse.com}
+      INTAKE_IP_SALT: ${INTAKE_IP_SALT:-}
+      TURNSTILE_SECRET: ${TURNSTILE_SECRET:-}
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: "5432"
+      POSTGRES_USERNAME: odh_intake
+      POSTGRES_PASSWORD: ${INTAKE_POSTGRES_PASSWORD:-}
+      POSTGRES_DATABASE: ${POSTGRES_DATABASE}
+      POSTGRES_SSLMODE: disable
+    depends_on:
+      # The API creates the intake's role on boot; until it is healthy the
+      # role may not exist yet.
+      api:
+        condition: service_healthy
+    expose:
+      - "5200"
+    mem_limit: 100m
+
   caddy:
     image: caddy:2-alpine
     restart: unless-stopped
     environment:
       ODH_DOMAIN: ${ODH_DOMAIN}
+      # intake.localhost until the real hostname is set: Caddy gives a
+      # .localhost name a local certificate and never asks Let's Encrypt, so
+      # an unset value cannot burn the ACME rate limit on a missing A record.
+      ODH_INTAKE_DOMAIN: ${ODH_INTAKE_DOMAIN:-intake.localhost}
       TZ: Asia/Bangkok
     ports:
       - "80:80"

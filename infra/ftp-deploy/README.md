@@ -78,6 +78,23 @@ then delete the catch-all (the three commented lines) from `apps/web/public/.hta
 | `FTP_PORT` | – | default `21` |
 | `FTP_PROTO` | – | `ftp` (default) or `ftps` for FTP over TLS |
 
+### Build-time values for the quote form
+
+The form on `/contact/` is compiled into the static bundle, so these go in the
+environment of `pnpm build:web` (or `apps/web/.env.local`), not on the FTP
+host. Both are public by design; the Turnstile **secret** lives only on the
+Droplet (`infra/digitalocean`, section 1.11).
+
+| Var | Notes |
+| --- | --- |
+| `NEXT_PUBLIC_INTAKE_URL` | `https://api.owldayhouse.com`, no trailing slash |
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | the Turnstile widget's site key |
+
+The form appears only when both are set **and** `contact.replyWithinBusinessDays`
+in `apps/web/content/site.ts` is a number — the reply time the page promises.
+Missing any one, `/contact/` builds without the form, as before. Turn the
+intake on (Droplet) before deploying a build that has the form.
+
 ## Post-deploy checklist
 
 - [ ] Open https://owldayhouse.com/ — every route, image, and Messenger/phone/LINE link works
@@ -85,6 +102,7 @@ then delete the catch-all (the three commented lines) from `apps/web/public/.hta
 - [ ] `curl -sI https://owldayhouse.com/talon/` and `/packages/` → `301` to their new URLs
 - [ ] `curl -sI https://owldayhouse.com/no-such-page/` → ideally `404`; `200` means the
       vhost 404 is still unset and the catch-all rewrite is doing the work
+- [ ] If the form is on: send it once from `/contact/` and find it in the CRM under งานเข้า
 - [ ] OG preview looks right (Facebook Sharing Debugger) — image = `/og.png`
 - [ ] Domain `owldayhouse.com` points to the host (DNS/SSL ok)
 - [ ] Submit `https://owldayhouse.com/sitemap.xml` in Google Search Console + verify the domain

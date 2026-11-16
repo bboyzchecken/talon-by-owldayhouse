@@ -417,3 +417,44 @@ export interface EgpSendResult {
   lead_id: number;
   owner_name: string;
 }
+
+// --- Inbox: requests from the quote form on owldayhouse.com -----------------
+
+export type InboundStatus = "new" | "accepted" | "discarded";
+export type Timeline = "asap" | "1_3_months" | "3_6_months" | "planning";
+export type BudgetBand = "under_100k" | "100k_300k" | "300k_1m" | "over_1m" | "unsure";
+
+export interface InboundRequest {
+  id: number;
+  created_at: string;
+  updated_at: string;
+  kind: string;
+  status: InboundStatus;
+  locale: "th" | "en";
+  contact_name: string;
+  company: string;
+  industry: Industry | "";
+  phone: string;
+  line_id: string;
+  email: string;
+  interests: Interest[] | null;
+  brief: string;
+  timeline: Timeline | "";
+  budget_band: BudgetBand | "";
+  utm_source: string;
+  utm_campaign: string;
+  referrer: string;
+  landing_path: string;
+  lead_id?: number;
+  lead?: Lead;
+  handled_by?: number;
+  handler?: User;
+  handled_at?: string;
+  discard_reason: string;
+}
+
+export interface InboxListResponse {
+  items: InboundRequest[];
+  total: number;
+  counts: Partial<Record<InboundStatus, number>>;
+}

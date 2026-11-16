@@ -28,6 +28,7 @@ import {
   SidebarHeader,
   SidebarInset,
   SidebarMenu,
+  SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
@@ -39,6 +40,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { useAuth } from "@/lib/auth";
+import { useInboxCount } from "@/lib/hooks";
 import {
   adminPages,
   pageForPath,
@@ -148,6 +150,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                           </span>
                         </Link>
                       </SidebarMenuButton>
+                      {item.badge ? <ToolBadge /> : null}
 
                       {open && pages.length > 0 ? (
                         <SidebarMenuSub>
@@ -328,6 +331,20 @@ export function AppShell({ children }: { children: ReactNode }) {
         ) : null}
       </SidebarInset>
     </SidebarProvider>
+  );
+}
+
+/** The number of website requests waiting, next to "งานเข้า" in the menu. */
+function ToolBadge() {
+  const count = useInboxCount();
+  if (count === 0) return null;
+  return (
+    <SidebarMenuBadge
+      className="rounded-full bg-primary px-1.5 font-mono text-[11px] text-primary-foreground peer-hover/menu-button:text-primary-foreground peer-data-[active=true]/menu-button:text-primary-foreground"
+      aria-label={`คำขอใหม่ ${count} รายการ`}
+    >
+      {count > 99 ? "99+" : count}
+    </SidebarMenuBadge>
   );
 }
 

@@ -91,6 +91,10 @@ func main() {
 	e := echo.New()
 	e.HideBanner = true
 	e.HidePort = true
+	// Caddy sits in front and writes X-Forwarded-For itself. Take the address
+	// it saw, and ignore whatever a caller put in the header: the rate limit
+	// and the IP hash are only as good as this value.
+	e.IPExtractor = echo.ExtractIPFromXFFHeader()
 
 	e.Use(middleware.Recover())
 	e.Use(middleware.Secure())

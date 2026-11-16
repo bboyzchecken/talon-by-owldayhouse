@@ -333,6 +333,71 @@ crontab -e
 02:05 server time. Run it once by hand first and check the object appears in
 R2.
 
+### 1.11 The public intake (api.owldayhouse.com)
+
+The quote form on owldayhouse.com posts to a separate program on this same
+Droplet, at its own hostname. It is **off** until switched on, so nothing in
+this section is needed for the CRM to work.
+
+```
+owldayhouse.com ──POST──► api.owldayhouse.com ──► Caddy ──► intake:5200 ──► inbound_requests
+ (static, FTP)            (POST /intake/* only)            role odh_intake: INSERT only
+```
+
+What keeps it apart from the CRM:
+
+| | CRM | Intake |
+|---|---|---|
+| Hostname | `crm.owldayhouse.com` | `api.owldayhouse.com` |
+| Caddy site block | its own | its own; only `POST`/`OPTIONS /intake/*` pass, the rest is 404 |
+| Container / binary | `api` / `odh-internal-api` | `intake` / `odh-intake` (image target `intake`) |
+| Environment | all of `.env` | five values, named one by one in `docker-compose.yml` |
+| PostgreSQL role | the database owner | `odh_intake`: INSERT on `inbound_requests` and its sequence, nothing else |
+
+The API creates `odh_intake` on every boot when `INTAKE_POSTGRES_PASSWORD` is
+set, and resets its grants each time, so a grant added by hand does not
+survive a restart.
+
+To switch it on:
+
+1. **DNS.** An A record `api` → the Droplet's IPv4, next to `crm`. Grey
+   cloud if the zone is on Cloudflare (see 1.7). Check with
+   `dig +short api.owldayhouse.com`.
+2. **Turnstile.** In Cloudflare: Turnstile → Add widget, hostnames
+   `owldayhouse.com` and `www.owldayhouse.com`, mode Managed. The **site
+   key** goes into the website build (`NEXT_PUBLIC_TURNSTILE_SITE_KEY`, see
+   `infra/ftp-deploy`); the **secret key** goes into `.env` here.
+3. **`.env` on the Droplet**, from the intake block of `.env.example`:
+
+   ```bash
+   COMPOSE_PROFILES=intake
+   ODH_INTAKE_DOMAIN=api.owldayhouse.com
+   INTAKE_CORS_ORIGINS=https://owldayhouse.com,https://www.owldayhouse.com
+   INTAKE_POSTGRES_PASSWORD=<openssl rand -hex 24>
+   INTAKE_IP_SALT=<openssl rand -hex 32>
+   TURNSTILE_SECRET=<the Turnstile secret key>
+   ```
+
+4. **Deploy** as usual. The API sets up the role, then the intake starts.
+5. **Check** from your own machine. A GET must be a 404, and a POST without
+   a Turnstile token gets the same 202 a real one does but stores nothing:
+
+   ```bash
+   curl -s -o /dev/null -w '%{http_code}\n' https://api.owldayhouse.com/intake/quote   # 404
+   ssh deploy@<droplet-ip> 'cd /opt/odh-internal && docker compose logs --tail=20 intake'
+   ```
+
+   Then send the real form on the website once and find it in the CRM under
+   **งานเข้า**.
+
+Until `ODH_INTAKE_DOMAIN` is set, Caddy serves that block as
+`intake.localhost`, which gets a local certificate and never contacts Let's
+Encrypt, so a missing DNS record cannot use up the ACME rate limit.
+
+Requests that are never accepted are deleted by the API 180 days after they
+arrive, because the privacy policy says so. A request to erase one sooner is
+done by an admin from the inbox (delete).
+
 ---
 
 ## 2. Deploying a change
@@ -419,6 +484,7 @@ cd /opt/odh-internal
 docker compose ps                       # what is running
 docker compose logs -f --tail=100 api   # API logs (JSON in production)
 docker compose logs -f --tail=100 caddy # certificate and HTTP logs
+docker compose logs -f --tail=100 intake # the public quote form (if on)
 docker compose restart api              # restart just the API
 # NEVER `docker compose down -v` or `docker volume prune`: -v deletes the
 # PostgreSQL volume, i.e. every lead. `docker compose down` (no -v) is safe.
@@ -435,12 +501,14 @@ docker stats --no-stream                # per-container memory
 | postgres | 900 MB | `shared_buffers=512MB` + work memory for 25 connections |
 | api | 400 MB | a Go binary; this is generous |
 | caddy | 200 MB | static files and TLS |
+| intake | 100 MB | one route; only when `COMPOSE_PROFILES=intake` |
 
-That leaves roughly 500 MB for the host, plus 2 GB of swap for builds.
+That leaves roughly 400 MB for the host, plus 2 GB of swap for builds.
 
 `max_connections=25` on the server against `POSTGRES_MAX_OPEN_CONNS=10` in
-`.env`: the API can never exhaust the server, and there is room left for a
-`psql` session and the nightly `pg_dump`. Raise them together or not at all.
+`.env`, plus at most 5 for the intake (its role has `CONNECTION LIMIT 5`):
+the two can never exhaust the server, and there is room left for a `psql`
+session and the nightly `pg_dump`. Raise them together or not at all.
 
 ### Security checklist
 
@@ -451,6 +519,9 @@ That leaves roughly 500 MB for the host, plus 2 GB of swap for builds.
 - [ ] The R2 token is scoped to the two buckets, and both are private
 - [ ] `CORS_ORIGINS` names only `https://crm.owldayhouse.com`
 - [ ] Sign-in is rate-limited in the API (per IP, with a short burst)
+- [ ] If the intake is on: `api.owldayhouse.com` answers 404 to a GET, the
+      `intake` service has no `env_file`, and `odh_intake` can only INSERT
+      (`\dp inbound_requests` in psql)
 - [ ] The whole host is `noindex` — Caddy sends `X-Robots-Tag` and the app
       ships its own `robots.txt`
 

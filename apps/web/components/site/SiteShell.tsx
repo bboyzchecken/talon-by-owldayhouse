@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { fontVariables } from "@odh/brand/fonts";
 import { Analytics } from "@/components/Analytics";
+import { AttributionCapture } from "@/components/AttributionCapture";
 import { JsonLd } from "@/components/JsonLd";
 import type { Locale } from "@/lib/i18n";
 import { businessSchema, websiteSchema } from "@/lib/structured-data";
@@ -19,6 +20,7 @@ export function SiteShell({ locale, children }: { locale: Locale; children: Reac
         <div className="flex-1">{children}</div>
         <SiteFooter locale={locale} />
         <Analytics />
+        <AttributionCapture />
       </body>
     </html>
   );

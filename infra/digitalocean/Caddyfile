@@ -1,4 +1,5 @@
-# ODH internal tools — HTTPS, static UI and API proxy on one host.
+# ODH internal tools — HTTPS, static UI and API proxy on one host, plus the
+# public intake for the quote form on a host of its own.
 #
 # Caddy gets and renews the certificate itself over HTTP-01, which needs
 # port 80 open and the A record pointing straight at the Droplet. If the
@@ -54,5 +55,46 @@
 	handle_errors {
 		rewrite * /404.html
 		file_server
+	}
+}
+
+# The public intake for the quote form on owldayhouse.com. A separate site
+# block on a separate hostname, proxying to a separate process: nothing on
+# this host reaches the CRM, and the CRM's host never reaches the intake.
+# Only POST /intake/* (and the CORS preflight) gets through; everything else,
+# the intake's own /healthz included, is a bare 404.
+{$ODH_INTAKE_DOMAIN} {
+	log {
+		output file /data/intake-access.log {
+			roll_size 10MiB
+			roll_keep 5
+		}
+	}
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "no-referrer"
+		X-Robots-Tag "noindex, nofollow, noarchive"
+		-Server
+	}
+
+	# A form, never a file: refuse anything bigger before it reaches Go,
+	# which has its own 16KB limit as well.
+	request_body {
+		max_size 16KB
+	}
+
+	@intake {
+		path /intake/*
+		method POST OPTIONS
+	}
+	handle @intake {
+		reverse_proxy intake:5200
+	}
+
+	handle {
+		respond 404
 	}
 }

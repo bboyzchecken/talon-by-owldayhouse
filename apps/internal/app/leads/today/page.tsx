@@ -9,11 +9,13 @@ import { TeamCalendar } from "@/components/team-calendar";
 import { Alert, EmptyState, Panel, Spinner, StatTile } from "@/components/odh";
 import { leads as leadsApi } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
+import { useInboxCount } from "@/lib/hooks";
 import { formatWhen } from "@/lib/format";
 import { activityTypeLabels, labelOf } from "@/lib/labels";
 
 export default function TodayPage() {
   const { user, isAdmin } = useAuth();
+  const waiting = useInboxCount();
   const { data, isLoading, error } = useQuery({
     queryKey: ["leads", "today"],
     queryFn: () => leadsApi.today(),
@@ -36,6 +38,15 @@ export default function TodayPage() {
             : `สวัสดี ${user?.name ?? ""} — ลูกค้าที่ถึงกำหนดตามต่อ และนัดที่กำลังจะถึง`}
         </p>
       </header>
+
+      {waiting > 0 ? (
+        <Alert>
+          มีคำขอจากเว็บไซต์รอคนรับ {waiting} รายการ ·{" "}
+          <Link href="/inbox" className="font-semibold underline">
+            ไปที่งานเข้า
+          </Link>
+        </Alert>
+      ) : null}
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         <StatTile label="ต้องตามวันนี้" value={due.length} tone={due.length > 0 ? "key" : "plain"} />

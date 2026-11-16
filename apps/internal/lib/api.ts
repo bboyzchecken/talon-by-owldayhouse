@@ -17,6 +17,9 @@ import type {
   DuplicateLead,
   FileRow,
   ImportResponse,
+  InboundRequest,
+  InboundStatus,
+  InboxListResponse,
   KPIResult,
   Lead,
   ListResponse,
@@ -414,4 +417,24 @@ export const egp = {
   settings: () => get<EgpSettingsResponse>("/api/egp/settings"),
   saveSettings: (settings: EgpSettings) =>
     send<{ settings: EgpSettings }>("put", "/api/egp/settings", settings),
+};
+
+// --- Inbox: requests from the quote form on owldayhouse.com -----------------
+
+export interface AcceptInboxBody {
+  /** Add the request to this existing customer instead of registering one. */
+  lead_id?: number;
+  name?: string;
+  industry?: string;
+  owner_user_id?: number;
+  confirm_similar?: boolean;
+}
+
+export const inbox = {
+  list: (status: InboundStatus) => get<InboxListResponse>("/api/inbox", { status, limit: 100 }),
+  counts: () => get<{ new: number }>("/api/inbox/counts"),
+  accept: (id: number, body: AcceptInboxBody) => send<InboundRequest>("post", `/api/inbox/${id}/accept`, body),
+  discard: (id: number, reason: string) => send<InboundRequest>("post", `/api/inbox/${id}/discard`, { reason }),
+  /** Admin only: erase a request for good (a PDPA erasure request). */
+  remove: (id: number) => send<void>("delete", `/api/inbox/${id}`),
 };

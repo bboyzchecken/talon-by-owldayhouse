@@ -3,6 +3,7 @@ import {
   BarChart3,
   CalendarCheck,
   Columns3,
+  Inbox,
   List,
   Plus,
   Radar,
@@ -36,10 +37,22 @@ export interface Tool {
   icon: LucideIcon;
   /** Only admins see an admin-only tool at all. */
   adminOnly?: boolean;
+  /** A count shown next to the tool in the menu (see useToolBadge). */
+  badge?: "inbox";
   nav: ToolNavItem[];
 }
 
 export const tools: Tool[] = [
+  {
+    slug: "inbox",
+    name: "งานเข้า",
+    summary: "คำขอใบเสนอราคาจากฟอร์มบน owldayhouse.com รอคนในทีมรับเข้า Lead Tracker หรือทิ้ง",
+    href: "/inbox",
+    icon: Inbox,
+    badge: "inbox",
+    // One screen, so no sub-menu and no phone tab bar.
+    nav: [],
+  },
   {
     slug: "leads",
     name: "Lead Tracker",
