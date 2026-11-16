@@ -26,6 +26,7 @@ import (
 	storedocument "github.com/owldayhouse/odh-internal-api/pkg/store/document"
 	storeegp "github.com/owldayhouse/odh-internal-api/pkg/store/egp"
 	storefile "github.com/owldayhouse/odh-internal-api/pkg/store/file"
+	storefinance "github.com/owldayhouse/odh-internal-api/pkg/store/finance"
 	storeinbound "github.com/owldayhouse/odh-internal-api/pkg/store/inbound"
 	storekpi "github.com/owldayhouse/odh-internal-api/pkg/store/kpi"
 	storelead "github.com/owldayhouse/odh-internal-api/pkg/store/lead"
@@ -34,6 +35,7 @@ import (
 	storeregister "github.com/owldayhouse/odh-internal-api/pkg/store/register"
 	storesetting "github.com/owldayhouse/odh-internal-api/pkg/store/setting"
 	storetarget "github.com/owldayhouse/odh-internal-api/pkg/store/target"
+	storetaxfiling "github.com/owldayhouse/odh-internal-api/pkg/store/taxfiling"
 	storeuser "github.com/owldayhouse/odh-internal-api/pkg/store/user"
 	"github.com/owldayhouse/odh-internal-api/pkg/testdb"
 	"github.com/sirupsen/logrus"
@@ -134,7 +136,7 @@ func newTestEnv(t *testing.T) *testEnv {
 	}
 	testdb.Lock(t, db)
 
-	err = db.Exec(`TRUNCATE payments, products, payment_methods, document_events, document_items, documents, document_counters, billing_contacts, inbound_requests, egp_announcements, egp_settings_rows, ownership_logs, targets, deals, activities, contacts, leads, files, users RESTART IDENTITY CASCADE`).Error
+	err = db.Exec(`TRUNCATE tax_filings, settings, payments, products, payment_methods, document_events, document_items, documents, document_counters, billing_contacts, inbound_requests, egp_announcements, egp_settings_rows, ownership_logs, targets, deals, activities, contacts, leads, files, users RESTART IDENTITY CASCADE`).Error
 	if err != nil {
 		t.Fatalf("cannot clear the test database: %v", err)
 	}
@@ -157,6 +159,8 @@ func newTestEnv(t *testing.T) *testEnv {
 		storedocument.New(db),
 		storeregister.New(db),
 		storepayment.New(db),
+		storetaxfiling.New(db),
+		storefinance.New(db),
 		storage.New(config, storage.NewR2Client(config)),
 	)
 

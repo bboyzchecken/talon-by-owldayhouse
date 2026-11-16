@@ -29,6 +29,8 @@ func (s *Server) checkFileOwner(c echo.Context, ownerType string, ownerID uint) 
 		return nil
 	case models.FileOwnerPayment, models.FileOwnerPaymentWht:
 		return s.checkPaymentFile(c, ownerID)
+	case models.FileOwnerTaxFiling:
+		return s.checkTaxFilingFile(c, ownerID)
 	default:
 		return responded(badRequest(c, "ชนิดเจ้าของไฟล์ไม่ถูกต้อง"))
 	}
@@ -43,6 +45,8 @@ func (s *Server) checkFileRead(c echo.Context, ownerType string, ownerID uint) e
 		return nil
 	case models.FileOwnerPayment, models.FileOwnerPaymentWht:
 		return s.checkPaymentFile(c, ownerID)
+	case models.FileOwnerTaxFiling:
+		return s.checkTaxFilingFile(c, ownerID)
 	default:
 		return responded(badRequest(c, "ชนิดเจ้าของไฟล์ไม่ถูกต้อง"))
 	}
@@ -80,7 +84,7 @@ func (s *Server) ListLeadFiles(c echo.Context) error {
 }
 
 type uploadURLBody struct {
-	OwnerType string `json:"owner_type" validate:"required,oneof=lead payment payment_wht"`
+	OwnerType string `json:"owner_type" validate:"required,oneof=lead payment payment_wht tax_filing"`
 	OwnerID   uint   `json:"owner_id" validate:"required"`
 	Filename  string `json:"filename" validate:"required,max=255"`
 	Size      int64  `json:"size" validate:"required,gt=0"`

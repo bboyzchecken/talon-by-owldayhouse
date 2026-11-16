@@ -170,7 +170,7 @@ func (s *paymentStoreService) Record(payment *models.Payment, plan *models.Recei
 		}
 		return tx.Create(&models.DocumentEvent{
 			DocumentID: &source.ID, UserID: payment.CreatedBy, Action: models.DocEventPayment,
-			Note: "รับเงิน " + docmath.Baht(payment.SettledAmount) + " บาท",
+			Note: moneyVerb(payment.Direction) + " " + docmath.Baht(payment.SettledAmount) + " บาท",
 		}).Error
 	})
 }
@@ -186,6 +186,10 @@ func (s *paymentStoreService) IssueReceipt(paymentID, userID uint, plan *models.
 		}
 		if payment.ReceiptID != nil {
 			return models.ErrReceiptExists
+		}
+		if payment.Direction != models.PaymentIn {
+			// Paying a vendor issues nothing of ours.
+			return models.ErrNotPayable
 		}
 		source, err := lockDocument(tx, payment.DocumentID)
 		if err != nil {
@@ -242,7 +246,7 @@ func (s *paymentStoreService) Void(paymentID, userID uint, reason string) (*mode
 		}
 		return tx.Create(&models.DocumentEvent{
 			DocumentID: &payment.DocumentID, UserID: userID, Action: models.DocEventPayment,
-			Note: "ยกเลิกการรับเงิน " + docmath.Baht(payment.SettledAmount) + " บาท: " + reason,
+			Note: "ยกเลิกการ" + moneyVerb(payment.Direction) + " " + docmath.Baht(payment.SettledAmount) + " บาท: " + reason,
 		}).Error
 	})
 	if err != nil {
@@ -342,4 +346,30 @@ func (s *paymentStoreService) List(filter models.PaymentFilter) ([]*models.Payme
 func (s *paymentStoreService) Settled(documentID uint) (decimal.Decimal, error) {
 	settled, _, _, err := sums(s.db, documentID)
 	return settled, err
+}
+
+func (s *paymentStoreService) SettledFor(documentIDs []uint) (map[uint]decimal.Decimal, error) {
+	out := make(map[uint]decimal.Decimal, len(documentIDs))
+	if len(documentIDs) == 0 {
+		return out, nil
+	}
+	var rows []struct {
+		DocumentID uint
+		Settled    decimal.Decimal
+	}
+	err := s.db.Model(&models.Payment{}).
+		Select("document_id, COALESCE(SUM(settled_amount), 0) AS settled").
+		Where("document_id IN ? AND status = ?", documentIDs, models.PaymentActive).
+		Group("document_id").Scan(&rows).Error
+	for _, r := range rows {
+		out[r.DocumentID] = r.Settled
+	}
+	return out, err
+}
+
+func moneyVerb(direction string) string {
+	if direction == models.PaymentOut {
+		return "จ่ายเงิน"
+	}
+	return "รับเงิน"
 }

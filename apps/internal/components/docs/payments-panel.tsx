@@ -7,11 +7,52 @@ import { FileCheck2, Paperclip, Receipt, XCircle } from "lucide-react";
 import { Button, cn } from "@odh/ui";
 import { Alert, Field, Input, Panel, Select } from "@/components/odh";
 import { ApiError, files, payments, registers } from "@/lib/api";
-import { money, todayISO, whtCertLabels } from "@/lib/docs";
+import { money, todayISO } from "@/lib/docs";
 import { formatDate } from "@/lib/format";
 import type { DocumentPayments, DocumentRow, Payment } from "@/lib/types";
 
 const round2 = (n: number) => Math.round(n * 100) / 100;
+
+/** The panel's words, for money coming in (sales documents) or going out (an expense). */
+function wordsFor(out: boolean) {
+  return out
+    ? {
+        title: "จ่ายเงิน",
+        done: "จ่ายแล้ว",
+        owed: "ค้างจ่าย",
+        record: "บันทึกจ่ายเงิน",
+        date: "วันที่จ่ายเงิน",
+        account: "จ่ายจากช่องทาง",
+        moved: "ยอดที่โอนจริง",
+        withheld: "เราหัก ณ ที่จ่าย",
+        movedShort: "โอนออก",
+        certLabel: "หนังสือรับรอง 50 ทวิ ที่เราออก",
+        certDone: "ส่งหนังสือรับรองให้ผู้รับเงินแล้ว",
+        certPending: "รอส่งหนังสือรับรอง 50 ทวิ",
+        certDoneBadge: "ส่งหนังสือรับรองแล้ว",
+        voidLink: "ยกเลิกการจ่ายเงินนี้",
+        adminOnly: "แอดมินเป็นคนบันทึกจ่ายเงิน",
+        recorded: "บันทึกจ่ายเงินแล้ว",
+      }
+    : {
+        title: "รับเงิน",
+        done: "รับแล้ว",
+        owed: "ค้างรับ",
+        record: "บันทึกรับเงิน",
+        date: "วันที่ได้รับเงิน",
+        account: "เข้าช่องทาง",
+        moved: "ยอดที่เงินเข้าจริง",
+        withheld: "ลูกค้าหัก ณ ที่จ่าย",
+        movedShort: "เงินเข้า",
+        certLabel: "หนังสือรับรอง 50 ทวิ",
+        certDone: "ได้รับหนังสือรับรองแล้ว",
+        certPending: "รอหนังสือรับรอง 50 ทวิ",
+        certDoneBadge: "ได้รับหนังสือรับรองแล้ว",
+        voidLink: "ยกเลิกการรับเงินนี้ (ใบเสร็จของรายการนี้จะถูกยกเลิกด้วย)",
+        adminOnly: "แอดมินเป็นคนบันทึกรับเงินและออกใบเสร็จ/ใบกำกับภาษี",
+        recorded: "บันทึกรับเงินแล้ว",
+      };
+}
 
 /**
  * Money received against a quotation, invoice or billing note. Recording a
@@ -24,14 +65,16 @@ export function PaymentsPanel({ doc, data, isAdmin }: { doc: DocumentRow; data: 
   const outstanding = Number(data.outstanding);
   const active = data.items.filter((p) => p.status === "active");
   const refresh = () => queryClient.invalidateQueries({ queryKey: ["docs"] });
+  const out = doc.doc_type === 202;
+  const w = wordsFor(out);
 
   return (
-    <Panel title="รับเงิน">
+    <Panel title={w.title}>
       <div className="space-y-4 p-4 sm:p-5">
         <dl className="grid grid-cols-3 gap-2 font-body text-sm">
           <Figure label="ยอดเอกสาร" value={doc.net_amount} />
-          <Figure label="รับแล้ว" value={data.settled} />
-          <Figure label="ค้างรับ" value={data.outstanding} strong={outstanding > 0} />
+          <Figure label={w.done} value={data.settled} />
+          <Figure label={w.owed} value={data.outstanding} strong={outstanding > 0} />
         </dl>
 
         {data.items.length > 0 ? (
@@ -46,7 +89,7 @@ export function PaymentsPanel({ doc, data, isAdmin }: { doc: DocumentRow; data: 
           <RecordPayment doc={doc} outstanding={outstanding} firstPayment={active.length === 0} onDone={refresh} />
         ) : null}
         {!isAdmin && outstanding > 0 ? (
-          <p className="font-body text-xs text-muted-foreground">แอดมินเป็นคนบันทึกรับเงินและออกใบเสร็จ/ใบกำกับภาษี</p>
+          <p className="font-body text-xs text-muted-foreground">{w.adminOnly}</p>
         ) : null}
       </div>
     </Panel>
@@ -83,7 +126,9 @@ function RecordPayment({
   const [methodId, setMethodId] = useState("");
   const [withheld, setWithheld] = useState(expectedWht ? String(expectedWht) : "0");
   const [received, setReceived] = useState(String(round2(outstanding - expectedWht)));
-  const [issueReceipt, setIssueReceipt] = useState(true);
+  const out = doc.doc_type === 202;
+  const w = wordsFor(out);
+  const [issueReceipt, setIssueReceipt] = useState(!out);
   const [note, setNote] = useState("");
   const [error, setError] = useState("");
 
@@ -105,7 +150,7 @@ function RecordPayment({
       await onDone();
     },
     onError: (caught) => setError((caught as ApiError).body?.error ?? "บันทึกไม่สำเร็จ"),
-    meta: { success: issueReceipt ? "บันทึกรับเงินและออกใบเสร็จ/ใบกำกับภาษีแล้ว" : "บันทึกรับเงินแล้ว" },
+    meta: { success: issueReceipt ? "บันทึกรับเงินและออกใบเสร็จ/ใบกำกับภาษีแล้ว" : w.recorded },
   });
 
   if (methods.data && methods.data.items.length === 0) {
@@ -127,12 +172,12 @@ function RecordPayment({
         record.mutate();
       }}
     >
-      <p className="font-display text-sm font-semibold text-foreground">บันทึกรับเงิน</p>
+      <p className="font-display text-sm font-semibold text-foreground">{w.record}</p>
       <div className="grid gap-3 sm:grid-cols-2">
-        <Field label="วันที่ได้รับเงิน" required>
+        <Field label={w.date} required>
           <Input type="date" value={date} max={todayISO()} onChange={(e) => setDate(e.target.value)} required />
         </Field>
-        <Field label="เข้าช่องทาง" required>
+        <Field label={w.account} required>
           <Select value={method} onChange={(e) => setMethodId(e.target.value)}>
             {(methods.data?.items ?? []).map((m) => (
               <option key={m.id} value={m.id}>
@@ -141,31 +186,33 @@ function RecordPayment({
             ))}
           </Select>
         </Field>
-        <Field label="ยอดที่เงินเข้าจริง" required>
+        <Field label={w.moved} required>
           <Input inputMode="decimal" value={received} onChange={(e) => setReceived(e.target.value)} />
         </Field>
-        <Field label="ลูกค้าหัก ณ ที่จ่าย" hint="ใส่ 0 ถ้าไม่หัก">
+        <Field label={w.withheld} hint="ใส่ 0 ถ้าไม่หัก">
           <Input inputMode="decimal" value={withheld} onChange={(e) => setWithheld(e.target.value)} />
         </Field>
       </div>
       <p className="font-body text-sm text-muted-foreground">
-        ตัดยอดเอกสาร <span className="font-mono font-semibold text-foreground">{money(settled)}</span> จากค้างรับ{" "}
+        ตัดยอดเอกสาร <span className="font-mono font-semibold text-foreground">{money(settled)}</span> จาก{w.owed}{" "}
         <span className="font-mono">{money(outstanding)}</span>
         {settled > outstanding ? <span className="font-semibold text-foreground"> — เกินยอดค้าง</span> : null}
       </p>
       <Input placeholder="หมายเหตุ เช่น งวดมัดจำ 50%" value={note} maxLength={500} onChange={(e) => setNote(e.target.value)} aria-label="หมายเหตุการรับเงิน" />
+      {out ? null : (
       <label className="flex items-start gap-2 font-body text-sm text-foreground">
-        <input type="checkbox" className="mt-1 size-4" checked={issueReceipt} onChange={(e) => setIssueReceipt(e.target.checked)} />
-        <span>
-          ออกใบเสร็จ/ใบกำกับภาษีให้เลย
-          <span className="block text-xs text-muted-foreground">
-            ปิดไว้ได้ถ้าข้อมูลภาษีของลูกค้ายังไม่ครบ แล้วกดออกใบเสร็จทีหลังจากรายการรับเงิน
+          <input type="checkbox" className="mt-1 size-4" checked={issueReceipt} onChange={(e) => setIssueReceipt(e.target.checked)} />
+          <span>
+            ออกใบเสร็จ/ใบกำกับภาษีให้เลย
+            <span className="block text-xs text-muted-foreground">
+              ปิดไว้ได้ถ้าข้อมูลภาษีของลูกค้ายังไม่ครบ แล้วกดออกใบเสร็จทีหลังจากรายการรับเงิน
+            </span>
           </span>
-        </span>
-      </label>
+        </label>
+      )}
       {error ? <Alert tone="stop">{error}</Alert> : null}
       <Button type="submit" size="sm" disabled={record.isPending || !method || settled <= 0}>
-        {record.isPending ? "กำลังบันทึก…" : "บันทึกรับเงิน"}
+        {record.isPending ? "กำลังบันทึก…" : w.record}
       </Button>
     </form>
   );
@@ -177,6 +224,7 @@ function PaymentRow({ payment, isAdmin, onChange }: { payment: Payment; isAdmin:
   const [error, setError] = useState("");
   const fail = (caught: unknown) => setError((caught as ApiError).body?.error ?? (caught as Error).message);
   const voided = payment.status === "voided";
+  const w = wordsFor(payment.direction === "out");
 
   const receipt = useMutation({
     mutationFn: () => payments.issueReceipt(payment.id),
@@ -197,7 +245,7 @@ function PaymentRow({ payment, isAdmin, onChange }: { payment: Payment; isAdmin:
     mutationFn: () => payments.whtCertReceived(payment.id),
     onSuccess: onChange,
     onError: fail,
-    meta: { success: "บันทึกว่าได้รับหนังสือรับรองแล้ว" },
+    meta: { success: `บันทึกแล้ว: ${w.certDone}` },
   });
 
   return (
@@ -210,8 +258,9 @@ function PaymentRow({ payment, isAdmin, onChange }: { payment: Payment; isAdmin:
         <span className="font-mono tabular-nums text-foreground">{money(payment.settled_amount)}</span>
       </div>
       <p className="font-mono text-xs text-muted-foreground">
-        เงินเข้า {money(payment.received_amount)}
+        {w.movedShort} {money(payment.received_amount)}
         {Number(payment.withholding_amount) > 0 ? ` + หัก ณ ที่จ่าย ${money(payment.withholding_amount)}` : ""}
+        {payment.wht_form ? ` (${payment.wht_form === "pnd3" ? "ภ.ง.ด.3" : "ภ.ง.ด.53"})` : ""}
         {payment.note ? ` · ${payment.note}` : ""}
       </p>
 
@@ -220,7 +269,7 @@ function PaymentRow({ payment, isAdmin, onChange }: { payment: Payment; isAdmin:
           <Link href={`/docs/detail/?id=${payment.receipt.id}`} className="inline-flex items-center gap-1 font-display text-xs font-semibold text-primary underline">
             <Receipt className="size-3.5" aria-hidden /> {payment.receipt.code}
           </Link>
-        ) : !voided && isAdmin ? (
+        ) : !voided && isAdmin && payment.direction === "in" ? (
           <Button size="sm" variant="line" onClick={() => receipt.mutate()} disabled={receipt.isPending}>
             <Receipt className="size-4" aria-hidden /> ออกใบเสร็จ/ใบกำกับภาษี
           </Button>
@@ -232,7 +281,7 @@ function PaymentRow({ payment, isAdmin, onChange }: { payment: Payment; isAdmin:
               payment.wht_cert_status === "pending" ? "bg-primary/10 text-primary" : "border border-border text-muted-foreground",
             )}
           >
-            {whtCertLabels[payment.wht_cert_status]}
+            {payment.wht_cert_status === "pending" ? w.certPending : w.certDoneBadge}
           </span>
         ) : null}
       </div>
@@ -242,10 +291,10 @@ function PaymentRow({ payment, isAdmin, onChange }: { payment: Payment; isAdmin:
           <Evidence ownerType="payment" ownerId={payment.id} label="สลิปโอนเงิน" />
           {Number(payment.withholding_amount) > 0 ? (
             <div className="space-y-2">
-              <Evidence ownerType="payment_wht" ownerId={payment.id} label="หนังสือรับรอง 50 ทวิ" />
+              <Evidence ownerType="payment_wht" ownerId={payment.id} label={w.certLabel} />
               {payment.wht_cert_status === "pending" ? (
                 <Button size="sm" variant="line" onClick={() => cert.mutate()} disabled={cert.isPending}>
-                  <FileCheck2 className="size-4" aria-hidden /> ได้รับหนังสือรับรองแล้ว
+                  <FileCheck2 className="size-4" aria-hidden /> {w.certDone}
                 </Button>
               ) : null}
             </div>
@@ -258,7 +307,7 @@ function PaymentRow({ payment, isAdmin, onChange }: { payment: Payment; isAdmin:
             </div>
           ) : (
             <button type="button" className="inline-flex items-center gap-1 font-body text-xs text-muted-foreground underline" onClick={() => setVoiding(true)}>
-              <XCircle className="size-3.5" aria-hidden /> ยกเลิกการรับเงินนี้ (ใบเสร็จของรายการนี้จะถูกยกเลิกด้วย)
+              <XCircle className="size-3.5" aria-hidden /> {w.voidLink}
             </button>
           )}
         </div>
@@ -268,8 +317,16 @@ function PaymentRow({ payment, isAdmin, onChange }: { payment: Payment; isAdmin:
   );
 }
 
-/** The files attached to a payment as one kind of evidence, and an upload button. */
-function Evidence({ ownerType, ownerId, label }: { ownerType: "payment" | "payment_wht"; ownerId: number; label: string }) {
+/** The files attached to a payment (or a tax filing) as one kind of evidence, and an upload button. */
+export function Evidence({
+  ownerType,
+  ownerId,
+  label,
+}: {
+  ownerType: "payment" | "payment_wht" | "tax_filing";
+  ownerId: number;
+  label: string;
+}) {
   const queryClient = useQueryClient();
   const input = useRef<HTMLInputElement>(null);
   const list = useQuery({ queryKey: ["files", ownerType, ownerId], queryFn: () => files.list(ownerType, ownerId) });

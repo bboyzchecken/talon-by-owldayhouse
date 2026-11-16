@@ -53,6 +53,12 @@ type Payment struct {
 	ReceiptID *uint     `gorm:"index" json:"receipt_id,omitempty"`
 	Receipt   *Document `gorm:"foreignKey:ReceiptID" json:"receipt,omitempty"`
 
+	// WhtForm is the form the withheld tax is filed on (pnd3 / pnd53), taken
+	// from the vendor when we pay and withhold. Empty for money in: the
+	// customer files that, not us. Kept on the payment so a later edit of the
+	// vendor does not move tax already withheld to another form.
+	WhtForm string `gorm:"size:8;not null;default:''" json:"wht_form"`
+
 	WhtCertStatus string     `gorm:"size:10;not null;default:none;index" json:"wht_cert_status"`
 	WhtCertAt     *time.Time `json:"wht_cert_at,omitempty"`
 
@@ -111,4 +117,9 @@ type PaymentStore interface {
 	List(filter PaymentFilter) ([]*Payment, int64, error)
 	// Settled sums the active payments of a document.
 	Settled(documentID uint) (decimal.Decimal, error)
+	// SettledFor sums the active payments of many documents at once.
+	SettledFor(documentIDs []uint) (map[uint]decimal.Decimal, error)
 }
+
+// ErrHasPayments means a document still has money recorded against it.
+var ErrHasPayments = errors.New("เอกสารนี้มีการรับ/จ่ายเงินแล้ว ยกเลิกรายการเงินก่อน แล้วจึงยกเลิกเอกสาร")
