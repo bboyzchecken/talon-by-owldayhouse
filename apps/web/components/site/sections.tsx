@@ -64,6 +64,7 @@ export function WorkEditorial({ items, locale, showResult }: WorkEditorialProps)
               <span className="odh-mono">{item.category[locale]}</span>
               <h3>{item.title[locale]}</h3>
               {showResult ? <p className="odh-work__result">{item.result[locale]}</p> : null}
+              {item.imageNote ? <small className="odh-note">{item.imageNote[locale]}</small> : null}
             </figcaption>
           </figure>
         );

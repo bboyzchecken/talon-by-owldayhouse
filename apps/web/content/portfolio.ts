@@ -16,6 +16,8 @@ export interface PortfolioItem {
   category: Text;
   result: Text;
   image?: string;
+  /** Shown under the picture when it is a mockup rather than a screenshot. */
+  imageNote?: Text;
   url?: string;
   status: "live" | "closed" | "handed-over";
 }
@@ -74,7 +76,8 @@ export const portfolio: readonly PortfolioItem[] = keepThaiWordsDeep([
   {
     // v1 built and maintained by us (2023, public launch post on our Facebook page
     // 30 Nov 2023), then handed over with signed documents; another team runs v2.
-    // Keep it unnamed: no client name, logo, link or screenshots of v2, and no card art.
+    // Keep it unnamed: no client name, logo, link or screenshots of v2, and no real card art.
+    // The picture is a mockup of the v1 auction page with made-up cards and data.
     slug: "tcg-marketplace",
     title: { th: "แพลตฟอร์มซื้อขายและประมูลการ์ดเกม", en: "A trading card marketplace with live auctions" },
     client: { th: "ธุรกิจการ์ดเกมสะสมในไทย", en: "A Thai trading card business" },
@@ -83,6 +86,8 @@ export const portfolio: readonly PortfolioItem[] = keepThaiWordsDeep([
       th: "ทำเวอร์ชันแรก (ปี 2566) ครบทุกส่วน ตั้งแต่ UX/UI, หน้าเว็บ, API, ฐานข้อมูล ไปจนถึงระบบหลังบ้าน ได้แก่ ระบบซื้อขาย ประมูล ประวัติราคา ตั้งรับซื้อ และแจ้งเตือน ชำระเงินผ่าน GB Prime Pay ดูแลระบบช่วงปีแรก แล้วส่งมอบ source code ให้ทีมของลูกค้าพัฒนาต่อ",
       en: "We built the first version (2023) end to end: UX/UI, web front end, API, database and back office, covering buying and selling, live auctions, price history, buy requests and notifications, with payments through GB Prime Pay. We ran it through its first year, then handed the source code over for the client's next team to take forward.",
     },
+    image: "/portfolio/tcg-marketplace-v1.webp",
+    imageNote: { th: "ภาพจำลองหน้าประมูลของเวอร์ชันแรก ข้อมูลและการ์ดเป็นของสมมติ", en: "A mockup of the first version's auction page, with made-up cards and data" },
     status: "handed-over",
   },
   {
@@ -110,7 +115,9 @@ export const portfolio: readonly PortfolioItem[] = keepThaiWordsDeep([
 ]);
 
 export const liveWork = portfolio.filter((item) => item.status === "live");
-export const earlierWork = portfolio.filter((item) => item.status !== "live");
+/** Work shown with a picture on the work page: live sites plus earlier work we have a picture for. */
+export const featuredWork = portfolio.filter((item) => item.image);
+export const earlierWork = portfolio.filter((item) => item.status !== "live" && !item.image);
 
 /**
  * Campaign and event work under NDA (mostly delivered for agencies). Never name
