@@ -7,7 +7,7 @@ import template from "@/lib/up-docs/template.html";
 // Hidden client demo: UP Docs — internship document generator for the
 // University of Phayao (Business & Communication Arts faculty). Not linked
 // anywhere, excluded from the sitemap + noindex, and gated behind a password
-// shared with the faculty staff. Same pattern as /owl-docs.
+// shared with the faculty staff.
 //
 // NOTE: this is a 100% static site — there is no backend, so this gate is
 // client-side obfuscation, not real authentication. It keeps the tool out of

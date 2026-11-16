@@ -869,7 +869,7 @@
         state.students.slice(0, DOC_META[state.docType]?.stuMax || 4);
 
       /* ===== Persistence: autosave (localStorage) + บันทึก/เปิดไฟล์ .json =====
-   แพตเทิร์นเดียวกับ owl-docs — localStorage เป็น optional (try/catch)
+   localStorage เป็น optional (try/catch)
    ตามข้อกำหนดสเปก: ถ้าใช้ไม่ได้ (เช่นบน artifact preview) เครื่องมือยังทำงานปกติ */
       const STORAGE_KEY = "up-docs-state-v1";
       const SAVED_KEYS = [

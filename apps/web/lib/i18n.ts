@@ -4,7 +4,7 @@ export type Locale = "th" | "en";
 
 export const locales: readonly Locale[] = ["th", "en"];
 
-const thaiOnlyPrefixes = ["/owl-docs/", "/up-docs/", "/showcase/"];
+const thaiOnlyPrefixes = ["/up-docs/", "/showcase/"];
 
 /** Articles written for Thai search only. Every other article exists in both languages. */
 export const thaiOnlyPostSlugs = [
