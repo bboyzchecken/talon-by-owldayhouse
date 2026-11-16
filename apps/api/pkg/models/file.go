@@ -10,6 +10,11 @@ import (
 // tool can attach files without a new table.
 const (
 	FileOwnerLead = "lead"
+	// A payment's evidence: the transfer slip, and the withholding-tax
+	// certificate (50 ทวิ). Kept apart so "certificate received" can require
+	// a certificate, not just any file.
+	FileOwnerPayment    = "payment"
+	FileOwnerPaymentWht = "payment_wht"
 )
 
 // File upload lifecycle. A row is created when the presigned PUT is handed out

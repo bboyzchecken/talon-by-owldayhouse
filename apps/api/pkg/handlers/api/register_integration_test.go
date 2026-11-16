@@ -141,9 +141,7 @@ func TestContactCodesUnderConcurrency(t *testing.T) {
 func TestIssuedDocumentKeepsTheBuyer(t *testing.T) {
 	env := newTestEnv(t)
 	contact := docID(t, env.do(env.admin, http.MethodPost, "/api/docs/contacts", contactPayload("บริษัท ชื่อเดิม จำกัด", nil)))
-	receipt := quotationBody(contact)
-	receipt["doc_type"] = models.DocReceipt
-	id := docID(t, env.do(env.admin, http.MethodPost, "/api/docs", receipt))
+	id := docID(t, env.do(env.admin, http.MethodPost, "/api/docs", quotationBody(contact)))
 
 	draft := env.do(env.admin, http.MethodGet, fmt.Sprintf("/api/docs/%d", id), nil)
 	var doc models.Document

@@ -35,6 +35,7 @@ func allModels() []interface{} {
 		&models.DocumentNumbering{},
 		&models.DocumentCounter{},
 		&models.DocumentEvent{},
+		&models.Payment{},
 	}
 }
 
@@ -210,6 +211,17 @@ func migrations(db *gorm.DB) *gormigrate.Gormigrate {
 					}
 				}
 				return nil
+			},
+		},
+		{
+			// Money received against documents, with the receipt issued for
+			// it and the withholding certificate owed (step 5).
+			ID: "20261116_04_payments",
+			Migrate: func(tx *gorm.DB) error {
+				return tx.AutoMigrate(&models.Payment{})
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Migrator().DropTable("payments")
 			},
 		},
 	})

@@ -1,0 +1,369 @@
+package api
+
+import (
+	"errors"
+	"fmt"
+	"net/http"
+	"time"
+
+	"github.com/labstack/echo/v4"
+	"github.com/lib/pq"
+	"github.com/shopspring/decimal"
+
+	"github.com/owldayhouse/odh-internal-api/pkg/docmath"
+	"github.com/owldayhouse/odh-internal-api/pkg/handlers/api/request"
+	"github.com/owldayhouse/odh-internal-api/pkg/leadrules"
+	"github.com/owldayhouse/odh-internal-api/pkg/models"
+)
+
+// Money received (step 5 of docs/internal-tools/document-system.md).
+//
+// A payment is recorded against an issued quotation, invoice or billing note.
+// It says what arrived and what the customer withheld; together they are what
+// it settles. The receipt/tax invoice is issued from the payment — the
+// company issues receipts only after the money is in — in the same
+// transaction, with VAT following the money (docmath.SplitPayment). Recording
+// money, voiding it and the withholding certificate are the admin's; a sales
+// account sees the payments on its own customers' documents.
+
+// payableDocTypes are the documents money is received against.
+var payableDocTypes = map[int]bool{
+	models.DocQuotation:   true,
+	models.DocInvoice:     true,
+	models.DocBillingNote: true,
+}
+
+func (s *Server) registerPaymentRoutes(docs *echo.Group) {
+	docs.GET("/payments", s.ListPayments, s.IsAdmin())
+	docs.GET("/payments/:pid", s.GetPayment, s.IsAdmin())
+	docs.POST("/payments/:pid/void", s.VoidPayment, s.IsAdmin())
+	docs.POST("/payments/:pid/receipt", s.IssuePaymentReceipt, s.IsAdmin())
+	docs.POST("/payments/:pid/wht-cert", s.MarkWhtCertificate, s.IsAdmin())
+	docs.POST("/:id/payments", s.RecordPayment, s.IsAdmin())
+}
+
+func (s *Server) paymentError(c echo.Context, err error) error {
+	switch {
+	case errors.Is(err, models.ErrOverpaid), errors.Is(err, docmath.ErrOverpaid):
+		return c.JSON(http.StatusUnprocessableEntity, errorBody(models.ErrOverpaid.Error()))
+	case errors.Is(err, models.ErrNotPayable), errors.Is(err, models.ErrPaymentVoided),
+		errors.Is(err, models.ErrReceiptExists):
+		return conflict(c, errorBody(err.Error()))
+	case errors.Is(err, models.ErrNoWhtCertificate), errors.Is(err, models.ErrNothingWithheld):
+		return c.JSON(http.StatusUnprocessableEntity, errorBody(err.Error()))
+	}
+	return s.documentError(c, err)
+}
+
+// checkPaymentFile: a payment's slip and certificate are the admin's.
+func (s *Server) checkPaymentFile(c echo.Context, paymentID uint) error {
+	if !actor(c).IsAdmin() {
+		return responded(forbidden(c, "หลักฐานการรับเงินเปิดได้เฉพาะแอดมิน"))
+	}
+	if _, err := s.PaymentStore.Find(paymentID); err != nil {
+		if isNotFound(err) {
+			return responded(notFound(c, "ไม่พบรายการรับเงินนี้"))
+		}
+		return responded(s.serverError(c, err))
+	}
+	return nil
+}
+
+// receiptPlan builds the receipt/tax invoice for a payment once the source
+// document is locked and the payments already receipted are known.
+func (s *Server) receiptPlan(payment *models.Payment, methodName string) *models.ReceiptPlan {
+	return &models.ReceiptPlan{
+		Check: issueRules,
+		Build: func(source *models.Document, receiptedSettled, receiptedVat decimal.Decimal) (*models.Document, error) {
+			// source arrives locked and with its lines, read inside the
+			// payment's transaction; nothing here may open another connection.
+			full := source
+			lines := make([]docmath.Line, len(full.Items))
+			for i, item := range full.Items {
+				lines[i] = docmath.Line{
+					IsDescription: item.IsDescription, Quantity: item.Quantity, Price: item.Price,
+					Discount: item.Discount, VatType: item.VatType,
+				}
+			}
+			totals, err := docmath.Compute(full.TaxStatus, lines, full.DiscountTotal.StringFixed(2))
+			if err != nil {
+				return nil, err
+			}
+			portion, err := docmath.SplitPayment(full.NetAmount, full.VatAmount, totals.VatBase,
+				payment.SettledAmount, receiptedSettled, receiptedVat)
+			if err != nil {
+				return nil, err
+			}
+
+			what := fmt.Sprintf("รับชำระตาม%s %s", docTypeLabels[full.DocType], full.Code)
+			switch {
+			case payment.SettledAmount.Equal(full.NetAmount):
+				// the whole document in one payment
+			case payment.SettledAmount.Equal(full.NetAmount.Sub(receiptedSettled)):
+				what += " (ชำระงวดสุดท้าย)"
+			default:
+				what += " (ชำระบางส่วน)"
+			}
+			receipt := &models.Document{
+				DocType:          models.DocReceipt,
+				ContactID:        full.ContactID,
+				LeadID:           full.LeadID,
+				IssuedDate:       payment.PaymentDate,
+				Reference:        full.Code,
+				Remark:           fmt.Sprintf("ชำระโดย %s วันที่ %s", methodName, payment.PaymentDate.Format("02/01/2006")),
+				Tags:             pq.StringArray{},
+				TaxStatus:        models.TaxExclusive,
+				IsTaxInvoice:     totals.VatBase.IsPositive(),
+				PreTaxAmount:     portion.PreTax,
+				VatAmount:        portion.Vat,
+				NetAmount:        portion.Net,
+				WithholdingTotal: payment.WithholdingAmount,
+				SourceDocumentID: &full.ID,
+			}
+			one := decimal.NewFromInt(1)
+			if portion.VatBase.IsPositive() {
+				receipt.Items = append(receipt.Items, models.DocumentItem{
+					Description: what, Quantity: one, Price: portion.VatBase, VatType: models.VatSeven, LineAmount: portion.VatBase,
+				})
+			}
+			if rest := portion.PreTax.Sub(portion.VatBase); rest.IsPositive() {
+				desc := what
+				if portion.VatBase.IsPositive() {
+					desc += " — ส่วนที่ไม่มี VAT"
+				}
+				receipt.Items = append(receipt.Items, models.DocumentItem{
+					Description: desc, Quantity: one, Price: rest, VatType: models.VatNone, LineAmount: rest,
+				})
+			}
+			return receipt, nil
+		},
+	}
+}
+
+type paymentBody struct {
+	PaymentDate       string          `json:"payment_date"`
+	PaymentMethodID   uint            `json:"payment_method_id"`
+	ReceivedAmount    decimal.Decimal `json:"received_amount"`
+	WithholdingAmount decimal.Decimal `json:"withholding_amount"`
+	Note              string          `json:"note"`
+	// IssueReceipt is on unless the person turns it off — for example when
+	// the customer's tax ID is still missing; the receipt can follow later.
+	IssueReceipt *bool `json:"issue_receipt"`
+}
+
+// RecordPayment handles POST /api/docs/:id/payments (admin).
+func (s *Server) RecordPayment(c echo.Context) error {
+	doc, err := s.loadDocument(c)
+	if doc == nil {
+		return err
+	}
+	if !payableDocTypes[doc.DocType] || doc.Status != models.DocStatusIssued {
+		return conflict(c, errorBody(models.ErrNotPayable.Error()))
+	}
+	var body paymentBody
+	if err := c.Bind(&body); err != nil {
+		return badRequest(c, "ข้อมูลที่ส่งมาไม่ถูกต้อง")
+	}
+	day, err := parseDay(body.PaymentDate)
+	if err != nil {
+		return s.paymentError(c, err)
+	}
+	if day == nil {
+		return c.JSON(http.StatusUnprocessableEntity, errorBody("ใส่วันที่ได้รับเงิน"))
+	}
+	if day.After(startOfToday()) {
+		return c.JSON(http.StatusUnprocessableEntity, errorBody("วันที่ได้รับเงินเป็นวันในอนาคตไม่ได้"))
+	}
+	received := body.ReceivedAmount.Round(2)
+	withheld := body.WithholdingAmount.Round(2)
+	if received.IsNegative() || withheld.IsNegative() {
+		return c.JSON(http.StatusUnprocessableEntity, errorBody("ยอดเงินติดลบไม่ได้"))
+	}
+	settled := received.Add(withheld)
+	if !settled.IsPositive() {
+		return c.JSON(http.StatusUnprocessableEntity, errorBody("ใส่ยอดที่ได้รับ"))
+	}
+	method, err := s.RegisterStore.FindPaymentMethod(body.PaymentMethodID)
+	if err != nil || !method.Active {
+		return c.JSON(http.StatusUnprocessableEntity, errorBody("เลือกช่องทางรับเงิน"))
+	}
+
+	me := actor(c)
+	payment := &models.Payment{
+		DocumentID:        doc.ID,
+		Direction:         models.PaymentIn,
+		Status:            models.PaymentActive,
+		PaymentDate:       *day,
+		PaymentMethodID:   method.ID,
+		ReceivedAmount:    received,
+		WithholdingAmount: withheld,
+		SettledAmount:     settled,
+		Note:              cut(body.Note, 500),
+		WhtCertStatus:     models.WhtCertNone,
+		CreatedBy:         me.ID,
+	}
+	if withheld.IsPositive() {
+		payment.WhtCertStatus = models.WhtCertPending
+	}
+	var plan *models.ReceiptPlan
+	if body.IssueReceipt == nil || *body.IssueReceipt {
+		plan = s.receiptPlan(payment, method.Name)
+	}
+	if err := s.PaymentStore.Record(payment, plan); err != nil {
+		return s.paymentError(c, err)
+	}
+	saved, err := s.PaymentStore.Find(payment.ID)
+	if err != nil {
+		return s.serverError(c, err)
+	}
+	return c.JSON(http.StatusCreated, saved)
+}
+
+func (s *Server) loadPayment(c echo.Context) (*models.Payment, error) {
+	id, err := request.UintParam(c, "pid")
+	if err != nil {
+		return nil, responded(badRequest(c, "รหัสรายการรับเงินไม่ถูกต้อง"))
+	}
+	p, err := s.PaymentStore.Find(id)
+	if err != nil {
+		if isNotFound(err) {
+			return nil, responded(notFound(c, "ไม่พบรายการรับเงินนี้"))
+		}
+		return nil, responded(s.serverError(c, err))
+	}
+	return p, nil
+}
+
+// GetPayment handles GET /api/docs/payments/:pid (admin).
+func (s *Server) GetPayment(c echo.Context) error {
+	p, err := s.loadPayment(c)
+	if err != nil {
+		return err
+	}
+	return c.JSON(http.StatusOK, p)
+}
+
+// IssuePaymentReceipt handles POST /api/docs/payments/:pid/receipt: the
+// receipt for a payment recorded without one.
+func (s *Server) IssuePaymentReceipt(c echo.Context) error {
+	p, err := s.loadPayment(c)
+	if err != nil {
+		return err
+	}
+	name := ""
+	if p.PaymentMethod != nil {
+		name = p.PaymentMethod.Name
+	}
+	updated, err := s.PaymentStore.IssueReceipt(p.ID, actor(c).ID, s.receiptPlan(p, name))
+	if err != nil {
+		return s.paymentError(c, err)
+	}
+	return c.JSON(http.StatusOK, updated)
+}
+
+// VoidPayment handles POST /api/docs/payments/:pid/void: the payment and
+// the receipt issued for it are cancelled; both keep their rows and the
+// receipt its number.
+func (s *Server) VoidPayment(c echo.Context) error {
+	p, err := s.loadPayment(c)
+	if err != nil {
+		return err
+	}
+	var body voidBody
+	if err := c.Bind(&body); err != nil {
+		return badRequest(c, "ข้อมูลที่ส่งมาไม่ถูกต้อง")
+	}
+	reason := cut(body.Reason, 500)
+	if reason == "" {
+		return badRequest(c, "ต้องระบุเหตุผลที่ยกเลิก")
+	}
+	updated, err := s.PaymentStore.Void(p.ID, actor(c).ID, reason)
+	if err != nil {
+		return s.paymentError(c, err)
+	}
+	return c.JSON(http.StatusOK, updated)
+}
+
+// MarkWhtCertificate handles POST /api/docs/payments/:pid/wht-cert: the
+// customer's withholding certificate is in hand. The certificate must be
+// attached first (files, owner_type payment_wht).
+func (s *Server) MarkWhtCertificate(c echo.Context) error {
+	p, err := s.loadPayment(c)
+	if err != nil {
+		return err
+	}
+	updated, err := s.PaymentStore.MarkWhtCert(p.ID)
+	if err != nil {
+		return s.paymentError(c, err)
+	}
+	return c.JSON(http.StatusOK, updated)
+}
+
+// ListPayments handles GET /api/docs/payments?wht_cert=pending&month=YYYY-MM
+// (admin): "certificates we are still waiting for" is wht_cert=pending.
+func (s *Server) ListPayments(c echo.Context) error {
+	filter := models.PaymentFilter{
+		Direction:     models.PaymentIn,
+		WhtCertStatus: c.QueryParam("wht_cert"),
+		IncludeVoided: c.QueryParam("voided") == "1",
+	}
+	if p := request.QueryUint(c, "page"); p != nil {
+		filter.Page = int(*p)
+	}
+	if month := c.QueryParam("month"); month != "" {
+		start, err := time.ParseInLocation("2006-01", month, leadrules.Bangkok)
+		if err != nil {
+			return badRequest(c, "เดือนไม่ถูกต้อง ใช้รูปแบบ ปปปป-ดด")
+		}
+		end := start.AddDate(0, 1, -1)
+		filter.From, filter.To = &start, &end
+	}
+	rows, total, err := s.PaymentStore.List(filter)
+	if err != nil {
+		return s.serverError(c, err)
+	}
+	sum := map[string]decimal.Decimal{"received": decimal.Zero, "withholding": decimal.Zero, "settled": decimal.Zero}
+	for _, p := range rows {
+		sum["received"] = sum["received"].Add(p.ReceivedAmount)
+		sum["withholding"] = sum["withholding"].Add(p.WithholdingAmount)
+		sum["settled"] = sum["settled"].Add(p.SettledAmount)
+	}
+	return c.JSON(http.StatusOK, map[string]interface{}{"items": rows, "total": total, "page_sums": sum})
+}
+
+// documentPayments is what the document screen shows about money: the
+// payments (to whoever may see the document) and what is still owed.
+func (s *Server) documentPayments(doc *models.Document) (map[string]interface{}, error) {
+	if !payableDocTypes[doc.DocType] {
+		return nil, nil
+	}
+	payments, err := s.PaymentStore.ListByDocument(doc.ID)
+	if err != nil {
+		return nil, err
+	}
+	settled := decimal.Zero
+	for _, p := range payments {
+		if p.Status == models.PaymentActive {
+			settled = settled.Add(p.SettledAmount)
+		}
+	}
+	outstanding := doc.NetAmount.Sub(settled)
+	if doc.Status != models.DocStatusIssued {
+		outstanding = decimal.Zero
+	}
+	return map[string]interface{}{
+		"items":       payments,
+		"settled":     settled,
+		"outstanding": outstanding,
+	}, nil
+}
+
+// receiptsOnlyFromPayments refuses the old ways to a receipt: a receipt/tax
+// invoice is issued when money is recorded (the company issues receipts only
+// after payment), never typed in or chained by hand.
+func receiptsOnlyFromPayments(docType int) error {
+	if docType == models.DocReceipt {
+		return violation("ใบเสร็จ/ใบกำกับภาษีออกจากการบันทึกรับเงินของใบแจ้งหนี้หรือใบเสนอราคา")
+	}
+	return nil
+}

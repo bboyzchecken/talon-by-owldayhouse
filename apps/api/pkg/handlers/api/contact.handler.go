@@ -15,17 +15,17 @@ import (
 func (s *Server) loadLead(c echo.Context, mutate bool) (*models.Lead, error) {
 	id, err := request.UintParam(c, "id")
 	if err != nil {
-		return nil, badRequest(c, "รหัสลูกค้าไม่ถูกต้อง")
+		return nil, responded(badRequest(c, "รหัสลูกค้าไม่ถูกต้อง"))
 	}
 	lead, err := s.LeadStore.Find(id)
 	if err != nil {
 		if isNotFound(err) {
-			return nil, notFound(c, "ไม่พบลูกค้ารายนี้")
+			return nil, responded(notFound(c, "ไม่พบลูกค้ารายนี้"))
 		}
-		return nil, s.serverError(c, err)
+		return nil, responded(s.serverError(c, err))
 	}
 	if mutate && !leadrules.CanEditLead(actor(c), lead.OwnerUserID) {
-		return nil, forbidden(c, leadrules.ErrNotLeadOwner.Error())
+		return nil, responded(forbidden(c, leadrules.ErrNotLeadOwner.Error()))
 	}
 	return lead, nil
 }

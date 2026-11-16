@@ -51,11 +51,11 @@ var docTypeLabels = map[int]string{
 // nextDocTypes is the document chain: which documents can be made from an
 // issued one. It follows PEAK's createbyquotation / createbyinvoice.
 var nextDocTypes = map[int][]int{
-	models.DocQuotation:   {models.DocInvoice, models.DocBillingNote, models.DocReceipt},
-	models.DocInvoice:     {models.DocBillingNote, models.DocReceipt},
-	models.DocBillingNote: {models.DocReceipt},
-	models.DocReceipt:     {models.DocCreditNote, models.DocDebitNote},
-	models.DocTaxInvoice:  {models.DocCreditNote, models.DocDebitNote},
+	// A receipt is not on this list: it comes from recording a payment.
+	models.DocQuotation:  {models.DocInvoice, models.DocBillingNote},
+	models.DocInvoice:    {models.DocBillingNote},
+	models.DocReceipt:    {models.DocCreditNote, models.DocDebitNote},
+	models.DocTaxInvoice: {models.DocCreditNote, models.DocDebitNote},
 }
 
 const maxDocumentLines = 200
@@ -67,6 +67,7 @@ func (s *Server) registerDocumentRoutes(api *echo.Group) {
 	// Static segments before /:id.
 	docs.POST("/calculate", s.CalculateDocument)
 	s.registerRegisterRoutes(docs)
+	s.registerPaymentRoutes(docs)
 	docs.GET("/:id", s.GetDocument)
 	docs.PUT("/:id", s.UpdateDocument)
 	docs.DELETE("/:id", s.DeleteDocument)
@@ -232,6 +233,9 @@ func cut(value string, limit int) string {
 func (s *Server) buildDocument(body documentBody) (*models.Document, error) {
 	if _, ok := docTypeLabels[body.DocType]; !ok {
 		return nil, violation("ประเภทเอกสารไม่ถูกต้อง")
+	}
+	if err := receiptsOnlyFromPayments(body.DocType); err != nil {
+		return nil, err
 	}
 	if len(body.Items) == 0 {
 		return nil, violation("เอกสารต้องมีรายการอย่างน้อย 1 บรรทัด")
@@ -429,10 +433,15 @@ func (s *Server) GetDocument(c echo.Context) error {
 	if err != nil {
 		return s.serverError(c, err)
 	}
+	payments, err := s.documentPayments(doc)
+	if err != nil {
+		return s.serverError(c, err)
+	}
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"document": doc,
 		"events":   events,
 		"next":     nextDocTypes[doc.DocType],
+		"payments": payments,
 	})
 }
 
@@ -570,6 +579,9 @@ func (s *Server) IssueDocument(c echo.Context) error {
 	}
 	if !ok {
 		return forbidden(c, noDocAccess)
+	}
+	if err := receiptsOnlyFromPayments(doc.DocType); err != nil {
+		return s.documentError(c, err)
 	}
 	issued, err := s.DocumentStore.Issue(doc.ID, me.ID, issueRules)
 	if err != nil {
@@ -714,7 +726,7 @@ func (s *Server) DraftDocumentEmail(c echo.Context) error {
 		greeting,
 		"",
 		fmt.Sprintf("Owl Day House ขอส่ง%s เลขที่ %s ลงวันที่ %s ยอดรวม %s บาท ตามไฟล์แนบ",
-			label, doc.Code, doc.IssuedDate.Format("02/01/2006"), groupThousands(doc.NetAmount.StringFixed(2))),
+			label, doc.Code, doc.IssuedDate.Format("02/01/2006"), docmath.Baht(doc.NetAmount)),
 	}
 	if doc.DueDate != nil {
 		lines = append(lines, "ครบกำหนดชำระ "+doc.DueDate.Format("02/01/2006"))
@@ -795,24 +807,4 @@ func (s *Server) CalculateDocument(c echo.Context) error {
 		"withholding_total": result.WithholdingTotal,
 		"payable_amount":    result.PayableAmount,
 	})
-}
-
-// groupThousands writes "20330.00" as "20,330.00" for people to read.
-func groupThousands(fixed string) string {
-	sign := ""
-	if strings.HasPrefix(fixed, "-") {
-		sign, fixed = "-", fixed[1:]
-	}
-	whole, frac := fixed, ""
-	if i := strings.Index(fixed, "."); i >= 0 {
-		whole, frac = fixed[:i], fixed[i:]
-	}
-	var b strings.Builder
-	for i, r := range whole {
-		if i > 0 && (len(whole)-i)%3 == 0 {
-			b.WriteByte(',')
-		}
-		b.WriteRune(r)
-	}
-	return sign + b.String() + frac
 }

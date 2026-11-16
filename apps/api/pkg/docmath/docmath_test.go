@@ -141,3 +141,68 @@ func TestRefusals(t *testing.T) {
 		}
 	}
 }
+
+func TestSplitPaymentInInstalments(t *testing.T) {
+	// An invoice of 21,400: 20,000 + VAT 1,400, paid as a 30% deposit and
+	// then the balance.
+	net, vat, base := d("21400"), d("1400"), d("20000")
+
+	deposit, err := SplitPayment(net, vat, base, d("6420"), d("0"), d("0"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	expect(t, "deposit vat", deposit.Vat, "420")
+	expect(t, "deposit pre-tax", deposit.PreTax, "6000")
+
+	balance, err := SplitPayment(net, vat, base, d("14980"), d("6420"), deposit.Vat)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expect(t, "balance vat", balance.Vat, "980")
+	expect(t, "balance pre-tax", balance.PreTax, "14000")
+
+	if _, err := SplitPayment(net, vat, base, d("0.01"), d("21400"), d("1400")); err != ErrOverpaid {
+		t.Errorf("paying a settled document: want ErrOverpaid, got %v", err)
+	}
+}
+
+// Three instalments of an amount that does not divide evenly: the rounded
+// shares would miss by a satang, and the last one takes the exact remainder.
+func TestSplitPaymentClosesExactly(t *testing.T) {
+	net, vat, base := d("1000.00"), d("65.42"), d("934.58")
+	first, _ := SplitPayment(net, vat, base, d("333.33"), d("0"), d("0"))
+	second, _ := SplitPayment(net, vat, base, d("333.33"), d("333.33"), first.Vat)
+	third, err := SplitPayment(net, vat, base, d("333.34"), d("666.66"), first.Vat.Add(second.Vat))
+	if err != nil {
+		t.Fatal(err)
+	}
+	total := first.Vat.Add(second.Vat).Add(third.Vat)
+	expect(t, "VAT across three receipts", total, "65.42")
+	expect(t, "pre-tax across three receipts", first.PreTax.Add(second.PreTax).Add(third.PreTax), "934.58")
+}
+
+// A document with a VAT line and a no-VAT line: the receipt's VAT base is
+// only the VAT line's share.
+func TestSplitPaymentMixedVat(t *testing.T) {
+	res, err := Compute(models.TaxExclusive, []Line{line("1", "10000", models.VatSeven), line("1", "5000", models.VatNone)}, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	expect(t, "doc vat base", res.VatBase, "10000")
+	full, err := SplitPayment(res.NetAmount, res.VatAmount, res.VatBase, res.NetAmount, d("0"), d("0"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	expect(t, "vat", full.Vat, "700")
+	expect(t, "vat base", full.VatBase, "10000")
+	expect(t, "pre-tax", full.PreTax, "15000")
+}
+
+func TestBaht(t *testing.T) {
+	cases := map[string]string{"0": "0.00", "999.5": "999.50", "1000": "1,000.00", "20330": "20,330.00", "1234567.89": "1,234,567.89", "-1500": "-1,500.00"}
+	for in, want := range cases {
+		if got := Baht(d(in)); got != want {
+			t.Errorf("Baht(%s) = %s, want %s", in, got, want)
+		}
+	}
+}

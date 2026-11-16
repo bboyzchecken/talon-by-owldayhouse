@@ -579,10 +579,43 @@ export interface DocumentEvent {
   created_at: string;
 }
 
+export type WhtCertStatus = "none" | "pending" | "done";
+
+export interface Payment {
+  id: number;
+  document_id: number;
+  document?: DocumentRow;
+  direction: "in" | "out";
+  status: "active" | "voided";
+  payment_date: string;
+  payment_method_id: number;
+  payment_method?: PaymentMethod;
+  received_amount: Money;
+  withholding_amount: Money;
+  settled_amount: Money;
+  note: string;
+  receipt_id?: number;
+  receipt?: DocumentRow;
+  wht_cert_status: WhtCertStatus;
+  wht_cert_at?: string;
+  void_reason: string;
+  voided_at?: string;
+  creator?: User;
+  created_at: string;
+}
+
+export interface DocumentPayments {
+  items: Payment[];
+  settled: Money;
+  outstanding: Money;
+}
+
 export interface DocumentDetail {
   document: DocumentRow;
   events: DocumentEvent[];
   next: DocType[] | null;
+  /** Only on documents money is received against (quotation, invoice, billing note). */
+  payments: DocumentPayments | null;
 }
 
 export interface DocumentTotals {

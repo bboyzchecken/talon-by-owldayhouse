@@ -20,7 +20,15 @@ export const docStatusLabels: Record<DocStatus, string> = {
 
 /** Types a sales account may create; the API enforces the same. */
 export const salesDocTypes: DocType[] = [101, 102, 106];
-export const adminDocTypes: DocType[] = [101, 102, 103, 106, 202];
+/** A receipt/tax invoice (103) is not here: it is issued by recording a payment. */
+export const adminDocTypes: DocType[] = [101, 102, 106, 202];
+export const payableDocTypes: DocType[] = [101, 102, 106];
+
+export const whtCertLabels: Record<string, string> = {
+  none: "ไม่มีหัก ณ ที่จ่าย",
+  pending: "รอหนังสือรับรอง 50 ทวิ",
+  done: "ได้รับหนังสือรับรองแล้ว",
+};
 
 export const vatTypeLabels: Record<number, string> = { 1: "ไม่มี VAT", 2: "VAT 0%", 3: "VAT 7%" };
 

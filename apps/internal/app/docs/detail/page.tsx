@@ -6,6 +6,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Suspense, useState } from "react";
 import { ArrowRight, Copy, FileCheck2, Mail, Pencil, Printer, Send, Trash2, XCircle } from "lucide-react";
 import { Button } from "@odh/ui";
+import { PaymentsPanel } from "@/components/docs/payments-panel";
 import { DocStatusBadge } from "@/components/docs/status-badge";
 import { leadHref } from "@/components/lead-card";
 import { Alert, EmptyState, Input, Panel, Spinner, Textarea } from "@/components/odh";
@@ -98,7 +99,7 @@ function DocumentDetail() {
   if (detail.isLoading) return <Spinner />;
   if (detail.error || !detail.data) return <Alert tone="stop">{(detail.error as Error)?.message ?? "ไม่พบเอกสาร"}</Alert>;
 
-  const { document: doc, events, next: nextTypes } = detail.data;
+  const { document: doc, events, next: nextTypes, payments: moneyIn } = detail.data;
   const busy = issue.isPending || voidDoc.isPending || remove.isPending || next.isPending;
   const contact = doc.contact;
   const isExpense = doc.doc_type === 202;
@@ -231,6 +232,8 @@ function DocumentDetail() {
               ))}
             </ol>
           </Panel>
+
+          {moneyIn && doc.status !== "draft" ? <PaymentsPanel doc={doc} data={moneyIn} isAdmin={isAdmin} /> : null}
 
           {doc.remark ? (
             <Panel title="หมายเหตุ">

@@ -30,6 +30,7 @@ import (
 	storekpi "github.com/owldayhouse/odh-internal-api/pkg/store/kpi"
 	storelead "github.com/owldayhouse/odh-internal-api/pkg/store/lead"
 	storeownership "github.com/owldayhouse/odh-internal-api/pkg/store/ownership"
+	storepayment "github.com/owldayhouse/odh-internal-api/pkg/store/payment"
 	storeregister "github.com/owldayhouse/odh-internal-api/pkg/store/register"
 	storesetting "github.com/owldayhouse/odh-internal-api/pkg/store/setting"
 	storetarget "github.com/owldayhouse/odh-internal-api/pkg/store/target"
@@ -125,12 +126,15 @@ func newTestEnv(t *testing.T) *testEnv {
 		noDatabase("no PostgreSQL for the integration tests — see the comment at the top of this file")
 		return nil
 	}
+	// Each test opens its own pool; without this the suite runs the server
+	// out of connections.
+	t.Cleanup(func() { _ = pool.Close() })
 	if err := database.Migrate(db); err != nil {
 		t.Fatalf("migrations failed: %v", err)
 	}
 	testdb.Lock(t, db)
 
-	err = db.Exec(`TRUNCATE products, payment_methods, document_events, document_items, documents, document_counters, billing_contacts, inbound_requests, egp_announcements, egp_settings_rows, ownership_logs, targets, deals, activities, contacts, leads, files, users RESTART IDENTITY CASCADE`).Error
+	err = db.Exec(`TRUNCATE payments, products, payment_methods, document_events, document_items, documents, document_counters, billing_contacts, inbound_requests, egp_announcements, egp_settings_rows, ownership_logs, targets, deals, activities, contacts, leads, files, users RESTART IDENTITY CASCADE`).Error
 	if err != nil {
 		t.Fatalf("cannot clear the test database: %v", err)
 	}
@@ -152,6 +156,7 @@ func newTestEnv(t *testing.T) *testEnv {
 		storeinbound.New(db),
 		storedocument.New(db),
 		storeregister.New(db),
+		storepayment.New(db),
 		storage.New(config, storage.NewR2Client(config)),
 	)
 

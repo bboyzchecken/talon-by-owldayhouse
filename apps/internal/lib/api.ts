@@ -18,6 +18,7 @@ import type {
   FileRow,
   ImportResponse,
   BillingContact,
+  Payment,
   PaymentMethod,
   DocStatus,
   DocType,
@@ -342,6 +343,9 @@ export const files = {
     ),
 
   remove: (id: number) => send<{ status: string }>("delete", `/api/files/${id}`),
+
+  list: (ownerType: string, ownerId: number) =>
+    get<{ data: FileRow[] }>("/api/files", { owner_type: ownerType, owner_id: ownerId }),
 };
 
 // --- CSV import and export --------------------------------------------------
@@ -519,4 +523,28 @@ export const registers = {
   createPaymentMethod: (body: PaymentMethodBody) => send<PaymentMethod>("post", "/api/docs/payment-methods", body),
   updatePaymentMethod: (id: number, body: PaymentMethodBody) =>
     send<PaymentMethod>("put", `/api/docs/payment-methods/${id}`, body),
+};
+
+// --- Payments (admin) ------------------------------------------------------------
+
+export interface PaymentBody {
+  payment_date: string;
+  payment_method_id: number;
+  received_amount: string;
+  withholding_amount: string;
+  note?: string;
+  issue_receipt: boolean;
+}
+
+export const payments = {
+  record: (documentId: number, body: PaymentBody) => send<Payment>("post", `/api/docs/${documentId}/payments`, body),
+  list: (filters: { wht_cert?: string; month?: string; page?: number }) =>
+    get<{ items: Payment[]; total: number; page_sums: { received: string; withholding: string; settled: string } }>(
+      "/api/docs/payments",
+      filters,
+    ),
+  void: (id: number, reason: string) => send<Payment>("post", `/api/docs/payments/${id}/void`, { reason }),
+  issueReceipt: (id: number) => send<Payment>("post", `/api/docs/payments/${id}/receipt`),
+  /** Needs the certificate file attached first (owner_type payment_wht). */
+  whtCertReceived: (id: number) => send<Payment>("post", `/api/docs/payments/${id}/wht-cert`),
 };
