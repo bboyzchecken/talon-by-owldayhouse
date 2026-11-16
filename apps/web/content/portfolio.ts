@@ -58,8 +58,8 @@ export const portfolio: readonly PortfolioItem[] = keepThaiWordsDeep([
     client: { th: "POST MAIL BOX", en: "POST MAIL BOX" },
     category: { th: "ระบบหน้าร้าน / ขนส่งและพัสดุ", en: "Counter system / Shipping" },
     result: {
-      th: "ระบบที่พนักงานหน้าร้านใช้รับงานทุกอย่างในจอเดียว ตั้งแต่ชั่งน้ำหนักพัสดุ เลือกบริการส่ง กล่องและการแพ็ก แสตมป์ งานเอกสาร ติดตามพัสดุ ไปจนถึงปิดบิลและออกใบเสร็จ เดินเป็นขั้นตอนทีละหน้าจอ พนักงานใหม่จึงรับงานได้เร็วและคิดเงินไม่ตกหล่น",
-      en: "One screen for everything at the counter: weighing the parcel, choosing the shipping service, boxes and packing, stamps, document jobs, tracking and closing the bill. It walks staff through one step at a time, so new people pick it up quickly and nothing is left off the bill.",
+      th: "ระบบที่พนักงานหน้าร้านใช้รับงานทุกอย่างในจอเดียว ตั้งแต่ชั่งน้ำหนักพัสดุ เลือกบริการส่ง กล่องและการแพ็ก แสตมป์ งานเอกสาร ติดตามพัสดุ แลกเงิน ไปจนถึงปิดบิลและออกใบเสร็จ เดินเป็นขั้นตอนทีละหน้าจอ พนักงานใหม่จึงรับงานได้เร็วและคิดเงินไม่ตกหล่น และสลับไทย–อังกฤษได้ทั้งระบบ รับลูกค้าต่างชาติหน้าร้านได้",
+      en: "One screen for everything at the counter: weighing the parcel, choosing the shipping service, boxes and packing, stamps, document jobs, tracking, currency exchange and closing the bill. It walks staff through one step at a time, so new people pick it up quickly and nothing is left off the bill, and the whole system switches between Thai and English for walk-in customers from abroad.",
     },
     image: "/portfolio/postmailbox-counter.webp",
     imageNote: { th: "ภาพจำลองหน้าจอชั่งน้ำหนักที่เคาน์เตอร์ ข้อมูลในบิลเป็นของสมมติ", en: "A mockup of the counter's weighing screen, with made-up bill data" },
