@@ -70,6 +70,7 @@ func (s *Server) registerDocumentRoutes(api *echo.Group) {
 	s.registerPaymentRoutes(docs)
 	s.registerTaxRoutes(docs)
 	s.registerFinanceRoutes(docs)
+	s.registerAccountingRoutes(docs)
 	docs.GET("/:id", s.GetDocument)
 	docs.PUT("/:id", s.UpdateDocument)
 	docs.DELETE("/:id", s.DeleteDocument)

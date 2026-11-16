@@ -26,7 +26,7 @@ function wordsFor(out: boolean) {
         moved: "ยอดที่โอนจริง",
         withheld: "เราหัก ณ ที่จ่าย",
         movedShort: "โอนออก",
-        certLabel: "หนังสือรับรอง 50 ทวิ ที่เราออก",
+        certLabel: "50 ทวิ (สำนักบัญชีออก)",
         certDone: "ส่งหนังสือรับรองให้ผู้รับเงินแล้ว",
         certPending: "รอส่งหนังสือรับรอง 50 ทวิ",
         certDoneBadge: "ส่งหนังสือรับรองแล้ว",
@@ -292,6 +292,18 @@ function PaymentRow({ payment, isAdmin, onChange }: { payment: Payment; isAdmin:
           {Number(payment.withholding_amount) > 0 ? (
             <div className="space-y-2">
               <Evidence ownerType="payment_wht" ownerId={payment.id} label={w.certLabel} />
+              {payment.direction === "out" && payment.wht_cert_status === "pending" ? (
+                <p className="font-body text-xs text-muted-foreground">
+                  {payment.wht_requested_at
+                    ? `ขอสำนักบัญชีออก 50 ทวิ แล้ว ${formatDate(payment.wht_requested_at)} · ได้ไฟล์มาแล้วแนบที่นี่`
+                    : "สำนักบัญชีเป็นคนออก 50 ทวิ "}
+                  {payment.wht_requested_at ? null : (
+                    <Link href="/docs/accounting" className="underline">
+                      ส่งคำขอที่หน้างานกับสำนักบัญชี
+                    </Link>
+                  )}
+                </p>
+              ) : null}
               {payment.wht_cert_status === "pending" ? (
                 <Button size="sm" variant="line" onClick={() => cert.mutate()} disabled={cert.isPending}>
                   <FileCheck2 className="size-4" aria-hidden /> {w.certDone}
@@ -322,10 +334,13 @@ export function Evidence({
   ownerType,
   ownerId,
   label,
+  onUploaded,
 }: {
   ownerType: "payment" | "payment_wht" | "tax_filing";
   ownerId: number;
   label: string;
+  /** Called after a file is attached, for a screen whose state depends on it. */
+  onUploaded?: () => void;
 }) {
   const queryClient = useQueryClient();
   const input = useRef<HTMLInputElement>(null);
@@ -337,6 +352,7 @@ export function Evidence({
       setError("");
       if (input.current) input.current.value = "";
       await queryClient.invalidateQueries({ queryKey: ["files", ownerType, ownerId] });
+      onUploaded?.();
     },
     onError: (caught) => setError((caught as ApiError).body?.error ?? "อัปโหลดไม่สำเร็จ"),
     meta: { success: `แนบ${label}แล้ว` },

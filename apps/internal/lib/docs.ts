@@ -43,6 +43,9 @@ export const eventLabels: Record<string, string> = {
   filed_period_edit: "แก้รายการในงวดภาษีที่ยื่นแล้ว",
   tax_filed: "บันทึกว่ายื่นภาษีแล้ว",
   tax_reopened: "เปิดแก้ไขงวดภาษี",
+  tax_sent: "ส่งข้อมูลให้สำนักบัญชี",
+  tax_due: "สำนักบัญชีแจ้งยอด QR",
+  wht_requested: "ขอสำนักบัญชีออก 50 ทวิ",
 };
 
 /** The templates the print page knows. Other types print in a later step. */
@@ -75,7 +78,7 @@ function ddmmyyyy(value?: string | null): string {
 // The company as it must appear on a tax invoice: the registered office.
 // Kept here, not in the template's sample, because the sample still carries
 // an older address.
-const issuer = {
+export const issuer = {
   isName: "บริษัท อาวล์ เดย์ เฮ้าส์ จำกัด (สำนักงานใหญ่)",
   isAddr: "ห้อง B1 ชั้น 1 อาคาร TNC เลขที่ 172 ตำบลไชยสถาน อำเภอสารภี จังหวัดเชียงใหม่ 50140",
   isTax: "0505563011424",

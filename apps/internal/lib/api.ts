@@ -2,6 +2,7 @@
 // from @odh/query, which attaches the bearer token from localStorage.
 import { api } from "@odh/query";
 import type {
+  AccountingOverview,
   Activity,
   EgpImportResult,
   EgpListResponse,
@@ -619,6 +620,17 @@ export const finance = {
       throw toApiError(error);
     }
   },
+};
+
+// --- Working with the accounting firm (admin) ---------------------------------------
+
+export const accounting = {
+  overview: () => get<AccountingOverview>("/api/docs/accounting"),
+  /** The message asking the firm for these 50 ทวิ was sent. */
+  whtRequested: (paymentIds: number[]) =>
+    send<{ marked: number }>("post", "/api/docs/accounting/wht-requested", { payment_ids: paymentIds }),
+  taxSent: (filingId: number) => send<TaxFiling>("post", `/api/docs/tax/filings/${filingId}/sent`),
+  taxDue: (filingId: number, amount: string) => send<TaxFiling>("post", `/api/docs/tax/filings/${filingId}/due`, { amount }),
 };
 
 // --- Monthly tax (admin) -----------------------------------------------------------

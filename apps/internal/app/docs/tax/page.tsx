@@ -139,6 +139,13 @@ function FormCard({ view }: { view: TaxFormView }) {
             กำหนดยื่น: กระดาษ {formatDate(view.due_date)} · ออนไลน์ {formatDate(view.efiling_due_date)}
           </p>
 
+          {view.filing && view.filing.status !== "filed" && (view.filing.sent_at || view.filing.due_set_at) ? (
+            <p className="mt-2 font-body text-xs text-muted-foreground">
+              {view.filing.sent_at ? `ส่งข้อมูลให้สำนักบัญชีแล้ว ${formatDate(view.filing.sent_at)}` : ""}
+              {view.filing.due_set_at ? ` · ยอดตาม QR ${money(view.filing.due_amount)} บาท` : " · รอ QR จากบัญชี"}
+            </p>
+          ) : null}
+
           {view.differs && view.filing ? (
             <div className="mt-3">
               <Alert>
@@ -235,7 +242,7 @@ function FiledBlock({ view }: { view: TaxFormView }) {
 function FileForm({ view }: { view: TaxFormView }) {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
-  const [paidAmount, setPaidAmount] = useState(view.figures.tax_amount);
+  const [paidAmount, setPaidAmount] = useState(view.filing?.due_set_at ? view.filing.due_amount : view.figures.tax_amount);
   const [paidDate, setPaidDate] = useState(todayISO());
   const [reference, setReference] = useState("");
   const [note, setNote] = useState("");

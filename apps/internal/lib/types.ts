@@ -660,6 +660,34 @@ export interface FinanceOverview {
   };
 }
 
+// --- Working with the accounting firm ---------------------------------------------
+
+export interface WhtRequest {
+  payment_id: number;
+  document_id: number;
+  document_code: string;
+  invoice_no: string;
+  payee_name: string;
+  payee_tax_number: string;
+  payee_branch: string;
+  payee_address: string;
+  payment_date: string;
+  wht_form: "pnd3" | "pnd53";
+  income_type: string;
+  base: string;
+  rate: string;
+  withheld: string;
+  requested_at?: string;
+  has_certificate: boolean;
+}
+
+export interface AccountingOverview {
+  wht_to_request: WhtRequest[];
+  wht_waiting: WhtRequest[];
+  wht_to_send: WhtRequest[];
+  tax_months: { month: string; forms: TaxFormView[] }[];
+}
+
 // --- Monthly tax ----------------------------------------------------------------
 
 export type TaxForm = "pp30" | "pnd3" | "pnd53";
@@ -678,6 +706,11 @@ export interface TaxFiling extends TaxFigures {
   form: TaxForm;
   period: string;
   status: "open" | "filed";
+  /** When our figures went to the accounting firm. */
+  sent_at?: string;
+  /** The amount on the e-tax QR the firm sent back. */
+  due_amount: string;
+  due_set_at?: string;
   paid_amount: string;
   paid_date?: string;
   reference: string;
@@ -762,6 +795,8 @@ export interface Payment {
   receipt?: DocumentRow;
   wht_cert_status: WhtCertStatus;
   wht_cert_at?: string;
+  /** Money out: when the accounting firm was asked for the 50 ทวิ. */
+  wht_requested_at?: string;
   void_reason: string;
   voided_at?: string;
   creator?: User;
