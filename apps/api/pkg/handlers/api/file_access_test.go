@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 	"testing"
@@ -28,5 +27,4 @@ func TestUploadToAnotherSalesLeadIsRefusedCompletely(t *testing.T) {
 	if files != 0 {
 		t.Fatalf("a refused request created %d file rows", files)
 	}
-	_ = fmt.Sprint()
 }
