@@ -192,7 +192,7 @@ export interface Meta {
   };
 }
 
-export type CalendarKind = "egp_deadline" | "meeting" | "follow_up";
+export type CalendarKind = "egp_deadline" | "meeting" | "follow_up" | "tax_deadline";
 
 /** One dated item on the team calendar. */
 export interface CalendarEvent {
@@ -208,6 +208,8 @@ export interface CalendarEvent {
   owner_id?: number;
   owner_name?: string;
   project_id?: string;
+  /** Where a non-lead event opens (a tax month). */
+  link?: string;
 }
 
 export interface CalendarResponse {
@@ -580,6 +582,89 @@ export interface DocumentEvent {
 }
 
 export type WhtCertStatus = "none" | "pending" | "done";
+
+// --- Monthly tax ----------------------------------------------------------------
+
+export type TaxForm = "pp30" | "pnd3" | "pnd53";
+
+export interface TaxFigures {
+  output_vat: string;
+  input_vat: string;
+  credit_brought_forward: string;
+  tax_amount: string;
+  credit_carried: string;
+  line_count: number;
+}
+
+export interface TaxFiling extends TaxFigures {
+  id: number;
+  form: TaxForm;
+  period: string;
+  status: "open" | "filed";
+  paid_amount: string;
+  paid_date?: string;
+  reference: string;
+  note: string;
+  filed_by?: number;
+  filer?: User;
+  filed_at?: string;
+}
+
+export interface TaxLine {
+  kind: "output" | "credit_note" | "debit_note" | "input" | "withheld";
+  document_id: number;
+  code: string;
+  date: string;
+  name: string;
+  tax_number: string;
+  branch_code: string;
+  invoice_no?: string;
+  base: string;
+  amount: string;
+  payment_id?: number;
+  wht_cert_done?: boolean;
+}
+
+export interface TaxFormView {
+  form: TaxForm;
+  label: string;
+  period: string;
+  due_date: string;
+  efiling_due_date: string;
+  required: boolean;
+  before_first: boolean;
+  closed: boolean;
+  figures: TaxFigures;
+  filing: TaxFiling | null;
+  differs: boolean;
+  lines: TaxLine[];
+  events: DocumentEvent[];
+}
+
+export interface TaxSettings {
+  first_period: string;
+  opening_vat_credit: string;
+  efiling_extra_days: number;
+}
+
+export interface TaxMonth {
+  month: string;
+  first_period: string;
+  settings: TaxSettings;
+  forms: TaxFormView[];
+}
+
+export interface TaxDue {
+  form: TaxForm;
+  label: string;
+  period: string;
+  due_date: string;
+  efiling_due_date: string;
+  days_left: number;
+  filed: boolean;
+  tax_amount: string;
+  credit_carried: string;
+}
 
 export interface Payment {
   id: number;

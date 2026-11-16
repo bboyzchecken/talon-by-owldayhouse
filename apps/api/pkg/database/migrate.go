@@ -235,6 +235,20 @@ func migrations(db *gorm.DB) *gormigrate.Gormigrate {
 				return tx.Migrator().DropColumn(&models.Payment{}, "wht_form")
 			},
 		},
+		{
+			// Monthly tax (step 7): one row per form and month, holding the
+			// figures as they were filed; its log goes in document_events.
+			ID: "20261116_06_tax_filings",
+			Migrate: func(tx *gorm.DB) error {
+				return tx.AutoMigrate(&models.TaxFiling{}, &models.DocumentEvent{})
+			},
+			Rollback: func(tx *gorm.DB) error {
+				if err := tx.Migrator().DropColumn(&models.DocumentEvent{}, "tax_filing_id"); err != nil {
+					return err
+				}
+				return tx.Migrator().DropTable("tax_filings")
+			},
+		},
 	})
 }
 

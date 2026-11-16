@@ -39,6 +39,11 @@ import type {
   SimilarLead,
   Stage,
   Target,
+  TaxDue,
+  TaxFiling,
+  TaxForm,
+  TaxMonth,
+  TaxSettings,
   TodayResponse,
   User,
 } from "./types";
@@ -51,6 +56,9 @@ export interface ApiErrorBody {
   similar?: SimilarLead[];
   needs_confirm?: boolean;
   matched_on?: string;
+  /** "period_filed": the change moves a tax month already filed. */
+  code?: string;
+  periods?: string[];
 }
 
 export class ApiError extends Error {
@@ -115,6 +123,28 @@ async function send<T>(
     return response.data;
   } catch (error) {
     throw toApiError(error);
+  }
+}
+
+/**
+ * Run a change that may touch a tax month already filed. The API refuses it
+ * with code "period_filed" until the person confirms; then it runs again
+ * with ?confirm_filed=1 and the change is logged on the document.
+ */
+async function confirmingFiled<T>(run: (query: string) => Promise<T>): Promise<T> {
+  try {
+    return await run("");
+  } catch (error) {
+    if (
+      error instanceof ApiError &&
+      error.status === 409 &&
+      error.body.code === "period_filed" &&
+      typeof window !== "undefined" &&
+      window.confirm(`${error.message}\n\nยืนยันทำต่อหรือไม่?`)
+    ) {
+      return run("?confirm_filed=1");
+    }
+    throw error;
   }
 }
 
@@ -488,8 +518,9 @@ export const documents = {
   create: (body: DocumentBody) => send<DocumentRow>("post", "/api/docs", body),
   update: (id: number, body: DocumentBody) => send<DocumentRow>("put", `/api/docs/${id}`, body),
   remove: (id: number) => send<void>("delete", `/api/docs/${id}`),
-  issue: (id: number) => send<DocumentRow>("post", `/api/docs/${id}/issue`),
-  void: (id: number, reason: string) => send<DocumentRow>("post", `/api/docs/${id}/void`, { reason }),
+  issue: (id: number) => confirmingFiled((q) => send<DocumentRow>("post", `/api/docs/${id}/issue${q}`)),
+  void: (id: number, reason: string) =>
+    confirmingFiled((q) => send<DocumentRow>("post", `/api/docs/${id}/void${q}`, { reason })),
   next: (id: number, docType: DocType) => send<DocumentRow>("post", `/api/docs/${id}/next`, { doc_type: docType }),
   /** A subject and body for the person to send themselves. Nothing is sent. */
   emailDraft: (id: number) =>
@@ -553,14 +584,31 @@ export const expenses = {
 };
 
 export const payments = {
-  record: (documentId: number, body: PaymentBody) => send<Payment>("post", `/api/docs/${documentId}/payments`, body),
+  record: (documentId: number, body: PaymentBody) =>
+    confirmingFiled((q) => send<Payment>("post", `/api/docs/${documentId}/payments${q}`, body)),
   list: (filters: { wht_cert?: string; month?: string; page?: number; direction?: "in" | "out" }) =>
     get<{ items: Payment[]; total: number; page_sums: { received: string; withholding: string; settled: string } }>(
       "/api/docs/payments",
       filters,
     ),
-  void: (id: number, reason: string) => send<Payment>("post", `/api/docs/payments/${id}/void`, { reason }),
-  issueReceipt: (id: number) => send<Payment>("post", `/api/docs/payments/${id}/receipt`),
+  void: (id: number, reason: string) =>
+    confirmingFiled((q) => send<Payment>("post", `/api/docs/payments/${id}/void${q}`, { reason })),
+  issueReceipt: (id: number) => confirmingFiled((q) => send<Payment>("post", `/api/docs/payments/${id}/receipt${q}`)),
   /** Needs the certificate file attached first (owner_type payment_wht). */
   whtCertReceived: (id: number) => send<Payment>("post", `/api/docs/payments/${id}/wht-cert`),
+};
+
+// --- Monthly tax (admin) -----------------------------------------------------------
+
+export const tax = {
+  month: (month: string) => get<TaxMonth>("/api/docs/tax", { month }),
+  due: () => get<{ items: TaxDue[] }>("/api/docs/tax/due"),
+  saveSettings: (body: { first_period?: string; opening_vat_credit?: string; efiling_extra_days?: number }) =>
+    send<TaxSettings>("put", "/api/docs/tax/settings", body),
+  /** The row for a form and month, created if needed, so the receipt can be attached. */
+  open: (form: TaxForm, month: string) => send<TaxFiling>("post", "/api/docs/tax/filings", { form, month }),
+  /** Needs the Revenue Department's receipt attached first (owner_type tax_filing). */
+  file: (id: number, body: { paid_amount: string; paid_date: string; reference: string; note: string }) =>
+    send<TaxFiling>("post", `/api/docs/tax/filings/${id}/file`, body),
+  reopen: (id: number, reason: string) => send<TaxFiling>("post", `/api/docs/tax/filings/${id}/reopen`, { reason }),
 };

@@ -15,6 +15,9 @@ const (
 	// a certificate, not just any file.
 	FileOwnerPayment    = "payment"
 	FileOwnerPaymentWht = "payment_wht"
+	// The Revenue Department's receipt (or filing confirmation) for a
+	// monthly tax filing.
+	FileOwnerTaxFiling = "tax_filing"
 )
 
 // File upload lifecycle. A row is created when the presigned PUT is handed out

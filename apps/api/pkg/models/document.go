@@ -322,17 +322,25 @@ const (
 	DocEventVoided       = "voided"
 	DocEventPayment      = "payment"
 	DocEventNumberSet    = "number_set" // an admin moved a counter
+	// A change that moves the figures of a tax month already filed, made
+	// after the person confirmed it.
+	DocEventFiledPeriod = "filed_period_edit"
+	// A monthly tax filing confirmed, or reopened (tax_filing_id is set).
+	DocEventTaxFiled    = "tax_filed"
+	DocEventTaxReopened = "tax_reopened"
 )
 
 // DocumentEvent is the log of who did what to a document, and when.
 type DocumentEvent struct {
-	ID         uint      `gorm:"primarykey" json:"id"`
-	DocumentID *uint     `gorm:"index" json:"document_id,omitempty"`
-	UserID     uint      `gorm:"not null;index" json:"user_id"`
-	User       *User     `gorm:"foreignKey:UserID" json:"user,omitempty"`
-	Action     string    `gorm:"size:32;not null" json:"action"`
-	Note       string    `gorm:"size:1000" json:"note"`
-	CreatedAt  time.Time `gorm:"index" json:"created_at"`
+	ID         uint  `gorm:"primarykey" json:"id"`
+	DocumentID *uint `gorm:"index" json:"document_id,omitempty"`
+	// TaxFilingID is set on the events of a monthly tax filing.
+	TaxFilingID *uint     `gorm:"index" json:"tax_filing_id,omitempty"`
+	UserID      uint      `gorm:"not null;index" json:"user_id"`
+	User        *User     `gorm:"foreignKey:UserID" json:"user,omitempty"`
+	Action      string    `gorm:"size:32;not null" json:"action"`
+	Note        string    `gorm:"size:1000" json:"note"`
+	CreatedAt   time.Time `gorm:"index" json:"created_at"`
 }
 
 // Errors the document store returns for a document in the wrong state.

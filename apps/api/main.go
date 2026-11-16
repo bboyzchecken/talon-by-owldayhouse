@@ -47,6 +47,7 @@ import (
 	storeregister "github.com/owldayhouse/odh-internal-api/pkg/store/register"
 	storesetting "github.com/owldayhouse/odh-internal-api/pkg/store/setting"
 	storetarget "github.com/owldayhouse/odh-internal-api/pkg/store/target"
+	storetaxfiling "github.com/owldayhouse/odh-internal-api/pkg/store/taxfiling"
 	storeuser "github.com/owldayhouse/odh-internal-api/pkg/store/user"
 	"github.com/sirupsen/logrus"
 	"go.uber.org/fx"
@@ -109,6 +110,7 @@ func storeModules() fx.Option {
 		storedocument.Module,
 		storeregister.Module,
 		storepayment.Module,
+		storetaxfiling.Module,
 	)
 }
 

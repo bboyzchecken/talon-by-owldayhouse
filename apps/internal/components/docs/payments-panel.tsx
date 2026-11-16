@@ -317,8 +317,16 @@ function PaymentRow({ payment, isAdmin, onChange }: { payment: Payment; isAdmin:
   );
 }
 
-/** The files attached to a payment as one kind of evidence, and an upload button. */
-function Evidence({ ownerType, ownerId, label }: { ownerType: "payment" | "payment_wht"; ownerId: number; label: string }) {
+/** The files attached to a payment (or a tax filing) as one kind of evidence, and an upload button. */
+export function Evidence({
+  ownerType,
+  ownerId,
+  label,
+}: {
+  ownerType: "payment" | "payment_wht" | "tax_filing";
+  ownerId: number;
+  label: string;
+}) {
   const queryClient = useQueryClient();
   const input = useRef<HTMLInputElement>(null);
   const list = useQuery({ queryKey: ["files", ownerType, ownerId], queryFn: () => files.list(ownerType, ownerId) });

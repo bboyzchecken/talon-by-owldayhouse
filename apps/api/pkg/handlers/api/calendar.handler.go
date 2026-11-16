@@ -18,6 +18,8 @@ const (
 	CalendarEgpDeadline = "egp_deadline"
 	CalendarMeeting     = "meeting"
 	CalendarFollowUp    = "follow_up"
+	// A monthly tax filing's online deadline; admins only.
+	CalendarTaxDeadline = "tax_deadline"
 )
 
 // maxCalendarDays bounds one request: a month view plus its edge weeks.
@@ -36,6 +38,8 @@ type CalendarEvent struct {
 	OwnerID   *uint  `json:"owner_id,omitempty"`
 	OwnerName string `json:"owner_name,omitempty"`
 	ProjectID string `json:"project_id,omitempty"`
+	// Link is where the event opens when it is not a lead (a tax month).
+	Link string `json:"link,omitempty"`
 }
 
 func (s *Server) registerCalendarRoutes(api *echo.Group) {
@@ -145,9 +149,17 @@ func (s *Server) GetCalendar(c echo.Context) error {
 		events = append(events, event)
 	}
 
-	// Within a day: closing dates first (they cannot move), then meetings by
-	// time, then follow-ups.
-	rank := map[string]int{CalendarEgpDeadline: 0, CalendarMeeting: 1, CalendarFollowUp: 2}
+	if actor(c).IsAdmin() {
+		taxEvents, err := s.taxCalendar(start, end)
+		if err != nil {
+			return s.serverError(c, err)
+		}
+		events = append(events, taxEvents...)
+	}
+
+	// Within a day: tax and closing dates first (they cannot move), then
+	// meetings by time, then follow-ups.
+	rank := map[string]int{CalendarTaxDeadline: 0, CalendarEgpDeadline: 0, CalendarMeeting: 1, CalendarFollowUp: 2}
 	sort.SliceStable(events, func(i, j int) bool {
 		a, b := events[i], events[j]
 		if a.Date != b.Date {
@@ -164,6 +176,42 @@ func (s *Server) GetCalendar(c echo.Context) error {
 		"to":   end.AddDate(0, 0, -1).Format("2006-01-02"),
 		"data": events,
 	})
+}
+
+// taxCalendar: the online deadlines of the monthly tax filings that fall
+// between start and end. A month's forms are due in the month after it.
+func (s *Server) taxCalendar(start, end time.Time) ([]CalendarEvent, error) {
+	from := monthOf(start).AddDate(0, -1, 0)
+	last := monthOf(end.AddDate(0, 0, -1)).AddDate(0, -1, 0)
+	if current := thisMonth(); !last.Before(current) {
+		// A month still running has nothing to file yet; its deadline is
+		// shown once it is over.
+		last = current.AddDate(0, -1, 0)
+	}
+	if last.Before(from) {
+		return nil, nil
+	}
+	dues, err := s.taxDeadlines(from, last)
+	if err != nil {
+		return nil, err
+	}
+	events := []CalendarEvent{}
+	for _, d := range dues {
+		day, err := time.ParseInLocation("2006-01-02", d.EfilingDueDate, leadrules.Bangkok)
+		if err != nil || day.Before(start) || !day.Before(end) {
+			continue
+		}
+		period, _ := time.ParseInLocation("2006-01", d.Period, leadrules.Bangkok)
+		events = append(events, CalendarEvent{
+			Kind:     CalendarTaxDeadline,
+			Date:     d.EfilingDueDate,
+			Title:    "ยื่น " + d.Label + " งวด " + period.Format("01/2006") + " (ออนไลน์)",
+			Detail:   taxAmountNote(d),
+			LeadName: "ภาษีรายเดือน",
+			Link:     "/docs/tax/?month=" + d.Period,
+		})
+	}
+	return events, nil
 }
 
 func meetingTime(at time.Time) string {

@@ -68,6 +68,7 @@ func (s *Server) registerDocumentRoutes(api *echo.Group) {
 	docs.POST("/calculate", s.CalculateDocument)
 	s.registerRegisterRoutes(docs)
 	s.registerPaymentRoutes(docs)
+	s.registerTaxRoutes(docs)
 	docs.GET("/:id", s.GetDocument)
 	docs.PUT("/:id", s.UpdateDocument)
 	docs.DELETE("/:id", s.DeleteDocument)
@@ -594,10 +595,15 @@ func (s *Server) IssueDocument(c echo.Context) error {
 	if err := receiptsOnlyFromPayments(doc.DocType); err != nil {
 		return s.documentError(c, err)
 	}
+	note, err := s.guardFiledPeriods(c, documentTaxKeys(doc))
+	if err != nil {
+		return err
+	}
 	issued, err := s.DocumentStore.Issue(doc.ID, me.ID, issueRules)
 	if err != nil {
 		return s.documentError(c, err)
 	}
+	s.logFiledEdit(doc.ID, me.ID, note)
 	return c.JSON(http.StatusOK, issued)
 }
 
@@ -628,10 +634,19 @@ func (s *Server) VoidDocument(c echo.Context) error {
 	if !ok {
 		return forbidden(c, noDocAccess)
 	}
+	var keys []taxKey
+	if doc.Status == models.DocStatusIssued {
+		keys = documentTaxKeys(doc)
+	}
+	note, err := s.guardFiledPeriods(c, keys)
+	if err != nil {
+		return err
+	}
 	voided, err := s.DocumentStore.Void(doc.ID, me.ID, reason)
 	if err != nil {
 		return s.documentError(c, err)
 	}
+	s.logFiledEdit(doc.ID, me.ID, note)
 	return c.JSON(http.StatusOK, voided)
 }
 

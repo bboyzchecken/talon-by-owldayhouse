@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { CalendarClock, ChevronLeft, ChevronRight, FileClock, Handshake } from "lucide-react";
+import { CalendarClock, ChevronLeft, ChevronRight, FileClock, Handshake, Landmark } from "lucide-react";
 import { cn } from "@odh/ui";
 import { leadHref } from "@/components/lead-card";
 import { Alert, Panel, Spinner } from "@/components/odh";
@@ -38,7 +38,11 @@ const kindLabels: Record<CalendarKind, string> = {
   egp_deadline: "ปิดรับข้อเสนอ e-GP",
   meeting: "นัดพบ",
   follow_up: "ตามต่อ",
+  tax_deadline: "กำหนดยื่นภาษี",
 };
+
+/** Dates that cannot move: e-GP closing dates and tax deadlines (admins only). */
+const isDeadline = (kind: CalendarKind) => kind === "egp_deadline" || kind === "tax_deadline";
 
 /** The six-week grid around a month, starting on Sunday. */
 function gridFor(monthStart: Date) {
@@ -78,7 +82,7 @@ export function TeamCalendar({ userId }: { userId?: number }) {
 
   // The next closing dates, apart from the day already open above.
   const upcomingDeadlines = events
-    .filter((e) => e.kind === "egp_deadline" && e.date >= today && e.date !== selected)
+    .filter((e) => isDeadline(e.kind) && e.date >= today && e.date !== selected)
     .slice(0, 5);
   const selectedEvents = byDay.get(selected) ?? [];
 
@@ -160,7 +164,7 @@ export function TeamCalendar({ userId }: { userId?: number }) {
         {days.map((d) => {
           const key = iso(d);
           const list = byDay.get(key) ?? [];
-          const deadlines = list.filter((e) => e.kind === "egp_deadline").length;
+          const deadlines = list.filter((e) => isDeadline(e.kind)).length;
           const meetings = list.filter((e) => e.kind === "meeting").length;
           const followUps = list.filter((e) => e.kind === "follow_up").length;
           const inMonth = key.slice(0, 7) === month.slice(0, 7);
@@ -173,7 +177,7 @@ export function TeamCalendar({ userId }: { userId?: number }) {
               role="gridcell"
               onClick={() => setSelected(key)}
               aria-pressed={isSelected}
-              aria-label={`${dayTitle.format(d)}: ปิดรับ ${deadlines} นัด ${meetings} ตามต่อ ${followUps}`}
+              aria-label={`${dayTitle.format(d)}: กำหนด ${deadlines} นัด ${meetings} ตามต่อ ${followUps}`}
               className={cn(
                 "flex min-h-14 flex-col items-center gap-1 rounded-lg border px-0.5 py-1 transition-colors",
                 isSelected ? "border-primary bg-primary/5" : "border-transparent hover:border-border",
@@ -202,7 +206,7 @@ export function TeamCalendar({ userId }: { userId?: number }) {
 
       <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-1 font-body text-xs text-muted-foreground" aria-label="คำอธิบายสัญลักษณ์">
         <li className="flex items-center gap-1.5">
-          <span className="rounded bg-foreground px-1 font-mono text-[10px] leading-4 text-background">1</span> ปิดรับข้อเสนอ e-GP
+          <span className="rounded bg-foreground px-1 font-mono text-[10px] leading-4 text-background">1</span> ปิดรับข้อเสนอ e-GP / ยื่นภาษี
         </li>
         <li className="flex items-center gap-1.5">
           <span className="size-1.5 rounded-full border border-primary" /> นัดพบ
@@ -225,7 +229,7 @@ export function TeamCalendar({ userId }: { userId?: number }) {
 
       {upcomingDeadlines.length > 0 ? (
         <div className="mt-4 border-t border-border pt-4">
-          <h4 className="font-display text-sm font-semibold text-foreground">ปิดรับข้อเสนอที่ใกล้ถึง</h4>
+          <h4 className="font-display text-sm font-semibold text-foreground">กำหนดที่ใกล้ถึง</h4>
           <EventList events={upcomingDeadlines} showDate />
         </div>
       ) : null}
@@ -237,17 +241,17 @@ function EventList({ events, showDate = false }: { events: CalendarEvent[]; show
   return (
     <ul className="mt-2 space-y-2">
       {events.map((e, i) => {
-        const Icon = e.kind === "egp_deadline" ? FileClock : e.kind === "meeting" ? Handshake : CalendarClock;
+        const Icon = e.kind === "tax_deadline" ? Landmark : e.kind === "egp_deadline" ? FileClock : e.kind === "meeting" ? Handshake : CalendarClock;
         return (
           <li key={`${e.kind}-${e.lead_id}-${e.project_id ?? ""}-${i}`}>
             <Link
-              href={leadHref(e.lead_id)}
+              href={e.link ?? leadHref(e.lead_id)}
               className={cn(
                 "flex items-start gap-3 rounded-xl border p-3 transition-colors hover:border-primary",
-                e.kind === "egp_deadline" ? "border-foreground/40" : "border-border",
+                isDeadline(e.kind) ? "border-foreground/40" : "border-border",
               )}
             >
-              <Icon className={cn("mt-0.5 size-4 shrink-0", e.kind === "egp_deadline" ? "text-foreground" : "text-primary")} aria-hidden />
+              <Icon className={cn("mt-0.5 size-4 shrink-0", isDeadline(e.kind) ? "text-foreground" : "text-primary")} aria-hidden />
               <div className="min-w-0 flex-1">
                 <p className="font-mono text-[11px] text-muted-foreground">
                   {kindLabels[e.kind]}
@@ -257,7 +261,9 @@ function EventList({ events, showDate = false }: { events: CalendarEvent[]; show
                 <p className="font-display text-sm font-semibold text-foreground">{e.lead_name}</p>
                 <p className="line-clamp-2 font-body text-sm text-foreground">{e.title}</p>
                 <p className="font-body text-xs text-muted-foreground">
-                  {[e.detail, e.owner_name ? `ดูแลโดย ${e.owner_name}` : "ยังไม่มอบหมาย"].filter(Boolean).join(" · ")}
+                  {e.kind === "tax_deadline"
+                    ? e.detail
+                    : [e.detail, e.owner_name ? `ดูแลโดย ${e.owner_name}` : "ยังไม่มอบหมาย"].filter(Boolean).join(" · ")}
                 </p>
               </div>
             </Link>

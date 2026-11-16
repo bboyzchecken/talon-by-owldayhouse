@@ -7,11 +7,35 @@ import { Button } from "@odh/ui";
 import { LeadCard, leadHref } from "@/components/lead-card";
 import { TeamCalendar } from "@/components/team-calendar";
 import { Alert, EmptyState, Panel, Spinner, StatTile } from "@/components/odh";
-import { leads as leadsApi } from "@/lib/api";
+import { leads as leadsApi, tax } from "@/lib/api";
+import { money } from "@/lib/docs";
 import { useAuth } from "@/lib/auth";
 import { useInboxCount } from "@/lib/hooks";
 import { formatWhen } from "@/lib/format";
 import { activityTypeLabels, labelOf } from "@/lib/labels";
+
+/** Monthly tax filings due within five days, or overdue (admin). */
+function TaxDueAlert() {
+  const { data } = useQuery({ queryKey: ["docs", "tax", "due"], queryFn: () => tax.due() });
+  const items = data?.items ?? [];
+  if (items.length === 0) return null;
+  return (
+    <Alert>
+      <p className="font-semibold">ภาษีรายเดือนที่ต้องยื่น</p>
+      <ul className="mt-1 space-y-0.5">
+        {items.map((d) => (
+          <li key={`${d.form}-${d.period}`}>
+            <Link href={`/docs/tax/?month=${d.period}`} className="underline">
+              {d.label} งวด {d.period.slice(5)}/{d.period.slice(0, 4)}
+            </Link>{" "}
+            · {d.days_left < 0 ? `เลยกำหนดยื่นออนไลน์ ${-d.days_left} วัน` : d.days_left === 0 ? "ครบกำหนดวันนี้" : `อีก ${d.days_left} วัน`}
+            {Number(d.tax_amount) > 0 ? ` · ${money(d.tax_amount)} บาท` : ""}
+          </li>
+        ))}
+      </ul>
+    </Alert>
+  );
+}
 
 export default function TodayPage() {
   const { user, isAdmin } = useAuth();
@@ -38,6 +62,8 @@ export default function TodayPage() {
             : `สวัสดี ${user?.name ?? ""} — ลูกค้าที่ถึงกำหนดตามต่อ และนัดที่กำลังจะถึง`}
         </p>
       </header>
+
+      {isAdmin ? <TaxDueAlert /> : null}
 
       {waiting > 0 ? (
         <Alert>

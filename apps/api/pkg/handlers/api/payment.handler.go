@@ -231,14 +231,34 @@ func (s *Server) RecordPayment(c echo.Context) error {
 	if direction == models.PaymentIn && (body.IssueReceipt == nil || *body.IssueReceipt) {
 		plan = s.receiptPlan(payment, method.Name)
 	}
+	note, err := s.guardFiledPeriods(c, paymentTaxKeys(payment, doc, plan != nil))
+	if err != nil {
+		return err
+	}
 	if err := s.PaymentStore.Record(payment, plan); err != nil {
 		return s.paymentError(c, err)
 	}
+	s.logFiledEdit(doc.ID, me.ID, note)
 	saved, err := s.PaymentStore.Find(payment.ID)
 	if err != nil {
 		return s.serverError(c, err)
 	}
 	return c.JSON(http.StatusCreated, saved)
+}
+
+// paymentTaxKeys: the filings a new payment (or its receipt) counts in. A
+// receipt issued for money in is a tax invoice dated the payment day when the
+// document carries VAT; tax we withhold from a vendor goes on its form in the
+// payment's month.
+func paymentTaxKeys(p *models.Payment, doc *models.Document, withReceipt bool) []taxKey {
+	var keys []taxKey
+	if p.Direction == models.PaymentIn && withReceipt && doc.VatAmount.IsPositive() {
+		keys = append(keys, taxKey{models.TaxFormPP30, monthOf(p.PaymentDate)})
+	}
+	if p.Direction == models.PaymentOut && p.WithholdingAmount.IsPositive() && p.WhtForm != "" {
+		keys = append(keys, taxKey{p.WhtForm, monthOf(p.PaymentDate)})
+	}
+	return keys
 }
 
 func (s *Server) loadPayment(c echo.Context) (*models.Payment, error) {
@@ -276,10 +296,20 @@ func (s *Server) IssuePaymentReceipt(c echo.Context) error {
 	if p.PaymentMethod != nil {
 		name = p.PaymentMethod.Name
 	}
-	updated, err := s.PaymentStore.IssueReceipt(p.ID, actor(c).ID, s.receiptPlan(p, name))
+	var keys []taxKey
+	if p.Direction == models.PaymentIn && p.ReceiptID == nil && p.Document != nil {
+		keys = paymentTaxKeys(p, p.Document, true)
+	}
+	note, err := s.guardFiledPeriods(c, keys)
+	if err != nil {
+		return err
+	}
+	me := actor(c)
+	updated, err := s.PaymentStore.IssueReceipt(p.ID, me.ID, s.receiptPlan(p, name))
 	if err != nil {
 		return s.paymentError(c, err)
 	}
+	s.logFiledEdit(p.DocumentID, me.ID, note)
 	return c.JSON(http.StatusOK, updated)
 }
 
@@ -299,10 +329,25 @@ func (s *Server) VoidPayment(c echo.Context) error {
 	if reason == "" {
 		return badRequest(c, "ต้องระบุเหตุผลที่ยกเลิก")
 	}
-	updated, err := s.PaymentStore.Void(p.ID, actor(c).ID, reason)
+	var keys []taxKey
+	if p.Status == models.PaymentActive {
+		if p.Receipt != nil && p.Receipt.Status == models.DocStatusIssued {
+			keys = append(keys, documentTaxKeys(p.Receipt)...)
+		}
+		if p.Direction == models.PaymentOut && p.WithholdingAmount.IsPositive() && p.WhtForm != "" {
+			keys = append(keys, taxKey{p.WhtForm, monthOf(p.PaymentDate)})
+		}
+	}
+	note, err := s.guardFiledPeriods(c, keys)
+	if err != nil {
+		return err
+	}
+	me := actor(c)
+	updated, err := s.PaymentStore.Void(p.ID, me.ID, reason)
 	if err != nil {
 		return s.paymentError(c, err)
 	}
+	s.logFiledEdit(p.DocumentID, me.ID, note)
 	return c.JSON(http.StatusOK, updated)
 }
 
