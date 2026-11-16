@@ -25,7 +25,7 @@ export const copy = {
       switchLabel: "Switch to English",
       themeLabel: "สลับโหมดมืดและสว่าง",
     },
-    capability: { partner: "ร่วมกับพาร์ตเนอร์", closed: "ปิดให้บริการแล้ว", "handed-over": "ส่งมอบแล้ว", unreleased: "ไม่ได้เปิดตัว", live: "ใช้งานจริง", sample: "ตัวอย่าง" },
+    capability: { partner: "ร่วมกับพาร์ตเนอร์", closed: "ปิดให้บริการแล้ว", "handed-over": "ส่งมอบแล้ว", live: "ใช้งานจริง", sample: "ตัวอย่าง" },
     home: {
       metaTitle: "Owl Day House | ประสบการณ์แบรนด์ ที่สร้างได้จริง",
       metaDescription:
@@ -230,7 +230,7 @@ export const copy = {
       switchLabel: "เปลี่ยนเป็นภาษาไทย",
       themeLabel: "Switch between dark and light",
     },
-    capability: { partner: "With partner", closed: "No longer operating", "handed-over": "Handed over", unreleased: "Never launched", live: "Live", sample: "Sample" },
+    capability: { partner: "With partner", closed: "No longer operating", "handed-over": "Handed over", live: "Live", sample: "Sample" },
     home: {
       metaTitle: "Owl Day House | Brand Experience, Engineered",
       metaDescription:

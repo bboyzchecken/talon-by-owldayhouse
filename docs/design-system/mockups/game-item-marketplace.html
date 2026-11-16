@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<title>game marketplace mock</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --c1:#0E082A; --c2:#18113B; --c3:#343053; --red:#E2494F; --orange:#FF7E20;
+    --yellow:#F2C94C; --green:#37BC20; --blue:#2A7CC6; --gold:#FDC040;
+    --tx:#EDEBF5; --mut:#909193;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{width:1280px;height:640px;overflow:hidden}
+  body{font-family:'Kanit','IBM Plex Sans Thai','Noto Sans Thai','Thonburi',sans-serif;
+       background:var(--c1);color:var(--tx);font-weight:300;
+       background-image:radial-gradient(900px 420px at 18% -8%, rgba(226,73,79,.17), transparent 62%),
+                        radial-gradient(760px 380px at 86% 4%, rgba(42,124,198,.17), transparent 60%)}
+
+  /* top nav */
+  .nav{height:56px;display:flex;align-items:center;gap:16px;padding:0 26px;
+       border-bottom:1px solid rgba(255,255,255,.07);background:rgba(14,8,42,.6)}
+  .mark{display:flex;align-items:center;gap:9px}
+  .mk{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--red),var(--orange));
+      display:grid;place-items:center}
+  .mk svg{width:17px;height:17px;stroke:#fff;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+  .mt{font-size:13.5px;font-weight:400;letter-spacing:.2px}
+  .links{display:flex;gap:17px;font-size:12px;color:#A5A2BA;margin-left:8px}
+  .links .on{color:#fff}
+  .srch{margin-left:auto;width:255px;height:33px;border-radius:999px;background:rgba(255,255,255,.055);
+        border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:8px;padding:0 14px;
+        font-size:11.3px;color:#6E6B82}
+  .nic{width:33px;height:33px;border-radius:999px;background:rgba(255,255,255,.055);display:grid;place-items:center;position:relative}
+  .nic .d{position:absolute;top:6px;right:7px;width:6px;height:6px;border-radius:50%;background:var(--red)}
+  .me{width:33px;height:33px;border-radius:999px;background:linear-gradient(135deg,#2A7CC6,#6B4BC4);
+      display:grid;place-items:center;font-size:11px;font-weight:400}
+
+  .wrap{padding:16px 26px 0;display:flex;flex-direction:column;gap:14px;height:584px}
+
+  /* hero */
+  .hero{height:118px;border-radius:14px;position:relative;overflow:hidden;flex:none;
+        background:linear-gradient(110deg,#24184F 0%,#311C57 45%,#13224A 100%);
+        border:1px solid rgba(255,255,255,.07);display:flex;align-items:center;padding:0 26px}
+  .hero::after{content:"";position:absolute;right:-40px;top:-70px;width:330px;height:330px;border-radius:50%;
+               background:radial-gradient(circle,rgba(255,126,32,.26),transparent 62%)}
+  .hero::before{content:"";position:absolute;right:120px;bottom:-90px;width:260px;height:260px;border-radius:50%;
+               background:radial-gradient(circle,rgba(42,124,198,.3),transparent 60%)}
+  .ht{position:relative;z-index:1}
+  .ht .tag{display:inline-block;font-size:10px;padding:3px 10px;border-radius:999px;
+           background:rgba(253,192,64,.15);color:var(--gold);margin-bottom:7px}
+  .ht h1{font-size:23px;font-weight:500;line-height:1.25;letter-spacing:.2px}
+  .ht p{font-size:12px;color:#B6B2C8;margin-top:5px}
+  .hb{position:relative;z-index:1;margin-left:auto;display:flex;gap:9px}
+  .cta{height:36px;padding:0 20px;border-radius:999px;display:grid;place-items:center;font-size:12.5px;
+       background:linear-gradient(135deg,var(--red),var(--orange));color:#fff}
+  .cta2{height:36px;padding:0 18px;border-radius:999px;display:grid;place-items:center;font-size:12.5px;
+        border:1px solid rgba(255,255,255,.2);color:#D9D6E6}
+
+  /* games row */
+  .row{display:flex;align-items:center;gap:9px;flex:none}
+  .rl{font-size:12.5px;font-weight:400;margin-right:4px}
+  .chip{display:flex;align-items:center;gap:7px;padding:6px 13px 6px 7px;border-radius:999px;
+        background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);font-size:11.3px;color:#C9C6D8}
+  .chip.on{background:rgba(226,73,79,.16);border-color:rgba(226,73,79,.35);color:#fff}
+  .cg{width:21px;height:21px;border-radius:6px;display:grid;place-items:center;font-size:10px}
+  .more{margin-left:auto;font-size:11px;color:#8E8AA3}
+
+  /* grid */
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:214px;align-content:start;
+        gap:14px;flex:1;min-height:0}
+  .card{background:rgba(24,17,59,.85);border:1px solid rgba(255,255,255,.065);border-radius:13px;
+        overflow:hidden;display:flex;flex-direction:column}
+  .thumb{height:88px;position:relative;display:grid;place-items:center;font-size:27px}
+  .badge{position:absolute;left:9px;top:9px;font-size:9.3px;padding:2px 8px;border-radius:999px;
+         background:rgba(14,8,42,.72);backdrop-filter:blur(2px)}
+  .b-hot{color:#FF9A5C} .b-new{color:#6FD88B} .b-rare{color:#C9A8FF}
+  .info{padding:10px 12px 11px;display:flex;flex-direction:column;flex:1}
+  .gname{font-size:9.6px;color:#8E8AA3}
+  .iname{font-size:12.3px;font-weight:400;line-height:1.3;margin-top:2px}
+  .sell{display:flex;align-items:center;gap:6px;margin-top:7px;font-size:9.8px;color:#8E8AA3}
+  .sav{width:17px;height:17px;border-radius:50%;background:rgba(255,255,255,.1);display:grid;place-items:center;font-size:7.5px;color:#C9C6D8}
+  .star{color:var(--gold)}
+  .pricerow{margin-top:auto;padding-top:9px;display:flex;align-items:flex-end;gap:7px}
+  .price{font-size:16px;color:var(--gold);font-weight:500;line-height:1}
+  .old{font-size:10px;color:#6E6B82;text-decoration:line-through}
+  .buy{margin-left:auto;width:27px;height:27px;border-radius:8px;background:rgba(226,73,79,.16);
+       display:grid;place-items:center}
+  .buy svg{width:14px;height:14px;stroke:#F0707A;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+</style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="mark">
+      <span class="mk"><svg viewBox="0 0 24 24"><rect x="2.5" y="7" width="19" height="10" rx="4.5"/><path d="M7 10.5v3M5.5 12h3M16 11h.01M18 13.5h.01"/></svg></span>
+      <span class="mt">ตลาดไอเทมเกม</span>
+    </div>
+    <div class="links"><span class="on">ตลาดซื้อขาย</span><span>เกมทั้งหมด</span><span>วิธีซื้อขาย</span><span>เปิดร้าน</span></div>
+    <div class="srch">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#6E6B82" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      ค้นหาไอเทม เกม หรือร้านค้า
+    </div>
+    <div class="nic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#A5A2BA" stroke-width="1.7" stroke-linecap="round"><path d="M18 9a6 6 0 1 0-12 0c0 5-2 6-2 6h16s-2-1-2-6"/><path d="M10.5 19a2 2 0 0 0 3 0"/></svg><span class="d"></span></div>
+    <div class="nic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#A5A2BA" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h2l2.2 9.5a1.5 1.5 0 0 0 1.5 1.2h7.1a1.5 1.5 0 0 0 1.5-1.2L20 8H7"/><circle cx="10" cy="19" r="1.3"/><circle cx="17" cy="19" r="1.3"/></svg></div>
+    <div class="me">ธน</div>
+  </nav>
+
+  <div class="wrap">
+    <section class="hero">
+      <div class="ht">
+        <span class="tag">มีระบบคนกลางดูแลทุกออเดอร์</span>
+        <h1>ซื้อขายไอเทมในเกม ได้ของชัวร์ ได้เงินชัวร์</h1>
+        <p>เงินพักไว้กับระบบจนกว่าผู้ซื้อจะกดรับของ · เปิดร้านฟรี ค่าธรรมเนียม 4.5%</p>
+      </div>
+      <div class="hb"><span class="cta">เริ่มเลือกซื้อ</span><span class="cta2">เปิดร้านขายของ</span></div>
+    </section>
+
+    <div class="row">
+      <span class="rl">เลือกตามเกม</span>
+      <span class="chip on"><span class="cg" style="background:rgba(226,73,79,.25)">🔥</span>ยอดนิยม</span>
+      <span class="chip"><span class="cg" style="background:rgba(107,75,196,.3)">🐉</span>Dragon Realm Online</span>
+      <span class="chip"><span class="cg" style="background:rgba(42,124,198,.3)">⚔️</span>Nightfall Arena</span>
+      <span class="chip"><span class="cg" style="background:rgba(242,201,76,.25)">✨</span>Astra Legends</span>
+      <span class="chip"><span class="cg" style="background:rgba(55,188,32,.25)">🏹</span>Verdant Isles</span>
+      <span class="more">ดูทั้งหมด 38 เกม ›</span>
+    </div>
+
+    <div class="grid">
+      <article class="card">
+        <div class="thumb" style="background:linear-gradient(145deg,#3A2A6B,#231A4A)">
+          <span class="badge b-rare">ไอเทมหายาก</span>⚔️</div>
+        <div class="info">
+          <div class="gname">Dragon Realm Online</div>
+          <div class="iname">ดาบเงามรกต +12</div>
+          <div class="sell"><span class="sav">ร</span>ร้านมังกรเงา · <span class="star">★ 4.9</span></div>
+          <div class="pricerow"><span class="price">฿1,890</span><span class="old">฿2,400</span>
+            <span class="buy"><svg viewBox="0 0 24 24"><path d="M4 5h2l2.2 9.5a1.5 1.5 0 0 0 1.5 1.2h7.1a1.5 1.5 0 0 0 1.5-1.2L20 8H7"/><circle cx="10" cy="19" r="1.3"/><circle cx="17" cy="19" r="1.3"/></svg></span></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="thumb" style="background:linear-gradient(145deg,#4A3A1E,#2A2214)">
+          <span class="badge b-hot">ขายดี</span>🪙</div>
+        <div class="info">
+          <div class="gname">Astra Legends</div>
+          <div class="iname">โกลด์ 1,000,000</div>
+          <div class="sell"><span class="sav">พ</span>ร้านพี่หมีเติมเกม · <span class="star">★ 5.0</span></div>
+          <div class="pricerow"><span class="price">฿350</span>
+            <span class="buy"><svg viewBox="0 0 24 24"><path d="M4 5h2l2.2 9.5a1.5 1.5 0 0 0 1.5 1.2h7.1a1.5 1.5 0 0 0 1.5-1.2L20 8H7"/><circle cx="10" cy="19" r="1.3"/><circle cx="17" cy="19" r="1.3"/></svg></span></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="thumb" style="background:linear-gradient(145deg,#1E3A52,#13263A)">
+          <span class="badge b-new">เพิ่งลง</span>🧊</div>
+        <div class="info">
+          <div class="gname">Nightfall Arena</div>
+          <div class="iname">ไอดีเลเวล 60 · สกิน 14 ชิ้น</div>
+          <div class="sell"><span class="sav">ก</span>ร้านเกมเมอร์ป้ายแดง · <span class="star">★ 4.7</span></div>
+          <div class="pricerow"><span class="price">฿4,500</span>
+            <span class="buy"><svg viewBox="0 0 24 24"><path d="M4 5h2l2.2 9.5a1.5 1.5 0 0 0 1.5 1.2h7.1a1.5 1.5 0 0 0 1.5-1.2L20 8H7"/><circle cx="10" cy="19" r="1.3"/><circle cx="17" cy="19" r="1.3"/></svg></span></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="thumb" style="background:linear-gradient(145deg,#2A4A33,#1A2E22)">
+          <span class="badge b-hot">ขายดี</span>💎</div>
+        <div class="info">
+          <div class="gname">Verdant Isles</div>
+          <div class="iname">เพชร 5,000 เม็ด</div>
+          <div class="sell"><span class="sav">ฟ</span>ร้านฟ้าใสเติมเกม · <span class="star">★ 4.8</span></div>
+          <div class="pricerow"><span class="price">฿980</span><span class="old">฿1,150</span>
+            <span class="buy"><svg viewBox="0 0 24 24"><path d="M4 5h2l2.2 9.5a1.5 1.5 0 0 0 1.5 1.2h7.1a1.5 1.5 0 0 0 1.5-1.2L20 8H7"/><circle cx="10" cy="19" r="1.3"/><circle cx="17" cy="19" r="1.3"/></svg></span></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="thumb" style="background:linear-gradient(145deg,#4A2340,#2C1628)">
+          <span class="badge b-rare">ไอเทมหายาก</span>🛡️</div>
+        <div class="info">
+          <div class="gname">Dragon Realm Online</div>
+          <div class="iname">ชุดเกราะเพลิง ครบเซ็ต</div>
+          <div class="sell"><span class="sav">ต</span>ร้านตำนานนักรบ · <span class="star">★ 4.9</span></div>
+          <div class="pricerow"><span class="price">฿2,250</span>
+            <span class="buy"><svg viewBox="0 0 24 24"><path d="M4 5h2l2.2 9.5a1.5 1.5 0 0 0 1.5 1.2h7.1a1.5 1.5 0 0 0 1.5-1.2L20 8H7"/><circle cx="10" cy="19" r="1.3"/><circle cx="17" cy="19" r="1.3"/></svg></span></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="thumb" style="background:linear-gradient(145deg,#1F3F3C,#142926)">
+          <span class="badge b-new">เพิ่งลง</span>🏹</div>
+        <div class="info">
+          <div class="gname">Verdant Isles</div>
+          <div class="iname">ธนูแสงจันทร์ ตีบวก 9</div>
+          <div class="sell"><span class="sav">ป</span>ร้านป่าเงียบ · <span class="star">★ 4.6</span></div>
+          <div class="pricerow"><span class="price">฿1,340</span>
+            <span class="buy"><svg viewBox="0 0 24 24"><path d="M4 5h2l2.2 9.5a1.5 1.5 0 0 0 1.5 1.2h7.1a1.5 1.5 0 0 0 1.5-1.2L20 8H7"/><circle cx="10" cy="19" r="1.3"/><circle cx="17" cy="19" r="1.3"/></svg></span></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="thumb" style="background:linear-gradient(145deg,#3C3320,#241F14)">
+          <span class="badge b-hot">ขายดี</span>🪙</div>
+        <div class="info">
+          <div class="gname">Nightfall Arena</div>
+          <div class="iname">โกลด์ 250,000</div>
+          <div class="sell"><span class="sav">ด</span>ร้านดาวเหนือ · <span class="star">★ 4.9</span></div>
+          <div class="pricerow"><span class="price">฿120</span>
+            <span class="buy"><svg viewBox="0 0 24 24"><path d="M4 5h2l2.2 9.5a1.5 1.5 0 0 0 1.5 1.2h7.1a1.5 1.5 0 0 0 1.5-1.2L20 8H7"/><circle cx="10" cy="19" r="1.3"/><circle cx="17" cy="19" r="1.3"/></svg></span></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="thumb" style="background:linear-gradient(145deg,#26305C,#171D3A)">
+          <span class="badge b-rare">ไอเทมหายาก</span>💠</div>
+        <div class="info">
+          <div class="gname">Astra Legends</div>
+          <div class="iname">สกินจำกัด ฤดูกาลที่ 3</div>
+          <div class="sell"><span class="sav">จ</span>ร้านจันทราสกิน · <span class="star">★ 5.0</span></div>
+          <div class="pricerow"><span class="price">฿3,100</span><span class="old">฿3,800</span>
+            <span class="buy"><svg viewBox="0 0 24 24"><path d="M4 5h2l2.2 9.5a1.5 1.5 0 0 0 1.5 1.2h7.1a1.5 1.5 0 0 0 1.5-1.2L20 8H7"/><circle cx="10" cy="19" r="1.3"/><circle cx="17" cy="19" r="1.3"/></svg></span></div>
+        </div>
+      </article>
+    </div>
+  </div>
+</body>
+</html>
