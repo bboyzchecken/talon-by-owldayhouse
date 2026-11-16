@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"path"
 	"strings"
 	"time"
@@ -164,6 +165,19 @@ func (s *Service) Stat(ctx context.Context, key string) (int64, string, error) {
 		mime = *out.ContentType
 	}
 	return size, mime, nil
+}
+
+// Open streams an object from R2, for the monthly export's zip. The caller
+// closes it.
+func (s *Service) Open(ctx context.Context, key string) (io.ReadCloser, error) {
+	out, err := s.client.GetObject(ctx, &s3.GetObjectInput{
+		Bucket: aws.String(s.config.FileBucket),
+		Key:    aws.String(key),
+	})
+	if err != nil {
+		return nil, err
+	}
+	return out.Body, nil
 }
 
 // Delete removes the object from R2.

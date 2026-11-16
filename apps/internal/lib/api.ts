@@ -16,6 +16,7 @@ import type {
   Deal,
   DuplicateLead,
   FileRow,
+  FinanceOverview,
   ImportResponse,
   BillingContact,
   Payment,
@@ -596,6 +597,28 @@ export const payments = {
   issueReceipt: (id: number) => confirmingFiled((q) => send<Payment>("post", `/api/docs/payments/${id}/receipt${q}`)),
   /** Needs the certificate file attached first (owner_type payment_wht). */
   whtCertReceived: (id: number) => send<Payment>("post", `/api/docs/payments/${id}/wht-cert`),
+};
+
+// --- Finance overview (admin) ------------------------------------------------------
+
+export const finance = {
+  overview: (month: string) => get<FinanceOverview>("/api/docs/finance", { month }),
+  /** The month's zip for the accounting firm: VAT reports, withholding lists, PEAK-ordered CSVs, evidence. */
+  exportMonth: async (month: string): Promise<void> => {
+    try {
+      const response = await api.get<Blob>("/api/docs/finance/export", { params: { month }, responseType: "blob" });
+      const url = URL.createObjectURL(response.data);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `odh-accounting-${month}.zip`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      throw toApiError(error);
+    }
+  },
 };
 
 // --- Monthly tax (admin) -----------------------------------------------------------

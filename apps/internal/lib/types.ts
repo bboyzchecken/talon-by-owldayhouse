@@ -583,6 +583,83 @@ export interface DocumentEvent {
 
 export type WhtCertStatus = "none" | "pending" | "done";
 
+// --- Finance overview -------------------------------------------------------------
+
+export interface MonthTotals {
+  month: string;
+  revenue: string;
+  expense: string;
+  cash_in: string;
+  cash_out: string;
+}
+
+export interface CountSum {
+  count: number;
+  amount: string;
+}
+
+export interface OpenItem {
+  id: number;
+  doc_type: DocType;
+  code: string;
+  contact_id: number;
+  contact_name: string;
+  lead_id?: number;
+  issued_date: string;
+  due_date?: string;
+  net_amount: string;
+  settled: string;
+  outstanding: string;
+  days_late: number;
+}
+
+export interface AgingBucket {
+  key: "current" | "d1_30" | "d31_60" | "d61_90" | "d90";
+  label: string;
+  count: number;
+  amount: string;
+}
+
+export interface Aging {
+  total: string;
+  count: number;
+  overdue: CountSum;
+  buckets: AgingBucket[];
+  items: OpenItem[];
+}
+
+export interface AmountRow {
+  key: string;
+  id?: number;
+  name: string;
+  amount: string;
+  cost: string;
+}
+
+export interface FinanceOverview {
+  month: string;
+  as_of: string;
+  series: MonthTotals[];
+  this_month: MonthTotals;
+  last_month: MonthTotals;
+  ytd: MonthTotals;
+  last_ytd: MonthTotals;
+  receivables: Aging;
+  payables: Aging;
+  services: AmountRow[];
+  customers: AmountRow[];
+  jobs: AmountRow[];
+  methods: { id: number; name: string; in: string; out: string }[];
+  tax: TaxFormView[];
+  follow_up: {
+    overdue_invoices: CountSum;
+    wht_to_receive: CountSum;
+    wht_to_send: CountSum;
+    no_tax_invoice: CountSum;
+    tax_due: TaxDue[];
+  };
+}
+
 // --- Monthly tax ----------------------------------------------------------------
 
 export type TaxForm = "pp30" | "pnd3" | "pnd53";

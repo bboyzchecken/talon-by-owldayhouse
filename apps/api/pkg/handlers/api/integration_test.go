@@ -26,6 +26,7 @@ import (
 	storedocument "github.com/owldayhouse/odh-internal-api/pkg/store/document"
 	storeegp "github.com/owldayhouse/odh-internal-api/pkg/store/egp"
 	storefile "github.com/owldayhouse/odh-internal-api/pkg/store/file"
+	storefinance "github.com/owldayhouse/odh-internal-api/pkg/store/finance"
 	storeinbound "github.com/owldayhouse/odh-internal-api/pkg/store/inbound"
 	storekpi "github.com/owldayhouse/odh-internal-api/pkg/store/kpi"
 	storelead "github.com/owldayhouse/odh-internal-api/pkg/store/lead"
@@ -159,6 +160,7 @@ func newTestEnv(t *testing.T) *testEnv {
 		storeregister.New(db),
 		storepayment.New(db),
 		storetaxfiling.New(db),
+		storefinance.New(db),
 		storage.New(config, storage.NewR2Client(config)),
 	)
 

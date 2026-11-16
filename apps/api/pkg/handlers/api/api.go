@@ -41,6 +41,7 @@ type Server struct {
 	RegisterStore     models.RegisterStore
 	PaymentStore      models.PaymentStore
 	TaxStore          models.TaxStore
+	FinanceStore      models.FinanceStore
 
 	Storage *storage.Service
 }
@@ -65,6 +66,7 @@ func NewServer(
 	registerStore models.RegisterStore,
 	paymentStore models.PaymentStore,
 	taxStore models.TaxStore,
+	financeStore models.FinanceStore,
 	storageService *storage.Service,
 ) *Server {
 	return &Server{
@@ -86,6 +88,7 @@ func NewServer(
 		RegisterStore:     registerStore,
 		PaymentStore:      paymentStore,
 		TaxStore:          taxStore,
+		FinanceStore:      financeStore,
 		Storage:           storageService,
 	}
 }
