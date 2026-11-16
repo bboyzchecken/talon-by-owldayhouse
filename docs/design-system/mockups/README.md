@@ -13,10 +13,22 @@
 
 | ไฟล์ | ใช้เป็น | ผลงาน |
 | --- | --- | --- |
-| `fan-delivery-admin.html` | `/portfolio/fan-delivery-admin.webp` | FAN Delivery (หลังบ้าน + แอปลูกค้า) |
-| `encourage-board.html` | `/portfolio/encourage-board.webp` | กระดานระบายและให้กำลังใจ |
-| `e-saraban.html` | `/portfolio/e-saraban.webp` | E-Saraban |
-| `gameconnext-seller.html` | `/portfolio/gameconnext-seller.webp` | GameConnext |
+| `fan-delivery-admin.html` | `/portfolio/fan-delivery-admin.webp` | FAN Delivery (แอปลูกค้า + หลังบ้าน) |
+| `encourage-board.html` | `/portfolio/encourage-board.webp` | กระดานระบายและให้กำลังใจ (หน้าฟีด) |
+| `e-saraban.html` | `/portfolio/e-saraban.webp` | E-Saraban (หน้าเอกสารและเส้นทางเอกสาร) |
+| `game-item-marketplace.html` | `/portfolio/game-item-marketplace.webp` | ตลาดซื้อขายไอเทมในเกม (หน้าตลาด) |
+
+## เลือกหน้าจอยังไง
+
+เอาหน้าที่ **ผู้ใช้จริงเห็น** เป็นหลัก ไม่ใช่หน้า admin เพราะหน้า admin ของทุกระบบหน้าตาเหมือนกันหมด
+คือตารางกับ sidebar ซึ่งไม่บอกอะไรเลยว่าผลงานนั้นเด่นตรงไหน เวอร์ชันแรกของภาพชุดนี้เป็นหน้า admin
+สามในสี่ภาพ แล้วดูซ้ำกันจนไม่มีจุดขาย จึงรื้อใหม่
+
+ถ้าจุดขายอยู่ที่ "ทำครบทั้งสองฝั่ง" อย่าง FAN ให้วางฝั่งผู้ใช้เป็นพระเอกแล้วเอาหลังบ้านเป็นตัวประกอบ
+ในภาพเดียวกัน
+
+**ห้ามใส่ชื่อแบรนด์ลูกค้าที่หน้าผลงานปิดชื่อไว้** ตลาดไอเทมเกมปิดชื่อ ในภาพจึงใช้คำว่า "ตลาดไอเทมเกม"
+เฉย ๆ ไม่มีโลโก้และไม่มีชื่อร้านจริง
 
 ## วิธีสร้างภาพใหม่
 

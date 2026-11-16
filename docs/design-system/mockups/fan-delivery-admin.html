@@ -9,264 +9,243 @@
 <style>
   :root{
     --navy:#2E3192; --cyan:#00C0F3; --ink:#3F4255; --muted:rgba(63,66,85,.62);
-    --line:#EAEFF2; --bg:#F7F9FC; --green:#27AE60; --red:#EB5757; --amber:#F2994A;
+    --line:#EAEFF2; --green:#27AE60; --red:#EB5757; --amber:#F2994A;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{width:1280px;height:640px;overflow:hidden}
   body{font-family:'Kanit','IBM Plex Sans Thai','Noto Sans Thai','Thonburi',sans-serif;
-       background:var(--bg);color:var(--ink);font-weight:300;display:flex}
+       color:var(--ink);font-weight:300;display:flex;background:#F7F9FC}
 
-  /* sidebar */
-  .rail{width:78px;background:var(--navy);flex:none;display:flex;flex-direction:column;
-        align-items:center;padding:18px 0;gap:6px}
-  .mark{width:44px;height:44px;border-radius:14px;background:#fff;color:var(--navy);
-        display:grid;place-items:center;font-weight:600;font-size:17px;letter-spacing:.5px;margin-bottom:14px}
-  .ic{width:44px;height:40px;border-radius:12px;display:grid;place-items:center;opacity:.55}
-  .ic.on{background:rgba(255,255,255,.16);opacity:1}
-  .ic svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  /* ---------- left: the app ---------- */
+  .stage{width:556px;flex:none;position:relative;overflow:hidden;
+         background:linear-gradient(150deg,#2E3192 0%,#3A52C4 48%,#00A6DC 100%)}
+  .stage::before{content:"";position:absolute;width:420px;height:420px;border-radius:50%;left:-130px;top:-150px;
+                 background:radial-gradient(circle,rgba(255,255,255,.17),transparent 62%)}
+  .stage::after{content:"";position:absolute;width:360px;height:360px;border-radius:50%;right:-110px;bottom:-130px;
+                background:radial-gradient(circle,rgba(0,192,243,.4),transparent 62%)}
+  .shead{position:relative;z-index:2;padding:26px 30px 0;color:#fff}
+  .slogo{display:flex;align-items:center;gap:10px}
+  .sq{width:38px;height:38px;border-radius:12px;background:#fff;color:var(--navy);display:grid;place-items:center;
+      font-size:14px;font-weight:600;letter-spacing:.4px}
+  .sn{font-size:17px;font-weight:500;line-height:1.2}
+  .sn small{display:block;font-size:10.5px;font-weight:300;opacity:.8;letter-spacing:.3px}
+  .stag{display:inline-block;margin-top:15px;font-size:11px;padding:4px 12px;border-radius:999px;
+        background:rgba(255,255,255,.18);backdrop-filter:blur(2px)}
+  .sh1{font-size:21px;font-weight:500;line-height:1.35;margin-top:9px;letter-spacing:.2px}
+  .sh1 b{font-weight:500;color:#FFE08A}
 
-  /* shell */
-  .main{flex:1;display:flex;flex-direction:column;min-width:0}
-  .top{height:60px;background:#fff;border-bottom:1px solid var(--line);
-       display:flex;align-items:center;gap:12px;padding:0 22px;flex:none}
-  .brand{font-weight:600;font-size:17px;color:var(--navy);letter-spacing:.3px}
-  .crumb{font-size:12.5px;color:var(--muted)}
-  .spacer{flex:1}
-  .search{width:210px;height:34px;border:1px solid var(--line);border-radius:999px;
-          display:flex;align-items:center;padding:0 14px;font-size:12px;color:#B6BAC6;gap:7px}
-  .who{display:flex;align-items:center;gap:9px;font-size:12.5px}
-  .av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--navy));
-      color:#fff;display:grid;place-items:center;font-size:11px;font-weight:500}
+  .phones{position:absolute;z-index:2;left:30px;bottom:-26px;display:flex;align-items:flex-end;gap:14px}
+  .phone{width:208px;background:#fff;border:7px solid #11142B;border-bottom:none;
+         border-radius:28px 28px 0 0;overflow:hidden;display:flex;flex-direction:column;
+         box-shadow:0 18px 44px rgba(10,14,40,.4)}
+  .p1{height:330px}
+  .p2{height:286px;width:196px}
+  .notch{height:15px;background:#11142B;display:flex;align-items:center;justify-content:center}
+  .notch i{width:48px;height:4px;border-radius:999px;background:#2A2E4A;display:block}
+  .pst{display:flex;justify-content:space-between;padding:4px 11px 1px;font-size:7.4px;color:#9096A8}
 
-  .body{flex:1;padding:16px 22px;display:flex;flex-direction:column;gap:14px;min-height:0}
-
-  /* kpi */
-  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;flex:none}
-  .kpi{background:#fff;border-radius:14px;padding:13px 15px;box-shadow:0 2px 15px rgba(0,0,0,.05)}
-  .kpi .lbl{font-size:11.5px;color:var(--muted);display:flex;align-items:center;gap:6px}
-  .dot{width:7px;height:7px;border-radius:50%}
-  .kpi .val{font-size:22px;font-weight:500;letter-spacing:.2px;margin-top:3px}
-  .kpi .val span{font-size:12px;font-weight:300;color:var(--muted);margin-left:3px}
-  .kpi .sub{font-size:10.5px;color:var(--muted);margin-top:2px}
-  .up{color:var(--green)}
-
-  /* two column */
-  .cols{flex:1;display:grid;grid-template-columns:1fr 286px;gap:14px;min-height:0}
-
-  /* phone */
-  .phonewrap{background:linear-gradient(160deg,#EAF7FE 0%,#E7ECFB 100%);border-radius:14px;
-             box-shadow:0 2px 15px rgba(0,0,0,.05);display:flex;flex-direction:column;
-             align-items:center;padding:13px 0 0;min-height:0;overflow:hidden}
-  .pcap{font-size:11px;color:#5B6080;margin-bottom:9px;display:flex;align-items:center;gap:6px}
-  .pcap b{font-weight:500;color:var(--navy)}
-  .phone{width:214px;flex:1;min-height:0;background:#fff;border:7px solid #11142B;
-         border-bottom:none;border-radius:26px 26px 0 0;overflow:hidden;display:flex;flex-direction:column;
-         box-shadow:0 -2px 24px rgba(17,20,43,.18)}
-  .notch{height:16px;background:#11142B;display:flex;align-items:center;justify-content:center}
-  .notch i{width:52px;height:5px;border-radius:999px;background:#2A2E4A;display:block}
-  .pst{display:flex;align-items:center;justify-content:space-between;padding:4px 11px 2px;font-size:7.5px;color:#9096A8}
-  .phero{margin:5px 9px 0;height:62px;border-radius:9px;position:relative;overflow:hidden;
-         background:linear-gradient(120deg,#2E3192 0%,#00C0F3 100%)}
-  .phero::after{content:"";position:absolute;inset:0;
-    background:radial-gradient(circle at 78% 30%,rgba(255,255,255,.3),transparent 55%)}
-  .ph-t{position:absolute;left:9px;top:11px;color:#fff;z-index:1}
-  .ph-t b{display:block;font-size:11.5px;font-weight:500;line-height:1.2}
-  .ph-t span{font-size:7.8px;opacity:.9}
-  .ph-b{position:absolute;right:9px;bottom:9px;background:#fff;color:var(--navy);font-size:7.5px;
+  .phero{margin:5px 9px 0;height:56px;border-radius:9px;position:relative;overflow:hidden;
+         background:linear-gradient(120deg,#2E3192,#00C0F3)}
+  .phero::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 80% 28%,rgba(255,255,255,.3),transparent 55%)}
+  .ph-t{position:absolute;left:9px;top:10px;color:#fff;z-index:1}
+  .ph-t b{display:block;font-size:11px;font-weight:500;line-height:1.2}
+  .ph-t span{font-size:7.6px;opacity:.9}
+  .ph-b{position:absolute;right:9px;bottom:8px;background:#fff;color:var(--navy);font-size:7.3px;
         padding:2.5px 8px;border-radius:999px;z-index:1}
   .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;padding:9px 9px 0}
-  .tile{text-align:center}
   .tbx{width:100%;aspect-ratio:1;border-radius:10px;display:grid;place-items:center;margin-bottom:3px}
-  .tbx svg{width:17px;height:17px;stroke:#fff;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-  .tile span{font-size:7.3px;color:#4A4F66;display:block;line-height:1.2}
+  .tbx svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .tile span{font-size:7.1px;color:#4A4F66;display:block;text-align:center;line-height:1.2}
   .pgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:9px 9px 0}
   .pc{border-radius:8px;overflow:hidden;border:1px solid #EDF0F6}
-  .pcimg{height:40px}
+  .pcimg{height:36px}
   .pct{padding:4px 6px 5px}
-  .pct b{display:block;font-size:7.6px;font-weight:500;color:#2C3048;line-height:1.25}
-  .pct span{font-size:6.8px;color:#9096A8}
-  .ptabs{margin-top:auto;border-top:1px solid #EDF0F6;display:grid;grid-template-columns:repeat(4,1fr);
-         padding:5px 0 7px}
-  .pt{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:6.6px;color:#B3B8C8}
-  .pt.on{color:var(--navy)}
-  .pt svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-  .card{background:#fff;border-radius:14px;box-shadow:0 2px 15px rgba(0,0,0,.05);
-        display:flex;flex-direction:column;min-height:0;overflow:hidden}
-  .ch{padding:12px 16px 10px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line)}
-  .ch h2{font-size:13.5px;font-weight:500}
-  .pill{font-size:10.5px;padding:2px 9px;border-radius:999px;background:#E6F9FE;color:#0892B8;font-weight:400}
+  .pct b{display:block;font-size:7.5px;font-weight:500;color:#2C3048;line-height:1.25}
+  .pct span{font-size:6.6px;color:#9096A8}
 
+  /* phone 2 — tracking */
+  .map{height:118px;margin:6px 9px 0;border-radius:10px;position:relative;overflow:hidden;
+       background:linear-gradient(160deg,#E8F1FB,#DDE9F6)}
+  .road{position:absolute;background:#fff}
+  .r1{left:0;right:0;top:44px;height:7px}
+  .r2{left:52px;top:0;bottom:0;width:7px}
+  .r3{left:0;right:0;bottom:30px;height:5px}
+  .blk{position:absolute;border-radius:3px;background:rgba(46,49,146,.07)}
+  .route{position:absolute;left:30px;top:88px;width:84px;height:48px;border-left:2.5px dashed var(--cyan);
+         border-top:2.5px dashed var(--cyan);border-top-left-radius:12px}
+  .pin{position:absolute;width:19px;height:19px;border-radius:50%;display:grid;place-items:center;
+       font-size:9px;color:#fff;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+  .pin.a{background:var(--red);left:24px;top:80px}
+  .pin.b{background:var(--navy);left:106px;top:36px}
+  .rider{position:absolute;left:70px;top:76px;width:24px;height:24px;border-radius:50%;background:#fff;
+         display:grid;place-items:center;box-shadow:0 3px 9px rgba(0,0,0,.22);font-size:11px}
+  .trk{padding:9px 11px 0}
+  .trk .st{font-size:11.5px;font-weight:500;color:#2C3048}
+  .trk .et{font-size:8.6px;color:#9096A8;margin-top:1px}
+  .steps{display:flex;gap:4px;margin-top:8px}
+  .steps i{height:3.5px;border-radius:999px;flex:1;background:#E4E9F2}
+  .steps i.on{background:var(--cyan)}
+  .rbox{margin:9px 11px 0;border:1px solid #EDF0F6;border-radius:9px;padding:7px 9px;display:flex;
+        align-items:center;gap:8px}
+  .rb-av{width:23px;height:23px;border-radius:50%;background:#EAEFF2;display:grid;place-items:center;font-size:9px;color:#7C8192}
+  .rb-n{font-size:9px;line-height:1.3}
+  .rb-s{font-size:7.4px;color:#9096A8}
+  .rb-c{margin-left:auto;width:21px;height:21px;border-radius:50%;background:rgba(39,174,96,.13);
+        display:grid;place-items:center;font-size:9px}
+
+  /* ---------- right: back office ---------- */
+  .office{flex:1;display:flex;flex-direction:column;min-width:0;background:#F7F9FC}
+  .otop{height:54px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;
+        gap:10px;padding:0 20px;flex:none}
+  .ot{font-size:13.5px;font-weight:500;color:var(--navy)}
+  .oc{font-size:11px;color:var(--muted)}
+  .osp{flex:1}
+  .oav{width:27px;height:27px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--navy));
+       color:#fff;display:grid;place-items:center;font-size:10px}
+  .ou{font-size:10.6px;color:var(--muted)}
+
+  .obody{flex:1;padding:13px 20px;display:flex;flex-direction:column;gap:11px;min-height:0}
+  .okpi{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;flex:none}
+  .k{background:#fff;border-radius:11px;padding:10px 12px;box-shadow:0 2px 12px rgba(0,0,0,.045)}
+  .k .l{font-size:10px;color:var(--muted);display:flex;align-items:center;gap:5px}
+  .k .l em{width:6px;height:6px;border-radius:50%;display:inline-block}
+  .k .v{font-size:17.5px;font-weight:500;margin-top:2px}
+  .k .s{font-size:9.3px;color:var(--muted);margin-top:1px}
+  .k .s b{color:var(--green);font-weight:400}
+
+  .otab{background:#fff;border-radius:11px;box-shadow:0 2px 12px rgba(0,0,0,.045);flex:1;
+        display:flex;flex-direction:column;min-height:0;overflow:hidden}
+  .och{padding:11px 14px 9px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px}
+  .och h2{font-size:12.5px;font-weight:500}
+  .pill{font-size:9.6px;padding:2px 8px;border-radius:999px;background:#E6F9FE;color:#0892B8}
   table{width:100%;border-collapse:collapse}
-  th{font-size:10.5px;font-weight:400;color:var(--muted);text-align:left;padding:9px 16px 7px;
+  th{font-size:9.8px;font-weight:400;color:var(--muted);text-align:left;padding:8px 14px 6px;
      background:#FBFCFE;border-bottom:1px solid var(--line);white-space:nowrap}
-  td{font-size:11.8px;padding:8.5px 16px;border-bottom:1px solid #F4F6F9;white-space:nowrap}
+  td{font-size:11px;padding:7.5px 14px;border-bottom:1px solid #F4F6F9;white-space:nowrap}
   tr:last-child td{border-bottom:none}
-  .num{font-variant-numeric:tabular-nums}
-  .ord{color:var(--navy);font-weight:400}
-  .tag{display:inline-block;font-size:10px;padding:2.5px 8px;border-radius:999px;line-height:1.35}
+  .ord{color:var(--navy)}
+  .tag{display:inline-block;font-size:9.4px;padding:2px 7px;border-radius:999px}
   .t-half{background:#E8F6EE;color:#1E7F49}
   .t-win{background:#FFF1E6;color:#B96516}
   .t-m33{background:#E9EEFB;color:#2E3192}
   .t-cash{background:#F2F4F7;color:#6B7280}
-  .st{display:inline-flex;align-items:center;gap:5px;font-size:10.5px}
-  .st i{width:6px;height:6px;border-radius:50%;display:inline-block}
-
-  /* riders */
-  .rider{display:flex;align-items:center;gap:10px;padding:9px 15px;border-bottom:1px solid #F4F6F9}
-  .rav{width:30px;height:30px;border-radius:50%;background:#EAEFF2;display:grid;place-items:center;
-       font-size:10.5px;color:#7C8192;flex:none}
-  .rn{font-size:11.8px;line-height:1.3}
-  .rs{font-size:10px;color:var(--muted)}
-  .veh{margin-left:auto;font-size:9.5px;padding:2px 7px;border-radius:6px;background:#F3FBFF;color:#0892B8}
-  .foot{margin-top:auto;padding:11px 15px;border-top:1px solid var(--line);
-        display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--muted)}
-  .foot b{color:var(--ink);font-weight:500;font-size:13px}
+  .stt{display:inline-flex;align-items:center;gap:4px;font-size:9.8px}
+  .stt i{width:5.5px;height:5.5px;border-radius:50%;display:inline-block}
+  .ofoot{padding:9px 14px;border-top:1px solid var(--line);display:flex;align-items:center;
+         justify-content:space-between;font-size:10.3px;color:var(--muted);margin-top:auto}
+  .ofoot b{font-weight:500;color:var(--ink);font-size:12px}
 </style>
 </head>
 <body>
-  <nav class="rail">
-    <div class="mark">FAN</div>
-    <div class="ic on"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 4l9 6.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></div>
-    <div class="ic"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg></div>
-    <div class="ic"><svg viewBox="0 0 24 24"><circle cx="7" cy="17" r="2.5"/><circle cx="17" cy="17" r="2.5"/><path d="M9.5 17h5M4 7h7l2.5 7"/></svg></div>
-    <div class="ic"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M8 10h8M8 14h5"/></svg></div>
-    <div class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c1.2-3.4 4-5 7-5s5.8 1.6 7 5"/></svg></div>
-    <div class="ic"><svg viewBox="0 0 24 24"><path d="M12 3v18M7 7h7a3 3 0 0 1 0 6H9a3 3 0 0 0 0 6h8"/></svg></div>
-  </nav>
-
-  <div class="main">
-    <header class="top">
-      <div class="brand">FAN Delivery</div>
-      <div class="crumb">· หลังบ้านผู้ดูแลระบบ</div>
-      <div class="spacer"></div>
-      <div class="search">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#C3C7D2" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-        ค้นหาออเดอร์ ร้านค้า หรือคนขับ
+  <!-- left: customer app -->
+  <section class="stage">
+    <div class="shead">
+      <div class="slogo">
+        <span class="sq">FAN</span>
+        <span class="sn">FAN Delivery<small>แอปเดียว หลายบริการ</small></span>
       </div>
-      <div class="who"><span class="av">อร</span> อรุณี (ผู้ดูแลระบบ) · ข้อมูลตัวอย่าง</div>
-    </header>
+      <span class="stag">ลูกค้า · ไรเดอร์ · ร้านค้า · หลังบ้าน</span>
+      <div class="sh1">สั่งอาหาร เรียกรถ ส่งของ ซักผ้า<br>จ่ายด้วย <b>สิทธิ์รัฐ</b> ได้ในแอปเดียว</div>
+    </div>
 
-    <div class="body">
-      <div class="kpis">
-        <div class="kpi">
-          <div class="lbl"><span class="dot" style="background:#EB5757"></span>รายได้ส่งอาหาร / วันนี้</div>
-          <div class="val">฿ 48,250</div>
-          <div class="sub"><span class="up">▲ 6.4%</span> · 612 ออเดอร์</div>
+    <div class="phones">
+      <!-- home -->
+      <div class="phone p1">
+        <div class="notch"><i></i></div>
+        <div class="pst"><span>09:41</span><span>●●● ▮</span></div>
+        <div class="phero">
+          <div class="ph-t"><b>ส่งฟรี 3 กม.แรก</b><span>เฉพาะออเดอร์แรกของวัน</span></div>
+          <span class="ph-b">สั่งเลย</span>
         </div>
-        <div class="kpi">
-          <div class="lbl"><span class="dot" style="background:#00C0F3"></span>รายได้ส่งคนส่งของ / วันนี้</div>
-          <div class="val">฿ 31,980</div>
-          <div class="sub"><span class="up">▲ 2.1%</span> · 404 ออเดอร์</div>
+        <div class="tiles">
+          <div class="tile"><div class="tbx" style="background:linear-gradient(135deg,#EB5757,#FF8A6B)">
+            <svg viewBox="0 0 24 24"><path d="M5 4h8l1 4H4z"/><path d="M8 8v12M12 8v12"/><path d="M16 5c2.5 1 3.5 3.5 3.5 6S18.5 15 17 15h-1V5z"/></svg></div><span>อาหาร</span></div>
+          <div class="tile"><div class="tbx" style="background:linear-gradient(135deg,#2E3192,#4A6FE0)">
+            <svg viewBox="0 0 24 24"><rect x="3" y="7" width="13" height="10" rx="1.5"/><path d="M16 10h3l2 3v4h-5z"/><circle cx="7" cy="18" r="1.8"/><circle cx="17.5" cy="18" r="1.8"/></svg></div><span>ส่งของ</span></div>
+          <div class="tile"><div class="tbx" style="background:linear-gradient(135deg,#00C0F3,#4FD6D1)">
+            <svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2.5"/><circle cx="12" cy="13" r="4.2"/><path d="M8 6.5h3"/></svg></div><span>สะดวกซัก</span></div>
+          <div class="tile"><div class="tbx" style="background:linear-gradient(135deg,#F2994A,#FFC46B)">
+            <svg viewBox="0 0 24 24"><path d="M12 20s-7-4.2-7-9a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 4.8-7 9-7 9z"/></svg></div><span>โมเมนต์</span></div>
         </div>
-        <div class="kpi">
-          <div class="lbl"><span class="dot" style="background:#27AE60"></span>รายได้สะดวกซัก / วันนี้</div>
-          <div class="val">฿ 9,140</div>
-          <div class="sub">118 ออเดอร์ · 22 ร้าน</div>
-        </div>
-        <div class="kpi">
-          <div class="lbl"><span class="dot" style="background:#2E3192"></span>คนขับออนไลน์</div>
-          <div class="val">186<span>/ 342 คน</span></div>
-          <div class="sub">จักรยานยนต์ 154 · รถยนต์ 24 · กระบะ 8</div>
+        <div class="pgrid">
+          <div class="pc"><div class="pcimg" style="background:linear-gradient(135deg,#FFE3C7,#FFC9A3)"></div>
+            <div class="pct"><b>ลด 50 บาท</b><span>เมื่อสั่งครบ 200</span></div></div>
+          <div class="pc"><div class="pcimg" style="background:linear-gradient(135deg,#E3F6E6,#C5EDD0)"></div>
+            <div class="pct"><b>จ่ายด้วยสิทธิ์รัฐ</b><span>คนละครึ่ง · เราชนะ</span></div></div>
         </div>
       </div>
 
-      <div class="cols">
-        <section class="card">
-          <div class="ch"><h2>จัดการคำสั่งซื้อ / อาหาร</h2><span class="pill">วันนี้ 612 รายการ</span></div>
-          <table>
-            <thead><tr>
-              <th style="width:38px">ลำดับ</th><th>หมายเลขออเดอร์</th><th>ชื่อลูกค้า</th>
-              <th>ชื่อร้านอาหาร</th><th>ชำระผ่าน</th><th>ยอดรวม</th><th>สถานะ</th>
-            </tr></thead>
-            <tbody>
-              <tr><td class="num">1</td><td class="ord num">FD-26110412</td><td>ปรียา ก.</td><td>ครัวบ้านสวน</td>
-                  <td><span class="tag t-half">คนละครึ่ง</span></td><td class="num">฿ 182</td>
-                  <td><span class="st"><i style="background:#27AE60"></i>ส่งสำเร็จ</span></td></tr>
-              <tr><td class="num">2</td><td class="ord num">FD-26110411</td><td>ณัฐพล ว.</td><td>ก๋วยเตี๋ยวเรือป้าน้อย</td>
-                  <td><span class="tag t-cash">เงินสด</span></td><td class="num">฿ 95</td>
-                  <td><span class="st"><i style="background:#00C0F3"></i>คนขับรับงาน</span></td></tr>
-              <tr><td class="num">3</td><td class="ord num">FD-26110410</td><td>สุนิสา พ.</td><td>ข้าวมันไก่เจ๊แดง</td>
-                  <td><span class="tag t-win">เราชนะ</span></td><td class="num">฿ 140</td>
-                  <td><span class="st"><i style="background:#27AE60"></i>ส่งสำเร็จ</span></td></tr>
-              <tr><td class="num">4</td><td class="ord num">FD-26110409</td><td>กิตติศักดิ์ ม.</td><td>ส้มตำแซ่บนัว</td>
-                  <td><span class="tag t-m33">ม33เรารักกัน</span></td><td class="num">฿ 268</td>
-                  <td><span class="st"><i style="background:#F2994A"></i>กำลังปรุง</span></td></tr>
-              <tr><td class="num">5</td><td class="ord num">FD-26110408</td><td>อารียา ส.</td><td>คาเฟ่ริมคลอง</td>
-                  <td><span class="tag t-cash">เงินสด</span></td><td class="num">฿ 210</td>
-                  <td><span class="st"><i style="background:#27AE60"></i>ส่งสำเร็จ</span></td></tr>
-              <tr><td class="num">6</td><td class="ord num">FD-26110407</td><td>ธีรเดช อ.</td><td>หมูกระทะลุงหนวด</td>
-                  <td><span class="tag t-half">คนละครึ่ง</span></td><td class="num">฿ 455</td>
-                  <td><span class="st"><i style="background:#EB5757"></i>ลูกค้ายกเลิก</span></td></tr>
-              <tr><td class="num">7</td><td class="ord num">FD-26110406</td><td>พิมพ์ชนก ร.</td><td>ครัวบ้านสวน</td>
-                  <td><span class="tag t-cash">เงินสด</span></td><td class="num">฿ 128</td>
-                  <td><span class="st"><i style="background:#27AE60"></i>ส่งสำเร็จ</span></td></tr>
-            </tbody>
-          </table>
-        </section>
-
-        <aside class="phonewrap">
-          <div class="pcap">แอปฝั่งลูกค้า · <b>FAN Delivery</b></div>
-          <div class="phone">
-            <div class="notch"><i></i></div>
-            <div class="pst"><span>09:41</span><span>●●● ▮</span></div>
-
-            <div class="phero">
-              <div class="ph-t"><b>ส่งฟรี 3 กม.แรก</b><span>เฉพาะออเดอร์แรกของวัน</span></div>
-              <span class="ph-b">สั่งเลย</span>
-            </div>
-
-            <div class="tiles">
-              <div class="tile">
-                <div class="tbx" style="background:linear-gradient(135deg,#EB5757,#FF8A6B)">
-                  <svg viewBox="0 0 24 24"><path d="M5 4h8l1 4H4z"/><path d="M8 8v12M12 8v12"/><path d="M16 5c2.5 1 3.5 3.5 3.5 6S18.5 15 17 15h-1V5z"/></svg></div>
-                <span>อาหาร</span>
-              </div>
-              <div class="tile">
-                <div class="tbx" style="background:linear-gradient(135deg,#2E3192,#4A6FE0)">
-                  <svg viewBox="0 0 24 24"><rect x="3" y="7" width="13" height="10" rx="1.5"/><path d="M16 10h3l2 3v4h-5z"/><circle cx="7" cy="18" r="1.8"/><circle cx="17.5" cy="18" r="1.8"/></svg></div>
-                <span>ส่งคนส่งของ</span>
-              </div>
-              <div class="tile">
-                <div class="tbx" style="background:linear-gradient(135deg,#00C0F3,#4FD6D1)">
-                  <svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2.5"/><circle cx="12" cy="13" r="4.2"/><path d="M8 6.5h3"/></svg></div>
-                <span>สะดวกซัก</span>
-              </div>
-              <div class="tile">
-                <div class="tbx" style="background:linear-gradient(135deg,#F2994A,#FFC46B)">
-                  <svg viewBox="0 0 24 24"><path d="M12 20s-7-4.2-7-9a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 4.8-7 9-7 9z"/></svg></div>
-                <span>โมเมนต์</span>
-              </div>
-            </div>
-
-            <div class="pgrid">
-              <div class="pc">
-                <div class="pcimg" style="background:linear-gradient(135deg,#FFE3C7,#FFC9A3)"></div>
-                <div class="pct"><b>ลด 50 บาท</b><span>เมื่อสั่งครบ 200</span></div>
-              </div>
-              <div class="pc">
-                <div class="pcimg" style="background:linear-gradient(135deg,#D6F0FF,#B9E2FA)"></div>
-                <div class="pct"><b>ซักผ้ารับถึงบ้าน</b><span>รับคืนภายใน 24 ชม.</span></div>
-              </div>
-              <div class="pc">
-                <div class="pcimg" style="background:linear-gradient(135deg,#E3F6E6,#C5EDD0)"></div>
-                <div class="pct"><b>จ่ายด้วยสิทธิ์รัฐ</b><span>คนละครึ่ง · เราชนะ</span></div>
-              </div>
-              <div class="pc">
-                <div class="pcimg" style="background:linear-gradient(135deg,#E6E7FA,#CBCEF2)"></div>
-                <div class="pct"><b>ส่งของด่วน</b><span>เรียกไรเดอร์ใน 5 นาที</span></div>
-              </div>
-            </div>
-
-            <div class="ptabs">
-              <div class="pt on"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 4l9 6.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>หน้าแรก</div>
-              <div class="pt"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 9h8M8 13h5"/></svg>ออเดอร์</div>
-              <div class="pt"><svg viewBox="0 0 24 24"><path d="M20 12a7 7 0 0 1-7 7H7l-3 2 1-4a7 7 0 1 1 15-5z"/></svg>แชต</div>
-              <div class="pt"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c1.2-3.4 4-5 7-5s5.8 1.6 7 5"/></svg>บัญชี</div>
-            </div>
-          </div>
-        </aside>
+      <!-- tracking -->
+      <div class="phone p2">
+        <div class="notch"><i></i></div>
+        <div class="pst"><span>09:52</span><span>●●● ▮</span></div>
+        <div class="map">
+          <span class="blk" style="left:10px;top:8px;width:34px;height:28px"></span>
+          <span class="blk" style="left:68px;top:6px;width:48px;height:30px"></span>
+          <span class="blk" style="left:14px;top:60px;width:30px;height:22px"></span>
+          <span class="blk" style="left:70px;top:58px;width:52px;height:26px"></span>
+          <span class="blk" style="left:132px;top:52px;width:36px;height:34px"></span>
+          <span class="road r1"></span><span class="road r2"></span><span class="road r3"></span>
+          <span class="route"></span>
+          <span class="pin a">฿</span>
+          <span class="pin b">⌂</span>
+          <span class="rider">🛵</span>
+        </div>
+        <div class="trk">
+          <div class="st">ไรเดอร์กำลังไปส่ง</div>
+          <div class="et">ถึงประมาณ 09:58 · เหลือ 2.1 กม.</div>
+          <div class="steps"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div>
+        </div>
+        <div class="rbox">
+          <span class="rb-av">สม</span>
+          <div><div class="rb-n">สมชาย ใจดี</div><div class="rb-s">จยย. · 1กก 1234</div></div>
+          <span class="rb-c">💬</span>
+        </div>
       </div>
     </div>
-  </div>
+  </section>
+
+  <!-- right: back office -->
+  <section class="office">
+    <header class="otop">
+      <div class="ot">หลังบ้านผู้ดูแลระบบ</div>
+      <div class="oc">· ภาพรวมวันนี้</div>
+      <div class="osp"></div>
+      <span class="oav">อร</span><span class="ou">อรุณี · ข้อมูลตัวอย่าง</span>
+    </header>
+
+    <div class="obody">
+      <div class="okpi">
+        <div class="k"><div class="l"><em style="background:#EB5757"></em>รายได้ส่งอาหาร</div>
+          <div class="v">฿ 48,250</div><div class="s"><b>▲ 6.4%</b> · 612 ออเดอร์</div></div>
+        <div class="k"><div class="l"><em style="background:#00C0F3"></em>รายได้ส่งคนส่งของ</div>
+          <div class="v">฿ 31,980</div><div class="s"><b>▲ 2.1%</b> · 404 ออเดอร์</div></div>
+        <div class="k"><div class="l"><em style="background:#2E3192"></em>คนขับออนไลน์</div>
+          <div class="v">186 / 342</div><div class="s">จยย. 154 · รถยนต์ 24 · กระบะ 8</div></div>
+      </div>
+
+      <div class="otab">
+        <div class="och"><h2>จัดการคำสั่งซื้อ / อาหาร</h2><span class="pill">รับชำระสิทธิ์รัฐ 3 โครงการ</span></div>
+        <table>
+          <thead><tr><th>ออเดอร์</th><th>ร้านอาหาร</th><th>ชำระผ่าน</th><th>ยอด</th><th>สถานะ</th></tr></thead>
+          <tbody>
+            <tr><td class="ord">FD-26110412</td><td>ครัวบ้านสวน</td><td><span class="tag t-half">คนละครึ่ง</span></td><td>฿ 182</td>
+                <td><span class="stt"><i style="background:#27AE60"></i>ส่งสำเร็จ</span></td></tr>
+            <tr><td class="ord">FD-26110411</td><td>ก๋วยเตี๋ยวเรือป้าน้อย</td><td><span class="tag t-cash">เงินสด</span></td><td>฿ 95</td>
+                <td><span class="stt"><i style="background:#00C0F3"></i>คนขับรับงาน</span></td></tr>
+            <tr><td class="ord">FD-26110410</td><td>ข้าวมันไก่เจ๊แดง</td><td><span class="tag t-win">เราชนะ</span></td><td>฿ 140</td>
+                <td><span class="stt"><i style="background:#27AE60"></i>ส่งสำเร็จ</span></td></tr>
+            <tr><td class="ord">FD-26110409</td><td>ส้มตำแซ่บนัว</td><td><span class="tag t-m33">ม33เรารักกัน</span></td><td>฿ 268</td>
+                <td><span class="stt"><i style="background:#F2994A"></i>กำลังปรุง</span></td></tr>
+            <tr><td class="ord">FD-26110408</td><td>คาเฟ่ริมคลอง</td><td><span class="tag t-cash">เงินสด</span></td><td>฿ 210</td>
+                <td><span class="stt"><i style="background:#27AE60"></i>ส่งสำเร็จ</span></td></tr>
+            <tr><td class="ord">FD-26110407</td><td>หมูกระทะลุงหนวด</td><td><span class="tag t-half">คนละครึ่ง</span></td><td>฿ 455</td>
+                <td><span class="stt"><i style="background:#EB5757"></i>ลูกค้ายกเลิก</span></td></tr>
+          </tbody>
+        </table>
+        <div class="ofoot"><span>โอนให้ร้านและไรเดอร์รอบนี้ · ค่า GP แยกรายจังหวัด</span><b>฿ 182,640</b></div>
+      </div>
+    </div>
+  </section>
 </body>
 </html>

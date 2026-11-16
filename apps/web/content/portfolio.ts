@@ -2,9 +2,10 @@
 // carries its link, an in-house system has none and shows no link; "closed"
 // items were sizeable systems whose businesses have since shut down;
 // "handed-over" items were built by us, then handed to another team that runs a
-// later version (describe only the version we built, never link or name it);
-// "unreleased" items we finished and handed over, but the client never put them
-// in front of the public, so there is nothing to link and nothing to screenshot.
+// later version (describe only the version we built, never link or name it).
+// Work the client never put in front of the public also goes under "closed",
+// which is how they prefer it shown; say the project ended, not that it never
+// launched.
 
 import type { Locale } from "@/lib/i18n";
 import { keepThaiWordsDeep } from "@/lib/thai-wrap";
@@ -22,7 +23,7 @@ export interface PortfolioItem {
   /** Shown under the picture when it is a mockup rather than a screenshot. */
   imageNote?: Text;
   url?: string;
-  status: "live" | "closed" | "handed-over" | "unreleased";
+  status: "live" | "closed" | "handed-over";
 }
 
 export const portfolio: readonly PortfolioItem[] = keepThaiWordsDeep([
@@ -66,6 +67,26 @@ export const portfolio: readonly PortfolioItem[] = keepThaiWordsDeep([
     image: "/portfolio/postmailbox-counter.webp",
     imageNote: { th: "ภาพจำลองหน้าจอชั่งน้ำหนักที่เคาน์เตอร์ ข้อมูลในบิลเป็นของสมมติ", en: "A mockup of the counter's weighing screen, with made-up bill data" },
     status: "live",
+  },
+  {
+    // Three years of work (2021–2024), built end to end including the servers it
+    // ran on. The service has since closed, so there is no link and no live app
+    // to point at. It leads the retired work because it is the largest thing
+    // here: keep it first in this group.
+    slug: "fan-delivery",
+    title: { th: "FAN Delivery แอปเดลิเวอรีหลายบริการ", en: "FAN Delivery: a multi-service delivery app" },
+    client: { th: "FAN Delivery", en: "FAN Delivery" },
+    category: { th: "แพลตฟอร์ม / เดลิเวอรี", en: "Platform / Delivery" },
+    result: {
+      th: "แพลตฟอร์มเดลิเวอรีที่รวมสั่งอาหาร รับส่งคนและของ ซักรีด และบริการจัดโมเมนต์พิเศษไว้ที่เดียว ทำครบตั้งแต่ UX/UI หน้าเว็บ API หลังบ้าน ไปจนถึงวาง infrastructure และหาเครื่องเซิร์ฟเวอร์เอง หลังบ้านดูแลไรเดอร์ ร้านค้า ค่า GP แยกรายจังหวัด โบนัสไรเดอร์ เครดิตและส่วนลด รอบตัดบิลและโอนเงินให้ร้านและไรเดอร์ และรับชำระผ่านสิทธิ์รัฐทั้งคนละครึ่ง เราชนะ และ ม33เรารักกัน ดูแลระบบต่อเนื่องสามปี",
+      en: "A delivery platform with food, rides and parcels, laundry and special-occasion bookings in one place. We built all of it: UX/UI, the web front ends, the API, the back office, and the infrastructure and servers it ran on. The back office covered riders, merchants, commission rates set per province, rider bonuses, credit and discounts, billing cycles and payouts to shops and riders, and payment through the Thai government co-pay schemes. We ran it for three years.",
+    },
+    image: "/portfolio/fan-delivery-admin.webp",
+    imageNote: {
+      th: "ภาพจำลองแอปฝั่งลูกค้าและหลังบ้านของ FAN Delivery ออเดอร์ ร้านอาหาร และโปรโมชันเป็นของสมมติ",
+      en: "A mockup of FAN Delivery's customer app and back office, with made-up orders, restaurants and promotions",
+    },
+    status: "closed",
   },
   {
     slug: "pezy",
@@ -126,25 +147,6 @@ export const portfolio: readonly PortfolioItem[] = keepThaiWordsDeep([
     status: "closed",
   },
   {
-    // Three years of work (2021–2024), built end to end including the servers it
-    // ran on. The service has since closed, so there is no link and no live app
-    // to point at.
-    slug: "fan-delivery",
-    title: { th: "FAN Delivery แอปเดลิเวอรีหลายบริการ", en: "FAN Delivery: a multi-service delivery app" },
-    client: { th: "FAN Delivery", en: "FAN Delivery" },
-    category: { th: "แพลตฟอร์ม / เดลิเวอรี", en: "Platform / Delivery" },
-    result: {
-      th: "แพลตฟอร์มเดลิเวอรีที่รวมสั่งอาหาร รับส่งคนและของ ซักรีด และบริการจัดโมเมนต์พิเศษไว้ที่เดียว ทำครบตั้งแต่ UX/UI หน้าเว็บ API หลังบ้าน ไปจนถึงวาง infrastructure และหาเครื่องเซิร์ฟเวอร์เอง หลังบ้านดูแลไรเดอร์ ร้านค้า ค่า GP แยกรายจังหวัด โบนัสไรเดอร์ เครดิตและส่วนลด รอบตัดบิลและโอนเงินให้ร้านและไรเดอร์ และรับชำระผ่านสิทธิ์รัฐทั้งคนละครึ่ง เราชนะ และ ม33เรารักกัน ดูแลระบบต่อเนื่องสามปี",
-      en: "A delivery platform with food, rides and parcels, laundry and special-occasion bookings in one place. We built all of it: UX/UI, the web front ends, the API, the back office, and the infrastructure and servers it ran on. The back office covered riders, merchants, commission rates set per province, rider bonuses, credit and discounts, billing cycles and payouts to shops and riders, and payment through the Thai government co-pay schemes. We ran it for three years.",
-    },
-    image: "/portfolio/fan-delivery-admin.webp",
-    imageNote: {
-      th: "ภาพจำลองหลังบ้านและแอปฝั่งลูกค้าของ FAN Delivery ออเดอร์ ร้านอาหาร และโปรโมชันเป็นของสมมติ",
-      en: "A mockup of FAN Delivery's back office and customer app, with made-up orders, restaurants and promotions",
-    },
-    status: "closed",
-  },
-  {
     // Delivered as a subcontractor for a government agency; the client knows the
     // work as the main contractor's. Keep it unnamed: no agency, no main
     // contractor, no link, and no screenshots of the real board — the picture is
@@ -160,8 +162,8 @@ export const portfolio: readonly PortfolioItem[] = keepThaiWordsDeep([
     },
     image: "/portfolio/encourage-board.webp",
     imageNote: {
-      th: "ภาพจำลองหน้าดูแลกระดาน ข้อความและตัวเลขทั้งหมดเป็นของสมมติ",
-      en: "A mockup of the moderation screen, with made-up posts and figures",
+      th: "ภาพจำลองหน้าฟีดของกระดาน ข้อความและตัวเลขทั้งหมดเป็นของสมมติ",
+      en: "A mockup of the board's feed, with made-up posts and figures",
     },
     status: "closed",
   },
@@ -176,29 +178,32 @@ export const portfolio: readonly PortfolioItem[] = keepThaiWordsDeep([
     },
     image: "/portfolio/e-saraban.webp",
     imageNote: {
-      th: "ภาพจำลองตารางเอกสาร เลขที่หนังสือ เรื่อง และชื่อเป็นของสมมติ",
-      en: "A mockup of the document table, with made-up reference numbers, subjects and names",
+      th: "ภาพจำลองหน้าเอกสาร เลขที่หนังสือ เรื่อง และชื่อเป็นของสมมติ",
+      en: "A mockup of the document view, with made-up reference numbers, subjects and names",
     },
     status: "closed",
   },
   {
     // Finished and handed over (the work is on the repository's `develop`
-    // branch, not `master`), but the backer pulled out and the client never
-    // launched it, so there is nothing to link and the picture is a mockup.
-    slug: "gameconnext",
-    title: { th: "GameConnext ตลาดซื้อขายไอเทมในเกม", en: "GameConnext: a marketplace for in-game items" },
-    client: { th: "GameConnext", en: "GameConnext" },
+    // branch, not `master`), then wound up when the backer pulled out. The
+    // client asked for the plain "closed" tag rather than one saying it never
+    // reached the public, so the copy says the project ended and stops there.
+    // There is nothing to link, and the picture is a mockup. Keep it unnamed —
+    // no brand name in the copy, and none in the mockup.
+    slug: "game-item-marketplace",
+    title: { th: "ตลาดซื้อขายไอเทมในเกม", en: "A marketplace for in-game items" },
+    client: { th: "ธุรกิจเกมในไทย", en: "A Thai gaming business" },
     category: { th: "แพลตฟอร์ม / e-Marketplace", en: "Platform / e-Marketplace" },
     result: {
-      th: "ตลาดกลางที่ให้ผู้ขายเปิดร้านขายไอเทมในเกมของตัวเอง ตั้งแต่สมัครและอนุมัติร้านค้า ลงขายสินค้าแยกตามเกม จัดการคำสั่งซื้อ ชำระเงิน รอบตัดบิลและถอนเงินเข้าบัญชีผู้ขาย ข้อความระหว่างร้านกับลูกค้า ไปจนถึงคิวรับเรื่องร้องเรียน ทำครบทั้งหน้าเว็บ หลังบ้าน และ infrastructure งานเสร็จและส่งมอบแล้ว แต่ไม่ได้เปิดตัว เพราะผู้สนับสนุนของโปรเจกต์ถอนตัวไปก่อน",
-      en: "A marketplace where sellers open their own shop for in-game items: seller sign-up and approval, listings grouped by game, order management, payments, billing cycles and withdrawals to sellers' accounts, messaging between shops and buyers, and a queue for customer complaints. We built the front end, the back office and the infrastructure. The work was finished and handed over, but it never launched: the project's backer pulled out first.",
+      th: "ตลาดกลางที่ให้ผู้ขายเปิดร้านขายไอเทมในเกมของตัวเอง ตั้งแต่สมัครและอนุมัติร้านค้า ลงขายสินค้าแยกตามเกม จัดการคำสั่งซื้อ ชำระเงิน รอบตัดบิลและถอนเงินเข้าบัญชีผู้ขาย ข้อความระหว่างร้านกับลูกค้า ไปจนถึงคิวรับเรื่องร้องเรียน ทำครบทั้งหน้าเว็บ หลังบ้าน และ infrastructure ส่งมอบครบแล้วก่อนที่โปรเจกต์จะยุติลง เพราะผู้สนับสนุนถอนตัว",
+      en: "A marketplace where sellers open their own shop for in-game items: seller sign-up and approval, listings grouped by game, order management, payments, billing cycles and withdrawals to sellers' accounts, messaging between shops and buyers, and a queue for customer complaints. We built the front end, the back office and the infrastructure, and handed all of it over before the project was wound up when its backer pulled out.",
     },
-    image: "/portfolio/gameconnext-seller.webp",
+    image: "/portfolio/game-item-marketplace.webp",
     imageNote: {
-      th: "ภาพจำลองแดชบอร์ดผู้ขาย ร้านค้า เกม และสินค้าเป็นของสมมติ",
-      en: "A mockup of the seller dashboard, with made-up shops, games and items",
+      th: "ภาพจำลองหน้าตลาดซื้อขาย ชื่อเกม ร้านค้า และสินค้าเป็นของสมมติ",
+      en: "A mockup of the marketplace, with made-up games, shops and items",
     },
-    status: "unreleased",
+    status: "closed",
   },
   {
     slug: "intersant",
